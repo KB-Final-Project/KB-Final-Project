@@ -8,6 +8,12 @@ import TestStartPage from '@/views/TestStartPage.vue'
 import TestProcessPage from '@/views/TestProcessPage.vue'
 import TestResultPage from '@/views/TestResultPage.vue'
 import StockPage from '@/views/StockPage.vue'
+import Dictionary from "@/views/menu/dictionary/Dictionary.vue";
+import Savings from "@/views/menu/savings/Savings.vue";
+import SavingsDetail from "@/views/menu/savings/SavingsDetail.vue";
+import Gold from "@/views/menu/gold/Gold.vue";
+import GoldInvest from "@/views/menu/gold/GoldInvest.vue";
+import Calculator from "@/views/Calculator.vue";
 
 const routes = [
   {
@@ -57,6 +63,38 @@ const routes = [
     name: 'StockPage',
     component: StockPage
   },
+  {
+    path: '/dictionary',
+    name: 'dictionary',
+    component: Dictionary
+  },
+  {
+    path: '/savings',
+    name: 'savings',
+    component: Savings
+  },
+  {
+    path: '/savingsDetail',
+    name: 'savingsDetail',
+    component: SavingsDetail
+  },
+  {
+    path: '/gold',
+    name: 'gold',
+    component: Gold
+  },
+  {
+    path: '/goldInvest',
+    name: 'goldInvest',
+    component: GoldInvest
+  },
+  {
+    path: '/calculator',
+    name: 'calculator',
+    component: Calculator
+  },
+
+
   // 필요한 다른 라우트들을 여기에 추가할 수 있습니다.
 ]
 
