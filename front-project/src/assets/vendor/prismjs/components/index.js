@@ -1,5 +1,5 @@
 const components = require('../components.js');
-const getLoader = require('../dependencies');
+const getLoader = require('../dependencies.js');
 
 
 /**
