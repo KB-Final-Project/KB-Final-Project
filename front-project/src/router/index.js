@@ -30,6 +30,9 @@ import Gold from "@/views/menu/gold/Gold.vue";
 import GoldInvest from "@/views/menu/gold/GoldInvest.vue";
 import Calculator from "@/views/Calculator.vue";
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 5d1ac17d1eca314ee4a7635dd47c32cba1772ebe
+=======
 >>>>>>> 5d1ac17d1eca314ee4a7635dd47c32cba1772ebe
 =======
 >>>>>>> 5d1ac17d1eca314ee4a7635dd47c32cba1772ebe
@@ -85,6 +88,7 @@ const routes = [
   {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     path: '/deposit', // Deposit 페이지 경로 추가
     name: 'Deposit',
     component: Deposit,
@@ -101,6 +105,8 @@ const routes = [
   },
 
 =======
+=======
+>>>>>>> 5d1ac17d1eca314ee4a7635dd47c32cba1772ebe
 =======
 >>>>>>> 5d1ac17d1eca314ee4a7635dd47c32cba1772ebe
     path: '/dictionary',
@@ -135,6 +141,9 @@ const routes = [
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 5d1ac17d1eca314ee4a7635dd47c32cba1772ebe
+=======
 >>>>>>> 5d1ac17d1eca314ee4a7635dd47c32cba1772ebe
 =======
 >>>>>>> 5d1ac17d1eca314ee4a7635dd47c32cba1772ebe
