@@ -42,25 +42,25 @@
           {
             title: "연금투자형",
             description: "노후를 대비하고 세금 혜택도 받고 싶다면, 연금투자를 선호하세요!",
-            icon: require('@/assets/img/test/pension-icon.png')
+            icon: require('@/assets/img/analysis/pension-icon.png')
           },
           {
             title: "성장테마형",
             description: "성장 가능성이 높은 산업에 관심이 많고, 미래의 가치를 찾고 싶어요!",
-            icon: require('@/assets/img/test/growth-icon.png')
+            icon: require('@/assets/img/analysis/growth-icon.png')
           }
         ],
         recommendedContent: [
           {
             title: "한국인의 생애주기에 맞는 연금투자가 궁금하다면?",
             description: "ISA",
-            icon: require('@/assets/img/test/isa-icon.png'),
+            icon: require('@/assets/img/analysis/isa-icon.png'),
             link: "/isa"
           },
           {
             title: "든든한 노후를 준비하고 싶다면?",
             description: "예금저축",
-            icon: require('@/assets/img/test/savings-icon.png'),
+            icon: require('@/assets/img/analysis/savings-icon.png'),
             link: "/savings"
           }
         ]

@@ -2,7 +2,7 @@
     <div class="test-start-view">
       <h1>투자 성향 테스트</h1>
       <p>간단한 테스트로 성향을 파악하고, <br> 딱 맞는 투자 콘텐츠를 추천받아보세요!</p>
-      <img src="@/assets/img/test/test_start.jpg" alt="Test Direction Image" class="test-image" />
+      <img src="@/assets/img/analysis/test_start.jpg" alt="Test Direction Image" class="test-image" />
       <button @click="startTest" class="start-test-button">테스트 시작하기</button>
     </div>
   </template>

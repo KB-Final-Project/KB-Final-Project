@@ -43,12 +43,12 @@
           {
             question: "현재 연금계좌에서 투자하고 있나요?",
             options: ["네, 투자하고 있어요", "아니요, 지금은 안하고 있어요"],
-            icon: require('@/assets/img/test/investment-icon.png') 
+            icon: require('@/assets/img/analysis/investment-icon.png') 
           },
           {
             question: "분산투자보다 레버리지나 인버스 상품을 통한 투자를 선호하시나요?",
             options: ["네, 선호해요", "아니요, 선호하지 않아요"],
-            icon: require('@/assets/img/test/leverage-icon.png') 
+            icon: require('@/assets/img/analysis/leverage-icon.png') 
           },
           // 추가 질문을 여기에 추가합니다.
         ],
