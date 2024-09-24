@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/views/Home.vue';
 import Signin from '@/views/Signin.vue';
@@ -9,33 +8,15 @@ import TestStartPage from '@/views/TestStartPage.vue';
 import TestProcessPage from '@/views/TestProcessPage.vue';
 import TestResultPage from '@/views/TestResultPage.vue';
 import StockPage from '@/views/StockPage.vue';
+import Dictionary from '@/views/menu/dictionary/Dictionary.vue';
+import Savings from '@/views/menu/savings/Savings.vue';
+import SavingsDetail from '@/views/menu/savings/SavingsDetail.vue';
+import Gold from '@/views/menu/gold/Gold.vue';
+import GoldInvest from '@/views/menu/gold/GoldInvest.vue';
+import Calculator from '@/views/Calculator.vue';
 import Deposit from '@/views/Deposit.vue';
 import Fund from '@/views/Fund.vue';
 import ISA from '@/views/ISA.vue';
-=======
-import { createRouter, createWebHistory } from 'vue-router'
-import Home from '@/views/Home.vue'
-import Signin from '@/views/Signin.vue'
-import Signup from '@/views/Signup.vue'
-import Analysis from '@/views/Analysis.vue'
-import NewsPage from '@/views/NewsPage.vue'
-import TestStartPage from '@/views/TestStartPage.vue'
-import TestProcessPage from '@/views/TestProcessPage.vue'
-import TestResultPage from '@/views/TestResultPage.vue'
-import StockPage from '@/views/StockPage.vue'
-import Dictionary from "@/views/menu/dictionary/Dictionary.vue";
-import Savings from "@/views/menu/savings/Savings.vue";
-import SavingsDetail from "@/views/menu/savings/SavingsDetail.vue";
-import Gold from "@/views/menu/gold/Gold.vue";
-import GoldInvest from "@/views/menu/gold/GoldInvest.vue";
-import Calculator from "@/views/Calculator.vue";
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 5d1ac17d1eca314ee4a7635dd47c32cba1772ebe
-=======
->>>>>>> 5d1ac17d1eca314ee4a7635dd47c32cba1772ebe
-=======
->>>>>>> 5d1ac17d1eca314ee4a7635dd47c32cba1772ebe
 
 const routes = [
   {
@@ -84,6 +65,36 @@ const routes = [
     path: '/stock',
     name: 'StockPage',
     component: StockPage,
+  },
+  {
+    path: '/dictionary',
+    name: 'dictionary',
+    component: Dictionary,
+  },
+  {
+    path: '/savings',
+    name: 'savings',
+    component: Savings,
+  },
+  {
+    path: '/savingsDetail',
+    name: 'savingsDetail',
+    component: SavingsDetail,
+  },
+  {
+    path: '/gold',
+    name: 'gold',
+    component: Gold,
+  },
+  {
+    path: '/goldInvest',
+    name: 'goldInvest',
+    component: GoldInvest,
+  },
+  {
+    path: '/calculator',
+    name: 'calculator',
+    component: Calculator,
   },
   {
     path: '/deposit', // Deposit 페이지 경로 추가
