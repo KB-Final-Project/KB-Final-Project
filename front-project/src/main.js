@@ -8,6 +8,10 @@ createApp(App)
     .use(router)
     .mount('#app');
 
+createApp(App)
+    .use(router)
+    .mount('#app');
+
 // CSS 파일들
 =======
 // Import styles
