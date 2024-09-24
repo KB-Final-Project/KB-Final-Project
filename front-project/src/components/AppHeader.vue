@@ -158,7 +158,8 @@
         </div>
       </nav>
     </div>
-  </header><br><br><br><br><br>
+  </header>
+  <br /><br /><br /><br /><br />
 </template>
 
 <script setup>
