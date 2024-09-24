@@ -216,10 +216,10 @@ const menuItems = ref([
       },
       {
         text: '적금',
-        href: '#',
+        href: 'savings',
         subItems: [
-          { text: '~~~적금', href: 'shop-catalog.html' },
-          { text: '~~~적금', href: 'shop-catalog.html' },
+          { text: '~~~적금', href: 'savings' },
+          { text: '~~~적금 상세', href: 'savingsDetail' },
           { text: '~~~적금', href: 'shop-catalog.html' },
         ],
       },
@@ -258,8 +258,8 @@ const menuItems = ref([
         text: '금',
         href: '#',
         subItems: [
-          { text: '금 시세', href: 'account-signin.html' },
-          { text: '금투자', href: 'account-signup.html' },
+          { text: '금 시세', href: 'gold' },
+          { text: '금투자', href: '/goldInvest' },
         ],
       },
       { text: '환전', href: 'account-overview.html' },
