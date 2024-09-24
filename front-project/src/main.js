@@ -1,34 +1,36 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
-// import './assets/styles/main.scss'
+import axios from 'axios';
 
+<<<<<<< Updated upstream
 createApp(App)
     .use(router)
     .mount('#app');
 
 // CSS 파일들
+=======
+// Import styles
+>>>>>>> Stashed changes
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'aos/dist/aos.css';
 import 'lightgallery/css/lightgallery.css';
-import 'lightgallery/css/lg-zoom.css';
-import 'lightgallery/css/lg-video.css';
 
-// JS 파일들
+// Import JS libraries
 import 'bootstrap';
 import SmoothScroll from 'smooth-scroll';
-import 'img-comparison-slider';
 import AOS from 'aos';
 import lightGallery from 'lightgallery';
 
-// 플러그인 초기화
+// Axios 기본 URL 설정 (Spring 서버 API URL)
+axios.defaults.baseURL = 'http://localhost:8080';
+
+// Initialize plugins
 new SmoothScroll('a[href*="#"]');
 AOS.init();
 
-// Vue 인스턴스 생성 및 마운트
 const app = createApp(App);
-
-// lightGallery를 전역적으로 사용할 수 있도록 설정
 app.config.globalProperties.$lightGallery = lightGallery;
+app.config.globalProperties.$axios = axios;  // 전역에서 axios 사용 가능하게 설정
 
-createApp(App).use(router).mount('#app')
+app.use(router).mount('#app');
