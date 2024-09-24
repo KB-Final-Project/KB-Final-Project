@@ -6,7 +6,6 @@ module.exports = {
       sass: {
         additionalData: `
           @import "@/assets/scss/main.scss";
-
         `
       }
     }
