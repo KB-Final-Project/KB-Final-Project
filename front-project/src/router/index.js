@@ -13,7 +13,7 @@ import Savings from "@/views/menu/savings/Savings.vue";
 import SavingsDetail from "@/views/menu/savings/SavingsDetail.vue";
 import Gold from "@/views/menu/gold/Gold.vue";
 import GoldInvest from "@/views/menu/gold/GoldInvest.vue";
-import Calculator from "@/views/Calculator.vue";
+import Calculator from "@/views/modal/Calculator.vue";
 
 const routes = [
   {
