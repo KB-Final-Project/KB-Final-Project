@@ -166,7 +166,6 @@
 import { ref } from 'vue';
 
 const menuItems = ref([
-<<<<<<< HEAD
   {
     text: '투자성향',
     href: '#',
@@ -267,52 +266,6 @@ const menuItems = ref([
       { text: '뉴스', href: 'news' },
     ],
   },
-=======
-  { text: '투자성향', href: '#', active: true, megaMenu: true, subItems: [
-    [
-      { text: '테스트하기', href: 'test-start' },
-      { text: '공격투자형', href: 'index.html', bgImage: 'assets/img/megamenu/landings.jpg' },
-      { text: '적극투자형', href: 'landing-mobile-app-showcase.html', bgImage: 'assets/img/megamenu/mobile-app.jpg' },
-      { text: '위험중립형', href: 'index.html', bgImage: 'assets/img/megamenu/landings.jpg' },
-      { text: '안정추구형', href: 'landing-mobile-app-showcase.html', bgImage: 'assets/img/megamenu/mobile-app.jpg' },
-      { text: '안정형', href: 'landing-mobile-app-showcase.html', bgImage: 'assets/img/megamenu/mobile-app.jpg' },
-    ]
-  ]},
-  { text: '금융상품', href: '#', subItems: [
-    { text: '예금', href: '#', subItems: [
-      { text: '~~예금', href: 'portfolio-list-v1.html' },
-      { text: '~~예금', href: 'portfolio-list-v2.html' },
-    ]},
-    { text: '적금', href: 'savings', subItems: [
-      { text: '~~적금', href: 'savings' },
-      { text: '~~적금 상세', href: 'savingsDetail' },
-      { text: '~~~적금', href: 'shop-catalog.html' }
-    ]},
-    { text: '주식', href: '#', subItems: [
-      { text: '국내주식', href: 'stock' },
-    ]},
-    { text: '펀드', href: '#', subItems: [
-      { text: '~~~펀드', href: 'shop-catalog.html' },
-      { text: '~~~펀드', href: 'shop-catalog.html' },
-      { text: '~~~펀드', href: 'shop-catalog.html' }
-    ]},
-    { text: 'ISA', href: '#', subItems: [
-      { text: '~~ISA', href: 'shop-catalog.html' },
-      { text: '~~ISA', href: 'shop-catalog.html' },
-      { text: '~~ISA', href: 'shop-catalog.html' }
-    ]}
-  ]},
-  { text: '투자 커뮤니티', href: 'analysis' },
-  { text: '용어사전', href: 'dictionary' },
-  { text: '추가기능', href: '#', subItems: [
-    { text: '금', href: 'gold', subItems: [
-      { text: '금 시세', href: 'gold' },
-      { text: '금투자', href: 'goldInvest' },
-    ]},
-    { text: '환전', href: 'account-overview.html' },
-    { text: '뉴스', href: 'news' },
-  ]}
->>>>>>> 5d1ac17d1eca314ee4a7635dd47c32cba1772ebe
 ]);
 </script>
 

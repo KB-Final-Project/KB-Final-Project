@@ -86,9 +86,6 @@ const routes = [
     component: StockPage,
   },
   {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     path: '/deposit', // Deposit 페이지 경로 추가
     name: 'Deposit',
     component: Deposit,
@@ -104,49 +101,6 @@ const routes = [
     component: ISA,
   },
 
-=======
-=======
->>>>>>> 5d1ac17d1eca314ee4a7635dd47c32cba1772ebe
-=======
->>>>>>> 5d1ac17d1eca314ee4a7635dd47c32cba1772ebe
-    path: '/dictionary',
-    name: 'dictionary',
-    component: Dictionary
-  },
-  {
-    path: '/savings',
-    name: 'savings',
-    component: Savings
-  },
-  {
-    path: '/savingsDetail',
-    name: 'savingsDetail',
-    component: SavingsDetail
-  },
-  {
-    path: '/gold',
-    name: 'gold',
-    component: Gold
-  },
-  {
-    path: '/goldInvest',
-    name: 'goldInvest',
-    component: GoldInvest
-  },
-  {
-    path: '/calculator',
-    name: 'calculator',
-    component: Calculator
-  },
-
-
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 5d1ac17d1eca314ee4a7635dd47c32cba1772ebe
-=======
->>>>>>> 5d1ac17d1eca314ee4a7635dd47c32cba1772ebe
-=======
->>>>>>> 5d1ac17d1eca314ee4a7635dd47c32cba1772ebe
   // 필요한 다른 라우트들을 여기에 추가할 수 있습니다.
 ];
 
