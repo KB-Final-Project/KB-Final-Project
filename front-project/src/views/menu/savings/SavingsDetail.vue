@@ -143,13 +143,10 @@ const toggleText = () => {
 </template>
 
 <style scoped>
-
-
 .toggle-wrapper {
-  display: flex;
-  justify-content: center;
+  display: inline-block;
+  text-align: center;
   margin-top: 10px;
-  margin-right: -700px;
 }
 
 .info-list {
@@ -162,10 +159,11 @@ const toggleText = () => {
   font-size: 16px;
   color: black;
   cursor: pointer;
+
 }
 
 .moreInfo>span{
-  text-align: center;
+  text-align: start;
 }
 
 .text-wrapper {
@@ -207,6 +205,7 @@ const toggleText = () => {
 #customSwitch{
   width: 40px;
 }
+
 .calTable td{
   text-align: right;
   width: 10%;
@@ -219,6 +218,7 @@ const toggleText = () => {
   width: 95%;
   border-bottom: 1px solid rgba(180, 178, 178, 0.47);
 }
+
 .dayInfo{
   table-layout: fixed;
   width: 100%;
@@ -261,6 +261,7 @@ const toggleText = () => {
 .calSpecialRate{
   color: rgba(67, 140, 116, 1);
 }
+
 .container{
   width: 70%;
 }
@@ -269,6 +270,7 @@ const toggleText = () => {
   width: 95%;
   border: 5px solid rgba(180, 178, 178, 0.47);
 }
+
 .subject2{
   font-size: 25px;
   font-weight: bold;
