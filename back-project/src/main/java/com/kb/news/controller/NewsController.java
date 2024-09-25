@@ -1,5 +1,7 @@
-package com.kb.board.controller;
+package com.kb.news.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +23,8 @@ import java.nio.charset.StandardCharsets;
 @CrossOrigin(origins = "http://localhost:8081") // Vue.js 개발 서버 주소
 public class NewsController {
 
+    private static final Logger logger = LoggerFactory.getLogger(NewsController.class);
+
     @Value("${naver.client.id}")
     private String clientId;
 
@@ -32,9 +36,9 @@ public class NewsController {
             @RequestParam(value = "query", required = false, defaultValue = "금융") String query,
             @RequestParam(required = false, defaultValue = "10") int display) {
 
-        // 쿼리 인코딩 처리
-        String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
+        logger.info("Received request for news. Query: {}, Display: {}", query, display);
 
+        String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
         String apiURL = "https://openapi.naver.com/v1/search/news.json?query=" + encodedQuery + "&display=" + display;
 
         RestTemplate restTemplate = new RestTemplate();
@@ -49,9 +53,14 @@ public class NewsController {
             URI uri = new URI(apiURL);
             ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
 
+            logger.info("API request successful. Status: {}", response.getStatusCode());
             return response;
         } catch (URISyntaxException e) {
+            logger.error("URI Syntax error", e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            logger.error("Error occurred while fetching news", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
