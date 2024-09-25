@@ -437,3 +437,18 @@ gradle-app.setting
 *.hprof
 
 .idea/
+
+
+# Sensitive or high-churn files
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+
+# *.iml
+# modules.xml
+.idea/misc.xml
+# *.ipr
