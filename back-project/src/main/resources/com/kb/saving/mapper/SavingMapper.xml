@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kb.saving.mapper.SavingMapper">
+    <resultMap id="DepositResultMap" type="com.kb.saving.dto.Saving">
+        <id property="savingId" column="saving_id"/>
+        <result property="bankId" column="bank_id"/>
+        <result property="financialProductCode" column="fin_prdt_cd"/>
+        <result property="savingName" column="saving_name"/>
+        <result property="disclosureStartDay" column="dcls_strt_day"/>
+        <result property="joinDeny" column="join_deny"/>
+        <result property="joinMember" column="join_member"/>
+        <result property="financialCategoryId" column="fin_category_id"/>
+        <result property="joinWay" column="join_way"/>
+        <result property="maturityInterest" column="mtrt_int"/>
+        <result property="note" column="etc_note"/>
+        <result property="maxPrimeRate" column="max_prime_rate"/>
+    </resultMap>
+
+    <select id="getDepositList" resultMap="DepositResultMap">
+        select * from savings_products where fin_category_id = 1 order by max_prime_rate desc
+    </select>
+
+    <select id="getSavingList" resultMap="DepositResultMap">
+        select * from savings_products where fin_category_id = 2 order by max_prime_rate desc
+    </select>
+
+</mapper>
