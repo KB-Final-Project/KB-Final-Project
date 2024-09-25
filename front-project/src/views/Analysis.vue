@@ -393,7 +393,10 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
+
   name: 'Analysis',
   data() {
     return {
@@ -409,11 +412,101 @@ export default {
   },
   methods: {
     loadMoreFeeds() {
-      const widget5 = document.getElementById('kt_widget_5');
-      const loadMoreBtn = document.getElementById('kt_widget_5_load_more_btn');
-      
-      widget5.classList.remove('d-none');
-      loadMoreBtn.classList.add('d-none');
+        const widget5 = document.getElementById('kt_widget_5');
+        const loadMoreBtn = document.getElementById('kt_widget_5_load_more_btn');
+        
+        widget5.classList.remove('d-none');
+        loadMoreBtn.classList.add('d-none');
+      },
+
+        // 게시판 내용 가져오기
+    async getBoardContents() {
+      try {
+        const response = await axios.get('/api/board'); // 게시판 목록 가져오기
+        this.boardContents = response.data; // 데이터 저장
+      } catch (error) {
+        console.error(error);
+        alert('게시판 내용을 불러오는 데 실패했습니다.');
+      }
+    },
+
+    // 게시글 추가하기
+    async createBoardContent(boardDTO, files) {
+      const formData = new FormData();
+      formData.append('boardDTO', JSON.stringify(boardDTO)); // JSON 형태로 게시글 데이터 추가
+
+      // 파일이 있을 경우 FormData에 추가
+      if (files) {
+        files.forEach(file => {
+          formData.append('files', file);
+        });
+      }
+
+      try {
+        const response = await axios.post('/api/board', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data', // 멀티파트 데이터 전송
+          },
+        });
+        this.boardContents.push(response.data); // 새 게시글을 목록에 추가
+      } catch (error) {
+        console.error(error);
+        alert('게시글 작성에 실패했습니다.');
+      }
+    },
+
+    // 특정 게시글 가져오기
+    async getBoardContent(bno) {
+      try {
+        const response = await axios.get(`/api/board/${bno}`); // 특정 게시글 가져오기
+        this.selectedBoardContent = response.data; // 선택된 게시글 저장
+      } catch (error) {
+        console.error(error);
+        alert('게시글 조회에 실패했습니다.');
+      }
+    },
+
+    // 게시글 수정하기
+    async updateBoardContent(bno, boardDTO, files) {
+      const formData = new FormData();
+      formData.append('boardDTO', JSON.stringify(boardDTO));
+
+      if (files) {
+        files.forEach(file => {
+          formData.append('files', file);
+        });
+      }
+
+      try {
+        const response = await axios.put(`/api/board/${bno}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        // 수정된 게시글로 목록 업데이트
+        const index = this.boardContents.findIndex(board => board.bno === bno);
+        if (index !== -1) {
+          this.boardContents.splice(index, 1, response.data);
+        }
+      } catch (error) {
+        console.error(error);
+        alert('게시글 수정에 실패했습니다.');
+      }
+    },
+
+    // 게시글 삭제하기
+    async deleteBoardContent(bno) {
+      try {
+        await axios.delete(`/api/board/${bno}`); // 게시글 삭제
+        this.boardContents = this.boardContents.filter(board => board.bno !== bno); // 목록에서 제거
+      } catch (error) {
+        console.error(error);
+        alert('게시글 삭제에 실패했습니다.');
+      }
+    },
+
+    mounted() {
+      this.getBoardContents(); // 컴포넌트가 마운트될 때 게시판 내용 로드
     }
   }
 }

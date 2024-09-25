@@ -13,9 +13,11 @@ import Savings from '@/views/menu/savings/Savings.vue';
 import SavingsDetail from '@/views/menu/savings/SavingsDetail.vue';
 import Gold from '@/views/menu/gold/Gold.vue';
 import GoldInvest from '@/views/menu/gold/GoldInvest.vue';
-import Calculator from '@/views/Calculator.vue';
+import Calculator from '@/views/modal/Calculator.vue';
 import Deposit from '@/views/Deposit.vue';
+import Fund from '@/views/menu/fund/Fund.vue';
 import ISA from '@/views/ISA.vue';
+import FundDetail from "@/views/menu/fund/FundDetail.vue";
 
 const routes = [
   {
@@ -99,6 +101,16 @@ const routes = [
     path: '/deposit', // Deposit 페이지 경로 추가
     name: 'Deposit',
     component: Deposit,
+  },
+  {
+    path: '/fund', // Fund 페이지 경로 추가
+    name: 'fund',
+    component: Fund,
+  },
+  {
+    path: '/fundDetail', // Fund 페이지 경로 추가
+    name: 'fundDetail',
+    component: FundDetail,
   },
   {
     path: '/isa', // ISA 페이지 경로 추가

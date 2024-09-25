@@ -3,7 +3,7 @@
 </script>
 
 <template>
-d
+  <h1>프로필 정보</h1>
 </template>
 
 <style scoped>
