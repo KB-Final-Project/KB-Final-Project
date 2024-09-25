@@ -54,7 +54,7 @@ dependencies {
   annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
   // Jackson - Json 처리
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.4'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
 
   // 데이터베이스
   implementation 'com.mysql:mysql-connector-j:8.1.0'
@@ -91,17 +91,17 @@ dependencies {
   testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 
-  // https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
+  // Swagger
   implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
   implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
 
-  // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
+  // JSON Simple
   implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
 
+  // Apache HttpClient
+  implementation 'org.apache.httpcomponents:httpclient:4.5.13'
 }
-
 
 test {
   useJUnitPlatform()
 }
-
