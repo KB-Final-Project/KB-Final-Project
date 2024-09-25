@@ -3,19 +3,6 @@ import App from './App.vue';
 import router from './router';
 import axios from 'axios';
 
-<<<<<<< Updated upstream
-createApp(App)
-    .use(router)
-    .mount('#app');
-
-createApp(App)
-    .use(router)
-    .mount('#app');
-
-// CSS 파일들
-=======
-// Import styles
->>>>>>> Stashed changes
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'aos/dist/aos.css';
 import 'lightgallery/css/lightgallery.css';
