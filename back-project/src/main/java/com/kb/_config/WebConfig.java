@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.MultipartConfigElement;
@@ -13,7 +15,7 @@ import javax.servlet.ServletRegistration;
 @Slf4j
 @Configuration
 @PropertySource({"classpath:/application.properties"})
-public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer {
+public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer implements WebMvcConfigurer {
 //    @Value("${os_type} == win ? ${file_save_location_win} : ${file_save_location_other}")
     @Value("#{'${os_type}' == 'win' ? '${file_save_location_win}':'${file_save_location_other}'}")
     public String LOCATION;
@@ -65,5 +67,11 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
         registration.setMultipartConfig(multipartConfig);
     }
 
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/api/**")
+                .allowedOrigins("http://localhost:8080") // Vue 앱의 URL. 배포 시에 production URL로 수정
+                .allowedMethods("GET", "POST", "PUT", "DELETE");
+    }
 
 }
