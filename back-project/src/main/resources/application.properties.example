@@ -16,3 +16,8 @@ naver.client.secret=your_naver_client_secret
 spring.http.encoding.charset=UTF-8
 spring.http.encoding.enabled=true
 spring.http.encoding.force=true
+
+
+kis.api.appkey=
+kis.api.appsecret=
+kis.api.base-url=
