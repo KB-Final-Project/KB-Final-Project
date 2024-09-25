@@ -14,8 +14,10 @@ import { defineEmits } from 'vue';
 const props = defineProps({
   isOpen: {
     type: Boolean,
+
     required: true
   }
+
 });
 const emit = defineEmits(['close']);
 
