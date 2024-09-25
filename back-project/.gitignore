@@ -452,3 +452,5 @@ gradle-app.setting
 
 .idea/
 
+# Ignore application.properties file
+application.properties
