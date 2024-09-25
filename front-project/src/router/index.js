@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> be49f0553533ad7d8f4e1ff77087afb8cf9ac443
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/views/Home.vue';
 import Signin from '@/views/Signin.vue';
@@ -21,10 +17,6 @@ import Calculator from '@/views/Calculator.vue';
 import Deposit from '@/views/Deposit.vue';
 import Fund from '@/views/Fund.vue';
 import ISA from '@/views/ISA.vue';
-<<<<<<< HEAD
-
-=======
->>>>>>> be49f0553533ad7d8f4e1ff77087afb8cf9ac443
 
 const routes = [
   {
