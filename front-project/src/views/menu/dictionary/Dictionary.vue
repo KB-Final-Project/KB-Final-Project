@@ -1,5 +1,21 @@
-<script setup>
+<script>
+import axios from 'axios';
 
+export default {
+  methods: {
+    async fetchTerms() {
+      try {
+        const response = await axios.get('http://localhost:8080/api/terms/getTerms'); // API URL
+        console.log(response);
+        this.terms = response.data;
+      } catch (err) {
+        this.error = err;
+      } finally {
+        this.loading = false;
+      }
+    },
+  }
+}
 </script>
 
 <template>
@@ -96,6 +112,17 @@
       </div>
     </div>
   </div>
+
+
+  <div>
+    <button @click="fetchTerms">Terms</button>
+    <ul v-if="!loading">
+      <li v-for="(term, index) in terms" :key="index">{{ term.name }}</li> <!-- term.name을 필요한 필드로 바꿔주세요 -->
+    </ul>
+    <p v-else>Loading...</p>
+    <p v-if="error">Error: {{ error.message }}</p>
+  </div>
+
 </template>
 
 <style scoped>
