@@ -180,6 +180,7 @@ const menuItems = ref([
       },
       { text: '환전', href: 'account-overview.html' },
       { text: '뉴스', href: 'news' },
+      { text: '마이페이지(임시)', href: 'myPage' },
     ],
   },
 ]);
@@ -192,7 +193,9 @@ const menuItems = ref([
 // @import '@/assets/css/navbar.css';
 // @import "@/assets/scss/_position.scss";
 // @import "@/assets/scss/_containers.scss";
-
+.row.justify-content-center.text-center.pt-md-2.pt-lg-0.pt-xl-2.pb-5.mb-md-2 {
+  height: 500px;
+}
 // 부트스트랩 색상
 .bg-primary.position-absolute.top-0.start-0.w-100.h-100 {
   background-color: #448c74 !important;

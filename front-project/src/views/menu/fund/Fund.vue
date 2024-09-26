@@ -334,6 +334,10 @@ h3{
   transition: tranform 0.9s;
 }
 
+.container{
+  padding-top: 80px;
+}
+
 
 </style>
 <script setup>
