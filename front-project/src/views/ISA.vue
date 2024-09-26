@@ -1,7 +1,35 @@
 <template>
   <div class="container text-center">
-    <h1 class="d-inline">ISA</h1>
-    <p class="d-inline">ISA 하나로 모든 투자를 해결</p>
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+      "
+    >
+      <div
+        style="
+          flex-grow: 1;
+          text-align: center;
+          margin-top: 8px;
+          margin-left: 250px;
+        "
+      >
+        <!-- 제목을 오른쪽으로 옮기기 위해 margin-right 추가 -->
+        <h1 style="margin: 0; display: inline; padding-top: 8px">ISA</h1>
+        <p style="margin: 0; display: inline; padding-left: 10px">
+          ISA 하나로 모든 투자를 해결
+        </p>
+      </div>
+      <img
+        src="assets/img/isa.png"
+        alt="ISA위험성"
+        style="height: auto; width: 50px; margin-right: 100px; margin-top: 8px"
+      />
+      <!-- 이미지 왼쪽으로 옮기기 위해 margin-left 줄임 -->
+    </div>
+
     <br /><br />
 
     <div
