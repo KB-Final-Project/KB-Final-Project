@@ -5,7 +5,7 @@ export default {
   methods: {
     async fetchTerms() {
       try {
-        const response = await axios.get('http://localhost:8080/api/terms/getTerms'); // API URL
+        const response = await axios.get('http://localhost:8081/api/terms/getTerms'); // API URL
         console.log(response);
         this.terms = response.data;
       } catch (err) {
