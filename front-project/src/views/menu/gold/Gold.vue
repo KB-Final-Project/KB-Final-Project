@@ -29,6 +29,7 @@ onMounted(() => {
 </script>
 
 <template>
+<div class="gold">
   <div class="container text-center">
     <h1>금</h1>
     <br>
@@ -115,6 +116,7 @@ onMounted(() => {
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <style scoped>
@@ -183,5 +185,6 @@ table td:last-child {
 .trandingViewGoldQuote{
   margin-left: 50px;
 }
+
 
 </style>
