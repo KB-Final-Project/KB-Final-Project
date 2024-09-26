@@ -2,6 +2,8 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 import { createPinia } from 'pinia';
+import Vue3Lottie from 'vue3-lottie';
+
 // import './assets/styles/main.scss'
 
 // CSS 파일들
@@ -28,5 +30,7 @@ const app = createApp(App);
 // lightGallery를 전역적으로 사용할 수 있도록 설정
 app.config.globalProperties.$lightGallery = lightGallery;
 app.use(createPinia());
+app.use(Vue3Lottie);
 
 createApp(App).use(router).mount('#app')
+

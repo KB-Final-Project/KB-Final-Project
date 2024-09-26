@@ -11,16 +11,12 @@
       <h2>{{ currentQuestion.question }}</h2>
 
       <!-- 아이콘 추가 -->
-      <img v-if="currentQuestion.icon" :src="currentQuestion.icon" alt="Icon" class="question-icon"/>
+      <img v-if="currentQuestion.icon" :src="currentQuestion.icon" alt="Icon" class="question-icon" />
 
       <!-- 선택지 -->
       <div class="options">
-        <button
-          v-for="(option, index) in currentQuestion.options"
-          :key="index"
-          :class="{ selected: selectedOption === index }"
-          @click="selectOption(index)"
-        >
+        <button v-for="(option, index) in currentQuestion.options" :key="index"
+          :class="{ selected: selectedOption === index }" @click="selectOption(index)">
           {{ option.text }}
         </button>
       </div>
@@ -74,7 +70,7 @@ export default {
           options: [
             { text: "네", score: 0 },
             { text: "아니오", score: 1 }
-          ], 
+          ],
           icon: require('@/assets/img/analysis/4.png')
         },
         {
@@ -83,7 +79,7 @@ export default {
           options: [
             { text: "네", score: 0 },
             { text: "아니오", score: 1 }
-          ], 
+          ],
           icon: require('@/assets/img/analysis/5.png')
         },
         {
@@ -92,7 +88,7 @@ export default {
           options: [
             { text: "네", score: 0 },
             { text: "아니오", score: 1 }
-          ], 
+          ],
           icon: require('@/assets/img/analysis/6.png')
         },
         {
@@ -101,7 +97,7 @@ export default {
           options: [
             { text: "네", score: 1 },
             { text: "아니오", score: 0 }
-          ], 
+          ],
           icon: require('@/assets/img/analysis/7.png')
         },
         {
@@ -110,7 +106,7 @@ export default {
           options: [
             { text: "네", score: 1 },
             { text: "아니오", score: 0 }
-          ], 
+          ],
           icon: require('@/assets/img/analysis/8.png')
         },
         {
@@ -119,7 +115,7 @@ export default {
           options: [
             { text: "네", score: 0 },
             { text: "아니오", score: 1 }
-          ], 
+          ],
           icon: require('@/assets/img/analysis/9.png')
         },
         {
@@ -128,7 +124,7 @@ export default {
           options: [
             { text: "네", score: 1 },
             { text: "아니오", score: 0 }
-          ], 
+          ],
           icon: require('@/assets/img/analysis/10.png')
         },
         {
@@ -137,7 +133,7 @@ export default {
           options: [
             { text: "네", score: 1 },
             { text: "아니오", score: 0 }
-          ], 
+          ],
           icon: require('@/assets/img/analysis/11.png')
         },
         {
@@ -146,7 +142,7 @@ export default {
           options: [
             { text: "네", score: 1 },
             { text: "아니오", score: 0 }
-          ], 
+          ],
           icon: require('@/assets/img/analysis/12.png')
         },
         {
@@ -155,7 +151,7 @@ export default {
           options: [
             { text: "네", score: 1 },
             { text: "아니오", score: 0 }
-          ], 
+          ],
           icon: require('@/assets/img/analysis/13.png')
         },
         {
@@ -164,7 +160,7 @@ export default {
           options: [
             { text: "네", score: 0 },
             { text: "아니오", score: 1 }
-          ], 
+          ],
           icon: require('@/assets/img/analysis/14.png')
         },
         {
@@ -173,7 +169,7 @@ export default {
           options: [
             { text: "네", score: 1 },
             { text: "아니오", score: 0 }
-          ], 
+          ],
           icon: require('@/assets/img/analysis/15.png')
         },
         {
@@ -182,7 +178,7 @@ export default {
           options: [
             { text: "네", score: 1 },
             { text: "아니오", score: 0 }
-          ], 
+          ],
           icon: require('@/assets/img/analysis/16.png')
         },
         {
@@ -191,7 +187,7 @@ export default {
           options: [
             { text: "네", score: 1 },
             { text: "아니오", score: 0 }
-          ], 
+          ],
           icon: require('@/assets/img/analysis/17.png')
         },
         {
@@ -200,7 +196,7 @@ export default {
           options: [
             { text: "네", score: 0 },
             { text: "아니오", score: 1 }
-          ], 
+          ],
           icon: require('@/assets/img/analysis/18.png')
         },
         {
@@ -209,7 +205,7 @@ export default {
           options: [
             { text: "네", score: 1 },
             { text: "아니오", score: 0 }
-          ], 
+          ],
           icon: require('@/assets/img/analysis/19.png')
         },
         {
@@ -218,7 +214,7 @@ export default {
           options: [
             { text: "네", score: 0 },
             { text: "아니오", score: 1 }
-          ], 
+          ],
           icon: require('@/assets/img/analysis/20.png')
         },
         // 추가 질문을 여기에 추가합니다.
@@ -269,7 +265,10 @@ export default {
       console.log("설문이 완료되었습니다.", this.answers);
       console.log("총 점수: ", this.totalScore);
       // 설문 완료 후 추가 작업 (예: 결과 페이지로 이동)
-      this.$router.push('/test-result');
+      this.$router.push({
+        path: '/test-result',
+        query: { totalScore: this.totalScore }
+      });
     }
   }
 };
@@ -284,7 +283,6 @@ export default {
   justify-content: center;
   height: 100vh;
   background-color: #f9f9f9;
-  padding: 20px;
 }
 
 /* 진행 바 스타일 */

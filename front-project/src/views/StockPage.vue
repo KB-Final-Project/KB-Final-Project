@@ -2,9 +2,6 @@
     <div class="stock-dashboard">
         <h1><b>국내주식</b></h1>
         <div class="container">
-
-
-
             <div v-if="error" class="error-message">
                 {{ error }}
             </div>
@@ -137,7 +134,6 @@ export default {
 <style scoped>
 /* 기본 레이아웃 스타일 */
 .stock-dashboard {
-    padding: 20px;
     background-color: white
         /* 전체 배경색 */
 }
