@@ -53,13 +53,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    // AuthenticationManager 빈 등록
     @Bean
-    public AuthenticationManager authenticationManager() throws Exception {
-        return super.authenticationManager();
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
-    // Authentication Manger  구성
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
@@ -67,26 +66,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(passwordEncoder());
     }
 
-    // cross origin 접근 허용
+    // CORS 설정을 CorsFilter로 적용
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOriginPattern("*");
+        config.addAllowedOrigin("http://localhost:8080"); // Vue.js 개발 서버 주소 허용
+        config.addAllowedOrigin("http://localhost:8081"); // 다른 서버 주소 추가
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
 
-    // 접근 제한 무시 경로 설정 – resource
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/assets/**", "/*", "/api/member/**");
     }
 
-    // 문자셋 필터
     public CharacterEncodingFilter encodingFilter() {
         CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
         encodingFilter.setEncoding("UTF-8");
@@ -95,17 +93,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(HttpSecurity http) throws Exception {
-        // 한글 인코딩 필터 설정
+    protected void configure(HttpSecurity http) throws Exception {
         http.addFilterBefore(encodingFilter(), CsrfFilter.class)
-                // 인증 에러 필터
                 .addFilterBefore(authenticationErrorFilter, UsernamePasswordAuthenticationFilter.class)
-                // Jwt 인증 필터
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                // 로그인 인증 필터
-                .addFilterBefore(jwtUsernamePasswordAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtUsernamePasswordAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(corsFilter(), UsernamePasswordAuthenticationFilter.class); // CORS 필터 추가
 
-        // 예외 처리 설정
         http
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint)
@@ -119,13 +113,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/board/**").authenticated()
                 .antMatchers(HttpMethod.PUT, "/api/board/**").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/api/board/**").authenticated()
-                .anyRequest().permitAll()
-        ;
+                .antMatchers("/api/**").permitAll()
+                .antMatchers("/api/token").permitAll()
+                .antMatchers("/api/token/websocket-key").permitAll()
+                .anyRequest().authenticated();
 
-        http.httpBasic().disable()        // 기본 HTTP 인증 비활성화
-                .csrf().disable()       // CSRF 비활성화
-                .formLogin().disable()  // formLogin 비활성화  관련 필터 해제
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // 세션 생성 모드 설정
+        http.httpBasic().disable()
+                .csrf().disable()
+                .formLogin().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
-
 }
