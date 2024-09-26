@@ -31,21 +31,12 @@ const fundDetails = fundStore.fundDetails;
         <h2>테마 펀드 전체 상품 리스트</h2>
         <h3>{{ fundDetails.name }} 테마에 투자 가능한 전체 상품을 확인해보세요</h3><br>
         <div class="themeList">
-          <h4 class="d-inline-block">한국투자 NBSP 삼성그룹적립식증권투자신탁2호(주식)-A</h4>
-          <h3 class="d-inline-block">수익률 -3.08%(3개월 누적)</h3>
+          <div class="d-flex justify-content-between align-items-center">
+            <h4 class="d-inline">한국투자 NBSP 삼성그룹적립식증권투자신탁2호(주식)-A</h4>
+            <h3 class="d-inline">수익률 -3.08%(3개월 누적)</h3>
+          </div>
         </div>
-        <div class="themeList">
 
-        </div>
-        <div class="themeList">
-
-        </div>
-        <div class="themeList">
-
-        </div>
-        <div class="themeList">
-
-        </div>
       </div>
       <!-- Pagination basic example -->
       <nav aria-label="Page navigation example">
@@ -78,7 +69,7 @@ const fundDetails = fundStore.fundDetails;
             <a href="#" class="page-link">다음</a>
           </li>
         </ul>
-      </nav>
+      </nav><br><br>
     </div>
 
   </div>
@@ -113,6 +104,7 @@ const fundDetails = fundStore.fundDetails;
   background-color: white;
   margin: 10px;
   padding: 20px;
+  align-content: space-between;
 }
 
 .bc{
