@@ -4,8 +4,10 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.kb.saving.mapper.SavingMapper">
-    <resultMap id="DepositResultMap" type="com.kb.saving.dto.Saving">
+
+    <resultMap id="DepositDetailResultMap" type="com.kb.saving.dto.Saving">
         <id property="savingId" column="saving_id"/>
+        <result property="rank" column="saving_rank"/>
         <result property="bankId" column="bank_id"/>
         <result property="financialProductCode" column="fin_prdt_cd"/>
         <result property="savingName" column="saving_name"/>
@@ -17,6 +19,25 @@
         <result property="maturityInterest" column="mtrt_int"/>
         <result property="note" column="etc_note"/>
         <result property="maxPrimeRate" column="max_prime_rate"/>
+        <association property="bank" javaType="com.kb.bank.dto.Bank">
+            <result property="bankName" column="bank_name"/>
+            <result property="bankLogoUrl" column="bank_logo_url"/>
+            <result property="bankUrl" column="bank_url"/>
+        </association>
+        <collection property="interestRateList" ofType="com.kb.saving.dto.SavingInterestRate">
+            <id property="interestRateId" column="intr_rate_id"/>
+            <result property="savingId" column="saving_id"/>
+            <result property="interestRateType" column="intr_rate_type"/>
+            <result property="savingTerm" column="save_term"/>
+            <result property="interestRate" column="intr_rate"/>
+            <result property="interestMaxRate" column="intr_rate2"/>
+        </collection>
+        <collection property="primeRatesList" ofType="com.kb.saving.dto.SavingPrimeRate">
+            <id property="primeRateId" column="prime_rate_id"/>
+            <result property="primeRatePercent" column="prime_rate_percent"/>
+            <result property="primeRateDetail" column="prime_rate_detail"/>
+        </collection>
+
     </resultMap>
 
     <resultMap id="DepositListResultMap" type="com.kb.saving.dto.SavingListDTO">
@@ -62,7 +83,43 @@
         LEFT JOIN saving_interest_rates AS ir ON s.saving_id = ir.saving_id
         WHERE s.fin_category_id = #{finCategoryId} AND ir.save_term = #{saveTerm}
         ORDER BY ir.intr_rate DESC;
-        </select>
+    </select>
+
+    <select id="getProductDetail" resultMap="DepositDetailResultMap" parameterType="int">
+        <![CDATA[
+        SELECT
+            s.saving_id,
+            ROW_NUMBER() OVER (PARTITION BY s.fin_category_id ORDER BY s.max_prime_rate) AS saving_rank,
+            s.bank_id,
+            s.fin_prdt_cd,
+            s.saving_name,
+            s.dcls_strt_day,
+            s.join_deny,
+            s.join_member,
+            s.fin_category_id,
+            s.join_way,
+            s.mtrt_int,
+            s.etc_note,
+            s.max_prime_rate,
+            b.bank_name,
+            b.bank_logo_url,
+            b.bank_url,
+            ir.intr_rate_id,
+            ir.intr_rate_type,
+            ir.save_term,
+            ir.intr_rate,
+            ir.intr_rate2,
+            pr.prime_rate_id,
+            pr.prime_rate_percent,
+            pr.prime_rate_detail
+        ]]>
+        FROM savings_products AS s
+        INNER JOIN banks AS b ON s.bank_id = b.bank_id
+        LEFT JOIN saving_interest_rates AS ir ON s.saving_id = ir.saving_id
+        LEFT JOIN saving_prime_Rates AS pr ON s.saving_id = pr.saving_id
+        WHERE s.fin_category_id = #{finCategoryId} AND s.saving_id = #{savingId}
+        ORDER BY s.max_prime_rate DESC;
+    </select>
 
 
 </mapper>

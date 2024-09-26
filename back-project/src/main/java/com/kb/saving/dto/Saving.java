@@ -15,6 +15,7 @@
     @Data
     public class Saving {
         private long savingId;
+        private int rank;
         private String bankId;
         private String financialProductCode;
         private String savingName;
@@ -26,7 +27,9 @@
         private String maturityInterest;
         private String note;
         private double maxPrimeRate;
-        private Bank bank;
-        private List<SavingPrimeRate> primeRatesList;
 
+        private Bank bank;
+        private List<SavingInterestRate> interestRateList;
+        private List<SavingPrimeRate> primeRatesList;
+        private List<String> joinWays;
     }

@@ -33,4 +33,9 @@ public class SavingController {
         return ResponseEntity.ok(service.getProductList(2, saveTerm));
     }
 
+    @GetMapping("/detail/{savingId}")
+    public ResponseEntity<Saving> getDepositProductById(@PathVariable int savingId) {
+        return ResponseEntity.ok(service.getProductDetail(2, savingId));
+    }
+
 }

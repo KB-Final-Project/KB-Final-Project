@@ -33,8 +33,8 @@ public class DepositController {
         return ResponseEntity.ok(service.getProductList(1, saveTerm));
     }
 
-//    @GetMapping("/detail/{savingId}")
-//    public ResponseEntity<Saving> getDepositProductById(@PathVariable int savingId) {
-//        return ResponseEntity.ok(service.getDepositProduct(savingId));
-//    }
+    @GetMapping("/detail/{savingId}")
+    public ResponseEntity<Saving> getDepositProductById(@PathVariable int savingId) {
+        return ResponseEntity.ok(service.getProductDetail(1, savingId));
+    }
 }

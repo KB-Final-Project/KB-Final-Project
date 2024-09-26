@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Log4j
 @Service
@@ -25,8 +22,11 @@ public class SavingService {
         map.put("saveTerm", saveTerm);
         return mapper.getProductList(map);
     }
-    public Saving getDepositProduct(int savingId){
-        return mapper.getDepositProduct(savingId);
+    public Saving getProductDetail(int finCategoryId, int savingId){
+        Map<String, Integer> map = new HashMap<>();
+        map.put("finCategoryId", finCategoryId);
+        map.put("savingId", savingId);
+        return mapper.getProductDetail(map);
     }
 
 }

@@ -11,6 +11,6 @@ import java.util.Map;
 
 public interface SavingMapper {
     List<SavingListDTO> getProductList(Map<String, Integer> map);
-    Saving getDepositProduct(int savingId);
+    Saving getProductDetail(Map<String, Integer> map);
 
 }
