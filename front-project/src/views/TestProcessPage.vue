@@ -357,11 +357,12 @@ h2 {
 }
 
 .options button:hover {
-  background-color: white;
+  background-color: #6FBAA1;
+  color: white;
 }
 
 .options button.selected {
-  background-color: #45a049;
+  background-color: #6FBAA1;
   color: white;
 }
 

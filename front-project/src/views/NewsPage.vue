@@ -35,7 +35,6 @@
     </div>
 </template>
 
-
 <script>
 import axios from 'axios';
 
@@ -57,7 +56,6 @@ export default {
     },
 
     methods: {
-        // 카테고리 별로 세부 검색어를 설정
         getSearchQuery(category) {
             const queries = {
                 금융: '금융 정책 변화, 금융 시장 동향, 금융 리스크 관리, 한국 금융시장 전망, 미국증시',
@@ -70,7 +68,7 @@ export default {
                 ELS: 'ELS 시장 동향',
                 ETF: 'ETF 투자 전략, ETF 시장 트렌드, 주식형 ETF 분석'
             };
-            return queries[category] || category; // 카테고리 없으면 그대로 사용
+            return queries[category] || category;
         },
 
         async fetchNews(category, count = 9) {
@@ -80,10 +78,13 @@ export default {
                     params: { query: query, display: count }
                 });
 
-                const newsItems = response.data.items.map(this.processNewsItem);
-
-                // 관련도에 따라 뉴스 정렬
-                return this.sortByRelevance(newsItems);
+                if (response.data && response.data.items) {
+                    const newsItems = response.data.items.map(this.processNewsItem);
+                    return this.sortByRelevance(newsItems);
+                } else {
+                    console.error('Unexpected API response:', response.data);
+                    return [];
+                }
             } catch (error) {
                 console.error(`${category} 뉴스 데이터를 가져오는 데 실패했습니다:`, error);
                 return [];
@@ -100,34 +101,31 @@ export default {
             };
         },
 
-        // HTML 태그 제거
         stripHtml(text) {
             return text.replace(/<[^>]+>/g, '');
         },
 
-        // 이미지 URL 추출
         extractImageUrl(description) {
             const imgRegex = /<img[^>]+src="?([^"\s]+)"?\s*\/?>/g;
             const match = imgRegex.exec(description);
             return match ? match[1] : this.fallbackImage;
         },
 
-        // 관련도 기준으로 뉴스 정렬
         sortByRelevance(newsItems) {
             const relevantKeywords = ['금융', '은행', '금리', '증권', '자산', '채권'];
 
             return newsItems.sort((a, b) => {
                 const aScore = this.calculateRelevanceScore(a, relevantKeywords);
                 const bScore = this.calculateRelevanceScore(b, relevantKeywords);
-                return bScore - aScore; // 높은 점수 순으로 정렬
+                return bScore - aScore;
             });
         },
 
         calculateRelevanceScore(newsItem, keywords) {
             let score = 0;
             keywords.forEach(keyword => {
-                if (newsItem.title.includes(keyword)) score += 2; // 제목에 포함될 경우 높은 점수
-                if (newsItem.description.includes(keyword)) score += 1; // 설명에 포함될 경우 낮은 점수
+                if (newsItem.title.includes(keyword)) score += 2;
+                if (newsItem.description.includes(keyword)) score += 1;
             });
             return score;
         },
@@ -149,11 +147,8 @@ export default {
     },
 
     async mounted() {
-        // 메인 뉴스 가져오기
         const mainNewsData = await this.fetchNews('투자', 1);
         this.mainNews = mainNewsData[0];
-
-        // 초기 카테고리 뉴스 가져오기 (기본 카테고리)
         await this.selectCategory(this.selectedCategory);
     }
 };
@@ -164,6 +159,7 @@ export default {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+    padding-top: 80px;
     background-color: #F9FAFC;
 }
 
