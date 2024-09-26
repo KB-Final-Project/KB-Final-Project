@@ -98,6 +98,9 @@ dependencies {
   // JSON Simple
   implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
 
+  // jsoup 추가
+  implementation 'org.jsoup:jsoup:1.15.3'
+
   // Apache HttpClient
   implementation 'org.apache.httpcomponents:httpclient:4.5.13'
 
