@@ -212,4 +212,8 @@ template{
   margin-right: -20%;
 }
 
+.container{
+  padding-top: 80px;
+}
+
 </style>
