@@ -1,12 +1,16 @@
 package com.kb.saving.mapper;
 
 import com.kb.saving.dto.Saving;
+import com.kb.saving.dto.SavingInterestRate;
+import com.kb.saving.dto.SavingListDTO;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public interface SavingMapper {
-    List<Saving> getDepositList();
-    List<Saving> getSavingList();
+    List<SavingListDTO> getProductList(Map<String, Integer> map);
+    Saving getDepositProduct(int savingId);
 
 }

@@ -19,12 +19,50 @@
         <result property="maxPrimeRate" column="max_prime_rate"/>
     </resultMap>
 
-    <select id="getDepositList" resultMap="DepositResultMap">
-        select * from savings_products where fin_category_id = 1 order by max_prime_rate desc
-    </select>
+    <resultMap id="DepositListResultMap" type="com.kb.saving.dto.SavingListDTO">
+        <id property="savingId" column="saving_id"/>
+        <result property="savingName" column="saving_name"/>
+        <result property="joinDeny" column="join_deny"/>
+        <result property="joinWay" column="join_way"/>
 
-    <select id="getSavingList" resultMap="DepositResultMap">
-        select * from savings_products where fin_category_id = 2 order by max_prime_rate desc
-    </select>
+        <association property="bank" javaType="com.kb.bank.dto.Bank">
+            <result property="bankId" column="bank_id"/>
+            <result property="bankName" column="bank_name"/>
+            <result property="bankLogoUrl" column="bank_logo_url"/>
+            <result property="bankUrl" column="bank_url"/>
+        </association>
+
+        <association property="interestRateList" javaType="com.kb.saving.dto.SavingInterestRate">
+            <result property="interestRateId" column="intr_rate_id"/>
+            <result property="savingId" column="saving_id"/>
+            <result property="interestRateType" column="intr_rate_type"/>
+            <result property="savingTerm" column="save_term"/>
+            <result property="interestRate" column="intr_rate"/>
+            <result property="interestMaxRate" column="intr_rate2"/>
+        </association>
+    </resultMap>
+
+    <select id="getProductList" resultMap="DepositListResultMap">
+        SELECT
+            s.saving_id,
+            s.saving_name,
+            s.join_deny,
+            s.join_way,
+            b.bank_id,
+            b.bank_name,
+            b.bank_logo_url,
+            b.bank_url,
+            ir.intr_rate_id,
+            ir.intr_rate_type,
+            ir.save_term,
+            ir.intr_rate,
+            ir.intr_rate2
+        FROM savings_products AS s
+        INNER JOIN banks AS b ON s.bank_id = b.bank_id
+        LEFT JOIN saving_interest_rates AS ir ON s.saving_id = ir.saving_id
+        WHERE s.fin_category_id = #{finCategoryId} AND ir.save_term = #{saveTerm}
+        ORDER BY ir.intr_rate DESC;
+        </select>
+
 
 </mapper>
