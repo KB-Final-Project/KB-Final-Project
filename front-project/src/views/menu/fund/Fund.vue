@@ -191,6 +191,10 @@
   </div>
 </template>
 <style scoped>
+.container {
+  padding-top: 80px;
+}
+
 .suggest{
   display: inline-block;
   border: 1px solid rgba(153, 153, 153, 0.6);
