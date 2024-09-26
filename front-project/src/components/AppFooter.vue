@@ -89,15 +89,15 @@ const appStores = ref([
   {
     name: 'App Store',
     href: '#',
-    darkImage: 'assets/img/market/appstore-dark.svg',
-    lightImage: 'assets/img/market/appstore-light.svg',
+    // darkImage: 'assets/img/market/appstore-dark.svg',
+    // lightImage: 'assets/img/market/appstore-light.svg',
     width: 120
   },
   {
     name: 'Google Play',
     href: '#',
-    darkImage: 'assets/img/market/googleplay-dark.svg',
-    lightImage: 'assets/img/market/googleplay-light.svg',
+    // darkImage: 'assets/img/market/googleplay-dark.svg',
+    // lightImage: 'assets/img/market/googleplay-light.svg',
     width: 119
   }
 ]);
