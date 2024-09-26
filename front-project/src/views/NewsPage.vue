@@ -1,35 +1,37 @@
 <template>
     <div class="news-view">
-        <h1><b>뉴스 보기</b></h1>
-
-        <!-- 메인 뉴스 -->
-        <div v-if="mainNews" class="main-news">
-            <div class="main-news-image-container">
-                <img :src="require('@/assets/img/news/news-main.png')" alt="Main News Image" class="main-news-image"
-                    @click="goToNews(mainNews.link)" @error="onImageError" />
-                <div class="main-news-title-overlay">
-                    <b class="main-news-title" v-html="mainNews.title"></b>
+        <div class="container">
+            <h1><b>뉴스 보기</b></h1>
+            <!-- 메인 뉴스 -->
+            <div v-if="mainNews" class="main-news">
+                <div class="main-news-image-container">
+                    <img :src="require('@/assets/img/news/news-main.png')" alt="Main News Image" class="main-news-image"
+                        @click="goToNews(mainNews.link)" @error="onImageError" />
+                    <div class="main-news-title-overlay">
+                        <b class="main-news-title" v-html="mainNews.title"></b>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <br><br><br><br>
+            <br><br><br><br>
 
-        <h1><b>실시간 주요뉴스</b></h1>
-        <!-- 카테고리 선택 -->
-        <div class="category-selector">
-            <button v-for="category in categories" :key="category" @click="selectCategory(category)"
-                :class="{ active: selectedCategory === category }">
-                {{ category }}
-            </button>
-        </div>
+            <h1><b>실시간 주요뉴스</b></h1>
+            <!-- 카테고리 선택 -->
+            <div class="category-selector">
+                <button v-for="category in categories" :key="category" @click="selectCategory(category)"
+                    :class="{ active: selectedCategory === category }">
+                    {{ category }}
+                </button>
+            </div>
 
-        <!-- 뉴스 그리드 -->
-        <div v-if="selectedCategoryNews.length" class="news-grid">
-            <div v-for="news in selectedCategoryNews" :key="news.link" class="news-card" @click="goToNews(news.link)">
-                <img :src="news.image" alt="News Image" class="news-image" @error="onImageError" />
-                <h3 class="news-title" v-html="news.title"></h3>
-                <p class="news-date">{{ news.date }}</p>
+            <!-- 뉴스 그리드 -->
+            <div v-if="selectedCategoryNews.length" class="news-grid">
+                <div v-for="news in selectedCategoryNews" :key="news.link" class="news-card"
+                    @click="goToNews(news.link)">
+                    <img :src="news.image" alt="News Image" class="news-image" @error="onImageError" />
+                    <h3 class="news-title" v-html="news.title"></h3>
+                    <p class="news-date">{{ news.date }}</p>
+                </div>
             </div>
         </div>
     </div>
@@ -156,11 +158,13 @@ export default {
 
 <style scoped>
 .news-view {
-    max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    padding-top: 80px;
     background-color: #F9FAFC;
+}
+
+.container {
+    max-width: 1200px;
 }
 
 h1 {
