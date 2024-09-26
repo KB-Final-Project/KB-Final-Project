@@ -1,35 +1,38 @@
 <template>
-    <div class="news-view">
+    <div class="news-view text-center">
         <h1><b>뉴스 보기</b></h1>
-
-        <!-- 메인 뉴스 -->
-        <div v-if="mainNews" class="main-news">
-            <div class="main-news-image-container">
-                <img :src="require('@/assets/img/news/news-main.png')" alt="Main News Image" class="main-news-image"
-                    @click="goToNews(mainNews.link)" @error="onImageError" />
-                <div class="main-news-title-overlay">
-                    <b class="main-news-title" v-html="mainNews.title"></b>
+        <div class="container">
+            
+            <!-- 메인 뉴스 -->
+            <div v-if="mainNews" class="main-news">
+                <div class="main-news-image-container">
+                    <img :src="require('@/assets/img/news/news-main.png')" alt="Main News Image" class="main-news-image"
+                        @click="goToNews(mainNews.link)" @error="onImageError" />
+                    <div class="main-news-title-overlay">
+                        <b class="main-news-title" v-html="mainNews.title"></b>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <br><br><br><br>
+            <br><br><br><br>
 
-        <h1><b>실시간 주요뉴스</b></h1>
-        <!-- 카테고리 선택 -->
-        <div class="category-selector">
-            <button v-for="category in categories" :key="category" @click="selectCategory(category)"
-                :class="{ active: selectedCategory === category }">
-                {{ category }}
-            </button>
-        </div>
+            <h1><b>실시간 주요뉴스</b></h1>
+            <!-- 카테고리 선택 -->
+            <div class="category-selector">
+                <button v-for="category in categories" :key="category" @click="selectCategory(category)"
+                    :class="{ active: selectedCategory === category }">
+                    {{ category }}
+                </button>
+            </div>
 
-        <!-- 뉴스 그리드 -->
-        <div v-if="selectedCategoryNews.length" class="news-grid">
-            <div v-for="news in selectedCategoryNews" :key="news.link" class="news-card" @click="goToNews(news.link)">
-                <img :src="news.image" alt="News Image" class="news-image" @error="onImageError" />
-                <h3 class="news-title" v-html="news.title"></h3>
-                <p class="news-date">{{ news.date }}</p>
+            <!-- 뉴스 그리드 -->
+            <div v-if="selectedCategoryNews.length" class="news-grid">
+                <div v-for="news in selectedCategoryNews" :key="news.link" class="news-card"
+                    @click="goToNews(news.link)">
+                    <img :src="require('@/assets/img/news/news2.jpg')" alt="News Image" class="news-image" @error="onImageError" />
+                    <h3 class="news-title" v-html="news.title"></h3>
+                    <p class="news-date">{{ news.date }}</p>
+                </div>
             </div>
         </div>
     </div>
@@ -156,11 +159,12 @@ export default {
 
 <style scoped>
 .news-view {
-    max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
-    padding-top: 80px;
     background-color: #F9FAFC;
+}
+
+.container {
+    max-width: 1200px;
 }
 
 h1 {
@@ -199,17 +203,11 @@ h1 {
     transform: translate(-50%, -50%);
     /* 정확한 중앙으로 이동 */
     color: white;
-    font-size: 24px;
+    font-size: 40px;
     text-align: center;
     /* 텍스트 가운데 정렬 */
     padding: 10px;
     border-radius: 5px;
-}
-
-
-.main-news-title {
-    font-size: 24px;
-    margin: 0;
 }
 
 .main-news-content {
@@ -239,6 +237,7 @@ h1 {
     padding: 20px 35px;
     border: none;
     background-color: #90DAAA;
+    color: white;
     cursor: pointer;
     border-radius: 20%;
     font-size: 15px;
@@ -246,6 +245,10 @@ h1 {
     transition: background-color 0.3s;
 }
 
+.category-selector :hover {
+    background-color: #438B73;
+    color: white;
+}
 
 .category-selector button.active {
     background-color: #438B73;
