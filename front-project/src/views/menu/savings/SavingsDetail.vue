@@ -264,7 +264,9 @@ const toggleText = () => {
 
 .container{
   width: 70%;
+  padding-top: 80px;
 }
+
 
 .hr{
   width: 95%;
