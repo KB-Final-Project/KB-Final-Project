@@ -170,6 +170,7 @@ const fundDetails = fundStore.fundDetails;
   top: 0;
   left: 0;
   height: 100%;
+  padding-top: 80px;
 }
 .container {
   width: 70%;
