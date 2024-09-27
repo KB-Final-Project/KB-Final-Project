@@ -82,8 +82,9 @@
         INNER JOIN banks AS b ON s.bank_id = b.bank_id
         LEFT JOIN saving_interest_rates AS ir ON s.saving_id = ir.saving_id
         WHERE s.fin_category_id = #{finCategoryId}
-        <if test="search != null and search != ''">
-            AND s.saving_name LIKE CONCAT('%', #{search}, '%')
+
+        <if test="searchValue != null">
+            AND s.saving_name LIKE CONCAT('%', #{searchValue}, '%')
         </if>
         <if test="bankId != null">
             AND s.bank_id = #{bankId}
@@ -91,7 +92,12 @@
         <if test="saveTerm != null">
             AND ir.save_term = #{saveTerm}
         </if>
-        ORDER BY ir.intr_rate DESC;
+        <if test="interestRateType != null">
+            AND ir.intr_rate_type = #{interestRateType}
+        </if>
+
+        ORDER BY ir.intr_rate DESC
+        LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <select id="getProductDetail" resultMap="DepositDetailResultMap" parameterType="int">
@@ -130,5 +136,22 @@
         ORDER BY s.max_prime_rate DESC;
     </select>
 
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*)
+        FROM savings_products AS s
+        INNER JOIN banks AS b ON s.bank_id = b.bank_id
+        LEFT JOIN saving_interest_rates AS ir ON s.saving_id = ir.saving_id
+        WHERE s.fin_category_id = #{finCategoryId}
+
+        <if test="searchValue != null">
+            AND s.saving_name LIKE CONCAT('%', #{searchValue}, '%')
+        </if>
+        <if test="bankId != null">
+            AND s.bank_id = #{bankId}
+        </if>
+        <if test="saveTerm != null">
+            AND ir.save_term = #{saveTerm}
+        </if>
+    </select>
 
 </mapper>

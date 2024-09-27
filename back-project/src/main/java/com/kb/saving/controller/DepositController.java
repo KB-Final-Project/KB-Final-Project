@@ -1,7 +1,8 @@
 package com.kb.saving.controller;
 
 import com.kb.saving.dto.Saving;
-import com.kb.saving.dto.SavingListDTO;
+import com.kb.saving.dto.SavingListResponseDTO;
+import com.kb.saving.dto.SavingParam;
 import com.kb.saving.service.SavingService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/deposit")
@@ -21,12 +20,23 @@ import java.util.Optional;
 public class DepositController {
     private final SavingService service;
     @GetMapping("")
-    public ResponseEntity<List<SavingListDTO>> getDepositListDefault(
-            @RequestParam(value = "search", required = false) String search,
-            @RequestParam(value = "bankId", required = false) String bankId,
-            @RequestParam(value = "saveTerm", required = false) Integer saveTerm) {
+    public ResponseEntity<SavingListResponseDTO> getDepositListDefault(
+            @RequestParam(value = "searchValue", required = false) String searchValue,
+            @RequestParam(value = "bankId", required = false) Integer bankId,
+            @RequestParam(value = "saveTerm", defaultValue = "36") Integer saveTerm,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "interestRateType", defaultValue = "단리") String interestRateType){
 
-        return ResponseEntity.ok(service.getProductList(1, search, bankId, saveTerm));
+        SavingParam savingParam = new SavingParam();
+        savingParam.setSearchValue(searchValue);
+        savingParam.setBankId(bankId);
+        savingParam.setSaveTerm(saveTerm);
+        savingParam.setFinCategoryId(1);
+        savingParam.setPage(page);
+        savingParam.setInterestRateType(interestRateType);
+
+        SavingListResponseDTO response = service.getProductList(savingParam);
+        return ResponseEntity.ok(response);
     }
 
 
