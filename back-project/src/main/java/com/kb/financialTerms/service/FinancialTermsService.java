@@ -63,7 +63,7 @@ public class FinancialTermsService {
                     return pageTermsList;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return pageTermsList; // 빈 리스트 반환
+                    return pageTermsList; // 빈 리스트를 반환
                 }
             });
 
