@@ -29,6 +29,7 @@ const selectedPage = ref('warning');
 <style scoped>
 .bc {
   background-color: rgba(247, 249, 252, 1);
+
 }
 
 .container {

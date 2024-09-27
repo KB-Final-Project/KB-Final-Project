@@ -1,6 +1,5 @@
 package com.kb.financialTerms.service;
 
-
 import com.kb.financialTerms.dto.TermsDTO;
 import com.kb.financialTerms.mapper.FinancialTermsMapper;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -21,52 +21,62 @@ public class FinancialTermsService {
     public List<TermsDTO> crawlAndGetTerms() {
         List<TermsDTO> termsList = new ArrayList<>();
         String baseUrl = "https://www.fsc.go.kr/in090301?curPage=";
-        int page = 1;
+        List<CompletableFuture<List<TermsDTO>>> futures = new ArrayList<>();
 
-        while (true) {
-            String url = baseUrl + page;
+        for (int page = 1; ; page++) {
+            final int currentPage = page;
+            CompletableFuture<List<TermsDTO>> future = CompletableFuture.supplyAsync(() -> {
+                List<TermsDTO> pageTermsList = new ArrayList<>();
+                String url = baseUrl + currentPage;
 
-            try {
-                Document doc = Jsoup.connect(url)
-                        .userAgent("Mozilla/5.0")
-                        .get();
+                try {
+                    Document doc = Jsoup.connect(url)
+                            .userAgent("Mozilla/5.0")
+                            .get();
 
-                Elements termElements = doc.select("div.cont > div.subject");
+                    Elements termElements = doc.select("div.cont > div.subject");
 
-                if (termElements.isEmpty()) {
-                    break; // 더 이상 데이터가 없으면 종료
+                    if (termElements.isEmpty()) {
+                        return pageTermsList; // 빈 리스트 반환
+                    }
+
+                    for (Element termElement : termElements) {
+                        // 제목 가져오기
+                        Element linkElement = termElement.select("a").first();
+                        String termName = linkElement != null ? linkElement.text() : null;
+
+                        // 형제 요소에서 내용 가져오기
+                        Element descriptionElement = termElement.nextElementSibling(); // 다음 형제 요소
+                        String termDescription = descriptionElement != null && "info2".equals(descriptionElement.className()) ?
+                                descriptionElement.text() : null;
+
+                        // TermsDTO 객체 생성
+                        TermsDTO termsDTO = new TermsDTO();
+                        termsDTO.setTermName(termName);
+                        termsDTO.setTermDescription(termDescription); // 설명 추가
+
+                        // 리스트에 추가
+                        pageTermsList.add(termsDTO);
+                    }
+
+                    return pageTermsList;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return pageTermsList; // 빈 리스트를 반환
                 }
+            });
 
-                for (Element termElement : termElements) {
-                    // 제목 가져오기
-                    Element linkElement = termElement.select("a").first();
-                    String termName = linkElement != null ? linkElement.text() : null;
+            futures.add(future);
 
-                    // 형제 요소에서 내용 가져오기
-                    Element descriptionElement = termElement.nextElementSibling(); // 다음 형제 요소
-                    String termDescription = descriptionElement != null && "info2".equals(descriptionElement.className()) ?
-                            descriptionElement.text() : null;
-
-                    // TermsDTO 객체 생성
-                    TermsDTO termsDTO = new TermsDTO();
-                    termsDTO.setTermName(termName);
-                    termsDTO.setTermDescription(termDescription); // 설명 추가
-
-                    // 리스트에 추가
-                    termsList.add(termsDTO);
-                }
-
-                // 다음 페이지 링크 확인 (next page)
-                Element nextPageElement = doc.select("a.next").first(); // "next" 클래스를 가진 링크
-                if (nextPageElement == null) {
-                    break; // 다음 페이지가 없으면 종료
-                }
-
-                page++; // 다음 페이지로 이동
-            } catch (Exception e) {
-                e.printStackTrace(); // 예외 처리
-                break; // 예외 발생 시 종료
+            // 최대 페이지 수 설정
+            if (page >= 10) {
+                break; // 최대 10페이지 크롤링
             }
+        }
+
+        for (CompletableFuture<List<TermsDTO>> future : futures) {
+            List<TermsDTO> pageTermsList = future.join();
+            termsList.addAll(pageTermsList);
         }
 
         System.out.println("Terms List: " + termsList);

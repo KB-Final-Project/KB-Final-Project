@@ -2,23 +2,52 @@
 import axios from 'axios';
 
 export default {
+  data() {
+    return {
+      terms: [],
+      filteredTerms: [],
+      selectedTerm: null,
+      searchTerm: '',
+      error: null,
+      loading: true,
+    };
+  },
+  mounted() {
+    this.fetchTerms();
+  },
   methods: {
     async fetchTerms() {
+      this.loading = true;
       try {
-        const response = await axios.get('http://localhost:8081/api/terms/getTerms'); // API URL
-        console.log(response);
+        const response = await axios.get('/api/terms/getTerms');
+        console.log('API 호출 성공:', response.data);
         this.terms = response.data;
+        this.filteredTerms = response.data;
       } catch (err) {
         this.error = err;
+        console.error('데이터를 가져오는 중 오류 발생:', err);
       } finally {
         this.loading = false;
       }
     },
-  }
-}
+    filterTerms() {
+      const search = this.searchTerm.toLowerCase(); // 검색어 소문자로 변환
+      this.filteredTerms = this.terms.filter(term =>
+          term.termName.toLowerCase().includes(search) // 검색어가 포함된 용어 필터링
+      );
+
+      // 첫 번째 검색 결과를 선택된 용어로 설정
+      this.selectedTerm = this.filteredTerms.length > 0 ? this.filteredTerms[0] : null;
+    },
+    selectTerm(term) {
+      this.selectedTerm = term;
+    },
+  },
+};
 </script>
 
 <template>
+<div class="bc">
   <div class="container text-center">
     <h1>용어 사전</h1><br><br>
     <div class="dic">
@@ -31,9 +60,13 @@ export default {
           </td>
           <td>
             <div class="searchBar">
-              <i class="ai-search"></i>
-              <input class="search" placeholder="키워드를 입력해주세요">
-              <button type="button" class="searchBtn">검색</button>
+              <input
+                  class="search"
+                  placeholder="키워드를 입력해주세요"
+                  v-model="searchTerm"
+                  @input="filterTerms"
+              />
+              <button type="button" class="searchBtn" @click="filterTerms">검색</button>
             </div>
           </td>
         </tr>
@@ -101,31 +134,41 @@ export default {
       <br>
     </div>
     <br>
-    <h5 class="text-end" style="width: 93%;"><i class="ai-search"></i>"ㄱ" 검색 결과 "152"건의 정보가 검색되었습니다.</h5>
+    <h5 class="text-end" style="width: 93%;"><i class="ai-search"></i>"{{ searchTerm }}" 검색 결과 "{{ filteredTerms.length }}"건의 정보가 검색되었습니다.</h5>
     <br><br>
     <div class="row">
-      <div class="p-2 col-4">
-        검색결과
+      <div class="p-2 col-4 scrollbar">
+        <ul class="text-start dicSubject">
+          <li v-for="(term, index) in filteredTerms"
+              :key="index"
+              @click="selectTerm(term)"
+              :class="{ 'active': selectedTerm === term }">
+            <h3>{{ term.termName }}</h3>
+          </li>
+        </ul>
       </div>
-      <div class="p-2 col-7">
-        검색내용
+      <div class="p-2 col-7 text-start">
+        <h2 v-if="selectedTerm">{{ selectedTerm.termName }}</h2>
+        <p v-if="selectedTerm">{{ selectedTerm.termDescription }}</p>
       </div>
     </div>
   </div>
+</div>
 
 
-  <div>
-    <button @click="fetchTerms">Terms</button>
-    <ul v-if="!loading">
-      <li v-for="(term, index) in terms" :key="index">{{ term.name }}</li> <!-- term.name을 필요한 필드로 바꿔주세요 -->
-    </ul>
-    <p v-else>Loading...</p>
-    <p v-if="error">Error: {{ error.message }}</p>
-  </div>
 
 </template>
 
 <style scoped>
+.active {
+  text-decoration: underline;
+}
+.scrollbar {
+  overflow-y: scroll;
+}
+.scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
+}
 
 .dic{
   border: 1px solid lightgrey;
@@ -133,7 +176,6 @@ export default {
   margin-left : 30px;
   width: 91%;
 }
-
 
 .row{
   width: 99%;
@@ -192,7 +234,8 @@ h4{
 .search{
   border: none;
   width: 100%;
-  height: 40px;
+  height: 30px;
+  margin: 10px;
 }
 
 .hangul{
@@ -216,4 +259,29 @@ template{
   padding-top: 80px;
 }
 
+.dicSubject{
+  height: 380px;
+  margin-right: 15px;
+  list-style: none;
+  padding: 20px;
+}
+
+.dicSubject h3 {
+  margin: 20px;
+  cursor: pointer;
+}
+
+.dicSubject li.active h3 {
+  text-decoration: underline;
+  color: rgba(68, 140, 116, 1);
+}
+
+.col-7 h2{
+  color: rgba(68, 140, 116, 1);
+  margin: 20px;
+}
+.col-7 p{
+  font-size: 20px;
+  margin: 20px;
+}
 </style>

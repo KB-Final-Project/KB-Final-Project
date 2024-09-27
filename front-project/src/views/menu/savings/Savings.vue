@@ -146,6 +146,7 @@
 }
 
 .container{
+  width: 80%;
   padding-top: 80px;
 }
 
