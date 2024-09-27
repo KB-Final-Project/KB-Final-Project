@@ -336,6 +336,7 @@ h3{
 
 .container{
   padding-top: 80px;
+  width: 80%;
 }
 
 
