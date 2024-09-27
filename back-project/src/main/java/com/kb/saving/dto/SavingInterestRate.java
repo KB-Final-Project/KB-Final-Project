@@ -17,7 +17,5 @@ public class SavingInterestRate {
     private int savingTerm;
     private double interestRate;
     private double interestMaxRate;
-    private String bankId;
-    private String financialProductCode;
 
 }
