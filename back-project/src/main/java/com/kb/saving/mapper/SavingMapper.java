@@ -10,7 +10,8 @@ import java.util.Map;
 
 
 public interface SavingMapper {
-    List<SavingListDTO> getProductList(Map<String, Integer> map);
+    List<SavingListDTO> getProductList(Map<String, Object> map);
     Saving getProductDetail(Map<String, Integer> map);
+
 
 }

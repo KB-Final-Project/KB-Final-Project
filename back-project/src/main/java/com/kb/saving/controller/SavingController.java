@@ -7,10 +7,7 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,14 +20,13 @@ import java.util.List;
 public class SavingController {
     private final SavingService service;
 
-    @GetMapping
-    public ResponseEntity<List<SavingListDTO>> getDepositListDefault() {
-        return ResponseEntity.ok(service.getProductList(2, 36));
-    }
+    @GetMapping("")
+    public ResponseEntity<List<SavingListDTO>> getDepositListDefault(
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "bankId", required = false) String bankId,
+            @RequestParam(value = "saveTerm", required = false) Integer saveTerm) {
 
-    @GetMapping("/{saveTerm}")
-    public ResponseEntity<List<SavingListDTO>> getDepositList(@PathVariable int saveTerm) {
-        return ResponseEntity.ok(service.getProductList(2, saveTerm));
+        return ResponseEntity.ok(service.getProductList(2, search, bankId, saveTerm));
     }
 
     @GetMapping("/detail/{savingId}")

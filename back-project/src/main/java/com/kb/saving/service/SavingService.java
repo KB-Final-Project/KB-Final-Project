@@ -16,17 +16,22 @@ import java.util.*;
 public class SavingService {
     private final SavingMapper mapper;
 
-    public List<SavingListDTO> getProductList(int finCategoryId, int saveTerm){
-        HashMap<String, Integer> map = new HashMap<>();
+    public List<SavingListDTO> getProductList(int finCategoryId, String search, String bankId, Integer saveTerm) {
+        HashMap<String, Object> map = new HashMap<>();
         map.put("finCategoryId", finCategoryId);
+        map.put("search", search);
+        map.put("bankId", bankId);
         map.put("saveTerm", saveTerm);
         return mapper.getProductList(map);
     }
-    public Saving getProductDetail(int finCategoryId, int savingId){
+
+    public Saving getProductDetail(int finCategoryId, int savingId) {
         Map<String, Integer> map = new HashMap<>();
         map.put("finCategoryId", finCategoryId);
         map.put("savingId", savingId);
-        return mapper.getProductDetail(map);
+        Saving saving = mapper.getProductDetail(map);
+        saving.setJoinWays(new ArrayList<>(Arrays.asList(saving.getJoinWay().split(","))));
+        return saving;
     }
 
 }

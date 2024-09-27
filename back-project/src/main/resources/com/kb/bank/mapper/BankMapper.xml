@@ -12,13 +12,11 @@
         <result property="bankUrl" column="bank_url"/>
     </resultMap>
 
-    <select id="selectBankById" parameterType="String" resultMap="BankResultMap">
+    <select id="getBankList" resultMap="BankResultMap">
         SELECT
             bank_id, bank_name, bank_logo_url, bank_url
         FROM
             banks
-        WHERE
-            bank_id = #{bankId}
     </select>
 
 </mapper>

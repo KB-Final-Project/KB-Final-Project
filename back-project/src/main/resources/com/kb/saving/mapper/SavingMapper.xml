@@ -65,23 +65,32 @@
 
     <select id="getProductList" resultMap="DepositListResultMap">
         SELECT
-            s.saving_id,
-            s.saving_name,
-            s.join_deny,
-            s.join_way,
-            b.bank_id,
-            b.bank_name,
-            b.bank_logo_url,
-            b.bank_url,
-            ir.intr_rate_id,
-            ir.intr_rate_type,
-            ir.save_term,
-            ir.intr_rate,
-            ir.intr_rate2
+        s.saving_id,
+        s.saving_name,
+        s.join_deny,
+        s.join_way,
+        b.bank_id,
+        b.bank_name,
+        b.bank_logo_url,
+        b.bank_url,
+        ir.intr_rate_id,
+        ir.intr_rate_type,
+        ir.save_term,
+        ir.intr_rate,
+        ir.intr_rate2
         FROM savings_products AS s
         INNER JOIN banks AS b ON s.bank_id = b.bank_id
         LEFT JOIN saving_interest_rates AS ir ON s.saving_id = ir.saving_id
-        WHERE s.fin_category_id = #{finCategoryId} AND ir.save_term = #{saveTerm}
+        WHERE s.fin_category_id = #{finCategoryId}
+        <if test="search != null and search != ''">
+            AND s.saving_name LIKE CONCAT('%', #{search}, '%')
+        </if>
+        <if test="bankId != null">
+            AND s.bank_id = #{bankId}
+        </if>
+        <if test="saveTerm != null">
+            AND ir.save_term = #{saveTerm}
+        </if>
         ORDER BY ir.intr_rate DESC;
     </select>
 
