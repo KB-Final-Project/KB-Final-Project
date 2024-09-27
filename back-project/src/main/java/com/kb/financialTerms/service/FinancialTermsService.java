@@ -42,9 +42,21 @@ public class FinancialTermsService {
                     }
 
                     for (Element termElement : termElements) {
+                        // 제목 가져오기
+                        Element linkElement = termElement.select("a").first();
+                        String termName = linkElement != null ? linkElement.text() : null;
+
+                        // 형제 요소에서 내용 가져오기
+                        Element descriptionElement = termElement.nextElementSibling(); // 다음 형제 요소
+                        String termDescription = descriptionElement != null && "info2".equals(descriptionElement.className()) ?
+                                descriptionElement.text() : null;
+
+                        // TermsDTO 객체 생성
                         TermsDTO termsDTO = new TermsDTO();
-                        // 필요한 데이터 추출
-                        termsDTO.setTermName(termElement.text()); // 제목 세팅
+                        termsDTO.setTermName(termName);
+                        termsDTO.setTermDescription(termDescription); // 설명 추가
+
+                        // 리스트에 추가
                         pageTermsList.add(termsDTO);
                     }
 
