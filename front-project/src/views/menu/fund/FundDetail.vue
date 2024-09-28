@@ -90,7 +90,6 @@ const fundDetails = fundStore.fundDetails;
             <h3 class="d-inline">수익률 -3.08%(3개월 누적)</h3>
           </div>
         </div>
-
       </div>
       <!-- Pagination basic example -->
       <nav aria-label="Page navigation example">
@@ -125,7 +124,6 @@ const fundDetails = fundStore.fundDetails;
         </ul>
       </nav><br><br>
     </div>
-
   </div>
 </template>
 
@@ -148,6 +146,7 @@ const fundDetails = fundStore.fundDetails;
 }
 
 .pagination {
+  margin-right: 40px;
   --bs-pagination-color: rgba(68, 140, 116, 1);
   --bs-pagination-hover-color:rgba(68, 140, 116, 1);
 
@@ -157,7 +156,7 @@ const fundDetails = fundStore.fundDetails;
   display: block;
   border: 1px solid rgba(153, 153, 153, 0.6);
   border-radius: 20px;
-  width: 130%;
+  width: 150%;
   height: 70px;
   background-color: white;
   margin: 10px;
@@ -171,9 +170,10 @@ const fundDetails = fundStore.fundDetails;
   left: 0;
   height: 100%;
   padding-top: 80px;
+
 }
 .container {
-  width: 70%;
+  width: 60%;
 }
 
 .fundDetailBox{
@@ -182,7 +182,7 @@ const fundDetails = fundStore.fundDetails;
   border: 1px solid rgba(153, 153, 153, 0.6);
   background-color: white;
   border-radius: 30px;
-  margin: 10px;
+  margin: 20px;
   padding: 40px;
 }
 .fundDetailBox table tr td{
