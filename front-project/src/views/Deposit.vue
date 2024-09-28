@@ -1,48 +1,157 @@
+<script setup></script>
+
 <template>
-  <div class="deposit">
-    <h2 class="text-center">예금</h2>
-    <div class="input-boxes">
+  <div class="container text-center">
+    <h1 class="d-inline">예금</h1>
+    <p class="d-inline">열심히 모은 종자돈을 더 크게!</p>
+    <br /><br />
+    <div class="depositBest">
+      <div class="text-start">
+        <h2>ㅇㅇㅇ성향 고객님들이 선택한 BEST 인기상품</h2>
+        <h4>가장 많이 사랑 받은 예금 상품</h4>
+        <br /><br />
+      </div>
+      <div class="itemBoxDiv row g-3 gap-3">
+        <div class="itemBox col"><div class="p-3">content</div></div>
+        <div class="itemBox col"><div class="p-3">content</div></div>
+        <div class="itemBox col"><div class="p-3">content</div></div>
+      </div>
+    </div>
+    <br /><br />
+    <div>
+      <h2 class="d-inline search">상품 검색</h2>
       <input
+        class="searchBar"
         type="text"
-        placeholder="상품명, 이자율, 예치금액"
-        class="input-field"
+        placeholder="검색어를 입력해주세요"
       />
-      <input
-        type="text"
-        placeholder="상품명, 이자율, 예치금액"
-        class="input-field"
-      />
-      <input
-        type="text"
-        placeholder="상품명, 이자율, 예치금액"
-        class="input-field"
-      />
+      <button class="searchBtn" type="submit">검색</button>
+    </div>
+    <br /><br />
+    <div class="depositContent">
+      <div class="text-start">
+        <h2 class="d-inline">ooo가 고객님에게 추천한</h2>
+        <h2 class="d-inline themeItem">테마상품</h2>
+        <br /><br /><br />
+      </div>
+      <div class="itemBoxDiv row g-lg-3 gap-3">
+        <div class="itemBox col"><div class="p-3">content</div></div>
+        <div class="itemBox col"><div class="p-3">content</div></div>
+        <div class="itemBox col"><div class="p-3">content</div></div>
+      </div>
+      <br />
+      <div class="row g-3 gap-3">
+        <div class="itemBox col"><div class="p-3">content</div></div>
+        <div class="itemBox col"><div class="p-3">content</div></div>
+        <div class="itemBox col"><div class="p-3">content</div></div>
+      </div>
+      <br />
+      <!-- Pagination basic example -->
+      <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          <li class="page-item">
+            <a href="#" class="page-link">이전</a>
+          </li>
+          <li class="page-item d-sm-none">
+            <span class="page-link pe-none">2 / 5</span>
+          </li>
+          <li class="page-item d-none d-sm-block">
+            <a href="#" class="page-link">1</a>
+          </li>
+          <li class="page-item active d-none d-sm-block" aria-current="page">
+            <span class="page-link">
+              2
+              <span class="visually-hidden">(current)</span>
+            </span>
+          </li>
+          <li class="page-item d-none d-sm-block">
+            <a href="#" class="page-link">3</a>
+          </li>
+          <li class="page-item d-none d-sm-block">
+            <a href="#" class="page-link">4</a>
+          </li>
+          <li class="page-item d-none d-sm-block">
+            <a href="#" class="page-link">5</a>
+          </li>
+          <li class="page-item">
+            <a href="#" class="page-link">다음</a>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 </template>
-
-<script setup></script>
-
 <style scoped>
-.deposit {
-  margin-top: 60px; /* 페이지 상단 여백 */
-  text-align: center;
+.depositBest {
+  background-color: rgba(67, 140, 116, 0.06);
+  border-radius: 30px;
+  padding: 50px;
 }
 
-.input-boxes {
-  display: flex;
-  justify-content: center;
-  gap: 1rem; /* 박스 간격 */
-  margin-top: 1rem;
+.itemBox {
+  border: 1px solid rgba(231, 236, 243, 1);
+  border-radius: 30px;
+  display: inline-block;
+  width: 350px;
+  height: 350px;
+  background-color: white;
 }
 
-.input-field {
-  width: 300px; /* 박스 너비 */
-  height: 300px; /* 박스 높이로 정사각형 유지 */
-  padding: 1rem; /* 내부 여백 */
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  text-align: center; /* 텍스트 중앙 정렬 */
-  font-size: 16px; /* 폰트 크기 조정 */
+.depositContent {
+  background-color: rgba(247, 249, 252, 1);
+  border-radius: 30px;
+  padding: 50px;
+}
+
+.themeItem {
+  font-weight: 700;
+}
+
+.searchBar {
+  width: 50%;
+  height: 50px;
+  border: 1px solid rgba(215, 221, 227, 1);
+  border-radius: 30px;
+  padding: 20px;
+}
+
+.searchBtn {
+  width: 80px;
+  height: 50px;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  background-color: rgba(68, 140, 116, 1);
+  margin: 1%;
+}
+.searchBtn:active {
+  background-color: lightgrey;
+  color: black;
+}
+
+.search {
+  margin: 30px;
+}
+
+.page-link {
+  color: rgba(68, 140, 116, 1);
+}
+
+.active > .page-link {
+  background-color: rgba(68, 140, 116, 1);
+  border: none;
+}
+.page-link:hover {
+  color: white;
+}
+
+.pagination {
+  --bs-pagination-color: rgba(68, 140, 116, 1);
+  --bs-pagination-hover-color: rgba(68, 140, 116, 1);
+}
+
+.container {
+  width: 80%;
+  padding-top: 80px;
 }
 </style>

@@ -15,9 +15,17 @@ import Gold from '@/views/menu/gold/Gold.vue';
 import GoldInvest from '@/views/menu/gold/GoldInvest.vue';
 import Calculator from '@/views/modal/Calculator.vue';
 import Deposit from '@/views/Deposit.vue';
+import DepositDetail from '@/views/DepositDetail.vue';
 import Fund from '@/views/menu/fund/Fund.vue';
 import ISA from '@/views/ISA.vue';
-import FundDetail from "@/views/menu/fund/FundDetail.vue";
+import FundDetail from '@/views/menu/fund/FundDetail.vue';
+import MyPage from '@/views/myPage/myPage.vue';
+import MyPageContent from '@/views/myPage/MyPageContent.vue';
+import MyPagePanel from '@/views/myPage/MyPagePanel.vue';
+import MyPageSetting from '@/views/myPage/MyPageSetting.vue';
+import MyPageWithdraw from '@/views/myPage/MyPageWithdraw.vue';
+import MyPagePosts from '@/views/myPage/MyPagePosts.vue';
+import MyPageWarning from '@/views/myPage/MyPageWarning.vue';
 
 const routes = [
   {
@@ -103,6 +111,11 @@ const routes = [
     component: Deposit,
   },
   {
+    path: '/depositDetail', // DepositDetail 페이지 경로 추가
+    name: 'DepositDetail',
+    component: DepositDetail,
+  },
+  {
     path: '/fund', // Fund 페이지 경로 추가
     name: 'fund',
     component: Fund,
@@ -116,6 +129,41 @@ const routes = [
     path: '/isa', // ISA 페이지 경로 추가
     name: 'ISA',
     component: ISA,
+  },
+  {
+    path: '/myPage',
+    name: 'myPage',
+    component: MyPage,
+  },
+  {
+    path: '/myPageContent',
+    name: 'myPageContent',
+    component: MyPageContent,
+  },
+  {
+    path: '/myPagePanel',
+    name: 'myPagePanel',
+    component: MyPagePanel,
+  },
+  {
+    path: '/myPageSetting',
+    name: 'myPageSetting',
+    component: MyPageSetting,
+  },
+  {
+    path: '/myPageWithdraw',
+    name: 'myPageWithdraw',
+    component: MyPageWithdraw,
+  },
+  {
+    path: '/myPagePosts',
+    name: 'myPagePosts',
+    component: MyPagePosts,
+  },
+  {
+    path: '/myPageWarning',
+    name: 'myPageWarning',
+    component: MyPageWarning,
   },
 
   // 필요한 다른 라우트들을 여기에 추가할 수 있습니다.
