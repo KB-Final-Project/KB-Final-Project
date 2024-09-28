@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class TermsDTO {
-    private Integer termId;
     private String termName;
     private String termDescription;
 }
