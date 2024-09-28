@@ -48,14 +48,14 @@ const toggleText = () => {
         <div class="calNumber">
           <table>
             <tbody>
-              <tr>
-                <td class="cal" rowspan="2">🧮</td>
-                <td style="font-size: 15px;">월 만원 적금하면 </td>
-              </tr>
-              <tr>
-                <td style="font-size: 15px; font-weight: 600;">총 세후 이자 원</td>
-                <td style="font-size: 30px;"><i class="ai-chevron-right"></i></td>
-              </tr>
+            <tr>
+              <td class="cal" rowspan="2">🧮</td>
+              <td style="font-size: 15px;">월 만원 적금하면 </td>
+            </tr>
+            <tr>
+              <td style="font-size: 15px; font-weight: 600;">총 세후 이자 원</td>
+              <td style="font-size: 30px;"><i class="ai-chevron-right"></i></td>
+            </tr>
             </tbody>
           </table>
           <br>
@@ -64,19 +64,19 @@ const toggleText = () => {
       </div>
       <table class="calTable text-start">
         <tbody>
-          <tr>
-            <th>
-              <label class="form-check-label" for="customSwitch">달성 시</label>
-            </th>
-            <td>
-              <label class="calPercent" for="customSwitch">22%</label>
-            </td>
-            <td>
-              <div class="form-check form-switch">
-                <input type="checkbox" class="form-check-input" id="customSwitch" checked>
-              </div>
-            </td>
-          </tr>
+        <tr>
+          <th>
+            <label class="form-check-label" for="customSwitch">달성 시</label>
+          </th>
+          <td>
+            <label class="calPercent" for="customSwitch">22%</label>
+          </td>
+          <td>
+            <div class="form-check form-switch">
+              <input type="checkbox" class="form-check-input" id="customSwitch" checked>
+            </div>
+          </td>
+        </tr>
         </tbody>
       </table>
       <hr class="mt-5 hr"/>
@@ -84,14 +84,14 @@ const toggleText = () => {
         <img class="d-inline rankMedal" src="/img/emoji/goldmedal.png">
         <table class="d-inline calNumber">
           <tbody>
-            <tr>
-              <td><h4 class="d-inline rank">적금 최고금리 순위</h4></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td><h4 class="d-inline rank">3위</h4></td>
-              <td style="font-size: 30px;"><i class="rightArrow ai-chevron-right"></i></td>
-            </tr>
+          <tr>
+            <td><h4 class="d-inline rank">예금 최고금리 순위</h4></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><h4 class="d-inline rank">3위</h4></td>
+            <td style="font-size: 30px;"><i class="rightArrow ai-chevron-right"></i></td>
+          </tr>
           </tbody>
         </table>
       </div>
@@ -99,48 +99,48 @@ const toggleText = () => {
       <div class="moreInfo text-start m-4">
         <h3>상품 정보</h3><br>
         <div class="text-wrapper default-info">
-        <ul class="info-list">
-          <li>
-            <h4>가입 금액</h4>
-            <h5></h5>
-          </li>
-          <li>
-            <h4>가입 대상</h4>
-            <h5></h5>
-          </li>
-          <li>
-            <h4>가입 방법</h4>
-            <h5></h5>
-          </li>
-        </ul>
-        <div v-if="expanded" class="additional-info">
           <ul class="info-list">
             <li>
-              <h4>만기 후 이자율</h4>
+              <h4>가입 금액</h4>
               <h5></h5>
             </li>
             <li>
-              <h4>세제혜택</h4>
+              <h4>가입 대상</h4>
               <h5></h5>
             </li>
             <li>
-              <h4>예금자보호</h4>
+              <h4>가입 방법</h4>
               <h5></h5>
             </li>
           </ul>
-        </div>
-        <div class="toggle-wrapper">
-          <span class="more-text" v-if="!expanded" @click="toggleText">더보기<i class="ai-chevron-down"></i></span>
-          <span class="less-text" v-if="expanded" @click="toggleText">줄이기<i class="ai-chevron-up"></i></span>
+          <div v-if="expanded" class="additional-info">
+            <ul class="info-list">
+              <li>
+                <h4>만기 후 이자율</h4>
+                <h5></h5>
+              </li>
+              <li>
+                <h4>세제혜택</h4>
+                <h5></h5>
+              </li>
+              <li>
+                <h4>예금자보호</h4>
+                <h5></h5>
+              </li>
+            </ul>
+          </div>
+          <div class="toggle-wrapper">
+            <span class="more-text" v-if="!expanded" @click="toggleText">더보기<i class="ai-chevron-down"></i></span>
+            <span class="less-text" v-if="expanded" @click="toggleText">줄이기<i class="ai-chevron-up"></i></span>
+          </div>
         </div>
       </div>
-    </div>
-    <hr class="mt-5 hr"/>
-    <br>
-    <div class="text-start m-4">
-      <h3>기간별 금리</h3><br>
-      <table class="dayInfo text-start">
-        <tbody>
+      <hr class="mt-5 hr"/>
+      <br>
+      <div class="text-start m-4">
+        <h3>기간별 금리</h3><br>
+        <table class="dayInfo text-start">
+          <tbody>
           <tr>
             <td><h4>기간</h4></td>
             <td><h4>최고금리(기본금리)</h4></td>
@@ -149,10 +149,10 @@ const toggleText = () => {
             <td><h4>2개월</h4></td>
             <td><h4>23%</h4></td>
           </tr>
-        </tbody>
-      </table>
-    </div>
-    <button class="detailMove"><a href="#">상품 페이지로 이동</a></button>
+          </tbody>
+        </table>
+      </div>
+      <button class="detailMove"><a href="#">상품 페이지로 이동</a></button>
     </div>
   </div>
 </template>
@@ -186,7 +186,6 @@ const toggleText = () => {
   font-size: 16px;
   color: black;
   cursor: pointer;
-
 }
 
 .moreInfo>span{

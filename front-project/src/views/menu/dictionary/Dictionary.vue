@@ -23,7 +23,7 @@
             </td>
           </tr>
           <tr class="firstFilter">
-            <td>
+            <td style="width: 15%;">
               <h4>한글 순</h4>
             </td>
             <td>
@@ -55,11 +55,13 @@
         <br>
       </div>
       <br>
-      <h5 class="text-end" style="width: 93%;"><i class="ai-search"></i>"{{ searchTerm }}" 검색 결과 "{{ filteredTerms.length }}"건의 정보가 검색되었습니다.</h5>
-      <br><br>
+      <h5 class="text-end" style="width: 93%;"><i class="ai-search"></i>"{{ searchTerm }}{{selectedHangul}}{{selectedAlphabet}}" 검색 결과 "{{ filteredTerms.length }}"건의 정보가 검색되었습니다.</h5>
       <div class="row">
         <div class="p-2 col-4 scrollbar">
           <ul class="text-start dicSubject">
+            <li v-if="filteredTerms.length === 0">
+              <h3>검색된 검색어가 없습니다.</h3>
+            </li>
             <li v-for="(term, index) in filteredTerms"
                 :key="index"
                 @click="selectTerm(term)"
@@ -69,6 +71,9 @@
           </ul>
         </div>
         <div class="p-2 col-7 text-start">
+          <span v-if="filteredTerms.length === 0">
+            <h3  class="test-center m-5">검색된 검색어가 없습니다.</h3>
+          </span>
           <h2 v-if="selectedTerm">{{ selectedTerm.termName }}</h2>
           <p v-if="selectedTerm">{{ selectedTerm.termDescription }}</p>
         </div>
@@ -105,6 +110,11 @@ export default {
         const response = await axios.get('/api/terms/getTerms');
         this.terms = response.data;
         this.filteredTerms = response.data;
+
+        // 용어가 존재하면 첫 번째 용어를 기본 선택
+        if (this.filteredTerms.length > 0) {
+          this.selectedTerm = this.filteredTerms[0];
+        }
       } catch (err) {
         this.error = err;
       } finally {
@@ -158,6 +168,8 @@ export default {
 </script>
 
 <style scoped>
+
+
 .active {
   text-decoration: underline;
 }
@@ -172,6 +184,7 @@ export default {
   border: 1px solid lightgrey;
   border-radius: 30px;
   margin-left : 30px;
+  padding: 20px;
   width: 91%;
 }
 
@@ -195,7 +208,7 @@ export default {
 }
 
 .searchBtn{
-  display: inline;
+  display: inline-block;
   width: 80px;
   height: 40px;
   color: white;
@@ -210,7 +223,7 @@ export default {
 }
 
 table{
-  margin-left: 7%;
+  margin-left: 8%;
 }
 
 .ai-search{
@@ -219,22 +232,23 @@ table{
 
 .searchBar{
   display:flex;
-  width: 100%;
+  width: 80%;
   height: 50px;
   border: 1px solid rgba(215, 221, 227, 1);
   border-radius: 30px;
   align-items: center;
+  margin-bottom: 20px;
 }
 
 h4{
-  margin: 30px;
+  margin-right: 2%;
 }
 
 .search{
   border: none;
-  width: 100%;
-  height: 30px;
-  margin: 10px;
+  width: 89%;
+  height: 40px;
+  margin: 20px;
 }
 
 .hangul{
@@ -251,7 +265,7 @@ h4{
 }
 
 template{
-  margin-right: -20%;
+margin: 0 auto;
 }
 
 .container{
@@ -283,4 +297,6 @@ template{
   font-size: 20px;
   margin: 20px;
 }
+
+
 </style>

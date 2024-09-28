@@ -120,6 +120,8 @@
         <input class="searchBar" type="text" placeholder="검색어를 입력해주세요"/>
         <button class="searchBtn" type="submit">검색</button>
       </div>
+
+
       <div class="fundSearchResult text-start">
         <h5>ㅇㅇ 검색 결과</h5>
         <div>
