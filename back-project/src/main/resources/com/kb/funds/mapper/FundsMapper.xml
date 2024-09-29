@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kb.funds.mapper.FundsMapper">
+    <!-- 펀드 추가 -->
+    <insert id="insertFund" parameterType="com.kb.funds.dto.FundsDTO">
+        INSERT INTO funds (name, other_columns) VALUES (#{name}, #{otherField})
+    </insert>
+
+    <!-- 키워드로 펀드 검색 -->
+    <select id="searchFunds" resultType="com.kb.funds.dto.FundsDTO">
+        SELECT *
+        FROM funds
+        WHERE name LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+    <!-- 모든 펀드 조회 -->
+    <select id="findAllFunds" resultType="com.kb.funds.dto.FundsDTO">
+        SELECT *
+        FROM funds
+    </select>
+</mapper>

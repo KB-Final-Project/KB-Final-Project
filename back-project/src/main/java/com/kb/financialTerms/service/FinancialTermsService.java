@@ -2,7 +2,6 @@ package com.kb.financialTerms.service;
 
 
 import com.kb.financialTerms.dto.TermsDTO;
-import com.kb.financialTerms.mapper.FinancialTermsMapper;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,8 +15,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class FinancialTermsService {
-    private final FinancialTermsMapper financialTermsMapper;
-
     public List<TermsDTO> crawlAndGetTerms() {
         List<TermsDTO> termsList = new ArrayList<>();
         String url = "https://www.fsc.go.kr/in090301";
