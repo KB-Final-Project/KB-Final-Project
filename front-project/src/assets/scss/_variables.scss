@@ -1,3 +1,5 @@
+@use "sass:color";
+
 //
 // Variables
 // --------------------------------------------------
@@ -880,8 +882,8 @@ $offcanvas-dark-mode-box-shadow:            0 .4375rem 1.25rem rgba($black, .4) 
 $scrollbar-width:                           .25rem !default;
 $scrollbar-track-width:                     .125rem !default;
 $scrollbar-border-radius:                   var(--#{$prefix}border-radius) !default;
-$scrollbar-track-bg:                        lighten($gray-300, 2%) !default;
-$scrollbar-bg:                              lighten($gray-500, 6%) !default;
+$scrollbar-track-bg:                        color.adjust($gray-300, $lightness: 2%) !default;
+$scrollbar-bg:                              color.adjust($gray-500, $lightness: 6%) !default;
 $scrollbar-dark-mode-track-bg:              $border-light-color !default;
 $scrollbar-dark-mode-bg:                    rgba($white, .28) !default;
 

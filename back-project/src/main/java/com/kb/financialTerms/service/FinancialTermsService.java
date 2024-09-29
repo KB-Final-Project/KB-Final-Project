@@ -11,42 +11,72 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
 public class FinancialTermsService {
     public List<TermsDTO> crawlAndGetTerms() {
         List<TermsDTO> termsList = new ArrayList<>();
-        String url = "https://www.fsc.go.kr/in090301";
+        String baseUrl = "https://www.fsc.go.kr/in090301?curPage=";
+        List<CompletableFuture<List<TermsDTO>>> futures = new ArrayList<>();
 
-        try {
-            Document doc = Jsoup.connect(url)
-                    .userAgent("Mozilla/5.0")
-                    .get();
+        for (int page = 1; ; page++) {
+            final int currentPage = page;
+            CompletableFuture<List<TermsDTO>> future = CompletableFuture.supplyAsync(() -> {
+                List<TermsDTO> pageTermsList = new ArrayList<>();
+                String url = baseUrl + currentPage;
 
-            Elements termElements = doc.select("div.cont div.subject");
-            for (Element termElement : termElements) {
-                // a 태그에서 제목과 링크 가져오기
-                Element linkElement = termElement.select("a").first();
-                if (linkElement != null) {
-                    String termName = linkElement.text(); // 용어 이름
-                    String termLink = linkElement.attr("href"); // 링크
+                try {
+                    Document doc = Jsoup.connect(url)
+                            .userAgent("Mozilla/5.0")
+                            .get();
 
-                    // 필요한 경우, 절대 URL로 변환
-                    String absoluteLink = url + termLink;
+                    Elements termElements = doc.select("div.cont > div.subject");
 
-                    // TermsDTO 객체 생성
-                    TermsDTO termsDTO = new TermsDTO();
-                    termsDTO.setTermName(termName);
-                    termsDTO.setTermDescription(absoluteLink); // 설명 대신 링크를 사용할 경우
+                    if (termElements.isEmpty()) {
+                        return pageTermsList; // 빈 리스트 반환
+                    }
 
-                    // 리스트에 추가
-                    termsList.add(termsDTO);
+                    for (Element termElement : termElements) {
+                        // 제목 가져오기
+                        Element linkElement = termElement.select("a").first();
+                        String termName = linkElement != null ? linkElement.text() : null;
+
+                        // 형제 요소에서 내용 가져오기
+                        Element descriptionElement = termElement.nextElementSibling(); // 다음 형제 요소
+                        String termDescription = descriptionElement != null && "info2".equals(descriptionElement.className()) ?
+                                descriptionElement.text() : null;
+
+                        // TermsDTO 객체 생성
+                        TermsDTO termsDTO = new TermsDTO();
+                        termsDTO.setTermName(termName);
+                        termsDTO.setTermDescription(termDescription); // 설명 추가
+
+                        // 리스트에 추가
+                        pageTermsList.add(termsDTO);
+                    }
+
+                    return pageTermsList;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return pageTermsList; // 빈 리스트를 반환
                 }
+            });
+
+            futures.add(future);
+
+            // 최대 페이지 수 설정
+            if (page >= 30) {
+                break; // 최대 10페이지 크롤링
             }
-        } catch (Exception e) {
-            e.printStackTrace(); // 예외 처리
         }
+
+        for (CompletableFuture<List<TermsDTO>> future : futures) {
+            List<TermsDTO> pageTermsList = future.join();
+            termsList.addAll(pageTermsList);
+        }
+
         System.out.println("Terms List: " + termsList);
         return termsList;
     }
