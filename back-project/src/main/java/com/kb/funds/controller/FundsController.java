@@ -18,14 +18,22 @@ public class FundsController {
 
     private final FundsService fundsService;
 
+    // 크롤링하여 펀드 데이터를 저장하는 엔드포인트
     @GetMapping("/crawl")
-    public String crawlFunds() {
+    public String crawlAndSaveFunds() {
         fundsService.crawlAndSaveFunds();
-        return "Funds crawled and saved successfully!";
+        return "Funds have been crawled and saved successfully!";
     }
 
+    // 펀드 검색 엔드포인트 (옵션)
     @GetMapping("/search")
-    public List<FundsDTO> searchFunds(@RequestParam String keyword) {
+    public List<FundsDTO> searchFunds(String keyword) {
         return fundsService.searchFunds(keyword);
+    }
+
+    // 모든 펀드 조회 엔드포인트 (옵션)
+    @GetMapping("/all")
+    public List<FundsDTO> findAllFunds() {
+        return fundsService.findAllFunds();
     }
 }
