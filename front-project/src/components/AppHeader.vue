@@ -1,13 +1,9 @@
 <template>
-  <!-- <div class="page-loading active">
-      <div class="page-loading-inner">
-        <div class="page-spinner"></div><span>Loading...</span>
-      </div>
-    </div> -->
-  <header class="navbar navbar-expand-lg fixed-top bg-light">
+  <header class="appHeader navbar navbar-expand-lg fixed-top bg-light">
     <div class="container">
       <router-link to="/" class="navbar-brand pe-sm-3">
         <span class="text-primary flex-shrink-0 me-2">
+<<<<<<< Updated upstream
           <svg
             version="1.1"
             width="35"
@@ -21,6 +17,9 @@
             ></path>
           </svg> </span
         >iNVeTI
+=======
+           </span><img class="invetiLogo" src="/img/inveti.png">
+>>>>>>> Stashed changes
       </router-link>
       <button
         class="navbar-toggler ms-sm-3"
@@ -31,6 +30,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <nav class="collapse navbar-collapse" id="navbarNav">
+<<<<<<< Updated upstream
         <ul
           class="navbar-nav navbar-nav-scroll me-auto"
           style="--ar-scroll-height: 520px"
@@ -81,6 +81,33 @@
                             v-if="subItem.bgImage"
                             class="mega-dropdown-column position-absolute top-0 end-0 h-100 bg-size-cover bg-repeat-0 rounded-3 rounded-start-0"
                             :style="{
+=======
+        <ul  class="navbar-nav navbar-nav-scroll me-auto" style="--ar-scroll-height: 520px;">
+          <li v-for="(item, index) in menuItems" :key="index" class="nav-item" :class="{ dropdown: item.subItems }"
+              @mouseenter="hoverDropdown(index, true)"
+              @mouseleave="hoverDropdown(index, false)">
+            <a style="font-size:18px;" v-if="!item.subItems" class="nav-link" :class="{ active: item.active }" :href="item.href">{{ item.text
+              }}</a>
+            <template v-else>
+              <a style="font-size:18px;" class="nav-link dropdown-toggle" :class="{ active: item.active }" href="#" data-bs-toggle="dropdown"
+                 :data-bs-auto-close="item.autoClose" aria-expanded="false">
+                {{ item.text }}
+                <i :class="dropdownStates[index] ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
+              </a>
+              <ul class="dropdown-menu" :class="{ 'overflow-hidden p-0': item.megaMenu }">
+                <template  v-if="item.megaMenu">
+                  <div class="d-lg-flex">
+                    <div v-for="(column, colIndex) in item.subItems" :key="colIndex"
+                         class="mega-dropdown-column pt-1 pt-lg-3 pb-lg-4">
+                      <ul class="list-unstyled mb-0">
+                        <li v-for="(subItem, subIndex) in column" :key="subIndex">
+                          <a style="font-size:17px;" class="dropdown-item" :href="subItem.href">{{
+                              subItem.text
+                            }}</a>
+                          <span v-if="subItem.bgImage"
+                                class="mega-dropdown-column position-absolute top-0 end-0 h-100 bg-size-cover bg-repeat-0 rounded-3 rounded-start-0"
+                                :style="{
+>>>>>>> Stashed changes
                               backgroundImage: `url(${subItem.bgImage})`,
                             }"
                           ></span>
@@ -93,6 +120,7 @@
                   </div>
                 </template>
                 <template v-else>
+<<<<<<< Updated upstream
                   <li
                     v-for="(subItem, subIndex) in item.subItems"
                     :key="subIndex"
@@ -119,6 +147,23 @@
                           <a class="dropdown-item" :href="grandChild.href">{{
                             grandChild.text
                           }}</a>
+=======
+                  <li v-for="(subItem, subIndex) in item.subItems" :key="subIndex"
+                      :class="{ dropdown: subItem.subItems }">
+                    <template v-if="!subItem.subItems">
+                      <a style="font-size:17px;" class="dropdown-item" :href="subItem.href">{{
+                          subItem.text
+                        }}</a>
+                    </template>
+                    <template v-else>
+                      <a style="font-size:17px;" class="dropdown-item dropdown-toggle" href="#" data-bs-toggle="dropdown"
+                         aria-expanded="false">{{ subItem.text }}</a>
+                      <ul class="dropdown-menu" style=";">
+                        <li v-for="(grandChild, grandIndex) in subItem.subItems" :key="grandIndex">
+                          <a style="font-size:17px;" class="dropdown-item" :href="grandChild.href">{{
+                              grandChild.text
+                            }}</a>
+>>>>>>> Stashed changes
                         </li>
                       </ul>
                     </template>
@@ -131,28 +176,40 @@
 
         <!-- 로그인 버튼을 투자성향과 동일하게 변경 -->
         <ul class="navbar-nav">
-          <li class="nav-item dropdown">
-            <router-link class="dropdown-item" to="/signin">로그인</router-link>
-            <ul class="dropdown-menu">
+          <li id="headerLoginBtn" class="nav-item dropdown" @mouseenter="hoverLoginDropdown(true)" @mouseleave="hoverLoginDropdown(false)">
+            <router-link style="font-size:17px;" class="dropdown-item" to="/signin">
+              로그인 <i :class="loginDropdownState ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
+            </router-link>
+            <ul class="dropdown-menu" v-show="loginDropdownState">
               <li>
-                <a class="dropdown-item" href="#">내 계정</a>
+                <a style="font-size:17px;" class="dropdown-item" href="#">내 계정</a>
               </li>
               <li>
+<<<<<<< Updated upstream
                 <router-link class="dropdown-item" to="/signup"
                   >회원가입</router-link
                 >
+=======
+                <router-link style="font-size:17px;" class="dropdown-item" to="/signup">회원가입</router-link>
+>>>>>>> Stashed changes
               </li>
             </ul>
           </li>
         </ul>
 
         <div class="d-sm-none p-3 mt-n3">
+<<<<<<< Updated upstream
           <a
             class="btn btn-primary w-100 mb-1"
             href="https://themes.getbootstrap.com/product/around-multipurpose-template-ui-kit/"
             target="_blank"
             rel="noopener"
           >
+=======
+          <a class="btn btn-primary w-100 mb-1"
+             href="https://themes.getbootstrap.com/product/around-multipurpose-template-ui-kit/" target="_blank"
+             rel="noopener">
+>>>>>>> Stashed changes
             <i class="ai-cart fs-xl me-2 ms-n1"></i>Buy now
           </a>
         </div>
@@ -246,6 +303,16 @@ const menuItems = ref([
     ],
   },
 ]);
+
+const dropdownStates = ref(menuItems.value.map(() => false));
+const loginDropdownState = ref(false);
+const hoverDropdown = (index, isHovering) => {
+  dropdownStates.value[index] = isHovering;
+};
+
+const hoverLoginDropdown = (state) => {
+  loginDropdownState.value = state;
+};
 </script>
 
 <style lang="scss">
@@ -268,7 +335,7 @@ const menuItems = ref([
 }
 
 .container-xxl {
-  margin-top: 50px !important;
+  margin-top: 60px !important;
 }
 </style>
 
@@ -280,6 +347,46 @@ const menuItems = ref([
 
 a.nav-link {
   color: black;
+}
+
+/* 드롭다운 메뉴 애니메이션 및 화살표 회전 */
+.appHeader a.nav-link.dropdown-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.appHeader a.nav-link i {
+  transition: transform 0.3s ease;
+}
+
+/* 아이콘이 부드럽게 회전하도록 설정 */
+.appHeader a.nav-link.dropdown-toggle[aria-expanded="true"] i {
+  transform: rotate(180deg);
+}
+
+/* 기타 스타일 */
+.header.navbar.navbar-expand-lg.fixed-top.bg-light {
+  --ar-navbar-toggler-padding-y: 0.625rem;
+}
+
+#headerLoginBtn{
+  width: 100px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid lightgrey;
+  background-color: rgba(67, 140, 116, 1);
+  text-align: center;
+  color:white;
+  padding: 5px;
+}
+
+#headerLoginBtn:hover{
+  color: black;
+  background-color: lightgrey;
+}
+.invetiLogo{
+  width: 100px;
 }
 </style>
 

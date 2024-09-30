@@ -340,4 +340,38 @@ h4 {
 template {
   margin-right: -20%;
 }
+<<<<<<< Updated upstream
 </style>
+=======
+
+
+
+.dicSubject{
+  height: 380px;
+  margin-right: 15px;
+  list-style: none;
+  padding: 20px;
+}
+
+.dicSubject h3 {
+  margin: 20px;
+  cursor: pointer;
+}
+
+.dicSubject li.active h3 {
+  text-decoration: underline;
+  color: rgba(68, 140, 116, 1);
+}
+
+.col-7 h2{
+  color: rgba(68, 140, 116, 1);
+  margin: 20px;
+}
+.col-7 p{
+  font-size: 20px;
+  margin: 20px;
+}
+
+
+</style>
+>>>>>>> Stashed changes
