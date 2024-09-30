@@ -17,17 +17,6 @@ import Calculator from '@/views/modal/Calculator.vue';
 import Deposit from '@/views/menu/desposit/Deposit.vue';
 import Fund from '@/views/menu/fund/Fund.vue';
 import ISA from '@/views/ISA.vue';
-<<<<<<< Updated upstream
-import FundDetail from '@/views/menu/fund/FundDetail.vue';
-import MyPage from '@/views/myPage/MyPage.vue';
-import MyPageContent from '@/views/myPage/MyPageContent.vue';
-import MyPagePanel from '@/views/myPage/MyPagePanel.vue';
-import MyPageSetting from '@/views/myPage/MyPageSetting.vue';
-import MyPageWithdraw from '@/views/myPage/MyPageWithdraw.vue';
-import MyPagePosts from '@/views/myPage/MyPagePosts.vue';
-import MyPageWarning from '@/views/myPage/MyPageWarning.vue';
-import DepositDetail from '@/views/menu/desposit/DepositDetail.vue';
-=======
 import FundDetail from "@/views/menu/fund/FundDetail.vue";
 import MyPage from "@/views/myPage/MyPage.vue";
 import MyPageContent from "@/views/myPage/MyPageContent.vue";
@@ -38,7 +27,6 @@ import MyPagePosts from "@/views/myPage/MyPagePosts.vue";
 import MyPageWarning from "@/views/myPage/MyPageWarning.vue";
 import DepositDetail from "@/views/menu/desposit/DepositDetail.vue";
 import SignCoverImage from "@/views/SignCoverImage.vue";
->>>>>>> Stashed changes
 
 const routes = [
   {
@@ -178,15 +166,12 @@ const routes = [
     name: 'myPageWarning',
     component: MyPageWarning,
   },
-<<<<<<< Updated upstream
-=======
   {
     path: '/signCoverImage',
     name: 'signCoverImage',
     component: SignCoverImage,
     meta: { hideHeaderFooter: true },
   }
->>>>>>> Stashed changes
 
   // 필요한 다른 라우트들을 여기에 추가할 수 있습니다.
 ];
