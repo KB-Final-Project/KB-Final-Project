@@ -3,7 +3,6 @@
 </script>
 
 <template>
-
   <div class="container text-center">
     <h1 class="d-inline">적금 </h1><p class="d-inline">당신의 꿈을 모아서</p>
     <br><br>
@@ -145,4 +144,10 @@
   --bs-pagination-hover-color:rgba(68, 140, 116, 1);
 
 }
+
+.container{
+  width: 80%;
+  padding-top: 80px;
+}
+
 </style>

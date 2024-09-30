@@ -19,7 +19,7 @@ import DepositDetail from '@/views/DepositDetail.vue';
 import Fund from '@/views/menu/fund/Fund.vue';
 import ISA from '@/views/ISA.vue';
 import FundDetail from '@/views/menu/fund/FundDetail.vue';
-import MyPage from '@/views/myPage/myPage.vue';
+import MyPage from '@/views/myPage/MyPage.vue';
 import MyPageContent from '@/views/myPage/MyPageContent.vue';
 import MyPagePanel from '@/views/myPage/MyPagePanel.vue';
 import MyPageSetting from '@/views/myPage/MyPageSetting.vue';
@@ -132,37 +132,37 @@ const routes = [
   },
   {
     path: '/myPage',
-    name: 'myPage',
+    name: 'MyPage',
     component: MyPage,
   },
   {
     path: '/myPageContent',
-    name: 'myPageContent',
+    name: 'MyPageContent',
     component: MyPageContent,
   },
   {
     path: '/myPagePanel',
-    name: 'myPagePanel',
+    name: 'MyPagePanel',
     component: MyPagePanel,
   },
   {
     path: '/myPageSetting',
-    name: 'myPageSetting',
+    name: 'MyPageSetting',
     component: MyPageSetting,
   },
   {
     path: '/myPageWithdraw',
-    name: 'myPageWithdraw',
+    name: 'MyPageWithdraw',
     component: MyPageWithdraw,
   },
   {
     path: '/myPagePosts',
-    name: 'myPagePosts',
+    name: 'MyPagePosts',
     component: MyPagePosts,
   },
   {
     path: '/myPageWarning',
-    name: 'myPageWarning',
+    name: 'MyPageWarning',
     component: MyPageWarning,
   },
 
