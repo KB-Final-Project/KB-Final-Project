@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class FundsDTO {
-    private Long id;
-    private String name;
-    private String type;
-    private Double amount;
+    private String fundFnm;
+    private double gijunGa;
+    private double suikRt3;
+    private double suikRt12;
 }

@@ -1,8 +1,10 @@
 package com.kb._config;
 
+import com.google.gson.Gson;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -11,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = "com.kb")
-public class WebMvcConfig implements WebMvcConfigurer {
+public class WebMvcConfig  implements WebMvcConfigurer {
 
     @Bean
     public InternalResourceViewResolver viewResolver() {
@@ -43,5 +45,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/META-INF/resources/");
     }
 
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    @Bean
+    public Gson gson() {
+        return new Gson();
+    }
 }
 
