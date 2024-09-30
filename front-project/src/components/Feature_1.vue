@@ -45,4 +45,7 @@ const buttonLink = ref('/test-start');
     margin-left: calc(-0.5* var(--bs-gutter-x));
     flex-direction: row-reverse;
 }
+.content{
+  padding: 0;
+}
 </style>

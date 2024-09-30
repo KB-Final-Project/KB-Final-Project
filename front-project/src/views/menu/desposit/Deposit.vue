@@ -8,23 +8,23 @@ const selectedBanks = ref([]);
 const selectedDurations = ref([]);
 const selectedInterestTypes = ref([]);
 
+
 const removeFilter = (arrayRef, value) => {
-  // 배열이 정의되어 있는지 확인
-  if (!arrayRef || !Array.isArray(arrayRef.value)) {
+  if (!arrayRef || !Array.isArray(arrayRef)) {
     console.error('arrayRef is not defined or not an array:', arrayRef);
-    return; // 함수 종료
+    return;
   }
-  const index = arrayRef.value.indexOf(value);
+  const index = arrayRef.indexOf(value);
   if (index !== -1) {
-    arrayRef.value.splice(index, 1);
+    arrayRef.splice(index, 1);
   }
 };
 
 // 제1금융권 목록을 정의
 const firstTierBanks = ref([
   '국민은행', '신한은행', '하나은행', '우리은행', '농협은행', '기업은행', '수협은행',
-  'SC 제일은행', '토스뱅크', '경남은행', '광주은행', 'KDB 산업은행', '케이뱅크', 'IM 뱅크',
-  '카카오뱅크', '제주은행', '부산은행', '씨티은행', '전북은행', '씨티은행'
+  'SC제일은행', '토스뱅크', '경남은행', '광주은행', 'KDB산업은행', '케이뱅크', 'IM뱅크',
+  '카카오뱅크', '제주은행', '부산은행', '씨티은행', '전북은행'
 ]);
 
 // 체크박스 선택 처리 함수 (선택 또는 해제)
@@ -81,12 +81,6 @@ const resetInput = (event) => {
   event.target.classList.remove('highlight');
 };
 
-const clearFilter = () => {
-  selectedBanks.value = [];
-  selectedDurations.value = [];
-  selectedInterestTypes.value = [];
-};
-
 
 </script>
 
@@ -123,32 +117,31 @@ const clearFilter = () => {
               <label :for="'bank' + index" :class="{ 'selected': selectedBanks.includes(bank) }">{{ bank }}</label>
             </div>
           </li>
-          <li><br></li>
 
           <!-- 저축 기간 필터 -->
           <li>
             <h4 style="font-weight: 700;">저축 기간</h4>
             <button class="filterBtn" @click="selectAllDurations">전체</button>
-            <div class="filter d-inline"  v-for="duration in ['1개월', '3개월', '6개월', '12개월', '24개월', '36개월']" :key="duration">
+            <div class="filter d-inline" v-for="duration in ['1개월', '3개월', '6개월', '12개월', '24개월', '36개월']" :key="duration">
               <input type="checkbox" :id="'duration' + duration" @change="selectDuration(duration)" :checked="selectedDurations.includes(duration)" />
               <label :for="'duration' + duration" :class="{ 'selected': selectedDurations.includes(duration) }">{{ duration }}</label>
             </div>
           </li>
-          <li><br></li>
 
           <!-- 이자 유형 필터 -->
           <li>
             <h4 style="font-weight: 700;">이자 유형</h4>
             <button class="filterBtn" @click="selectAllInterestTypes">전체</button>
-            <div  class="filter d-inline" >
+            <div class="filter d-inline">
               <input type="checkbox" id="interest1" @change="selectInterestType('단리')" :checked="selectedInterestTypes.includes('단리')" />
               <label for="interest1" :class="{ 'selected': selectedInterestTypes.includes('단리') }">단리</label>
             </div>
-            <div  class="filter d-inline" >
+            <div class="filter d-inline">
               <input type="checkbox" id="interest2" @change="selectInterestType('복리')" :checked="selectedInterestTypes.includes('복리')" />
               <label for="interest2" :class="{ 'selected': selectedInterestTypes.includes('복리') }">복리</label>
             </div>
           </li>
+
         </ul>
         <div class="checkedFilterBox">
           <div
@@ -156,24 +149,36 @@ const clearFilter = () => {
               v-if="selectedBanks.length || selectedDurations.length || selectedInterestTypes.length"
           >
             <Swiper
-                :slides-per-view="8"
-                :space-between="5"
+                :space-between="10"
+                :loop="false"
+                :slides-per-view="7"
+                :centered-slides="false"
+                :edge-swipe-detection="true"
                 :pagination="{ clickable: true }"
             >
+              <!-- 선택된 은행 -->
               <SwiperSlide v-for="(bank, index) in selectedBanks" :key="'bank' + index">
-                <div class="checkedFilter">{{ bank }} <button @click="removeFilter(selectedBanks, bank)">X</button></div>
+                <div class="checkedFilter">
+                  {{ bank }} <button @click="removeFilter(selectedBanks, bank)">X</button>
+                </div>
               </SwiperSlide>
+
+              <!-- 선택된 저축 기간 -->
               <SwiperSlide v-for="(duration, index) in selectedDurations" :key="'duration' + index">
-                <div class="checkedFilter">{{ duration }} <button @click="removeFilter(selectedDurations, duration)">X</button></div>
+                <div class="checkedFilter">
+                  {{ duration }} <button @click="removeFilter(selectedDurations, duration)">X</button>
+                </div>
               </SwiperSlide>
+
+              <!-- 선택된 이자 유형 -->
               <SwiperSlide v-for="(type, index) in selectedInterestTypes" :key="'type' + index">
-                <div class="checkedFilter">{{ type }} <button @click="removeFilter(selectedInterestTypes, type)">X</button></div>
+                <div class="checkedFilter">
+                  {{ type }} <button @click="removeFilter(selectedInterestTypes, type)">X</button>
+                </div>
               </SwiperSlide>
             </Swiper>
           </div>
         </div>
-        <!-- 필터 초기화 버튼 추가 -->
-        <button class="clear-filter" @click="clearFilter">필터 초기화</button>
       </div>
       <!-- 선택된 필터를 나열 -->
       <div class="toggle-wrapper">
@@ -193,50 +198,50 @@ const clearFilter = () => {
         <div class="itemBox col"><div class="p-3">content</div></div>
         <div class="itemBox col"><div class="p-3">content</div></div>
       </div>
+      <br>
+      <div class="itemBoxDiv row g-lg-3 gap-3">
+        <div class="itemBox col"><div class="p-3">content</div></div>
+        <div class="itemBox col"><div class="p-3">content</div></div>
+        <div class="itemBox col"><div class="p-3">content</div></div>
+      </div>
+
     </div>
   </div>
 </template>
 
 <style scoped>
-.highlight {
-  background-color: lightgreen;
-}
 
 .checkedFilterBox {
   margin-top: 10px;
 }
 
 .selected-filters {
-  display: flex;
-  overflow-x: auto;
+  text-align: start;
+  width: 850px;
+  margin-left: 200px;
 }
 
 .checkedFilter {
-  background-color: #e0f7fa;
-  border: 1px solid #00796b;
-  border-radius: 5px;
-  padding: 5px 10px;
-  margin-right: 5px;
-  display: inline-flex;
-  align-items: center;
+  background-color: rgba(68, 140, 116, 1);
+  color: white;
+  font-size: 12px;
+  border: 1px solid #bebebe;
+  border-radius: 20px;
+  padding-left: 22px;
+  padding-top: 10px;
+  width: 120px;
+  height: 40px;
+  text-align: start;
+  margin-left: 20px;
 }
 
 .checkedFilter button {
   background-color: transparent;
   border: none;
-  margin-left: 5px;
   cursor: pointer;
-  color: #f44336;
+  color:  white;
 }
 
-.clear-filter {
-  margin-top: 10px;
-  padding: 5px 10px;
-  background-color: #ffeb3b;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
 
 .filter label{
   width: 130px;
@@ -303,9 +308,11 @@ input[type="checkbox"] {
   background-color: white;
 }
 
+
 .savingsContent{
   background-color: rgba(247, 249, 252, 1);
   border-radius: 30px;
+  padding: 50px;
 }
 
 .themeItem{
@@ -365,6 +372,18 @@ input[type="checkbox"] {
 .container{
   width: 80%;
   padding-top: 80px;
+}
+
+.selected {
+  background-color: rgba(68, 140, 116, 1) !important;
+  color: white;
+  border: 1px solid rgba(68, 140, 116, 1);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.selected:hover {
+  background-color: white;
+  border: 1px solid rgba(48, 120, 96, 1);
 }
 
 </style>
