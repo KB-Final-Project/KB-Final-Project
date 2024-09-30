@@ -27,7 +27,7 @@ export default {
 @import './assets/css/style.bundle';
 
 .content {
-  padding-top: 80px; /* 헤더의 높이에 맞게 조정 */
+  padding-top: 80px;
 }
 
 </style>
