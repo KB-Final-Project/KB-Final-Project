@@ -1,7 +1,6 @@
 package com.kb.financialTerms.service;
 
 import com.kb.financialTerms.dto.TermsDTO;
-import com.kb.financialTerms.mapper.FinancialTermsMapper;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,8 +15,6 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @RequiredArgsConstructor
 public class FinancialTermsService {
-    private final FinancialTermsMapper financialTermsMapper;
-
     public List<TermsDTO> crawlAndGetTerms() {
         List<TermsDTO> termsList = new ArrayList<>();
         String baseUrl = "https://www.fsc.go.kr/in090301?curPage=";
@@ -69,8 +66,8 @@ public class FinancialTermsService {
             futures.add(future);
 
             // 최대 페이지 수 설정
-            if (page >= 10) {
-                break; // 최대 10페이지 크롤링
+            if (page >= 30) {
+                break; // 최대 30페이지 크롤링
             }
         }
 
