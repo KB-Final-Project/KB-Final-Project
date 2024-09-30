@@ -67,7 +67,7 @@ public class FinancialTermsService {
 
             // 최대 페이지 수 설정
             if (page >= 30) {
-                break; // 최대 10페이지 크롤링
+                break; // 최대 30페이지 크롤링
             }
         }
 
