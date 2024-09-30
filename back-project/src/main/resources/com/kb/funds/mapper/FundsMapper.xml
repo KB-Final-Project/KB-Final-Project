@@ -6,7 +6,7 @@
 <mapper namespace="com.kb.funds.mapper.FundsMapper">
     <!-- 펀드 추가 -->
     <insert id="insertFund" parameterType="com.kb.funds.dto.FundsDTO">
-        INSERT INTO funds (name, other_columns) VALUES (#{name}, #{otherField})
+        INSERT INTO funds (fundFnm, gijunGa, suikRt3, suikRt12) VALUES (#{fundFnm}, #{gijunGa}, #{suikRt3}, #{suikRt12})
     </insert>
 
     <!-- 키워드로 펀드 검색 -->
