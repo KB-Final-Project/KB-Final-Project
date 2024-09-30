@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kb.exchange.mapper.ExchangeMapper">
+
+    <resultMap id="ExchangeResultMap" type="com.kb.exchange.dto.Exchange">
+        <id property="rateId" column="rate_id"/>
+        <result property="currencyId" column="currency_id"/>
+        <result property="receivingPrice" column="buy_rate"/>
+        <result property="sendingPrice" column="sell_rate"/>
+        <result property="basePrice" column="base_rate"/>
+        <result property="exchangeRateDate" column="exchange_date"/>
+    </resultMap>
+
+    <insert id="insertExchangeRate" parameterType="com.kb.exchange.dto.Exchange">
+        INSERT INTO
+            exchange_rates (currency_id, buy_rate, sell_rate, base_rate, exchange_date)
+        VALUES
+            (#{currencyId}, #{receivingPrice}, #{sendingPrice}, #{basePrice}, #{exchangeRateDate})
+    </insert>
+</mapper>
