@@ -14,10 +14,74 @@
         <result property="exchangeRateDate" column="exchange_date"/>
     </resultMap>
 
+    <resultMap id="ExchangeDailyResultMap" type="com.kb.exchange.dto.ExchangeDailyDTO">
+        <result property="dailyChangeRate" column="dailyChangeRate"/>
+        <association property="exchange" javaType="com.kb.exchange.dto.Exchange">
+            <result property="rateId" column="rate_id"/>
+            <result property="currencyId" column="currency_id"/>
+            <result property="receivingPrice" column="buy_rate"/>
+            <result property="sendingPrice" column="sell_rate"/>
+            <result property="basePrice" column="base_rate"/>
+            <result property="exchangeRateDate" column="exchange_date"/>
+        </association>
+    </resultMap>
+
+    <select id="getDailyExchange" resultMap="ExchangeDailyResultMap">
+        SELECT
+    <![CDATA[
+            current.rate_id,
+            current.currency_id,
+            current.buy_rate,
+            current.sell_rate,
+            current.base_rate,
+            current.exchange_date,
+            CASE
+                WHEN previous.base_rate IS NOT NULL THEN
+                    (current.base_rate - previous.base_rate) * 100 / previous.base_rate
+                ELSE
+                    NULL
+                END AS dailyChangeRate
+        FROM
+            (
+                SELECT
+                    rate_id,
+                    currency_id,
+                    buy_rate,
+                    sell_rate,
+                    base_rate,
+                    exchange_date,
+                    ROW_NUMBER() OVER (PARTITION BY currency_id ORDER BY exchange_date DESC) AS rn
+                FROM
+                    EXCHANGE_RATES
+                WHERE
+                    exchange_date <= CURDATE()
+            ) AS current
+                LEFT JOIN
+            (
+                SELECT
+                    rate_id,
+                    currency_id,
+                    buy_rate,
+                    sell_rate,
+                    base_rate,
+                    exchange_date,
+                    ROW_NUMBER() OVER (PARTITION BY currency_id ORDER BY exchange_date DESC) AS rn
+                FROM
+                    EXCHANGE_RATES
+                WHERE
+                    exchange_date < CURDATE()
+            ) AS previous
+            ON current.currency_id = previous.currency_id AND previous.rn = 2
+        WHERE current.rn = 1;
+        ]]>
+    </select>
+
+
     <insert id="insertExchangeRate" parameterType="com.kb.exchange.dto.Exchange">
         INSERT INTO
             exchange_rates (currency_id, buy_rate, sell_rate, base_rate, exchange_date)
         VALUES
             (#{currencyId}, #{receivingPrice}, #{sendingPrice}, #{basePrice}, #{exchangeRateDate})
     </insert>
+
 </mapper>

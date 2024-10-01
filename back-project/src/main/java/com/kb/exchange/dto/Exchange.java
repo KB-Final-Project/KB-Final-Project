@@ -1,10 +1,11 @@
 package com.kb.exchange.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.sql.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,4 +17,5 @@ public class Exchange {
     private double sendingPrice;
     private double basePrice;
     private Date exchangeRateDate;
+
 }

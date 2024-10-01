@@ -2,6 +2,7 @@ package com.kb.exchange.service;
 
 import com.kb.exchange.dto.Exchange;
 import com.kb.exchange.dto.ExchangeApiResponse;
+import com.kb.exchange.dto.ExchangeDailyDTO;
 import com.kb.exchange.mapper.ExchangeMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -13,9 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.text.ParseException;
+import java.sql.Date;  // java.sql.Date 임포트
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Log4j
 @Service
@@ -43,39 +47,40 @@ public class ExchangeService {
 
     private final ExchangeMapper mapper;
 
-//    public void fetchAndSaveExchangeRates() {  // 일년치 데이터 저장
-//        RestTemplate restTemplate = new RestTemplate();
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-//
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.add(Calendar.DATE, -1);
-//
-//        for (int i = 0; i < 365; i++) {
-//            String searchDate = dateFormat.format(calendar.getTime());
-//
-//            String apiUrl = API_URL + "?authkey=" + API_KEY + "&searchdate=" + searchDate + "&data=" + DATA_TYPE;
-//            ExchangeApiResponse[] responses = restTemplate.getForObject(apiUrl, ExchangeApiResponse[].class);
-//
-//            if (responses != null && responses.length > 0) {
-//                for (ExchangeApiResponse response : responses) {
-//                    String curUnit = response.getCurUnit();
-//                    Integer curNm = CURRENCY_MAP.get(curUnit);
-//                    if(curNm != null){
-//                        saveExchangeData(curNm, response, calendar.getTime());
-//                    }
-//                    else {
-//                        log.warn("일치하는 환율 없음");
-//                    }
-//                }
-//            } else {
-//                log.warn("데이터 없음");
-//            }
-//            calendar.add(Calendar.DATE, -1);
-//        }
-//    }
+    public void fetchAndSaveExchangeRates() {
+        RestTemplate restTemplate = new RestTemplate();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 
-    // 매일 12시(정오)에 실행 (월요일엔 주말까지 저장)
-    @Scheduled(cron = "0 0 12 * * *")
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -1);
+
+        for (int i = 0; i < 1; i++) {
+            String searchDate = dateFormat.format(calendar.getTime());
+
+            String apiUrl = API_URL + "?authkey=" + API_KEY + "&searchdate=" + searchDate + "&data=" + DATA_TYPE;
+            ExchangeApiResponse[] responses = restTemplate.getForObject(apiUrl, ExchangeApiResponse[].class);
+
+            if (responses != null && responses.length > 0) {
+                for (ExchangeApiResponse response : responses) {
+                    String curUnit = response.getCurUnit();
+                    Integer curNm = CURRENCY_MAP.get(curUnit);
+                    if(curNm != null){
+                        // Calendar에서 java.sql.Date로 변환
+                        Date exchangeRateDate = new Date(calendar.getTimeInMillis());
+                        saveExchangeData(curNm, response, exchangeRateDate);
+                    }
+                    else {
+                        log.warn("일치하는 환율 없음");
+                    }
+                }
+            } else {
+                log.warn("데이터 없음");
+            }
+            calendar.add(Calendar.DATE, -1);
+        }
+    }
+
+    @Scheduled(cron = "0 0 13 * * *")
     public void fetchAndSaveExchangeRatesDaily() {
         Calendar calendar = Calendar.getInstance();
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
@@ -110,8 +115,10 @@ public class ExchangeService {
                 for (ExchangeApiResponse response : responses) {
                     String curUnit = response.getCurUnit();
                     if (curUnit != null) {
+                        // Calendar에서 java.sql.Date로 변환
+                        Date exchangeRateDate = new Date(calendar.getTimeInMillis());
                         // 데이터를 저장하는 로직
-                        saveExchangeData(CURRENCY_MAP.get(curUnit), response, calendar.getTime());
+                        saveExchangeData(CURRENCY_MAP.get(curUnit), response, exchangeRateDate);
                     } else {
                         log.warn("일치하는 환율 없음");
                     }
@@ -121,10 +128,10 @@ public class ExchangeService {
             }
 
         } catch (RestClientException e) {
-            log.error("환율 API 호출 중 오류 발생");
+            log.error("환율 API 호출 중 오류 발생 : " + e);
 
         } catch (Exception e) {
-            log.error("알 수 없는 오류 발생", e);
+            log.error("알 수 없는 오류 발생 : " + e);
         }
     }
 
@@ -141,4 +148,9 @@ public class ExchangeService {
         mapper.insertExchangeRate(exchange);
     }
 
+    public List<ExchangeDailyDTO> getDailyExchange(){
+        List<ExchangeDailyDTO> list = mapper.getDailyExchange();
+        log.info(list);
+        return list;
+    }
 }
