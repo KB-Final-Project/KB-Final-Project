@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import com.kb.funds.dto.FundsDTO;
 import com.kb.funds.mapper.FundsMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -54,6 +55,11 @@ public class FundsService {
         System.out.println("Crawled Funds: " + fundList);
         return fundList;
     }
+
+//    @Scheduled(fixedRate = 3600000) // 1시간마다 실행
+//    public void scheduleCrawl() {
+//        crawlAndSaveFunds();
+//    }
 
     public List<FundsDTO> searchFunds(String keyword) {
         return fundsMapper.searchFunds(keyword);
