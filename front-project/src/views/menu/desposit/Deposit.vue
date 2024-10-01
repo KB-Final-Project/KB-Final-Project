@@ -1,19 +1,7 @@
 <script setup>
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/swiper-bundle.css';
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
-import { useRoute } from 'vue-router';
-
-const savings = ref([]);
-const loading = ref(true);
-const pageInfo = ref({});
-
-// eslint-disable-next-line no-unused-vars
-const route = useRoute();
-const currentPage = ref(1);
-const saveTerm = 36; // 기본 저축기간
-const interestRateType = '단리'; // 기본 금리 방식
+import { ref } from 'vue';
 
 // 선택된 은행, 저축 기간, 이자 유형을 추적
 const selectedBanks = ref([]);
@@ -94,77 +82,19 @@ const resetInput = (event) => {
 };
 
 
-const fetchSavings = async (page = 1) => {
-  loading.value = true;
-  try {
-    const response = await axios.get('saving/deposit/', {
-      params: {
-        page: page,
-        saveTerm: saveTerm,
-        interestRateType: interestRateType,
-      },
-    });
-    savings.value = response.data.savings;
-    pageInfo.value = response.data.pageInfo;
-  } catch (error) {
-    console.error('적금 상품 목록을 가져오는 중 오류 발생:', error);
-  } finally {
-    loading.value = false;
-  }
-};
-
-onMounted(() => {
-  fetchSavings(currentPage.value);
-});
-
 </script>
 
 <template>
   <div class="container text-center">
-    <h1 class="d-inline">적금 </h1><p class="d-inline">나만의 큰 꿈을 모아서</p>
+    <h1 class="d-inline">예금 </h1><p class="d-inline">열심히 모은 꿈을 더 크게</p>
     <br><br>
     <div class="savingBest">
       <div class="text-start">
         <h2>ㅇㅇㅇ성향 고객님들이 선택한 BEST 인기상품</h2>
-        <h4>가장 많이 사랑 받은 적금 상품</h4><br><br>
+        <h4>가장 많이 사랑 받은 예금 상품</h4><br><br>
       </div>
       <div class="itemBoxDiv row g-3 gap-3">
-        <div class="itemBox col">
-          <div class="p-3 m-6">
-            <div v-if="loading">로딩 중...</div>
-              <div v-else>
-                <div v-for="saving in savings" :key="saving.id">
-                <table class="savingRank text-start">
-                  <tbody>
-                    <tr>
-                      <td colspan="2" class="savingDepositMethod">
-                        <div class="savingMethod text-center">{{ saving.joinWay }}</div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colspan="2" class="bankLogo"><img style="height: 25px;" src="/img/banklogo/kb.png"></td>
-                    </tr>
-                    <tr>
-                      <td colspan="2" style="width: 300px;"><h2 class="savingName">국민은행적금</h2><br></td>
-                    </tr>
-                    <tr>
-                      <td><h3 style="font-weight: 600">{{ saving.interestRateType }}</h3></td>
-                      <td><h3 class="d-inline" style="color: rgba(68, 140, 116, 1);">3</h3><h3 class="d-inline">개월</h3></td>
-                    </tr>
-                    <tr style="color:grey">
-                      <td><h3>기본금리</h3></td>
-                      <td><h3>최고금리</h3></td>
-                    </tr>
-                    <tr>
-                      <td><h3>1.3%</h3></td>
-                      <td><h3>5.6%</h3></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-           </div>
-          </div>
+        <div class="itemBox col"><div class="p-3">content</div></div>
         <div class="itemBox col"><div class="p-3">content</div></div>
         <div class="itemBox col"><div class="p-3">content</div></div>
       </div>
@@ -186,7 +116,7 @@ onMounted(() => {
               <input type="checkbox" :id="'bank' + index" @change="selectBank(bank)" :checked="selectedBanks.includes(bank)" />
               <label :for="'bank' + index" :class="{ 'selected': selectedBanks.includes(bank) }">{{ bank }}</label>
             </div>
-          </li><br>
+          </li>
 
           <!-- 저축 기간 필터 -->
           <li>
@@ -196,7 +126,7 @@ onMounted(() => {
               <input type="checkbox" :id="'duration' + duration" @change="selectDuration(duration)" :checked="selectedDurations.includes(duration)" />
               <label :for="'duration' + duration" :class="{ 'selected': selectedDurations.includes(duration) }">{{ duration }}</label>
             </div>
-          </li><br>
+          </li>
 
           <!-- 이자 유형 필터 -->
           <li>
@@ -274,39 +204,12 @@ onMounted(() => {
         <div class="itemBox col"><div class="p-3">content</div></div>
         <div class="itemBox col"><div class="p-3">content</div></div>
       </div>
+
     </div>
   </div>
 </template>
 
 <style scoped>
-
-.savingRank{
-  margin: 20px;
-  border-collapse: separate;
-  border-spacing: 5px 0px;
-}
-
-.savingName{
-  color:rgba(68, 140, 116, 1);
-  font-weight: 700;
-  text-align: start;
-}
-
-.savingDepositMethod {
-  position: relative;
-}
-
-.savingMethod {
-  position: absolute;
-  top: -10px;
-  right: -20px;
-  border-radius: 20px;
-  border: 1px solid lightgrey;
-  width: 70px;
-}
-.savingRank>tbody tr{
-  padding: 20px;
-}
 
 .checkedFilterBox {
   margin-top: 10px;
@@ -338,6 +241,7 @@ onMounted(() => {
   cursor: pointer;
   color:  white;
 }
+
 
 .filter label{
   width: 130px;
@@ -399,10 +303,9 @@ input[type="checkbox"] {
   border: 1px solid rgba(231, 236, 243, 1);
   border-radius: 30px;
   display: inline-block;
-  width: 300px;
-  height: 300px;
+  width: 350px;
+  height: 350px;
   background-color: white;
-  padding-left:30px;
 }
 
 

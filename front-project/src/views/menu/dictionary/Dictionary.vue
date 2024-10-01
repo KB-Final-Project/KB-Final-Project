@@ -1,139 +1,192 @@
+<template>
+  <div class="bc">
+    <div class="container text-center">
+      <h1>용어 사전</h1><br><br>
+      <div class="dic">
+        <br>
+        <table class="text-start">
+          <tbody>
+          <tr class="firstFilter">
+            <td>
+              <h4>금융용어</h4>
+            </td>
+            <td>
+              <div class="searchBar">
+                <input
+                    class="search"
+                    placeholder="키워드를 입력해주세요"
+                    v-model="searchTerm"
+                    @input="filterTerms"
+                />
+                <button type="button" class="searchBtn" @click="filterTerms">검색</button>
+              </div>
+            </td>
+          </tr>
+          <tr class="firstFilter">
+            <td style="width: 15%;">
+              <h4>한글 순</h4>
+            </td>
+            <td>
+              <button
+                  v-for="hangul in hangulList"
+                  :key="hangul"
+                  :class="{ 'activeBtn': selectedHangul === hangul }"
+                  class="hangul"
+                  @click="filterTermsByHangul(hangul)"
+              >{{ hangul }}</button>
+            </td>
+          </tr>
+          <tr class="firstFilter">
+            <td>
+              <h4>알파벳 순</h4>
+            </td>
+            <td>
+              <button
+                  v-for="alphabet in alphabetList"
+                  :key="alphabet"
+                  :class="{ 'activeBtn': selectedAlphabet === alphabet }"
+                  class="hangul"
+                  @click="filterTermsByAlphabet(alphabet)"
+              >{{ alphabet }}</button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <br>
+      </div>
+      <br>
+      <h5 class="text-end" style="width: 93%;"><i class="ai-search"></i>"{{ searchTerm }}{{selectedHangul}}{{selectedAlphabet}}" 검색 결과 "{{ filteredTerms.length }}"건의 정보가 검색되었습니다.</h5>
+      <div class="row">
+        <div class="p-2 col-4 scrollbar">
+          <ul class="text-start dicSubject">
+            <li v-if="filteredTerms.length === 0">
+              <h3>검색된 검색어가 없습니다.</h3>
+            </li>
+            <li v-for="(term, index) in filteredTerms"
+                :key="index"
+                @click="selectTerm(term)"
+                :class="{ 'active': selectedTerm === term }">
+              <h3>{{ term.termName }}</h3>
+            </li>
+          </ul>
+        </div>
+        <div class="p-2 col-7 text-start">
+          <span v-if="filteredTerms.length === 0">
+            <h3  class="test-center m-5">검색된 검색어가 없습니다.</h3>
+          </span>
+          <h2 v-if="selectedTerm">{{ selectedTerm.termName }}</h2>
+          <p v-if="selectedTerm">{{ selectedTerm.termDescription }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script>
 import axios from 'axios';
 
 export default {
+  data() {
+    return {
+      terms: [],
+      filteredTerms: [],
+      selectedTerm: null,
+      searchTerm: '',
+      selectedHangul: null,
+      selectedAlphabet: null,
+      error: null,
+      loading: true,
+      hangulList: ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'],
+      alphabetList: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    };
+  },
+  mounted() {
+    this.fetchTerms();
+  },
   methods: {
     async fetchTerms() {
+      this.loading = true;
       try {
-        const response = await axios.get('http://localhost:8081/api/terms/getTerms'); // API URL
-        console.log(response);
+        const response = await axios.get('/api/terms/getTerms');
         this.terms = response.data;
+        this.filteredTerms = response.data;
+
+        // 용어가 존재하면 첫 번째 용어를 기본 선택
+        if (this.filteredTerms.length > 0) {
+          this.selectedTerm = this.filteredTerms[0];
+        }
       } catch (err) {
         this.error = err;
       } finally {
         this.loading = false;
       }
     },
-  }
-}
+    // 초성 추출 함수
+    getInitialConsonant(char) {
+      const initialConsonants = [
+        'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ',
+        'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'
+      ];
+
+      const code = char.charCodeAt(0) - 44032; // 한글 유니코드 시작점
+      if (code >= 0 && code <= 11171) {
+        const initialIndex = Math.floor(code / 588); // 초성 추출
+        return initialConsonants[initialIndex];
+      }
+      return char; // 한글이 아니면 그대로 반환
+    },
+    // 한글 자음으로 필터링
+    filterTermsByHangul(hangul) {
+      this.selectedHangul = hangul;
+      this.selectedAlphabet = null;
+      this.filteredTerms = this.terms.filter(term =>
+          this.getInitialConsonant(term.termName[0]) === hangul
+      );
+      this.selectedTerm = this.filteredTerms.length > 0 ? this.filteredTerms[0] : null;
+    },
+    // 알파벳으로 필터링
+    filterTermsByAlphabet(alphabet) {
+      this.selectedAlphabet = alphabet;
+      this.selectedHangul = null;
+      this.filteredTerms = this.terms.filter(term =>
+          term.termName[0].toUpperCase() === alphabet
+      );
+      this.selectedTerm = this.filteredTerms.length > 0 ? this.filteredTerms[0] : null;
+    },
+    filterTerms() {
+      const search = this.searchTerm.toLowerCase();
+      this.filteredTerms = this.terms.filter(term =>
+          term.termName.toLowerCase().includes(search)
+      );
+      this.selectedTerm = this.filteredTerms.length > 0 ? this.filteredTerms[0] : null;
+    },
+    selectTerm(term) {
+      this.selectedTerm = term;
+    },
+  },
+};
 </script>
 
-<template>
-  <div class="container text-center">
-    <h1>용어 사전</h1><br><br>
-    <div class="dic">
-      <br>
-      <table class="text-start">
-        <tbody>
-        <tr class="firstFilter">
-          <td>
-            <h4>금융용어</h4>
-          </td>
-          <td>
-            <div class="searchBar">
-              <i class="ai-search"></i>
-              <input class="search" placeholder="키워드를 입력해주세요">
-              <button type="button" class="searchBtn">검색</button>
-            </div>
-          </td>
-        </tr>
-        <tr class="firstFilter">
-          <td>
-            <h4>한글 순</h4>
-          </td>
-          <td>
-            <button class="hangul">ㄱ</button>
-            <button class="hangul">ㄴ</button>
-            <button class="hangul">ㄷ</button>
-            <button class="hangul">ㄹ</button>
-            <button class="hangul">ㅁ</button>
-            <button class="hangul">ㅂ</button>
-            <button class="hangul">ㅅ</button>
-            <button class="hangul">ㅇ</button>
-            <button class="hangul">ㅈ</button>
-            <button class="hangul">ㅊ</button>
-            <button class="hangul">ㅋ</button>
-            <button class="hangul">ㅌ</button>
-            <button class="hangul">ㅍ</button>
-            <button class="hangul">ㅎ</button>
-          </td>
-        </tr>
-        <tr class="firstFilter">
-          <td>
-            <h4>알파벳 순</h4>
-          </td>
-          <td>
-            <button class="hangul">A</button>
-            <button class="hangul">B</button>
-            <button class="hangul">C</button>
-            <button class="hangul">D</button>
-            <button class="hangul">E</button>
-            <button class="hangul">F</button>
-            <button class="hangul">G</button>
-            <button class="hangul">H</button>
-            <button class="hangul">I</button>
-            <button class="hangul">J</button>
-            <button class="hangul">K</button>
-            <button class="hangul">L</button>
-            <button class="hangul">M</button>
-            <button class="hangul">N</button>
-          </td>
-        </tr>
-        <tr class="firstFilter">
-          <td></td>
-          <td>
-            <button class="hangul">O</button>
-            <button class="hangul">P</button>
-            <button class="hangul">Q</button>
-            <button class="hangul">R</button>
-            <button class="hangul">S</button>
-            <button class="hangul">T</button>
-            <button class="hangul">U</button>
-            <button class="hangul">V</button>
-            <button class="hangul">W</button>
-            <button class="hangul">X</button>
-            <button class="hangul">Y</button>
-            <button class="hangul">Z</button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-      <br>
-    </div>
-    <br>
-    <h5 class="text-end" style="width: 93%;"><i class="ai-search"></i>"ㄱ" 검색 결과 "152"건의 정보가 검색되었습니다.</h5>
-    <br><br>
-    <div class="row">
-      <div class="p-2 col-4">
-        검색결과
-      </div>
-      <div class="p-2 col-7">
-        검색내용
-      </div>
-    </div>
-  </div>
-
-
-  <div>
-    <button @click="fetchTerms">Terms</button>
-    <ul v-if="!loading">
-      <li v-for="(term, index) in terms" :key="index">{{ term.name }}</li> <!-- term.name을 필요한 필드로 바꿔주세요 -->
-    </ul>
-    <p v-else>Loading...</p>
-    <p v-if="error">Error: {{ error.message }}</p>
-  </div>
-
-</template>
-
 <style scoped>
+
+
+.active {
+  text-decoration: underline;
+}
+.scrollbar {
+  overflow-y: scroll;
+}
+.scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
+}
 
 .dic{
   border: 1px solid lightgrey;
   border-radius: 30px;
   margin-left : 30px;
+  padding: 20px;
   width: 91%;
 }
-
 
 .row{
   width: 99%;
@@ -155,7 +208,7 @@ export default {
 }
 
 .searchBtn{
-  display: inline;
+  display: inline-block;
   width: 80px;
   height: 40px;
   color: white;
@@ -170,7 +223,7 @@ export default {
 }
 
 table{
-  margin-left: 7%;
+  margin-left: 8%;
 }
 
 .ai-search{
@@ -179,20 +232,23 @@ table{
 
 .searchBar{
   display:flex;
-  width: 100%;
+  width: 80%;
   height: 50px;
   border: 1px solid rgba(215, 221, 227, 1);
   border-radius: 30px;
   align-items: center;
+  margin-bottom: 20px;
 }
 
 h4{
-  margin: 30px;
+  margin-right: 2%;
 }
+
 .search{
   border: none;
-  width: 100%;
+  width: 89%;
   height: 40px;
+  margin: 20px;
 }
 
 .hangul{
@@ -203,17 +259,42 @@ h4{
   border-radius: 10px;
 }
 
-.hangul:active{
+.activeBtn {
   background-color: rgba(68, 140, 116, 1);
   color: white;
 }
 
 template{
-  margin-right: -20%;
+  margin: 0 auto;
 }
 
-.container{
-  padding-top: 80px;
+
+
+.dicSubject{
+  height: 380px;
+  margin-right: 15px;
+  list-style: none;
+  padding: 20px;
 }
+
+.dicSubject h3 {
+  margin: 20px;
+  cursor: pointer;
+}
+
+.dicSubject li.active h3 {
+  text-decoration: underline;
+  color: rgba(68, 140, 116, 1);
+}
+
+.col-7 h2{
+  color: rgba(68, 140, 116, 1);
+  margin: 20px;
+}
+.col-7 p{
+  font-size: 20px;
+  margin: 20px;
+}
+
 
 </style>

@@ -25,7 +25,6 @@
           :centeredSlides="true"
           :spaceBetween="20"
           loop
-          pagination
           style="padding-left: 450px;"
       >
       <SwiperSlide class="sliders" style="background-color: rgba(67, 140, 116, 1);" @click="FundDetail({type : '1', name: '지수형 펀드', img: '/img/emoji/fund4.PNG'})">
@@ -51,7 +50,6 @@
           :centeredSlides="true"
           :spaceBetween="20"
           loop
-          pagination
           style="padding-left: 400px;"
       >
         <SwiperSlide class="sliders" style="background-color: rgba(67, 140, 116, 1);" @click="FundDetail({type: '4', name: '유명산업펀드 ', img: '/img/emoji/fund2.PNG'})">
@@ -74,7 +72,6 @@
           :centeredSlides="true"
           :spaceBetween="20"
           loop
-          pagination
           style="padding-left: 380px;"
       >
         <SwiperSlide class="sliders" style="background-color: rgba(111, 186, 161, 1);" @click="FundDetail({type: '6', name: '퇴직연금 펀드 ', img: '/img/emoji/fund5.PNG'})">
@@ -97,7 +94,6 @@
           :centeredSlides="true"
           :spaceBetween="20"
           loop
-          pagination
           style="padding-left: 450px;"
       >
         <SwiperSlide class="sliders" style="background-color: rgba(111, 186, 161, 1);" @click="FundDetail({type: '8', name: 'EMP 펀드 ', img: '/img/emoji/bank.png'})">
@@ -120,6 +116,8 @@
         <input class="searchBar" type="text" placeholder="검색어를 입력해주세요"/>
         <button class="searchBtn" type="submit">검색</button>
       </div>
+
+
       <div class="fundSearchResult text-start">
         <h5>ㅇㅇ 검색 결과</h5>
         <div>
@@ -336,6 +334,7 @@ h3{
 
 .container{
   padding-top: 80px;
+  width: 80%;
 }
 
 

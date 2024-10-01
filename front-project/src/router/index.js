@@ -14,7 +14,7 @@ import SavingsDetail from '@/views/menu/savings/SavingsDetail.vue';
 import Gold from '@/views/menu/gold/Gold.vue';
 import GoldInvest from '@/views/menu/gold/GoldInvest.vue';
 import Calculator from '@/views/modal/Calculator.vue';
-import Deposit from '@/views/Deposit.vue';
+import Deposit from '@/views/menu/desposit/Deposit.vue';
 import Fund from '@/views/menu/fund/Fund.vue';
 import ISA from '@/views/ISA.vue';
 import FundDetail from "@/views/menu/fund/FundDetail.vue";
@@ -25,6 +25,8 @@ import MyPageSetting from "@/views/myPage/MyPageSetting.vue";
 import MyPageWithdraw from "@/views/myPage/MyPageWithdraw.vue";
 import MyPagePosts from "@/views/myPage/MyPagePosts.vue";
 import MyPageWarning from "@/views/myPage/MyPageWarning.vue";
+import DepositDetail from "@/views/menu/desposit/DepositDetail.vue";
+import SignCoverImage from "@/views/SignCoverImage.vue";
 
 const routes = [
   {
@@ -110,6 +112,11 @@ const routes = [
     component: Deposit,
   },
   {
+    path: '/depositDetail', // Deposit 페이지 경로 추가
+    name: 'depositDetail',
+    component: DepositDetail,
+  },
+  {
     path: '/fund', // Fund 페이지 경로 추가
     name: 'fund',
     component: Fund,
@@ -158,6 +165,12 @@ const routes = [
     path: '/myPageWarning',
     name: 'myPageWarning',
     component: MyPageWarning,
+  },
+  {
+    path: '/signCoverImage',
+    name: 'signCoverImage',
+    component: SignCoverImage,
+    meta: { hideHeaderFooter: true },
   }
 
   // 필요한 다른 라우트들을 여기에 추가할 수 있습니다.
