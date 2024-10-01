@@ -6,8 +6,23 @@
 <mapper namespace="com.kb.funds.mapper.FundsMapper">
     <!-- 펀드 추가 -->
     <insert id="insertFund" parameterType="com.kb.funds.dto.FundsDTO">
-        INSERT INTO funds (fundFnm, gijunGa, suikRt3, suikRt12) VALUES (#{fundFnm}, #{gijunGa}, #{suikRt3}, #{suikRt12})
+        INSERT INTO funds (fundFnm, gijunGa, gijunYmd, suikRt3, suikRt12, investGrade, feeTot, SEOLJ_AEK) VALUES (#{fundFnm}, #{gijunGa}, #{gijunYmd} #{suikRt3}, #{suikRt12}, #{investGrade}, #{feeTot}, #{SEOLJ_AEK})
     </insert>
+
+    <!-- 펀드 업데이트 -->
+    <update id="updateFund" parameterType="com.kb.funds.dto.FundsDTO">
+        UPDATE funds
+        SET
+        fundFnm = #{fundFnm},
+        gijunGa = #{gijunGa},
+        gijunYmd = #{gijunYmd},
+        suikRt3 = #{suikRt3},
+        suikRt12 = #{suikRt12},
+        investGrade = #{investGrade},
+        feeTot = #{feeTot},
+        SEOLJ_AEK = #{SEOLJ_AEK}
+        WHERE id = #{id} <!-- id 필드를 사용하여 업데이트할 레코드를 지정 -->
+    </update>
 
     <!-- 키워드로 펀드 검색 -->
     <select id="searchFunds" resultType="com.kb.funds.dto.FundsDTO">
