@@ -107,9 +107,12 @@ dependencies {
   // jsoup 추가
   implementation 'org.jsoup:jsoup:1.15.3'
 
-  // gson 추가
-  implementation 'com.google.code.gson:gson:2.9.0'
+  // selenium
+  implementation 'org.seleniumhq.selenium:selenium-java:4.0.0'
 
+  // jackson
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0' // 최신 버전으로 변경 가능
+  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0' // LocalDate 지원
 }
 
 

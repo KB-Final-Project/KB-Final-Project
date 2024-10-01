@@ -6,9 +6,39 @@
 <mapper namespace="com.kb.funds.mapper.FundsMapper">
     <!-- 펀드 추가 -->
     <insert id="insertFund" parameterType="com.kb.funds.dto.FundsDTO">
+<<<<<<< Updated upstream
         INSERT INTO funds (fundFnm, gijunGa, suikRt3, suikRt12) VALUES (#{fundFnm}, #{gijunGa}, #{suikRt3}, #{suikRt12})
     </insert>
 
+=======
+        INSERT INTO funds (fundFnm, gijunGa, gijunYmd, suikRt1, suikRt3, suikRt12, investGrade, feeTot, SEOLJ_AEK, bmNm) VALUES (#{fundFnm}, #{gijunGa}, #{gijunYmd}, #{suikRt1}, #{suikRt3}, #{suikRt12}, #{investGrade}, #{feeTot}, #{SEOLJ_AEK}, #{bmNm})
+    </insert>
+
+    <!-- 펀드 업데이트 -->
+    <update id="updateFund" parameterType="com.kb.funds.dto.FundsDTO">
+        UPDATE funds
+        SET
+        fundFnm = #{fundFnm},
+        gijunGa = #{gijunGa},
+        gijunYmd = #{gijunYmd},
+        suikRt3 = #{suikRt3},
+        suikRt12 = #{suikRt12},
+        investGrade = #{investGrade},
+        feeTot = #{feeTot},
+        SEOLJ_AEK = #{SEOLJ_AEK},
+        bmNm = #{bmNm}
+        WHERE id = #{id} <!-- id 필드를 사용하여 업데이트할 레코드를 지정 -->
+    </update>
+
+    <!-- ID로 펀드 존재 여부 확인 -->
+    <select id="exists" resultType="boolean" parameterType="Long">
+        SELECT COUNT(*) > 0
+        FROM funds
+        WHERE id = #{id}
+    </select>
+
+
+>>>>>>> Stashed changes
     <!-- 키워드로 펀드 검색 -->
     <select id="searchFunds" resultType="com.kb.funds.dto.FundsDTO">
         SELECT *

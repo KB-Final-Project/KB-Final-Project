@@ -1,8 +1,14 @@
 package com.kb._config;
 
+<<<<<<< Updated upstream
 import lombok.Getter;
+=======
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+>>>>>>> Stashed changes
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -74,4 +80,23 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
                 .allowedMethods("GET", "POST", "PUT", "DELETE");
     }
 
+<<<<<<< Updated upstream
+=======
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/resources/**")
+                .addResourceLocations("/resources/");
+    }
+
+    // ObjectMapper 빈 추가
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper().registerModule(new JavaTimeModule()); // LocalDate 지원
+    }
+>>>>>>> Stashed changes
 }
