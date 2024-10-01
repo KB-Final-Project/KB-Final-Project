@@ -167,7 +167,7 @@
       </nav>
     </div><br><br><br>
     <div class="text-center d-inline ">
-      <h1>AROUND 만의 또 다른 추천</h1>
+      <h1>iNVeTi 만의 또 다른 추천</h1>
       <br>
         <div class="suggest">
           <p>커뮤니티</p><br>
@@ -329,11 +329,10 @@ h3{
   z-index: 11111;
 }
 .slider .sliders{
-  transition: tranform 0.9s;
+  transition: transform 0.9s;
 }
 
 .container{
-  padding-top: 80px;
   width: 80%;
 }
 

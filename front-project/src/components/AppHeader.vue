@@ -214,7 +214,7 @@ const hoverLoginDropdown = (state) => {
 }
 
 .container-xxl {
-  margin-top: 60px !important;
+  margin-top: 80px !important;
 }
 </style>
 
@@ -226,6 +226,10 @@ const hoverLoginDropdown = (state) => {
 
 a.nav-link {
   color: black;
+}
+
+.appHeader{
+  height: 80px;
 }
 
 /* 드롭다운 메뉴 애니메이션 및 화살표 회전 */
@@ -267,6 +271,7 @@ a.nav-link {
 .invetiLogo{
   width: 100px;
 }
+
 </style>
 
 <!-- <style lang="scss" scoped>
