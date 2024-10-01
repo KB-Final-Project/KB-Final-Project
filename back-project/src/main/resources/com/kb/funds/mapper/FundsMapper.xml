@@ -36,7 +36,7 @@
     <select id="searchFunds" resultType="com.kb.funds.dto.FundsDTO">
         SELECT *
         FROM funds
-        WHERE name LIKE CONCAT('%', #{keyword}, '%')
+        WHERE fundFnm LIKE CONCAT('%', #{keyword}, '%')
     </select>
 
     <!-- 모든 펀드 조회 -->
