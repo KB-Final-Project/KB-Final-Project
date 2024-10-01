@@ -1,0 +1,67 @@
+<template>
+  <section>
+    <div class="suggestion">
+      <div class="container text-center">
+        <br><br>
+        <h1 class="text-start">주요 서비스 한 눈에 보기</h1>
+        <br>
+        <div class="suggest">
+          <p>커뮤니티</p><br>
+          <p class="text-end">👨‍👩‍👧‍</p>
+        </div>
+        <div class="suggest">
+          <p>용어사전</p><br>
+          <p class="text-end">📚</p>
+        </div>
+        <div class="suggest">
+          <p>투자성향TEST</p><br>
+          <p class="text-end">💖</p>
+        </div>
+        <div class="suggest">
+          <p>챗붓 상담</p><br>
+          <p class="text-end">👨‍🎓</p>
+        </div>
+        <br><br>
+      </div>
+    </div>
+  </section>
+</template>
+
+<style scoped>
+.suggest {
+  transition: transform 0.6s ease;
+  cursor: pointer;
+}
+
+.suggest:hover{
+  transform: scale(0.9);
+  z-index: 11111;
+}
+
+
+.suggest{
+  display: inline-block;
+  border: 1px solid rgba(153, 153, 153, 0.6);
+  border-radius: 20px;
+  width: 250px;
+  height: 200px;
+  margin: 10px;
+  padding: 25px;
+  font-size: 30px;
+  text-align: start;
+}
+
+.suggestion{
+  width: 100%;
+  position: relative;
+  padding: 20px 0;
+  background-color: rgba(249, 250, 251, 1);
+}
+
+.text-start{
+  margin-left: 40px;
+}
+</style>
+
+<script setup lang="ts">
+</script>

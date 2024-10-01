@@ -86,6 +86,7 @@ const resetInput = (event) => {
 
 <template>
   <div class="container text-center">
+    <br><br>
     <h1 class="d-inline">예금 </h1><p class="d-inline">열심히 모은 꿈을 더 크게</p>
     <br><br>
     <div class="savingBest">
@@ -227,12 +228,14 @@ const resetInput = (event) => {
   font-size: 12px;
   border: 1px solid #bebebe;
   border-radius: 20px;
-  padding-left: 22px;
-  padding-top: 10px;
+  padding: 5px;
   width: 120px;
   height: 40px;
   text-align: start;
   margin-left: 20px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 .checkedFilter button {
@@ -371,7 +374,6 @@ input[type="checkbox"] {
 
 .container{
   width: 80%;
-  padding-top: 80px;
 }
 
 .selected {

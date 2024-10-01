@@ -154,6 +154,7 @@ const toggleText = () => {
       </div>
       <button class="detailMove"><a href="#">상품 페이지로 이동</a></button>
     </div>
+    <br><br>
   </div>
 </template>
 
@@ -290,7 +291,6 @@ const toggleText = () => {
 
 .container{
   width: 60%;
-  padding-top: 80px;
 }
 
 
