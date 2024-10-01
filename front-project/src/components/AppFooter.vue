@@ -20,7 +20,7 @@
           <li class="footerInfo d-inline">
             <span>회사소개</span>
             <span>|</span>
-            <span><a href="#">개인 정보처리방침</a></span>
+            <span><a href="#">개인정보처리방침</a></span>
             <span>|</span>
             <span>자주 묻는 질문</span>
             <span>|</span>
