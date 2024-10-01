@@ -33,7 +33,11 @@ public class FundsService {
             } else {
                 for (FundsDTO fund : funds) {
                     try {
-                        fundsMapper.insertFund(fund);
+                        if (fundsMapper.exists(fund.getId())) { // ID가 존재하는지 확인
+                            fundsMapper.updateFund(fund); // 업데이트
+                        } else {
+                            fundsMapper.insertFund(fund); // 삽입
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
