@@ -24,6 +24,14 @@
         WHERE id = #{id} <!-- id 필드를 사용하여 업데이트할 레코드를 지정 -->
     </update>
 
+    <!-- ID로 펀드 존재 여부 확인 -->
+    <select id="exists" resultType="boolean" parameterType="Long">
+        SELECT COUNT(*) > 0
+        FROM funds
+        WHERE id = #{id}
+    </select>
+
+
     <!-- 키워드로 펀드 검색 -->
     <select id="searchFunds" resultType="com.kb.funds.dto.FundsDTO">
         SELECT *
