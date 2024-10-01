@@ -306,6 +306,7 @@ h2 {
 .prev-button,
 .next-button {
   padding: 10px 30px;
+  margin: 10px;
   border: none;
   background-color: white;
   color: #4CAF50;

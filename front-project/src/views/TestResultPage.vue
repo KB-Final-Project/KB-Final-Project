@@ -7,12 +7,12 @@
 
     <!-- 투자 성향 카드 -->
     <div class="result-cards">
-      <div v-if="userType === 'IBWL'" class="result-card">
+      <div v-if="userType === 'IPWC'" class="result-card">
         <h3>{{ investmentResults[0].title }}</h3>
         <p>{{ investmentResults[0].description }}</p>
         <Vue3Lottie :animationData="investmentResults[0].lottiePath" />
       </div>
-      <div v-if="userType === 'IPWL'" class="result-card">
+      <div v-if="userType === 'IPMC'" class="result-card">
         <h3>{{ investmentResults[1].title }}</h3>
         <p>{{ investmentResults[1].description }}</p>
         <Vue3Lottie :animationData="investmentResults[1].lottiePath" />
@@ -22,7 +22,7 @@
         <p>{{ investmentResults[2].description }}</p>
         <Vue3Lottie :animationData="investmentResults[2].lottiePath" />
       </div>
-      <div v-if="userType === 'IPMC'" class="result-card">
+      <div v-if="userType === 'IBMC'" class="result-card">
         <h3>{{ investmentResults[3].title }}</h3>
         <p>{{ investmentResults[3].description }}</p>
         <Vue3Lottie :animationData="investmentResults[3].lottiePath" />
@@ -32,17 +32,17 @@
         <p>{{ investmentResults[4].description }}</p>
         <Vue3Lottie :animationData="investmentResults[4].lottiePath" />
       </div>
-      <div v-if="userType === 'IBMC'" class="result-card">
+      <div v-if="userType === 'IPWL'" class="result-card">
         <h3>{{ investmentResults[5].title }}</h3>
         <p>{{ investmentResults[5].description }}</p>
         <Vue3Lottie :animationData="investmentResults[5].lottiePath" />
       </div>
-      <div v-if="userType === 'IPWC'" class="result-card">
+      <div v-if="userType === 'IBML'" class="result-card">
         <h3>{{ investmentResults[6].title }}</h3>
         <p>{{ investmentResults[6].description }}</p>
         <Vue3Lottie :animationData="investmentResults[6].lottiePath" />
       </div>
-      <div v-if="userType === 'APWC'" class="result-card">
+      <div v-if="userType === 'IBWL'" class="result-card">
         <h3>{{ investmentResults[7].title }}</h3>
         <p>{{ investmentResults[7].description }}</p>
         <Vue3Lottie :animationData="investmentResults[7].lottiePath" />
@@ -57,22 +57,22 @@
         <p>{{ investmentResults[9].description }}</p>
         <Vue3Lottie :animationData="investmentResults[9].lottiePath" />
       </div>
-      <div v-if="userType === 'ABWL'" class="result-card">
+      <div v-if="userType === 'ABWC'" class="result-card">
         <h3>{{ investmentResults[10].title }}</h3>
         <p>{{ investmentResults[10].description }}</p>
         <Vue3Lottie :animationData="investmentResults[10].lottiePath" />
       </div>
-      <div v-if="userType === 'ABML'" class="result-card">
+      <div v-if="userType === 'APMC'" class="result-card">
         <h3>{{ investmentResults[11].title }}</h3>
         <p>{{ investmentResults[11].description }}</p>
         <Vue3Lottie :animationData="investmentResults[11].lottiePath" />
       </div>
-      <div v-if="userType === 'ABWC'" class="result-card">
+      <div v-if="userType === 'ABWL'" class="result-card">
         <h3>{{ investmentResults[12].title }}</h3>
         <p>{{ investmentResults[12].description }}</p>
         <Vue3Lottie :animationData="investmentResults[12].lottiePath" />
       </div>
-      <div v-if="userType === 'APMC'" class="result-card">
+      <div v-if="userType === 'APWC'" class="result-card">
         <h3>{{ investmentResults[13].title }}</h3>
         <p>{{ investmentResults[13].description }}</p>
         <Vue3Lottie :animationData="investmentResults[13].lottiePath" />
@@ -82,7 +82,7 @@
         <p>{{ investmentResults[14].description }}</p>
         <Vue3Lottie :animationData="investmentResults[14].lottiePath" />
       </div>
-      <div v-if="userType === 'IPMC'" class="result-card">
+      <div v-if="userType === 'ABML'" class="result-card">
         <h3>{{ investmentResults[15].title }}</h3>
         <p>{{ investmentResults[15].description }}</p>
         <Vue3Lottie :animationData="investmentResults[15].lottiePath" />
@@ -143,12 +143,12 @@ export default {
       totalScore: 0, // 총 점수 저장
       investmentResults: [
         {
-          title: "IBWL",
+          title: "IPWC",
           description: "안정성을 최우선으로 고려하며, 주로 단기적이고 소규모로 신중하게 투자합니다.",
           lottiePath: cautiousObserver
         },
         {
-          title: "IPWL",
+          title: "IPMC",
           description: "리스크를 철저히 관리하며 안정적인 자산 운용을 추구합니다.",
           lottiePath: experiencedIcon
         },
@@ -158,27 +158,27 @@ export default {
           lottiePath: buddingInvestor
         },
         {
-          title: "IPMC",
+          title: "IBMC",
           description: "안정성을 중시하면서도, 적절한 위험을 감수하여 장기적인 성장을 목표로 합니다.",
           lottiePath: strategicPlanner
         },
         {
-          title: "IPML",
+          title: "IPWL",
           description: "투자 전략을 철저히 분석하며, 안정적이면서도 성장 가능성이 있는 상품에 투자합니다.",
           lottiePath: strategicResearcher
         },
         {
-          title: "IBMC",
+          title: "IPWL",
           description: "금융 지식이 풍부하며, 다각화된 자산에 신중하게 투자합니다.",
           lottiePath: exploratorySeeker
         },
         {
-          title: "IPWC",
+          title: "IBML",
           description: "디지털 자산과 새로운 금융 상품에 관심이 많으며, 혁신적인 투자에 도전합니다.",
           lottiePath: digitalInnovator
         },
         {
-          title: "APWC",
+          title: "IBWL",
           description: "위험을 감수하더라도 성장 가능성이 높은 자산에 투자합니다. 고위험 상품에도 과감히 투자합니다.",
           lottiePath: confidentInvestor
         },
@@ -193,22 +193,22 @@ export default {
           lottiePath: naturalLeader
         },
         {
-          title: "ABWL",
+          title: "ABWC",
           description: "직관적이고 창의적인 방법으로 시장의 변화를 빠르게 감지하여 투자합니다.",
           lottiePath: insightfulArtist
         },
         {
-          title: "ABML",
+          title: "APMC",
           description: "혁신적이며 리스크를 감수하더라도 트렌드를 선도하는 자산에 투자합니다.",
           lottiePath: trendsetter
         },
         {
-          title: "ABWC",
+          title: "ABWL",
           description: "도전적이며 불확실한 시장에서도 과감한 결정을 내리고, 고위험 자산에 투자합니다.",
           lottiePath: braveExplorer
         },
         {
-          title: "APMC",
+          title: "APWC",
           description: "풍부한 금융 지식을 바탕으로 복잡한 금융 상품에도 적극적으로 투자하며, 큰 수익을 기대합니다.",
           lottiePath: knowledgeableMaster
         },
@@ -218,7 +218,7 @@ export default {
           lottiePath: forwardThinker
         },
         {
-          title: "IPMC",
+          title: "ABML",
           description: "현실적인 계획을 바탕으로 극단적인 위험을 감수하며, 장기적으로도 큰 수익을 목표로 합니다.",
           lottiePath: futureOrientedCollaborator
         }
@@ -236,37 +236,37 @@ export default {
     classifyUserType() {
       // 성향 분류 로직 => totalScore에 따라 성향을 결정
       if (this.totalScore >= 44) {
-        this.userType = "IPMC";
+        this.userType = "ABML";
       } else if (this.totalScore >= 43) {
         this.userType = "ABMC";
       } else if (this.totalScore >= 42) {
-        this.userType = "APMC";
+        this.userType = "APWC";
       } else if (this.totalScore >= 41) {
-        this.userType = "ABWC";
+        this.userType = "ABWL";
       } else if (this.totalScore >= 40) {
-        this.userType = "ABML";
+        this.userType = "APMC";
       } else if (this.totalScore >= 39) {
-        this.userType = "ABML";
+        this.userType = "ABWC";
       } else if (this.totalScore >= 38) {
         this.userType = "APML";
       } else if (this.totalScore >= 37) {
         this.userType = "APWL";
       } else if (this.totalScore >= 35) {
-        this.userType = "APWC";
+        this.userType = "IBWL";
       } else if (this.totalScore >= 34) {
-        this.userType = "IPWC";
+        this.userType = "IBML";
       } else if (this.totalScore >= 33) {
-        this.userType = "IBMC";
+        this.userType = "IPWL";
       } else if (this.totalScore >= 32) {
         this.userType = "IPML";
       } else if (this.totalScore >= 30) {
-        this.userType = "IPMC";
+        this.userType = "IBMC";
       } else if (this.totalScore >= 28) {
         this.userType = "IBWC";
       } else if (this.totalScore >= 26) {
-        this.userType = "IPWC";
+        this.userType = "IPMC";
       } else {
-        this.userType = "IBWL";
+        this.userType = "IPWC";
       }
     },
     setRecommendedContent() {
