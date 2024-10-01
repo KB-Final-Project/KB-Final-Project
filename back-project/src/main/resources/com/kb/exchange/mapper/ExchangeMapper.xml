@@ -14,6 +14,16 @@
         <result property="exchangeRateDate" column="exchange_date"/>
     </resultMap>
 
+    <resultMap id="ExchangeListResultMap" type="com.kb.exchange.dto.ExchangeListByTerm">
+        <collection property="exchangeList" ofType="com.kb.exchange.dto.Exchange">
+            <result property="currencyId" column="currency_id"/>
+            <result property="receivingPrice" column="buy_rate"/>
+            <result property="sendingPrice" column="sell_rate"/>
+            <result property="basePrice" column="base_rate"/>
+            <result property="exchangeRateDate" column="exchange_date"/>
+        </collection>
+    </resultMap>
+
     <resultMap id="ExchangeDailyResultMap" type="com.kb.exchange.dto.ExchangeDailyDTO">
         <result property="dailyChangeRate" column="dailyChangeRate"/>
         <association property="exchange" javaType="com.kb.exchange.dto.Exchange">
@@ -26,6 +36,31 @@
         </association>
     </resultMap>
 
+    <select id="getExchangeListByTerm" resultMap="ExchangeListResultMap">
+        SELECT
+            currency_id, buy_rate, sell_rate, base_rate, exchange_date
+        FROM
+            EXCHANGE_RATES
+        WHERE
+            currency_id = #{currencyId}
+        AND
+            exchange_date >= CASE
+            WHEN #{term} = '1month' THEN DATE_SUB(NOW(), INTERVAL 1 MONTH)
+            WHEN #{term} = '3months' THEN DATE_SUB(NOW(), INTERVAL 3 MONTH)
+            WHEN #{term} = '6months' THEN DATE_SUB(NOW(), INTERVAL 6 MONTH)
+            WHEN #{term} = '1year' THEN DATE_SUB(NOW(), INTERVAL 1 YEAR)
+        ELSE NOW() -- 기본값 처리 (필요시 수정)
+        END
+        ORDER BY
+            exchange_date;
+
+
+<!--        <result property="currencyId" column="currency_id"/>-->
+<!--        <result property="receivingPrice" column="buy_rate"/>-->
+<!--        <result property="sendingPrice" column="sell_rate"/>-->
+<!--        <result property="basePrice" column="base_rate"/>-->
+<!--        <result property="exchangeRateDate" column="exchange_date"/>-->
+    </select>
     <select id="getDailyExchange" resultMap="ExchangeDailyResultMap">
         SELECT
     <![CDATA[
@@ -75,7 +110,6 @@
         WHERE current.rn = 1;
         ]]>
     </select>
-
 
     <insert id="insertExchangeRate" parameterType="com.kb.exchange.dto.Exchange">
         INSERT INTO

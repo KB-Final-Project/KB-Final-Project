@@ -3,6 +3,7 @@ package com.kb.exchange.service;
 import com.kb.exchange.dto.Exchange;
 import com.kb.exchange.dto.ExchangeApiResponse;
 import com.kb.exchange.dto.ExchangeDailyDTO;
+import com.kb.exchange.dto.ExchangeParam;
 import com.kb.exchange.mapper.ExchangeMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -152,5 +153,9 @@ public class ExchangeService {
         List<ExchangeDailyDTO> list = mapper.getDailyExchange();
         log.info(list);
         return list;
+    }
+
+    public List<Exchange> getExchangeListByTerm(ExchangeParam exchangeParam){
+        return mapper.getExchangeListByTerm(exchangeParam);
     }
 }
