@@ -1,8 +1,11 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import WriterPopup from './WriterPopup.vue'; // WriterPopup 컴포넌트 불러오기
 
 const activePropensity = ref('');
+const showModal = ref(false); // 팝업을 제어하는 변수
+
 const router = useRouter();
 const route = useRoute();
 
@@ -37,6 +40,14 @@ function setActive(propensity) {
   }
 }
 
+function openPopup() {
+  showModal.value = true; // 팝업 열기
+}
+
+function closePopup() {
+  showModal.value = false; // 팝업 닫기
+}
+
 // 라우트 변경 시 activePropensity 업데이트
 watch(
     () => route.path,
@@ -64,10 +75,11 @@ function updateActivePropensity(path) {
   }
 }
 
-// 페이지 로드시 경로를 확인하고 activePropensity 값을 설정
-updateActivePropensity(route.path);
+// 페이지 로드 시 '안정추구형' 게시판으로 자동 이동
+onMounted(() => {
+  setActive('안정추구형');
+});
 </script>
-
 
 <template>
   <div class="communityPanel d-inline-block text-start">
@@ -113,17 +125,23 @@ updateActivePropensity(route.path);
       <h2>공격투자형</h2>
     </div>
     <div
-        class="propensity"
+        class="myPage"
         @click="router.push('/mypage')"
     >
-      <h2 class="myPage">마이페이지</h2>
+      <hr><br>
+      <h2>마이페이지</h2>
     </div>
     <br />
     <div>
-      <button class="writerBtn">새 글 작성하기</button>
+      <button class="writerBtn"  @click="openPopup">새 글 작성하기</button>
     </div>
     <br />
   </div>
+  <!-- WriterPopup 컴포넌트 (모달) -->
+  <WriterPopup v-if="showModal" @close="closePopup" />
+
+  <!-- 흐림 배경 -->
+  <div v-if="showModal" class="overlay" @click="closePopup"></div>
 </template>
 
 <style scoped>
@@ -136,33 +154,48 @@ updateActivePropensity(route.path);
   color: white;
   background-color: rgba(67, 140, 116, 1);
 }
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* 흐린 배경 */
+  z-index: 10; /* 팝업 뒤에 위치하도록 */
+}
+
+
 .propensity {
-  padding: 20px;
+  padding: 25px;
+  cursor: pointer;
+}
+
+.myPage{
+  padding: 25px;
   cursor: pointer;
 }
 .propensity:hover {
   border: 1px solid rgba(67, 140, 116, 1);
-  border-radius: 20px
-
+  border-radius: 20px;
 }
 .propensity.active {
   border: 1px solid rgba(67, 140, 116, 1);
   border-radius: 20px;
   color: rgba(67, 140, 116, 1);
 }
-.propensity.myPage:hover{
-
+.myPage:hover{
   border-radius: 20px
 }
 .communityPanel {
+  position: relative;
   width: 350px;
-  height: auto;
   background-color: white;
   border-radius: 30px;
   padding: 15px;
 }
 .profile {
-  padding: 20px;
+  padding: 25px;
 }
 .profile img {
   width: 150px;
