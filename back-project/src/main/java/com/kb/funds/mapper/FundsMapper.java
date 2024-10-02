@@ -1,10 +1,13 @@
 package com.kb.funds.mapper;
 
 import com.kb.funds.dto.FundsDTO;
+import com.kb.funds.dto.SuikChartDTO;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 public interface FundsMapper {
+    @Transactional
     void insertFund(FundsDTO fund);
     void updateFund(FundsDTO fund); // 업데이트 메서드 추가
 
