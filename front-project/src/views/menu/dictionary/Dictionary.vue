@@ -1,6 +1,7 @@
 <template>
   <div class="bc">
     <div class="container text-center">
+      <br>   <br>
       <h1>용어 사전</h1><br><br>
       <div class="dic">
         <br>

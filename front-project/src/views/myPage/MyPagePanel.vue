@@ -1,6 +1,5 @@
 <script setup>
-import { ref } from 'vue';
-import { defineEmits } from 'vue';
+import { ref,onMounted,defineEmits } from 'vue';
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits();
@@ -11,15 +10,51 @@ const navigateTo = (page) => {
   selectedMenu.value = page;
   emit('update-page', page);
 };
+import axios from "axios";
+
+const avatar = ref();
+const myPage = ref([]);
+const loading = ref(true);
+
+const fetchMyPage = async () => {
+  loading.value = true;
+  try {
+    const response = await axios.get('/api/member/{id}');
+    console.log(response);
+    myPage.value = response.data.member;
+  } catch (error) {
+    console.error('마이페이지 오류:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+const fetchMyAvatar = async () => {
+  loading.value = true;
+  try {
+    const response = await axios.get('/api/member/{id}');
+    console.log(response);
+    avatar.value = response.data.file;
+  } catch (error) {
+    console.error('아바타 가져오기 오류:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchMyPage();
+  fetchMyAvatar();
+});
+
 </script>
 
 <template>
   <div class="my-page-panel">
     <div class="nameBox">
-      <img class="d-block profile" src="/img/imsi.png">
-      <p class="name">이사벨라</p>
+      <img class="d-block profile" :src="avatar">
+      <p class="name">{{  myPage.name }}</p>
       <p class="nim">님</p>
-      <p class="email">isabella@gmail.com</p>
+      <p class="email">{{ myPage.email }}</p>
     </div>
     <br><br>
     <div class="panel">
