@@ -1,5 +1,8 @@
 package com.kb.funds.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.kb._config.LocalDateDeserializer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class FundsDTO {
     private Long id; // ID 필드 추가
 
@@ -21,7 +25,11 @@ public class FundsDTO {
     private BigDecimal gijunGa;
 
     // 기준일
+    @JsonDeserialize(using = LocalDateDeserializer.class) //
     private LocalDate gijunYmd;
+
+    // 1개월 수익률
+    private BigDecimal suikRt1;
 
     // 3개월 수익률
     private BigDecimal suikRt3;
