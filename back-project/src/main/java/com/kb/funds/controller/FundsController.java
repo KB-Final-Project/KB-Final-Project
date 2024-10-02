@@ -1,5 +1,6 @@
 package com.kb.funds.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kb.funds.dto.FundsDTO;
 import com.kb.funds.service.FundsService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class FundsController {
 
     // 크롤링하여 펀드 데이터를 저장하는 엔드포인트
     @GetMapping("/crawl")
-    public String crawlAndSaveFunds() {
+    public String crawlAndSaveFunds() throws JsonProcessingException {
         fundsService.crawlAndSaveFunds();
         return "Funds have been crawled and saved successfully!";
     }
