@@ -47,7 +47,7 @@
                   <span class="mode2Badge badgeText badge bg-faded-light fs-sm text-white px-3 mb-3">
                     <h3>Choose at a glance</h3>
                   </span><br>투자 상품을 한 눈에
-                </h1>
+                  </h1>
                   <div class="logoYong">
                     <img src="/img/logoYong2.png" alt="Logo">
                   </div>
@@ -86,7 +86,7 @@
                   </div>
                 </div>
                 <h3 class="pb-3 mb-3 mb-lg-4">투자 성향을 분석하고 <br> 성향 기반 투자 상품 추천받기</h3>
-                </div>
+              </div>
               <div class="text-center mt-4">
                 <button class="investChoiceBtn">투자 성향 분석 Click!</button>
               </div>
