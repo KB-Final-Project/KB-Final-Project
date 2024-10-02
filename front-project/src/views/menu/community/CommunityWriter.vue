@@ -17,7 +17,7 @@
           </div>
           <div class="pt-3">
             <p class="fs-6 fw-normal">
-              <input class="writer" type="text" placeholder="무슨 일이 일어나고 있나요?">
+              <textarea class="writer"  type="text" placeholder="무슨 일이 일어나고 있나요?"></textarea>
             </p>
           </div>
         </div>
@@ -34,12 +34,14 @@
   border: none;
   background-color: rgb(67, 140, 116);
   color: white;
+  font-size: 15px;
 }
 .cancel{
   width: 100px;
   height: 30px;
   border-radius: 30px;
   border: none;
+  font-size: 15px;
 }
 
 .card{
@@ -57,6 +59,8 @@
   border-radius: 20px;
   padding: 20px;
   border: 1px solid lightgrey;
+  resize: none;
+  font-size: 20px;
 }
 </style>
 
