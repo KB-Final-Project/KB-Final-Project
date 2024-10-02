@@ -215,6 +215,7 @@ const hoverLoginDropdown = (state) => {
 
 .container-xxl {
   margin-top: 80px !important;
+
 }
 </style>
 
@@ -227,6 +228,7 @@ const hoverLoginDropdown = (state) => {
 a.nav-link {
   color: black;
 }
+
 
 .appHeader{
   height: 80px;
@@ -271,7 +273,6 @@ a.nav-link {
 .invetiLogo{
   width: 100px;
 }
-
 </style>
 
 <!-- <style lang="scss" scoped>
