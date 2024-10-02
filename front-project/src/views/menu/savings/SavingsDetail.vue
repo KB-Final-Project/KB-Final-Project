@@ -1,21 +1,43 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { useRoute } from 'vue-router';
 
 const expanded = ref(false);
+const route = useRoute();
+const savingId = route.params.savingId;
 
 const toggleText = () => {
   expanded.value = !expanded.value;
 };
+
+const savingDetail = ref(null);
+
+const fetchSavingDetail = async () => {
+  try {
+    const response = await axios.get(`/saving/detail/${savingId}`);
+    savingDetail.value = response.data;
+  } catch (error) {
+    console.error("Error fetching saving detail:", error);
+  }
+};
+
+onMounted(() => {
+  fetchSavingDetail();
+});
+
 </script>
 
 <template>
   <div class="container text-center">
     <br /><br />
     <div class="savingDetailBox">
+      <div v-if="loading">로딩 중...</div>
+      <div v-else>
       <ul class="text-start">
-        <li><img src="" /></li>
-        <li><h1>상품명</h1></li>
-        <li><h1>부제목</h1></li>
+        <li><img :src="savingDetail.bank.bankLogoUrl" /></li>
+        <li><h1>{{ savingDetail.bank.bankName }}</h1></li>
+        <li><h5>{{ savingDetail.note }}</h5></li>
         <li><br /><br /></li>
       </ul>
       <ul class="text-start">
@@ -27,8 +49,8 @@ const toggleText = () => {
       </ul>
       <ul class="text-start mt-5">
         <li>
-          <router-link to=""
-            >oo뱅크에서 보기 <i class="ai-chevron-right"></i
+          <router-link to="{{ savingDetail.bank.bankUrl }}"
+            >{{ savingDetail.bank.bankName }}에서 보기 <i class="ai-chevron-right"></i
           ></router-link>
         </li>
       </ul>
@@ -105,7 +127,7 @@ const toggleText = () => {
               <td></td>
             </tr>
             <tr>
-              <td><h4 class="d-inline rank">3위</h4></td>
+              <td><h4 class="d-inline rank">{{  savingDetail.rank }}위</h4></td>
               <td style="font-size: 30px">
                 <i class="rightArrow ai-chevron-right"></i>
               </td>
@@ -178,6 +200,7 @@ const toggleText = () => {
       </div>
       <button class="detailMove"><a href="#">상품 페이지로 이동</a></button>
     </div>
+  </div>
   <br><br>
   </div>
 </template>

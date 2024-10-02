@@ -9,24 +9,20 @@
       <table>
         <tbody>
           <tr>
+            <td>ID</td>
+            <td>{{ myPage.id}}</td>
+          </tr>
+          <tr>
             <td>이름</td>
-            <td></td>
+            <td>{{ myPage.name}}</td>
           </tr>
           <tr>
             <td>이메일</td>
-            <td>dd</td>
+            <td>{{ myPage.email}}</td>
           </tr>
           <tr>
-            <td>전화번호</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>성별</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>투자성향</td>
-            <td></td>
+            <td>가입날짜</td>
+            <td>{{ myPage.createDate}}</td>
           </tr>
         </tbody>
       </table>
@@ -65,5 +61,27 @@ table tbody tr td:nth-child(2){
 </style>
 
 <script setup>
+import axios from "axios";
+import {onMounted, ref} from "vue";
+
+const myPage = ref([]);
+const loading = ref(true);
+
+const fetchMyPage = async () => {
+  loading.value = true;
+  try {
+    const response = await axios.get('/api/member/{id}');
+    console.log(response);
+    myPage.value = response.member.data
+  } catch (error) {
+    console.error('적금 상품 목록을 가져오는 중 오류 발생:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchMyPage();
+});
 
 </script>

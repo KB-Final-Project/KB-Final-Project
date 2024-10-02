@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/views/Home.vue';
 import Signin from '@/views/Signin.vue';
 import Signup from '@/views/Signup.vue';
-import Analysis from '@/views/Analysis.vue';
 import NewsPage from '@/views/NewsPage.vue';
 import TestStartPage from '@/views/TestStartPage.vue';
 import TestProcessPage from '@/views/TestProcessPage.vue';
@@ -27,6 +26,13 @@ import MyPagePosts from "@/views/myPage/MyPagePosts.vue";
 import MyPageWarning from "@/views/myPage/MyPageWarning.vue";
 import DepositDetail from "@/views/menu/desposit/DepositDetail.vue";
 import SignCoverImage from "@/views/SignCoverImage.vue";
+import community from "@/views/menu/community/Community.vue";
+import ActiveInvestment from "@/views/menu/community/ActiveInvestment.vue";
+import StabilitySeeking from "@/views/menu/community/StabilitySeeking.vue";
+import AggressiveInvestment from "@/views/menu/community/AggressiveInvestment.vue";
+import Stability from "@/views/menu/community/Stability.vue";
+import RiskNeutral from "@/views/menu/community/RiskNeutral.vue";
+import Community from "@/views/menu/community/Community.vue";
 
 const routes = [
   {
@@ -47,9 +53,9 @@ const routes = [
     meta: { hideHeaderFooter: true },
   },
   {
-    path: '/analysis',
-    name: 'analysis',
-    component: Analysis,
+    path: '/community',
+    name: 'community',
+    component: community,
   },
   {
     path: '/news',
@@ -87,8 +93,8 @@ const routes = [
     component: Savings,
   },
   {
-    path: '/savingsDetail',
-    name: 'savingsDetail',
+    path: '/saving/:savingId',
+    name: 'SavingDetail',
     component: SavingsDetail,
   },
   {
@@ -171,9 +177,44 @@ const routes = [
     name: 'signCoverImage',
     component: SignCoverImage,
     meta: { hideHeaderFooter: true },
-  }
-
+  },
   // 필요한 다른 라우트들을 여기에 추가할 수 있습니다.
+  {
+    path: '/community',
+    component: Community, // community.vue를 레이아웃 컴포넌트로 사용
+    children: [
+      {
+        path: '',
+        name: 'CommunityHome',
+        component: null, // 기본적으로 아무것도 표시하지 않음
+      },
+      {
+        path: 'stabilitySeeking',
+        name: 'stabilitySeeking',
+        component: StabilitySeeking,
+      },
+      {
+        path: 'aggressiveInvestment',
+        name: 'aggressiveInvestment',
+        component: AggressiveInvestment,
+      },
+      {
+        path: 'activeInvestment',
+        name: 'activeInvestment',
+        component: ActiveInvestment,
+      },
+      {
+        path: 'stability',
+        name: 'stability',
+        component: Stability,
+      },
+      {
+        path: 'riskNeutral',
+        name: 'riskNeutral',
+        component: RiskNeutral,
+      },
+    ],
+  },
 ];
 
 const router = createRouter({

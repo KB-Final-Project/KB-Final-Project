@@ -9,26 +9,11 @@
       <div class="formMyInfo d-flex flex-wrap">
         <div class="form-group">
           <label for="name">이름</label><br>
-          <input class="form" id="name" type="text" value="이사벨라">
-        </div>
-        <div class="form-group">
-          <label for="phone">전화번호</label><br>
-          <input class="form" id="phone" type="number" value="01054459876">
+          <input class="form" id="name" type="text" v-model="info.value.name">
         </div>
         <div class="form-group">
           <label for="email">이메일</label><br>
-          <input class="form" id="email" type="email" value="isabella@gmail.com">
-        </div>
-        <div class="form-group">
-          <label>성별</label><br><br>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" id="ex-radio-4" name="radio2">
-            <label class="form-check-label" for="ex-radio-4">남성</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" id="ex-radio-5" name="radio2" checked>
-            <label class="form-check-label" for="ex-radio-5">여성</label>
-          </div>
+          <input class="form" id="email" type="email" v-model="info.value.email">
         </div>
       </div>
       <div class="btn d-flex justify-content-end align-items-end">
@@ -44,7 +29,7 @@
         <div class="mb-3">
           <label class="form-label" for="pass-visibility1">현재 비밀번호</label>
           <div class="password-toggle">
-            <input class="form-control" type="password" id="pass-visibility1" value="hidden@password">
+            <input class="form-control" type="password" id="pass-visibility1" v-model="password.value.oldPassword">
             <label class="password-toggle-btn" aria-label="Show/hide password">
               <input class="password-toggle-check" type="checkbox">
               <span class="password-toggle-indicator"></span>
@@ -57,7 +42,7 @@
         <div class="mb-3">
           <label class="form-label" for="pass-visibility2">새 비밀번호</label>
           <div class="password-toggle">
-            <input class="form-control" type="password" id="pass-visibility2" value="hidden@password">
+            <input class="form-control" type="password" id="pass-visibility2" v-model="password.value.newPassword">
             <label class="password-toggle-btn" aria-label="Show/hide password">
               <input class="password-toggle-check" type="checkbox">
               <span class="password-toggle-indicator"></span>
@@ -67,7 +52,7 @@
         <div >
           <label class="form-label" for="pass-visibility3">새 비밀번호 확인</label>
           <div class="password-toggle">
-            <input class="form-control" type="password" id="pass-visibility3" value="hidden@password">
+            <input class="form-control" type="password" id="pass-visibility3" v-model="password.value.newPassword">
             <label class="password-toggle-btn" aria-label="Show/hide password">
               <input class="password-toggle-check" type="checkbox">
               <span class="password-toggle-indicator"></span>
@@ -255,4 +240,50 @@ label{
 </style>
 
 <script setup>
+
+import {onMounted, ref} from "vue";
+import axios from "axios";
+
+const loading = ref(true);
+const password = ref({
+  oldPassword: '',
+  newPassword: '',
+});
+const info = ref({
+  name: '',
+  email: '',
+});
+
+const changeMyPassword = async() =>{
+  loading.value = true;
+  try{
+    const response = await axios.get('/api/member/{id}/changepassword');
+    console.log(response);
+    password.value.oldPassword = response.data.oldPassword;
+    password.value.newPassword = response.data.newPassword;
+  } catch (error){
+    console.error('비밀번호 가져오기 에러:', error);
+  } finally {
+    loading.value = false;
+  }
+}
+
+const changeMyInfo = async() =>{
+  loading.value = true;
+  try{
+    const response = await axios.get('/api/member/{id}');
+    console.log(response);
+    info.value.name = response.data.member.name;
+    info.value.email = response.data.member.email;
+  } catch (error){
+    console.error('info 가져오기 에러:', error);
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(() => {
+  changeMyPassword();
+  changeMyInfo();
+});
 </script>

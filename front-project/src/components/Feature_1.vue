@@ -82,7 +82,7 @@
                     </span><br>취향대로 투자하자
                   </h1>
                   <div class="logoYong">
-                    <img src="/img/logoYong3.png" alt="Logo">
+                    <img src="/img/logoYong.png" alt="Logo">
                   </div>
                 </div>
                 <h3 class="pb-3 mb-3 mb-lg-4">투자 성향을 분석하고 <br> 성향 기반 투자 상품 추천받기</h3>
@@ -129,8 +129,8 @@
 
 .logoYong img{
   width: 70%;
-  margin-left: 300px;
-  margin-top: -30px;
+  margin-left: 250px;
+  margin-top: -10px;
 }
 
 section {

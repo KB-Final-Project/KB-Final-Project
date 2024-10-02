@@ -3,7 +3,7 @@ import {Swiper, SwiperSlide} from 'swiper/vue';
 import 'swiper/swiper-bundle.css';
 import {ref, onMounted} from 'vue';
 import axios from 'axios';
-import {useRoute} from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
 
 const savings = ref([]);
 const loading = ref(true);
@@ -11,6 +11,7 @@ const loading = ref(true);
 
 // eslint-disable-next-line no-unused-vars
 const route = useRoute();
+const router = useRouter();
 
 
 // 선택된 은행, 저축 기간, 이자 유형을 추적
@@ -18,6 +19,9 @@ const selectedBanks = ref([]);
 const selectedDurations = ref([]);
 const selectedInterestTypes = ref([]);
 
+const goToDetail = (savingId) => {
+  router.push({ name: 'SavingDetail', params: { savingId } });
+};
 
 const removeFilter = (arrayRef, value) => {
   if (!arrayRef || !Array.isArray(arrayRef)) {
@@ -129,7 +133,8 @@ onMounted(() => {
             <div v-if="loading">로딩 중...</div>
             <div v-else>
               <div v-for="saving in savings.slice(0, 3)" :key="saving.savingId">
-                <table class="savingRank text-start">
+                <div class="goToDetail" @click="goToDetail(saving.savingId)">
+                <table class="savingRank text-start" >
                   <tbody>
                   <tr>
                     <td colspan="2" class="savingDepositMethod">
@@ -163,6 +168,7 @@ onMounted(() => {
                   </tr>
                   </tbody>
                 </table>
+                </div>
               </div>
             </div>
           </div>
@@ -272,8 +278,7 @@ onMounted(() => {
     <br><br>
     <div class="savingsContent">
       <div class="text-start">
-        <h2 class="d-inline"><b>iNVeTI</b>가 고객님에게 추천한 </h2>
-        <h2 class="d-inline themeItem">테마상품</h2>
+        <h2 class="d-inline"><b>검색 결과</b> 테마상품</h2>
         <br><br><br>
       </div>
       <div class="itemBoxDiv row g-lg-3 gap-3">
@@ -283,39 +288,41 @@ onMounted(() => {
               <div v-if="loading">로딩 중...</div>
               <div v-else>
                 <div v-for="saving in savings" :key="saving.savingId">
-                  <table class="savingRank text-start">
-                    <tbody>
-                    <tr>
-                      <td colspan="2" class="savingDepositMethod">
-                        <div class="savingMethod text-center">{{ saving.joinWay }}</div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colspan="2" class="bankLogo">
-                        <a href="{{saving.bank.bankUrl}}">
-                          <img style="height: 25px;" src="{{ saving.bank.bankLogoUrl }}">
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colspan="2" style="width: 300px;"><h2 class="savingName">{{ saving.savingName }}</h2><br></td>
-                    </tr>
-                    <tr>
-                      <td><h3 style="font-weight: 600">{{ saving.interestRateType }}</h3></td>
-                      <td><h3 class="d-inline" style="color: rgba(68, 140, 116, 1);">
-                        {{ saving.interestRateList.savingTerm }}</h3>
-                        <h3 class="d-inline">개월</h3></td>
-                    </tr>
-                    <tr style="color:grey">
-                      <td><h3>기본금리</h3></td>
-                      <td><h3>최고금리</h3></td>
-                    </tr>
-                    <tr>
-                      <td><h3>{{ saving.interestRate }}%</h3></td>
-                      <td><h3>{{ saving.interestMaxRate }}%</h3></td>
-                    </tr>
-                    </tbody>
-                  </table>
+                  <div class="goToDetail" @click="goToDetail(saving.savingId)">
+                    <table class="savingRank text-start">
+                      <tbody>
+                        <tr>
+                          <td colspan="2" class="savingDepositMethod">
+                            <div class="savingMethod text-center">{{ saving.joinWay }}</div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colspan="2" class="bankLogo">
+                            <a href="{{saving.bank.bankUrl}}">
+                              <img style="height: 25px;" src="{{ saving.bank.bankLogoUrl }}">
+                            </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colspan="2" style="width: 300px;"><h2 class="savingName">{{ saving.savingName }}</h2><br></td>
+                        </tr>
+                        <tr>
+                          <td><h3 style="font-weight: 600">{{ saving.interestRateType }}</h3></td>
+                          <td><h3 class="d-inline" style="color: rgba(68, 140, 116, 1);">
+                            {{ saving.interestRateList.savingTerm }}</h3>
+                            <h3 class="d-inline">개월</h3></td>
+                        </tr>
+                        <tr style="color:grey">
+                          <td><h3>기본금리</h3></td>
+                          <td><h3>최고금리</h3></td>
+                        </tr>
+                        <tr>
+                          <td><h3>{{ saving.interestRate }}%</h3></td>
+                          <td><h3>{{ saving.interestMaxRate }}%</h3></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
@@ -329,6 +336,9 @@ onMounted(() => {
 
 <style scoped>
 
+.goToDetail{
+  cursor: pointer;
+}
 .savingRank {
   margin: 20px;
   border-collapse: separate;

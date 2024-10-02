@@ -6,37 +6,54 @@
 <mapper namespace="com.kb.funds.mapper.FundsMapper">
     <!-- 펀드 추가 -->
     <insert id="insertFund" parameterType="com.kb.funds.dto.FundsDTO">
-        INSERT INTO funds (fundFnm, gijunGa, gijunYmd, suikRt3, suikRt12, investGrade, feeTot, SEOLJ_AEK) VALUES (#{fundFnm}, #{gijunGa}, #{gijunYmd} #{suikRt3}, #{suikRt12}, #{investGrade}, #{feeTot}, #{SEOLJ_AEK})
+        INSERT INTO funds (fundFnm, gijunGa, gijunYmd, suikRt1, suikRt3, suikRt12, investGrade, feeTot, bmNm)
+        VALUES (#{fundFnm}, #{gijunGa}, #{gijunYmd}, #{suikRt1}, #{suikRt3}, #{suikRt12}, #{investGrade}, #{feeTot}, #{bmNm})
+
+        <!-- Retrieve the generated key for the funds table -->
+        <selectKey keyProperty="id" resultType="long" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <!-- 수익 차트 추가 -->
+    <insert id="insertSuikChart" parameterType="com.kb.funds.dto.SuikChartDTO">
+        INSERT INTO suik_chart (fundId, gijunYmd, bmSuikJisu, silhSuikRt, seoljAek)
+        VALUES (#{fundId}, #{gijunYmd}, #{bmSuikJisu}, #{silhSuikRt}, #{seoljAek})
     </insert>
 
     <!-- 펀드 업데이트 -->
     <update id="updateFund" parameterType="com.kb.funds.dto.FundsDTO">
         UPDATE funds
         SET
-        fundFnm = #{fundFnm},
-        gijunGa = #{gijunGa},
-        gijunYmd = #{gijunYmd},
-        suikRt3 = #{suikRt3},
-        suikRt12 = #{suikRt12},
-        investGrade = #{investGrade},
-        feeTot = #{feeTot},
-        SEOLJ_AEK = #{SEOLJ_AEK}
-        WHERE id = #{id} <!-- id 필드를 사용하여 업데이트할 레코드를 지정 -->
+            fundFnm = #{fundFnm},
+            gijunGa = #{gijunGa},
+            gijunYmd = #{gijunYmd},
+            suikRt1 = #{suikRt1},
+            suikRt3 = #{suikRt3},
+            suikRt12 = #{suikRt12},
+            investGrade = #{investGrade},
+            feeTot = #{feeTot},
+            bmNm = #{bmNm}
+        WHERE id = #{id}
     </update>
 
+    <!-- 기존 수익 차트 삭제 -->
+    <delete id="deleteSuikChartByFundId" parameterType="long">
+        DELETE FROM suik_chart WHERE fund_id = #{id}
+    </delete>
+
     <!-- ID로 펀드 존재 여부 확인 -->
-    <select id="exists" resultType="boolean" parameterType="Long">
+    <select id="existsById" resultType="boolean" parameterType="Long">
         SELECT COUNT(*) > 0
         FROM funds
         WHERE id = #{id}
     </select>
 
-
     <!-- 키워드로 펀드 검색 -->
     <select id="searchFunds" resultType="com.kb.funds.dto.FundsDTO">
         SELECT *
         FROM funds
-        WHERE fundFnm LIKE CONCAT('%', #{keyword}, '%')
+        WHERE fund_fnm LIKE CONCAT('%', #{keyword}, '%')
     </select>
 
     <!-- 모든 펀드 조회 -->

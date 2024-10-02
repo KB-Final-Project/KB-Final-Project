@@ -162,7 +162,7 @@ const menuItems = ref([
       },
     ],
   },
-  { text: '투자 커뮤니티', href: 'analysis' },
+  { text: '투자 커뮤니티', href: '/community' },
   { text: '용어사전', href: 'dictionary' },
   {
     text: '추가기능',
