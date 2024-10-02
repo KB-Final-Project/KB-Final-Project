@@ -26,8 +26,10 @@ export default {
 @import './assets/css/theme.min.css';
 @import './assets/css/style.bundle';
 
+
 #mainContent{
   padding-top: 80px !important;
+
 }
 
 </style>
