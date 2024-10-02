@@ -29,7 +29,6 @@
   </div>
 </template>
 
-
 <script>
 export default {
   data() {
@@ -39,185 +38,117 @@ export default {
       questions: [
         {
           id: 1,
-          question: "당신은 20대 또는 30대인가요?",
+          question: "고객님의 연령대는 어떻게 되나요?",
           options: [
-            { text: "네", score: 1 },
-            { text: "아니오", score: 0 }
+            { text: "20대", score: 1 },
+            { text: "30대", score: 2 },
+            { text: "40대", score: 3 },
+            { text: "50대", score: 4 },
+            { text: "60대 이상", score: 5 }
           ],
           icon: require('@/assets/img/analysis/1.png')
         },
         {
           id: 2,
-          question: "당신의 연간 소득이 5천만원 이하인가요?",
+          question: "고객님의 연소득은 어떻게 되나요?",
           options: [
-            { text: "네", score: 0 },
-            { text: "아니오", score: 1 }
+            { text: "3천만원 이하", score: 1 },
+            { text: "5천만원 이하", score: 2 },
+            { text: "1억원 이하", score: 3 },
+            { text: "3억원 이하", score: 4 },
+            { text: "3억원 초과", score: 5 }
           ],
           icon: require('@/assets/img/analysis/2.png')
         },
         {
           id: 3,
-          question: "현재 수입원이 안정적이고 꾸준한가요?",
+          question: "고객님의 수입원은 무엇인가요?",
           options: [
-            { text: "네", score: 0 },
-            { text: "아니오", score: 1 }
+            { text: "정기적인 수입 (급여, 임대 등)", score: 1 },
+            { text: "정기적인 수입 (연금)", score: 2 },
+            { text: "불안정한 수입 (변동 가능)", score: 3 },
+            { text: "일정한 수입 없음", score: 4 }
           ],
           icon: require('@/assets/img/analysis/3.png')
         },
         {
           id: 4,
-          question: "총 자산 중 금융 자산의 비중이 30% 이하인가요?",
+          question: "금융자산 중 투자 자금의 비중은 어느 정도인가요?",
           options: [
-            { text: "네", score: 0 },
-            { text: "아니오", score: 1 }
+            { text: "10% 이내", score: 1 },
+            { text: "30% 이내", score: 2 },
+            { text: "50% 이내", score: 3 },
+            { text: "80% 이내", score: 4 },
+            { text: "80% 초과", score: 5 }
           ],
           icon: require('@/assets/img/analysis/4.png')
         },
         {
           id: 5,
-          question: "현재 투자 자산의 비중이 30% 이하인가요?",
+          question: "투자해본 금융상품은 어떤 것이 있나요?",
           options: [
-            { text: "네", score: 0 },
-            { text: "아니오", score: 1 }
+            { text: "은행 예적금 등 안전 자산", score: 1 },
+            { text: "채권형 펀드 등 안정적 투자", score: 2 },
+            { text: "혼합형 펀드 등 중간 위험 자산", score: 3 },
+            { text: "주식형 펀드 등 고위험 자산", score: 4 },
+            { text: "파생상품 등 초고위험 자산", score: 5 }
           ],
           icon: require('@/assets/img/analysis/5.png')
         },
         {
           id: 6,
-          question: "투자 자금을 확보하기 어려운 상황에서 저축을 활용할 수 있나요?",
+          question: "파생상품 투자 경험은 얼마나 되나요?",
           options: [
-            { text: "네", score: 0 },
-            { text: "아니오", score: 1 }
+            { text: "1년 미만", score: 1 },
+            { text: "1년 이상 ~ 3년 미만", score: 2 },
+            { text: "3년 이상", score: 3 }
           ],
           icon: require('@/assets/img/analysis/6.png')
         },
         {
           id: 7,
-          question: "투자 성과가 기대와 크게 차이나면 손실을 감수하고 장기적으로 기다릴 수 있나요?",
+          question: "금융투자상품에 대한 이해도는 어느 정도인가요?",
           options: [
-            { text: "네", score: 1 },
-            { text: "아니오", score: 0 }
+            { text: "매우 낮음 (예적금만 알고 있음)", score: 1 },
+            { text: "낮음 (주식과 채권 차이를 구별할 수 있음)", score: 2 },
+            { text: "높음 (주식, 채권, 펀드의 구조를 이해하고 있음)", score: 3 },
+            { text: "매우 높음 (파생상품까지 이해하고 있음)", score: 4 }
           ],
           icon: require('@/assets/img/analysis/7.png')
         },
         {
           id: 8,
-          question: "주식 시장의 급격한 변동 시 계획대로 투자할 수 있나요?",
+          question: "금융투자상품 가입 목적은 무엇인가요?",
           options: [
-            { text: "네", score: 1 },
-            { text: "아니오", score: 0 }
+            { text: "자산 증식(여유 자금 투자)", score: 1 },
+            { text: "노후 자금 마련", score: 2 },
+            { text: "목적 자금 마련 (결혼자금, 주택구입자금 등)", score: 3 },
+            { text: "사용 예정 자금 단기 운용 (전세금, 임차보증금 등)", score: 4 }
           ],
           icon: require('@/assets/img/analysis/8.png')
         },
         {
           id: 9,
-          question: "투자 결정을 내릴 때 전문가의 조언을 참고하나요?",
+          question: "자금의 예상 투자 기간은 얼마나 되나요?",
           options: [
-            { text: "네", score: 0 },
-            { text: "아니오", score: 1 }
+            { text: "6개월 미만", score: 1 },
+            { text: "1년 미만", score: 2 },
+            { text: "3년 미만", score: 3 },
+            { text: "3년 이상", score: 4 }
           ],
           icon: require('@/assets/img/analysis/9.png')
         },
         {
           id: 10,
-          question: "새로운 금융 상품에 대한 정보를 주로 인터넷 검색을 통해 수집하나요?",
+          question: "기대 수익과 감내할 수 있는 손실은 어느 정도인가요?",
           options: [
-            { text: "네", score: 1 },
-            { text: "아니오", score: 0 }
+            { text: "원금 보존 추구", score: 1 },
+            { text: "20% 이내 손실 감내 가능", score: 2 },
+            { text: "최대 100% 손실 감내 가능", score: 3 },
+            { text: "원금 초과 손실 감내 가능", score: 4 }
           ],
           icon: require('@/assets/img/analysis/10.png')
-        },
-        {
-          id: 11,
-          question: "재산 증식을 위해 적절한 리스크를 감수할 목표가 있나요?",
-          options: [
-            { text: "네", score: 1 },
-            { text: "아니오", score: 0 }
-          ],
-          icon: require('@/assets/img/analysis/11.png')
-        },
-        {
-          id: 12,
-          question: "투자 시 장기 성장 가능성을 고려하나요?",
-          options: [
-            { text: "네", score: 1 },
-            { text: "아니오", score: 0 }
-          ],
-          icon: require('@/assets/img/analysis/12.png')
-        },
-        {
-          id: 13,
-          question: "10% 이내의 손실은 감내할 수 있나요?",
-          options: [
-            { text: "네", score: 1 },
-            { text: "아니오", score: 0 }
-          ],
-          icon: require('@/assets/img/analysis/13.png')
-        },
-        {
-          id: 14,
-          question: "리스크를 줄이기 위해 분산 투자를 선호하나요?",
-          options: [
-            { text: "네", score: 0 },
-            { text: "아니오", score: 1 }
-          ],
-          icon: require('@/assets/img/analysis/14.png')
-        },
-        {
-          id: 15,
-          question: "정기적인 투자 계획을 세우고 실행하고 있나요?",
-          options: [
-            { text: "네", score: 1 },
-            { text: "아니오", score: 0 }
-          ],
-          icon: require('@/assets/img/analysis/15.png')
-        },
-        {
-          id: 16,
-          question: "장기 투자 시 자산 배분 전략을 사용할 의향이 있나요?",
-          options: [
-            { text: "네", score: 1 },
-            { text: "아니오", score: 0 }
-          ],
-          icon: require('@/assets/img/analysis/16.png')
-        },
-        {
-          id: 17,
-          question: "투자 성과를 목표 수익률과 비교하여 평가하나요?",
-          options: [
-            { text: "네", score: 1 },
-            { text: "아니오", score: 0 }
-          ],
-          icon: require('@/assets/img/analysis/17.png')
-        },
-        {
-          id: 18,
-          question: "당신의 투자 스타일이 중립적이라고 생각하나요?",
-          options: [
-            { text: "네", score: 0 },
-            { text: "아니오", score: 1 }
-          ],
-          icon: require('@/assets/img/analysis/18.png')
-        },
-        {
-          id: 19,
-          question: "투자에 대한 기본적인 이해도가 있다고 생각하나요?",
-          options: [
-            { text: "네", score: 1 },
-            { text: "아니오", score: 0 }
-          ],
-          icon: require('@/assets/img/analysis/19.png')
-        },
-        {
-          id: 20,
-          question: "불확실한 경제 상황에서 신중하게 접근할 의향이 있나요?",
-          options: [
-            { text: "네", score: 0 },
-            { text: "아니오", score: 1 }
-          ],
-          icon: require('@/assets/img/analysis/20.png')
-        },
-        // 추가 질문을 여기에 추가합니다.
+        }
       ],
       answers: [], // 사용자의 응답을 저장
       totalScore: 0 // 총점 계산
@@ -339,14 +270,15 @@ h2 {
 
 /* 옵션 버튼 스타일 */
 .options {
-  display: flex;
-  justify-content: space-around;
+  display:grid;
   margin-bottom: 20px;
 }
 
 .options button {
+  margin: 10px;
   padding: 15px 25px;
   border: none;
+  font-weight: bold;
   background-color: white;
   border-radius: 10px;
   cursor: pointer;
@@ -374,6 +306,7 @@ h2 {
 .prev-button,
 .next-button {
   padding: 10px 30px;
+  margin: 10px;
   border: none;
   background-color: white;
   color: #4CAF50;
