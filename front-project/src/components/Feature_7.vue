@@ -1,8 +1,8 @@
 <template>
   <section>
     <br><br><br><br><br>
-    <div class="container text-center investDictionary">
-      <div class="text-start">
+    <div class="container text-center investDictionary" @click="goToDic">
+      <div class="text-start" >
         <h1>HOW TO</h1>
         <h1>INVEST</h1>
         <h4>투자의 처음과 끝을 알려드립니다.</h4>
@@ -23,7 +23,7 @@
 }
 
 .investDictionary:hover{
-  transform: scale(0.9);
+  transform: scale(1.1);
   z-index: 11111;
 }
 
@@ -46,5 +46,12 @@ h1{
 
 </style>
 
-<script setup lang="ts">
+<script setup>
+import {useRouter} from "vue-router";
+
+const router = useRouter();
+
+const goToDic = () => {
+  router.push('dictionary');
+}
 </script>
