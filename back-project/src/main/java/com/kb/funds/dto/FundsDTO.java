@@ -46,7 +46,7 @@ public class FundsDTO {
     private BigDecimal feeTot;
 
     // 수익 차트 리스트 초기화
-    private List<SuikChartDTO> suikCharts = new ArrayList<>(); // SuikChartDTO 리스트
+    private List<SuikChartDTO> suikChart = new ArrayList<>(); // SuikChartDTO 리스트
 
     // 벤치마크
     private String bmNm;

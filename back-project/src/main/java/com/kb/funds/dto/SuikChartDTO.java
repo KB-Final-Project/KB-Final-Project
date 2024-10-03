@@ -1,5 +1,6 @@
 package com.kb.funds.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +12,16 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SuikChartDTO {
     private Long fundId;
-    private String gijunYmd; // 기준일
-    private Double bmSuikJisu; // 벤치마크 수익 지수
-    private Double silhSuikRt; // 실현 수익률
-    private Double seoljAek; // 순 자산
+
+    @JsonProperty("GIJUN_YMD") // JSON 필드 매핑
+    private String gijunYmd;
+
+    @JsonProperty("BM_SUIK_JISU")
+    private double bmSuikJisu;
+
+    @JsonProperty("SILH_SUIK_RT")
+    private double silhSuikRt;
+
+    @JsonProperty("SEOLJ_AEK")
+    private double seoljAek;
 }

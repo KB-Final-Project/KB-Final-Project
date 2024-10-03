@@ -33,7 +33,7 @@
 
     <!-- 기존 수익 차트 삭제 -->
     <delete id="deleteSuikChartByFundId" parameterType="long">
-        DELETE FROM suik_chart WHERE fund_id = #{id}
+        DELETE FROM suikChart WHERE fundId = #{id}
     </delete>
 
     <!-- ID로 펀드 존재 여부 확인 -->
@@ -47,7 +47,7 @@
     <select id="searchFunds" resultType="com.kb.funds.dto.FundsDTO">
         SELECT *
         FROM funds
-        WHERE fund_fnm LIKE CONCAT('%', #{keyword}, '%')
+        WHERE fundFnm LIKE CONCAT('%', #{keyword}, '%')
     </select>
 
     <!-- 모든 펀드 조회 -->

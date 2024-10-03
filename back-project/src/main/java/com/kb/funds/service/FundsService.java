@@ -9,6 +9,7 @@ import com.kb.funds.dto.SuikChartDTO;
 import com.kb.funds.mapper.FundsMapper;
 import com.kb.funds.mapper.SuikChartMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -39,42 +40,30 @@ public class FundsService {
                 for (FundsDTO fund : funds) {
                     try {
                         System.out.println("Processing fund: " + fund);
-                        List<SuikChartDTO> suikCharts = crawlSuikCharts(fund);
+                        List<SuikChartDTO> suikCharts = crawlSuikChart(fund);
 
+                        // Fund 존재 여부 체크 및 삽입
                         if (fundsMapper.existsById(fund.getId())) {
                             fundsMapper.updateFund(fund);
-                            suikChartMapper.deleteSuikChartByFundId(fund.getId());
                         } else {
-                            // 새로운 펀드 삽입
-                            try {
-                                fundsMapper.insertFund(fund);
-                                System.out.println("Inserted fund ID: " + fund.getId());
+                            fundsMapper.insertFund(fund);
+                            System.out.println("Inserted fund ID: " + fund.getId());
+                        }
 
-                                // 새로운 수익 차트 데이터 삽입
-                                System.out.println("SuikCharts size: " + suikCharts.size());
-                                for (SuikChartDTO suikChart : suikCharts) {
-                                    if (fund.getId() == null) {
-                                        System.out.println("Fund ID is null for fund: " + fund);
-                                        continue;
-                                    }
-
-                                    suikChart.setFundId(fund.getId()); // fundId 설정
-                                    System.out.println("Inserting SuikChart: " + suikChart);
-                                    System.out.println("Preparing to insert SuikChart with Fund ID: " + suikChart.getFundId());
-
-                                    try {
-                                        suikChartMapper.insertSuikChart(suikChart);
-                                        System.out.println("Inserted SuikChart: " + suikChart);
-                                    } catch (Exception e) {
-                                        System.err.println("Error inserting SuikChart: " + suikChart);
-                                        e.printStackTrace();
-                                    }
-                                }
-                            } catch (Exception e) {
-                                System.err.println("Error inserting fund: " + fund);
-                                e.printStackTrace();
-                                continue;
+                        // 수익 차트 중복 체크 및 삽입
+                        List<SuikChartDTO> uniqueSuikCharts = new ArrayList<>();
+                        for (SuikChartDTO suikChart : suikCharts) {
+                            if (!suikChartMapper.existsByFundIdAndGijunYmd(fund.getId(), suikChart.getGijunYmd())) {
+                                suikChart.setFundId(fund.getId());
+                                uniqueSuikCharts.add(suikChart);
+                            } else {
+                                System.out.println("Duplicate SuikChart found for Fund ID: " + fund.getId() + " and GijunYmd: " + suikChart.getGijunYmd());
                             }
+                        }
+
+                        if (!uniqueSuikCharts.isEmpty()) {
+                            suikChartMapper.insertSuikCharts(uniqueSuikCharts); // Batch insert
+                            System.out.println("Inserted SuikCharts: " + uniqueSuikCharts);
                         }
                     } catch (Exception e) {
                         System.err.println("Error occurred while processing fund ID: " + fund.getId());
@@ -142,9 +131,8 @@ public class FundsService {
         return fundList;
     }
 
-
-    private List<SuikChartDTO> crawlSuikCharts(FundsDTO fund) {
-        List<SuikChartDTO> suikCharts = new ArrayList<>(fund.getSuikCharts());
+    private List<SuikChartDTO> crawlSuikChart(FundsDTO fund) {
+        List<SuikChartDTO> suikCharts = new ArrayList<>(fund.getSuikChart());
         suikCharts.forEach(suikChart -> {
             if (fund.getId() != null) {
                 suikChart.setFundId(fund.getId());

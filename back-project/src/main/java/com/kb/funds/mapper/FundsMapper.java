@@ -16,6 +16,4 @@ public interface FundsMapper {
 
     List<FundsDTO> searchFunds(String keyword);
     List<FundsDTO> findAllFunds();
-
-
 }
