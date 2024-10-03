@@ -1,6 +1,5 @@
 package com.kb._config;
 
-import com.google.gson.Gson;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -50,9 +49,5 @@ public class WebMvcConfig  implements WebMvcConfigurer {
         return new RestTemplate();
     }
 
-    @Bean
-    public Gson gson() {
-        return new Gson();
-    }
 }
 
