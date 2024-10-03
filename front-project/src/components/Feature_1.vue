@@ -1,51 +1,194 @@
 <template>
-  <section class="position-relative pt-5">
-    <div class="position-absolute top-0 start-0 w-100" style="height: 79%;">
-      <div class="bg-primary position-absolute top-0 start-0 w-100 h-100"></div>
-      <div class="position-absolute start-0 bottom-0 w-100 overflow-hidden mb-n1" style="padding-bottom: 6.2%; color: var(--ar-body-bg);">
-        <svg class="position-absolute start-0 bottom-0 w-100 h-100" viewBox="0 0 3000 185.4" xmlns="http://www.w3.org/2000/svg">
-          <path fill="currentColor" d="M3000,0v185.4H0V0c496.4,115.6,996.4,173.4,1500,173.4S2503.6,115.6,3000,0z"></path>
-        </svg>
-      </div>
-    </div>
-    <svg class="position-absolute end-0 zindex-2 mt-4 mt-sm-5" width="836" height="755" fill="none" stroke="white" stroke-miterlimit="10" xmlns="http://www.w3.org/2000/svg">
-      <path d="M21.253 754.495c-18.309-66.796-31.642-139.581-6.067-203.929 33.531-84.307 126.54-131.543 216.622-142.348 90.082-10.831 180.803 7.052 271.284 13.945s187.376.931 261.969-50.776C868.476 299.694 902.433 159.981 995.762 75.54 1073.58 5.151 1191.04-18.081 1289.8 17.446M89.774 754.494c-17.324-63.177-29.938-132.049-5.748-192.911 31.722-79.756 119.701-124.438 204.913-134.657 85.239-10.246 171.036 6.68 256.621 13.2s177.263.878 247.812-48.035c97.852-67.835 129.947-199.99 218.248-279.853 73.61-66.584 184.74-88.565 278.15-54.954M158.305 754.496c-16.313-59.585-28.235-124.492-5.402-181.894 29.912-75.206 112.862-117.333 193.231-126.966 80.368-9.661 161.269 6.307 241.983 12.427 80.715 6.148 167.151.825 233.655-45.293 92.264-63.949 122.522-188.574 205.768-263.886 69.4-62.805 174.17-83.509 262.26-51.814M226.834 754.495c-15.328-55.965-26.532-116.96-5.083-170.876 28.103-70.655 106.023-110.228 181.521-119.276 75.499-9.074 151.503 5.908 227.321 11.683s157.011.772 219.497-42.553c86.675-60.09 115.097-177.157 193.31-247.891 65.2-59 163.64-78.453 246.37-48.674M295.359 754.495c-14.344-52.372-24.802-109.429-4.763-159.859 26.266-66.104 99.183-103.122 169.812-111.584 70.628-8.489 141.736 5.535 212.657 10.937s146.899.719 205.366-39.811c81.087-56.205 107.699-165.741 180.859-231.925 60.99-55.193 153.1-73.396 230.48-45.533" stroke-opacity=".12"></path>
-    </svg>
-    <div class="container dark-mode position-relative zindex-5 pt-5 mt-4 mt-lg-5">
-      <div class="row justify-content-center text-center pt-md-2 pt-lg-0 pt-xl-2 pb-5 mb-md-2">
-        <div class="col-lg-10 col-xl-9 col-xxl-8">
-          <span class="badge bg-faded-light fs-sm text-white px-3 mb-4">{{ badgeText }}</span>
-          <h1 class="display-3 mb-sm-4">{{ title }}</h1>
-          <p class="pb-3 mb-3 mb-lg-4" v-html="description"></p>
-          <a class="btn btn-lg btn-warning" :href="buttonLink">{{ buttonText }}</a>
+  <section>
+    <div id="carouselExample" class="carousel slide"  data-bs-ride="carousel" data-bs-interval="5000">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <div class="position-absolute top-0 start-0 w-100" style="height:92%;">
+            <div class="bg-primary position-absolute top-0 start-0 w-100 h-100"></div>
+            <div class="position-absolute start-0 bottom-0 w-100 overflow-hidden mb-n1" style="padding-bottom: 6.2%; color: var(--ar-body-bg);">
+              <svg class="position-absolute start-0 bottom-0 w-100 h-100" viewBox="0 0 3000 185.4" xmlns="http://www.w3.org/2000/svg">
+                <path fill="white" d="M3000,0v185.4H0V0c496.4,115.6,996.4,173.4,1500,173.4S2503.6,115.6,3000,0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="container dark-mode position-relative zindex-5 pt-5 mt-4 mt-lg-5">
+            <div class="row justify-content-center text-center pt-md-2 pt-lg-0 pt-xl-2 pb-5 mb-md-2">
+              <div class="col-lg-10 col-xl-9 col-xxl-8 text-start">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h1 class="display-3 mb-sm-4 me-2" style="width: 140%; height: 100%; text-align: start;"><span class="badgeText badge bg-faded-light fs-sm text-white px-3 mb-3"><h3>Let's have a dream</h3></span><br>취향대로 투자하자</h1>
+                  <div class="logoYong">
+                    <img src="/img/logoYong.png" alt="Logo">
+                  </div>
+                </div>
+                <h3 class="pb-3 mb-3 mb-lg-4">투자 성향을 분석하고 <br> 성향 기반 투자 상품 추천받기</h3>
+              </div>
+              <div class="text-center mt-4">
+                <button class="investChoiceBtn">투자 성향 분석 Click!</button>
+              </div>
+            </div>
+            <div class="overflow-hidden" style="border-radius: calc(var(--ar-border-radius) * 1.25);"></div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <div class="position-absolute top-0 start-0 w-100" style="height:92%;">
+            <div class="mode2Color position-absolute top-0 start-0 w-100 h-100"></div>
+            <div class="position-absolute start-0 bottom-0 w-100 overflow-hidden mb-n1" style="padding-bottom: 6.2%; color: var(--ar-body-bg);">
+              <svg class="position-absolute start-0 bottom-0 w-100 h-100" viewBox="0 0 3000 185.4" xmlns="http://www.w3.org/2000/svg">
+                <path fill="white" d="M3000,0v185.4H0V0c496.4,115.6,996.4,173.4,1500,173.4S2503.6,115.6,3000,0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="container dark-mode position-relative zindex-5 pt-5 mt-4 mt-lg-5">
+            <div class="row justify-content-center text-center pt-md-2 pt-lg-0 pt-xl-2 pb-5 mb-md-2">
+              <div class="mode2 col-lg-10 col-xl-9 col-xxl-8 text-start">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h1 class="display-3 mb-sm-4 me-2" style="width: 170%; height: 100%; text-align: start;">
+                  <span class="mode2Badge badgeText badge bg-faded-light fs-sm text-white px-3 mb-3">
+                    <h3>Choose at a glance</h3>
+                  </span><br>투자 상품을 한 눈에
+                  </h1>
+                  <div class="logoYong">
+                    <img src="/img/logoYong2.png" alt="Logo">
+                  </div>
+                </div>
+                <h3 class="pb-3 mb-3 mb-lg-4">
+                  다양한 투자 상품을<br>
+                  하나의 플랫폼에서 한 눈에 비교</h3>
+              </div>
+              <div class="text-center mt-4">
+                <button class="investChoiceBtn">투자 성향 분석 Click!</button>
+              </div>
+            </div>
+            <div class="overflow-hidden" style="border-radius: calc(var(--ar-border-radius) * 1.25);"></div>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="position-absolute top-0 start-0 w-100" style="height:92%;">
+            <div class="mode3Color position-absolute top-0 start-0 w-100 h-100"></div>
+            <div class="position-absolute start-0 bottom-0 w-100 overflow-hidden mb-n1" style="padding-bottom: 6.2%; color: var(--ar-body-bg);">
+              <svg class="position-absolute start-0 bottom-0 w-100 h-100" viewBox="0 0 3000 185.4" xmlns="http://www.w3.org/2000/svg">
+                <path fill="white" d="M3000,0v185.4H0V0c496.4,115.6,996.4,173.4,1500,173.4S2503.6,115.6,3000,0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="container position-relative zindex-5 pt-5 mt-4 mt-lg-5">
+            <div class="row justify-content-center text-center pt-md-2 pt-lg-0 pt-xl-2 pb-5 mb-md-2">
+              <div class="mode3 col-lg-10 col-xl-9 col-xxl-8 text-start">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h1 class="display-3 mb-sm-4 me-2" style="width: 150%; height: 100%; text-align: start;">
+                    <span class="mode3Badge badgeText badge bg-faded-light fs-sm text-white px-3 mb-3">
+                      <h3>Let's have a dream</h3>
+                    </span><br>취향대로 투자하자
+                  </h1>
+                  <div class="logoYong">
+                    <img src="/img/logoYong3.png" alt="Logo">
+                  </div>
+                </div>
+                <h3 class="pb-3 mb-3 mb-lg-4">투자 성향을 분석하고 <br> 성향 기반 투자 상품 추천받기</h3>
+              </div>
+              <div class="text-center mt-4">
+                <button class="investChoiceBtn">투자 성향 분석 Click!</button>
+              </div>
+            </div>
+            <div class="overflow-hidden" style="border-radius: calc(var(--ar-border-radius) * 1.25);"></div>
+          </div>
         </div>
       </div>
-      <div class="overflow-hidden" style="border-radius: calc(var(--ar-border-radius) * 1.25);"></div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref } from 'vue';
 
-const badgeText = ref('Take your data to the next level');
-const title = ref('취향대로 투자하자');
-const description = ref('투자 성향을 분석하고 <br> 성향 기반 투자 상품 추천받기');
-const buttonText = ref('투자 성향 분석 click');
-const buttonLink = ref('/test-start');
 </script>
-<style>
-.row[data-v-cfb9518a] {
-    --bs-gutter-x: 30px;
-    --bs-gutter-y: 0;
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: calc(-1* var(--bs-gutter-y));
-    margin-right: calc(-0.5* var(--bs-gutter-x));
-    margin-left: calc(-0.5* var(--bs-gutter-x));
-    flex-direction: row-reverse;
+
+<style scoped>
+.investChoiceBtn {
+  transition: transform 0.6s ease;
+  cursor: pointer;
 }
-.content{
+
+.investChoiceBtn:hover{
+  background-color: rgba(236, 203, 80, 1);
+  transform: scale(1.2);
+  z-index: 11111;
+}
+
+.carousel-item {
+  transition: transform 1s ease-in-out;
+}
+
+.logoYong img{
+  width: 70%;
+  margin-left: 300px;
+  margin-top: -30px;
+}
+
+section {
+  padding-top: 0 !important;
+}
+
+.content {
   padding: 0;
 }
+
+.badgeText {
+  width: 50%;
+  height: 10%;
+  font-size: 30px;
+}
+
+.display-3 {
+  color: white;
+  font-weight: 700;
+}
+
+h3.pb-3 {
+  color: white;
+}
+
+.mode3 h1 {
+  color: rgba(50, 98, 82, 1);
+}
+
+.mode3 h3 {
+  color: rgba(67, 139, 115, 1);
+}
+
+.mode2Color {
+  background-color: rgba(162, 202, 129, 1);
+}
+
+.mode3Color {
+  background-color: rgba(241, 252, 232, 1);
+}
+
+.mode3Badge h3 {
+  color: rgba(67, 139, 115, 1);
+  background-color: rgb(214, 255, 188);
+}
+
+.investChoiceBtn {
+  width: 300px;
+  height: 60px;
+  background-color: rgba(236, 203, 80, 1);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: -50px;
+}
+
+
 </style>

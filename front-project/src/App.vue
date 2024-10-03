@@ -2,7 +2,7 @@
   <div id="app">
     <!-- AppHeader와 AppFooter를 라우터의 meta 정보에 따라 조건부 렌더링 -->
     <AppHeader v-if="!$route.meta.hideHeaderFooter" />
-    <router-view class="content"></router-view>
+    <router-view id="mainContent"></router-view>
     <AppFooter v-if="!$route.meta.hideHeaderFooter" />
   </div>
 </template>
@@ -26,8 +26,10 @@ export default {
 @import './assets/css/theme.min.css';
 @import './assets/css/style.bundle';
 
-.content {
-  padding-top: 80px;
+
+#mainContent{
+  padding-top: 80px !important;
+
 }
 
 </style>
