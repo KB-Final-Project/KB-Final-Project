@@ -2,24 +2,17 @@ package com.kb.funds.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kb.funds.dto.FundsDTO;
-import com.kb.funds.dto.WeightDTO; // 추가
+import com.kb.funds.dto.SuikChartDTO;
 import com.kb.funds.mapper.FundsMapper;
+import com.kb.funds.mapper.SuikChartMapper;
 import lombok.RequiredArgsConstructor;
-<<<<<<< Updated upstream
-=======
-import org.openqa.selenium.WebElement;
-import org.springframework.scheduling.annotation.Scheduled;
->>>>>>> Stashed changes
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +20,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FundsService {
 
+    private final ObjectMapper objectMapper;
     private final FundsMapper fundsMapper;
     private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper; // ObjectMapper 추가
+    private final SuikChartMapper suikChartMapper;
 
-
+    @Transactional
     public void crawlAndSaveFunds() throws JsonProcessingException {
         int pageNo = 1;
         boolean hasMoreFunds = true;
@@ -44,8 +38,46 @@ public class FundsService {
             } else {
                 for (FundsDTO fund : funds) {
                     try {
-                        fundsMapper.insertFund(fund);
+                        System.out.println("Processing fund: " + fund);
+                        List<SuikChartDTO> suikCharts = crawlSuikCharts(fund);
+
+                        if (fundsMapper.existsById(fund.getId())) {
+                            fundsMapper.updateFund(fund);
+                            suikChartMapper.deleteSuikChartByFundId(fund.getId());
+                        } else {
+                            // 새로운 펀드 삽입
+                            try {
+                                fundsMapper.insertFund(fund);
+                                System.out.println("Inserted fund ID: " + fund.getId());
+
+                                // 새로운 수익 차트 데이터 삽입
+                                System.out.println("SuikCharts size: " + suikCharts.size());
+                                for (SuikChartDTO suikChart : suikCharts) {
+                                    if (fund.getId() == null) {
+                                        System.out.println("Fund ID is null for fund: " + fund);
+                                        continue;
+                                    }
+
+                                    suikChart.setFundId(fund.getId()); // fundId 설정
+                                    System.out.println("Inserting SuikChart: " + suikChart);
+                                    System.out.println("Preparing to insert SuikChart with Fund ID: " + suikChart.getFundId());
+
+                                    try {
+                                        suikChartMapper.insertSuikChart(suikChart);
+                                        System.out.println("Inserted SuikChart: " + suikChart);
+                                    } catch (Exception e) {
+                                        System.err.println("Error inserting SuikChart: " + suikChart);
+                                        e.printStackTrace();
+                                    }
+                                }
+                            } catch (Exception e) {
+                                System.err.println("Error inserting fund: " + fund);
+                                e.printStackTrace();
+                                continue;
+                            }
+                        }
                     } catch (Exception e) {
+                        System.err.println("Error occurred while processing fund ID: " + fund.getId());
                         e.printStackTrace();
                     }
                 }
@@ -56,55 +88,71 @@ public class FundsService {
 
     private List<FundsDTO> crawlFundsFromWebsite(int pageNo) throws JsonProcessingException {
         String url = "https://www.samsungfund.com/api/v1/fund/product.do?graphTerm=1&orderBy=DESC&orderByType=SUIK_RT3&pageNo=" + pageNo;
-
-        // JSON 데이터를 가져오기
         String jsonResponse = restTemplate.getForObject(url, String.class);
+        System.out.println("JSON Response: " + jsonResponse); // JSON 응답 로그
 
-        // JSON 데이터를 DTO로 변환
         List<FundsDTO> fundList = objectMapper.readValue(jsonResponse, new TypeReference<List<FundsDTO>>() {});
-        System.out.println("Crawled Funds: " + fundList);
+
+        JsonNode rootNode = objectMapper.readTree(jsonResponse);
+
+        for (FundsDTO fund : fundList) {
+            Long fundId = fund.getId(); // fund.getId()가 정확한지 확인 필요
+
+            if (fundId == null) {
+                System.out.println("Fund ID is null for fund: " + fund);
+                continue;
+            }
+
+            JsonNode fundNode = null;
+
+            // fundNode를 찾는 과정에서 fundId 대신 fId 사용
+            for (JsonNode node : rootNode) {
+                if (node.get("fId").asText().equals(fundId.toString())) {
+                    fundNode = node;
+                    break;
+                }
+            }
+
+            if (fundNode != null) {
+                System.out.println("Fund Node found for fund ID: " + fundId);
+                System.out.println("Fund Node: " + fundNode.toString()); // fundNode 내용 로그
+
+                JsonNode suikChartNode = fundNode.get("suikChart");
+
+                if (suikChartNode != null) {
+                    System.out.println("suikChartNode found for fund ID: " + fundId);
+                    System.out.println("suikChartNode content: " + suikChartNode.toString()); // suikChartNode 내용 로그
+                    if (suikChartNode.isArray() && suikChartNode.size() > 0) {
+                        System.out.println("suikChartNode has size: " + suikChartNode.size());
+                        // 차트 데이터 처리 로직
+                        for (JsonNode chart : suikChartNode) {
+                            // 차트 데이터 로직 추가
+                        }
+                    } else {
+                        System.out.println("suikChartNode is empty for fund ID: " + fundId);
+                    }
+                } else {
+                    System.out.println("suikChartNode is null for fund ID: " + fundId);
+                }
+            } else {
+                System.out.println("Fund data not found for fund ID: " + fundId);
+            }
+        }
+
         return fundList;
     }
 
-<<<<<<< Updated upstream
-=======
-    private List<WeightDTO> crawlStructureWeights(FundsDTO fund) {
-        List<WeightDTO> weights = new ArrayList<>();
 
-        // Selenium 사용하여 하위 요소 크롤링
-        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver"); // ChromeDriver 경로 설정
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless"); // 브라우저를 표시하지 않으려면 이 줄을 추가합니다.
-        WebDriver driver = new ChromeDriver(options);
-
-        try {
-            driver.get("https://www.samsungfund.com/fund/product/detail.do?id=" + fund.getId()); // 상세 페이지 URL로 변경
-            List<WebElement> liElements = driver.findElements(By.cssSelector(".structure-weight__list ul li")); // ul 아래의 li 요소 선택
-
-            for (WebElement liElement : liElements) {
-                String category = liElement.getText(); // li의 텍스트
-                List<WebElement> spanElements = liElement.findElements(By.tagName("span")); // 각 li 아래의 span 요소들
-
-                for (WebElement spanElement : spanElements) {
-                    String value = spanElement.getText(); // span 값
-                    weights.add(new WeightDTO(category, value)); // WeightDTO 객체 생성 후 리스트에 추가
-                }
+    private List<SuikChartDTO> crawlSuikCharts(FundsDTO fund) {
+        List<SuikChartDTO> suikCharts = new ArrayList<>(fund.getSuikCharts());
+        suikCharts.forEach(suikChart -> {
+            if (fund.getId() != null) {
+                suikChart.setFundId(fund.getId());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            driver.quit();
-        }
-
-        return weights;
+        });
+        return suikCharts;
     }
 
-//    @Scheduled(fixedRate = 3600000) // 1시간마다 실행
-//    public void scheduleCrawl() {
-//        crawlAndSaveFunds();
-//    }
-
->>>>>>> Stashed changes
     public List<FundsDTO> searchFunds(String keyword) {
         return fundsMapper.searchFunds(keyword);
     }

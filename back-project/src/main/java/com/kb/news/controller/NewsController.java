@@ -8,7 +8,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +19,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8081") // Vue.js 개발 서버 주소
 public class NewsController {
 
     private static final Logger logger = LoggerFactory.getLogger(NewsController.class);
@@ -38,19 +36,25 @@ public class NewsController {
 
         logger.info("Received request for news. Query: {}, Display: {}", query, display);
 
+        // 쿼리 인코딩
         String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
         String apiURL = "https://openapi.naver.com/v1/search/news.json?query=" + encodedQuery + "&display=" + display;
 
+        // RestTemplate 사용
         RestTemplate restTemplate = new RestTemplate();
 
+        // HTTP 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Naver-Client-Id", clientId);
         headers.set("X-Naver-Client-Secret", clientSecret);
 
+        // HTTP 요청 엔티티 생성
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
+            // URI 생성
             URI uri = new URI(apiURL);
+            // API 호출
             ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
 
             logger.info("API request successful. Status: {}", response.getStatusCode());

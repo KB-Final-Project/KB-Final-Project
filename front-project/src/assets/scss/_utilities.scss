@@ -1,9 +1,12 @@
+@use 'sass:color';
+
 @import '~@/assets/vendor/bootstrap/scss/_functions.scss';
 
 @import 'bootstrap/scss/variables';
 @import 'bootstrap/scss/maps';
 @import 'bootstrap/scss/mixins';
 @import 'bootstrap/scss/utilities';
+
 
 $utilities: map-merge(
   $utilities,
@@ -101,7 +104,7 @@ $utilities: map-merge(
       responsive: true,
       values: (
         null: var(--#{$prefix}border-width) var(--#{$prefix}border-style) var(--#{$prefix}border-color),
-        'dashed': var(--#{$prefix}border-width) dashed darken($border-color, 4%),
+        'dashed': var(--#{$prefix}border-width) dashed color.scale($border-color, $lightness: -4%),
         0: 0,
       )
     ),
