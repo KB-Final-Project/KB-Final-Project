@@ -88,7 +88,7 @@
                 <h3 class="pb-3 mb-3 mb-lg-4">투자 성향을 분석하고 <br> 성향 기반 투자 상품 추천받기</h3>
               </div>
               <div class="text-center mt-4">
-                <button class="investChoiceBtn">투자 성향 분석 Click!</button>
+                <button class="investChoiceBtn" >투자 성향 분석 Click!</button>
               </div>
             </div>
             <div class="overflow-hidden" style="border-radius: calc(var(--ar-border-radius) * 1.25);"></div>
