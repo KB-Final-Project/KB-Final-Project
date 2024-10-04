@@ -11,7 +11,7 @@ import java.util.Map;
 public class StockListService {
 
     @Autowired
-        private StockService stockService;
+    private StockService stockService;
 
     public List<Map<String, Object>> getStockPrices(List<String> stockCodes) {
         List<Map<String, Object>> stockDataList = new ArrayList<>();
@@ -21,7 +21,6 @@ public class StockListService {
                 stockDataList.add(stockData);
             }
         }
-            return stockDataList;
+        return stockDataList;
     }
 }
-
