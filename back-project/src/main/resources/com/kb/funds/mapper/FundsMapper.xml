@@ -6,11 +6,9 @@
 <mapper namespace="com.kb.funds.mapper.FundsMapper">
     <!-- 펀드 추가 -->
     <insert id="insertFund" parameterType="com.kb.funds.dto.FundsDTO">
-        <!-- Retrieve the generated key for the funds table -->
         <selectKey keyProperty="id" resultType="long" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
-
         INSERT INTO funds (fundFnm, gijunGa, gijunYmd, suikRt1, suikRt3, suikRt12, investGrade, feeTot, bmNm)
         VALUES (#{fundFnm}, #{gijunGa}, #{gijunYmd}, #{suikRt1}, #{suikRt3}, #{suikRt12}, #{investGrade}, #{feeTot}, #{bmNm})
     </insert>
@@ -33,7 +31,7 @@
 
     <!-- 기존 수익 차트 삭제 -->
     <delete id="deleteSuikChartByFundId" parameterType="long">
-        DELETE FROM suikChart WHERE fundId = #{id}
+        DELETE FROM suik_chart WHERE fund_id = #{id}
     </delete>
 
     <!-- ID로 펀드 존재 여부 확인 -->
@@ -43,16 +41,38 @@
         WHERE id = #{id}
     </select>
 
-    <!-- 키워드로 펀드 검색 -->
-    <select id="searchFunds" resultType="com.kb.funds.dto.FundsDTO">
-        SELECT *
-        FROM funds
-        WHERE fundFnm LIKE CONCAT('%', #{keyword}, '%')
-    </select>
+    <resultMap id="FundsResultMap" type="com.kb.funds.dto.FundsDTO">
+        <id property="id" column="id"/>
+        <result property="fundFnm" column="fundFnm"/>
+        <result property="gijunGa" column="gijunGa"/>
+        <result property="gijunYmd" column="gijunYmd"/>
+        <result property="suikRt1" column="suikRt1"/>
+        <result property="suikRt3" column="suikRt3"/>
+        <result property="suikRt12" column="suikRt12"/>
+        <result property="investGrade" column="investGrade"/>
+        <result property="feeTot" column="feeTot"/>
+        <result property="bmNm" column="bmNm"/>
 
+        <collection property="suikChart" ofType="com.kb.funds.dto.SuikChartDTO">
+            <result property="fundId" column="fundId"/>
+            <result property="gijunYmd" column="gijunYmd"/>
+            <result property="bmSuikJisu" column="bmSuikJisu"/>
+            <result property="silhSuikRt" column="silhSuikRt"/>
+            <result property="seoljAek" column="seoljAek"/>
+        </collection>
+    </resultMap>
+
+    <!-- 키워드로 펀드 검색 -->
+    <select id="searchFunds" resultMap="FundsResultMap">
+        SELECT f.*, s.*
+        FROM funds f
+                 LEFT JOIN suikChart s ON f.id = s.fundId
+        WHERE f.fundFnm LIKE CONCAT('%', #{keyword}, '%');
+    </select>
     <!-- 모든 펀드 조회 -->
-    <select id="findAllFunds" resultType="com.kb.funds.dto.FundsDTO">
-        SELECT *
-        FROM funds
+    <select id="findAllFunds" resultMap="FundsResultMap">
+        SELECT f.*, s.*
+        FROM funds f
+                 LEFT JOIN suikChart s ON f.id = s.fundId;
     </select>
 </mapper>
