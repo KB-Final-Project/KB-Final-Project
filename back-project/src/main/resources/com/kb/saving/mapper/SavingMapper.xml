@@ -78,9 +78,9 @@
         ir.save_term,
         ir.intr_rate,
         ir.intr_rate2
-        FROM savings_products AS s
-        INNER JOIN banks AS b ON s.bank_id = b.bank_id
-        LEFT JOIN saving_interest_rates AS ir ON s.saving_id = ir.saving_id
+        FROM SAVINGS_PRODUCTS AS s
+        INNER JOIN BANKS AS b ON s.bank_id = b.bank_id
+        LEFT JOIN SAVING_INTEREST_RATES AS ir ON s.saving_id = ir.saving_id
         WHERE s.fin_category_id = #{finCategoryId}
 
         <if test="searchValue != null">
@@ -127,19 +127,19 @@
             pr.prime_rate_percent,
             pr.prime_rate_detail
         ]]>
-        FROM savings_products AS s
-        INNER JOIN banks AS b ON s.bank_id = b.bank_id
-        LEFT JOIN saving_interest_rates AS ir ON s.saving_id = ir.saving_id
-        LEFT JOIN saving_prime_Rates AS pr ON s.saving_id = pr.saving_id
+        FROM SAVINGS_PRODUCTS AS s
+        INNER JOIN BANKS AS b ON s.bank_id = b.bank_id
+        LEFT JOIN SAVING_INTEREST_RATES AS ir ON s.saving_id = ir.saving_id
+        LEFT JOIN SAVING_PRIME_RATES AS pr ON s.saving_id = pr.saving_id
         WHERE s.fin_category_id = #{finCategoryId} AND s.saving_id = #{savingId}
         ORDER BY s.max_prime_rate DESC;
     </select>
 
     <select id="getTotalCount" resultType="int">
         SELECT COUNT(*)
-        FROM savings_products AS s
-        INNER JOIN banks AS b ON s.bank_id = b.bank_id
-        LEFT JOIN saving_interest_rates AS ir ON s.saving_id = ir.saving_id
+        FROM SAVINGS_PRODUCTS AS s
+        INNER JOIN BANKS AS b ON s.bank_id = b.bank_id
+        LEFT JOIN SAVING_INTEREST_RATES AS ir ON s.saving_id = ir.saving_id
         WHERE s.fin_category_id = #{finCategoryId}
 
         <if test="searchValue != null">
