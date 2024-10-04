@@ -26,13 +26,13 @@ import MyPagePosts from "@/views/myPage/MyPagePosts.vue";
 import MyPageWarning from "@/views/myPage/MyPageWarning.vue";
 import DepositDetail from "@/views/menu/desposit/DepositDetail.vue";
 import SignCoverImage from "@/views/SignCoverImage.vue";
-import community from "@/views/menu/community/Community.vue";
 import ActiveInvestment from "@/views/menu/community/ActiveInvestment.vue";
 import StabilitySeeking from "@/views/menu/community/StabilitySeeking.vue";
 import AggressiveInvestment from "@/views/menu/community/AggressiveInvestment.vue";
 import Stability from "@/views/menu/community/Stability.vue";
 import RiskNeutral from "@/views/menu/community/RiskNeutral.vue";
 import Community from "@/views/menu/community/Community.vue";
+
 
 const routes = [
   {
@@ -55,7 +55,7 @@ const routes = [
   {
     path: '/community',
     name: 'community',
-    component: community,
+    component: Community,
   },
   {
     path: '/news',
@@ -177,7 +177,9 @@ const routes = [
     name: 'signCoverImage',
     component: SignCoverImage,
     meta: { hideHeaderFooter: true },
+
   },
+
   // 필요한 다른 라우트들을 여기에 추가할 수 있습니다.
   {
     path: '/community',

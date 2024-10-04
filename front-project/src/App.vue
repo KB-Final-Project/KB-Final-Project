@@ -28,8 +28,7 @@ export default {
 
 
 #mainContent{
-  padding-top: 80px !important;
-
+  padding-top: 80px  !important;
 }
 
 </style>
