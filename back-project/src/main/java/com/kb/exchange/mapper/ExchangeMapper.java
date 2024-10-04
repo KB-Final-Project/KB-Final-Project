@@ -1,14 +1,23 @@
 package com.kb.exchange.mapper;
 
 
-import com.kb.exchange.dto.Exchange;
-import com.kb.exchange.dto.ExchangeDailyDTO;
-import com.kb.exchange.dto.ExchangeParam;
+import com.kb.exchange.dto.*;
 
+import java.sql.Date;
 import java.util.List;
 
 public interface ExchangeMapper {
-    void insertExchangeRate(Exchange exchange);
-    List<ExchangeDailyDTO> getDailyExchange();
-    List<Exchange> getExchangeListByTerm(ExchangeParam exchangeParam);
+    void insertExchangeRate(List<Exchange> list);
+    List<ExchangeDailyDTO> getDailyExchange(Date date);
+    List<ExchangeListByTerm> getExchangeDetailByTerm(ExchangeParam exchangeParam);
+    List<ExchangeFee> getExchangeFeeByCurrency(int currencyId);
+    void batchUpdateExchangeFees(List<ExchangeFee> updateList);
+    void batchInsertExchangeFees(List<ExchangeFee> saveList);
+    int checkExistExchangeFee(ExchangeFee exchangeFeeDTO);
+    int checkSameExchangeFee(ExchangeFee exchangeFeeDTO);
+    int getCurrenyIdByCurUnit(String curUnit);
+
+    int checkCurrencyExists(String currencyCode);
+
 }
+

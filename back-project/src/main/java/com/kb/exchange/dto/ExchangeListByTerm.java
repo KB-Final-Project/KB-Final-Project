@@ -11,4 +11,6 @@ import java.util.List;
 @Data
 public class ExchangeListByTerm {
     private List<Exchange> exchangeList;
+    private String currencyName;
+    private String currencyCode;
 }
