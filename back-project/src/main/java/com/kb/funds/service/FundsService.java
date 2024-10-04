@@ -9,6 +9,10 @@ import com.kb.funds.dto.SuikChartDTO;
 import com.kb.funds.mapper.FundsMapper;
 import com.kb.funds.mapper.SuikChartMapper;
 import lombok.RequiredArgsConstructor;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -146,6 +150,44 @@ public class FundsService {
             }
         }
 
+        fundList.addAll(crawlFundsWithSelenium());
+        return fundList;
+    }
+
+    private List<FundsDTO> crawlFundsWithSelenium() {
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+        WebDriver driver = new ChromeDriver();
+        List<FundsDTO> fundList = new ArrayList<>();
+
+        try {
+            driver.get("https://www.samsungfund.com/fund/page");
+            // 더보기 버튼 클릭 및 데이터 수집 로직
+
+            // 더보기 버튼 클릭
+            boolean hasMore = true;
+            while (hasMore) {
+                try {
+                    WebElement loadMoreButton = driver.findElement(By.cssSelector("selector-for-load-more-button"));
+                    loadMoreButton.click();
+                    Thread.sleep(2000); // 데이터 로드 대기
+                } catch (Exception e) {
+                    hasMore = false; // 더 이상 더보기 버튼이 없으면 루프 종료
+                }
+            }
+
+            // 데이터 수집
+            List<WebElement> rows = driver.findElements(By.cssSelector("selector-for-fund-rows"));
+            for (WebElement row : rows) {
+                FundsDTO fund = new FundsDTO();
+                fund.setId(Long.valueOf(row.findElement(By.cssSelector("selector-for-fund-id")).getText()));
+                // 나머지 필드도 설정
+                fundList.add(fund);
+            }
+
+        } finally {
+            driver.quit(); // 드라이버 종료
+        }
+
         return fundList;
     }
 
@@ -168,6 +210,8 @@ public class FundsService {
         });
         return suikCharts;
     }
+
+
 
     public List<FundsDTO> searchFunds(String keyword) {
         return fundsMapper.searchFunds(keyword);
