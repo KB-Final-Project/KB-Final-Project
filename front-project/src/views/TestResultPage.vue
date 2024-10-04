@@ -1,102 +1,101 @@
 <template>
   <div class="result-view">
-    <h4 style="color: #45a049;">투자 성향 테스트 결과</h4>
-    <h1>
+    <h4 class="animated-text" style="color: #45a049;">투자 성향 테스트 결과</h4>
+    <h1 class="animated-text">
       <p>나의 투자 성향은?</p>
     </h1>
 
     <!-- 투자 성향 카드 -->
     <div class="result-cards">
-      <div v-if="userType === 'IPWC'" class="result-card">
+      <div v-if="userType === 'IPWC'" class="result-card animated-text">
         <h3>{{ investmentResults[0].title }}</h3>
         <p>{{ investmentResults[0].description }}</p>
         <Vue3Lottie :animationData="investmentResults[0].lottiePath" />
       </div>
-      <div v-if="userType === 'IPMC'" class="result-card">
+      <div v-if="userType === 'IPMC'" class="result-card animated-text">
         <h3>{{ investmentResults[1].title }}</h3>
         <p>{{ investmentResults[1].description }}</p>
         <Vue3Lottie :animationData="investmentResults[1].lottiePath" />
       </div>
-      <div v-if="userType === 'IBWC'" class="result-card">
+      <div v-if="userType === 'IBWC'" class="result-card animated-text">
         <h3>{{ investmentResults[2].title }}</h3>
         <p>{{ investmentResults[2].description }}</p>
         <Vue3Lottie :animationData="investmentResults[2].lottiePath" />
       </div>
-      <div v-if="userType === 'IBMC'" class="result-card">
+      <div v-if="userType === 'IBMC'" class="result-card animated-text">
         <h3>{{ investmentResults[3].title }}</h3>
         <p>{{ investmentResults[3].description }}</p>
         <Vue3Lottie :animationData="investmentResults[3].lottiePath" />
       </div>
-      <div v-if="userType === 'IPML'" class="result-card">
+      <div v-if="userType === 'IPML'" class="result-card animated-text">
         <h3>{{ investmentResults[4].title }}</h3>
         <p>{{ investmentResults[4].description }}</p>
         <Vue3Lottie :animationData="investmentResults[4].lottiePath" />
       </div>
-      <div v-if="userType === 'IPWL'" class="result-card">
+      <div v-if="userType === 'IPWL'" class="result-card animated-text">
         <h3>{{ investmentResults[5].title }}</h3>
         <p>{{ investmentResults[5].description }}</p>
         <Vue3Lottie :animationData="investmentResults[5].lottiePath" />
       </div>
-      <div v-if="userType === 'IBML'" class="result-card">
+      <div v-if="userType === 'IBML'" class="result-card animated-text">
         <h3>{{ investmentResults[6].title }}</h3>
         <p>{{ investmentResults[6].description }}</p>
         <Vue3Lottie :animationData="investmentResults[6].lottiePath" />
       </div>
-      <div v-if="userType === 'IBWL'" class="result-card">
+      <div v-if="userType === 'IBWL'" class="result-card animated-text">
         <h3>{{ investmentResults[7].title }}</h3>
         <p>{{ investmentResults[7].description }}</p>
         <Vue3Lottie :animationData="investmentResults[7].lottiePath" />
       </div>
-      <div v-if="userType === 'APWL'" class="result-card">
+      <div v-if="userType === 'APWL'" class="result-card animated-text">
         <h3>{{ investmentResults[8].title }}</h3>
         <p>{{ investmentResults[8].description }}</p>
         <Vue3Lottie :animationData="investmentResults[8].lottiePath" />
       </div>
-      <div v-if="userType === 'APML'" class="result-card">
+      <div v-if="userType === 'APML'" class="result-card animated-text">
         <h3>{{ investmentResults[9].title }}</h3>
         <p>{{ investmentResults[9].description }}</p>
         <Vue3Lottie :animationData="investmentResults[9].lottiePath" />
       </div>
-      <div v-if="userType === 'ABWC'" class="result-card">
+      <div v-if="userType === 'ABWC'" class="result-card animated-text">
         <h3>{{ investmentResults[10].title }}</h3>
         <p>{{ investmentResults[10].description }}</p>
         <Vue3Lottie :animationData="investmentResults[10].lottiePath" />
       </div>
-      <div v-if="userType === 'APMC'" class="result-card">
+      <div v-if="userType === 'APMC'" class="result-card animated-text">
         <h3>{{ investmentResults[11].title }}</h3>
         <p>{{ investmentResults[11].description }}</p>
         <Vue3Lottie :animationData="investmentResults[11].lottiePath" />
       </div>
-      <div v-if="userType === 'ABWL'" class="result-card">
+      <div v-if="userType === 'ABWL'" class="result-card animated-text">
         <h3>{{ investmentResults[12].title }}</h3>
         <p>{{ investmentResults[12].description }}</p>
         <Vue3Lottie :animationData="investmentResults[12].lottiePath" />
       </div>
-      <div v-if="userType === 'APWC'" class="result-card">
+      <div v-if="userType === 'APWC'" class="result-card animated-text">
         <h3>{{ investmentResults[13].title }}</h3>
         <p>{{ investmentResults[13].description }}</p>
         <Vue3Lottie :animationData="investmentResults[13].lottiePath" />
       </div>
-      <div v-if="userType === 'ABMC'" class="result-card">
+      <div v-if="userType === 'ABMC'" class="result-card animated-text">
         <h3>{{ investmentResults[14].title }}</h3>
         <p>{{ investmentResults[14].description }}</p>
         <Vue3Lottie :animationData="investmentResults[14].lottiePath" />
       </div>
-      <div v-if="userType === 'ABML'" class="result-card">
+      <div v-if="userType === 'ABML'" class="result-card animated-text">
         <h3>{{ investmentResults[15].title }}</h3>
         <p>{{ investmentResults[15].description }}</p>
         <Vue3Lottie :animationData="investmentResults[15].lottiePath" />
       </div>
     </div>
 
-
     <!-- 추천 콘텐츠 -->
     <div class="recommended-content" v-if="recommendedContent.length">
-      <b>
+      <b class="animated-text">
         <p class="type_txt">{{ userType }}</p> 타입을 가진 당신을 위해 아래 콘텐츠를 준비했어요!
       </b>
       <div class="content-cards">
-        <div v-for="(content, index) in recommendedContent" :key="index" class="content-card">
+        <div v-for="(content, index) in recommendedContent" :key="index" class="content-card animated-text">
           <p>{{ content.title }}</p>
           <h4>{{ content.description }}</h4>
           <img :src="content.icon" alt="Content Icon" />
@@ -105,10 +104,11 @@
       </div>
     </div>
 
+
     <!-- 하단 버튼 -->
     <div class="action-buttons">
-      <button @click="restartTest" class="restart-button">테스트 다시하기</button>
-      <button @click="shareResults" class="share-button">공유</button>
+      <button @click="restartTest" class="restart-button animated-text">테스트 다시하기</button>
+      <button @click="shareResults" class="share-button animated-text">공유</button>
     </div>
   </div>
 </template>
@@ -523,9 +523,18 @@ export default {
 };
 </script>
 
-
-
 <style scoped>
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .result-view {
   text-align: center;
   background-color: #f9f9f9;
@@ -533,6 +542,14 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
+}
+
+.animated-text {
+  animation: slideIn 0.5s ease-out forwards;
+}
+
+h1, h2, .result-card h3, .content-card p, .content-card h4 {
+  animation: slideIn 0.5s ease-out forwards;
 }
 
 h1 {
