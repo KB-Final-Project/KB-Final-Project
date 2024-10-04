@@ -134,40 +134,40 @@ onMounted(() => {
             <div v-else>
               <div v-for="saving in savings.slice(0, 3)" :key="saving.savingId">
                 <div class="goToDetail" @click="goToDetail(saving.savingId)">
-                <table class="savingRank text-start" >
-                  <tbody>
-                  <tr>
-                    <td colspan="2" class="savingDepositMethod">
-                      <div class="savingMethod text-center">{{ saving.joinWay }}</div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colspan="2" class="bankLogo">
-                      <a href="{{saving.bank.bankUrl}}">
-                        <img style="height: 25px;" src="{{ saving.bank.bankLogoUrl }}">
-                      </a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colspan="2" style="width: 300px;"><h2 class="savingName">{{ saving.savingName }}</h2><br></td>
-                  </tr>
-                  <tr>
-                    <td><h3 style="font-weight: 600">{{ saving.interestRateType }}</h3></td>
-                    <td><h3 class="d-inline" style="color: rgba(68, 140, 116, 1);">{{
-                        saving.interestRateList.savingTerm
-                      }}</h3>
-                      <h3 class="d-inline">개월</h3></td>
-                  </tr>
-                  <tr style="color:grey">
-                    <td><h3>기본금리</h3></td>
-                    <td><h3>최고금리</h3></td>
-                  </tr>
-                  <tr>
-                    <td><h3>{{ saving.interestRate }}%</h3></td>
-                    <td><h3>{{ saving.interestMaxRate }}%</h3></td>
-                  </tr>
-                  </tbody>
-                </table>
+                  <table class="savingRank text-start" >
+                    <tbody>
+                    <tr>
+                      <td colspan="2" class="savingDepositMethod">
+                        <div class="savingMethod text-center">{{ saving.joinWay }}</div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="2" class="bankLogo">
+                        <a href="{{saving.bank.bankUrl}}">
+                          <img style="height: 25px;" src="{{ saving.bank.bankLogoUrl }}">
+                        </a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="2" style="width: 300px;"><h2 class="savingName">{{ saving.savingName }}</h2><br></td>
+                    </tr>
+                    <tr>
+                      <td><h3 style="font-weight: 600">{{ saving.interestRateType }}</h3></td>
+                      <td><h3 class="d-inline" style="color: rgba(68, 140, 116, 1);">{{
+                          saving.interestRateList.savingTerm
+                        }}</h3>
+                        <h3 class="d-inline">개월</h3></td>
+                    </tr>
+                    <tr style="color:grey">
+                      <td><h3>기본금리</h3></td>
+                      <td><h3>최고금리</h3></td>
+                    </tr>
+                    <tr>
+                      <td><h3>{{ saving.interestRate }}%</h3></td>
+                      <td><h3>{{ saving.interestMaxRate }}%</h3></td>
+                    </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
@@ -291,35 +291,35 @@ onMounted(() => {
                   <div class="goToDetail" @click="goToDetail(saving.savingId)">
                     <table class="savingRank text-start">
                       <tbody>
-                        <tr>
-                          <td colspan="2" class="savingDepositMethod">
-                            <div class="savingMethod text-center">{{ saving.joinWay }}</div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colspan="2" class="bankLogo">
-                            <a href="{{saving.bank.bankUrl}}">
-                              <img style="height: 25px;" src="{{ saving.bank.bankLogoUrl }}">
-                            </a>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colspan="2" style="width: 300px;"><h2 class="savingName">{{ saving.savingName }}</h2><br></td>
-                        </tr>
-                        <tr>
-                          <td><h3 style="font-weight: 600">{{ saving.interestRateType }}</h3></td>
-                          <td><h3 class="d-inline" style="color: rgba(68, 140, 116, 1);">
-                            {{ saving.interestRateList.savingTerm }}</h3>
-                            <h3 class="d-inline">개월</h3></td>
-                        </tr>
-                        <tr style="color:grey">
-                          <td><h3>기본금리</h3></td>
-                          <td><h3>최고금리</h3></td>
-                        </tr>
-                        <tr>
-                          <td><h3>{{ saving.interestRate }}%</h3></td>
-                          <td><h3>{{ saving.interestMaxRate }}%</h3></td>
-                        </tr>
+                      <tr>
+                        <td colspan="2" class="savingDepositMethod">
+                          <div class="savingMethod text-center">{{ saving.joinWay }}</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" class="bankLogo">
+                          <a href="{{saving.bank.bankUrl}}">
+                            <img style="height: 25px;" src="{{ saving.bank.bankLogoUrl }}">
+                          </a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="width: 300px;"><h2 class="savingName">{{ saving.savingName }}</h2><br></td>
+                      </tr>
+                      <tr>
+                        <td><h3 style="font-weight: 600">{{ saving.interestRateType }}</h3></td>
+                        <td><h3 class="d-inline" style="color: rgba(68, 140, 116, 1);">
+                          {{ saving.interestRateList.savingTerm }}</h3>
+                          <h3 class="d-inline">개월</h3></td>
+                      </tr>
+                      <tr style="color:grey">
+                        <td><h3>기본금리</h3></td>
+                        <td><h3>최고금리</h3></td>
+                      </tr>
+                      <tr>
+                        <td><h3>{{ saving.interestRate }}%</h3></td>
+                        <td><h3>{{ saving.interestMaxRate }}%</h3></td>
+                      </tr>
                       </tbody>
                     </table>
                   </div>

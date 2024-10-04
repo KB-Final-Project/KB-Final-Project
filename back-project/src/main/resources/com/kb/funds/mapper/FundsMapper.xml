@@ -6,19 +6,13 @@
 <mapper namespace="com.kb.funds.mapper.FundsMapper">
     <!-- 펀드 추가 -->
     <insert id="insertFund" parameterType="com.kb.funds.dto.FundsDTO">
-        INSERT INTO funds (fundFnm, gijunGa, gijunYmd, suikRt1, suikRt3, suikRt12, investGrade, feeTot, bmNm)
-        VALUES (#{fundFnm}, #{gijunGa}, #{gijunYmd}, #{suikRt1}, #{suikRt3}, #{suikRt12}, #{investGrade}, #{feeTot}, #{bmNm})
-
         <!-- Retrieve the generated key for the funds table -->
         <selectKey keyProperty="id" resultType="long" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
-    </insert>
 
-    <!-- 수익 차트 추가 -->
-    <insert id="insertSuikChart" parameterType="com.kb.funds.dto.SuikChartDTO">
-        INSERT INTO suik_chart (fundId, gijunYmd, bmSuikJisu, silhSuikRt, seoljAek)
-        VALUES (#{fundId}, #{gijunYmd}, #{bmSuikJisu}, #{silhSuikRt}, #{seoljAek})
+        INSERT INTO funds (fundFnm, gijunGa, gijunYmd, suikRt1, suikRt3, suikRt12, investGrade, feeTot, bmNm)
+        VALUES (#{fundFnm}, #{gijunGa}, #{gijunYmd}, #{suikRt1}, #{suikRt3}, #{suikRt12}, #{investGrade}, #{feeTot}, #{bmNm})
     </insert>
 
     <!-- 펀드 업데이트 -->
@@ -39,7 +33,7 @@
 
     <!-- 기존 수익 차트 삭제 -->
     <delete id="deleteSuikChartByFundId" parameterType="long">
-        DELETE FROM suik_chart WHERE fund_id = #{id}
+        DELETE FROM suikChart WHERE fundId = #{id}
     </delete>
 
     <!-- ID로 펀드 존재 여부 확인 -->
@@ -53,7 +47,7 @@
     <select id="searchFunds" resultType="com.kb.funds.dto.FundsDTO">
         SELECT *
         FROM funds
-        WHERE fund_fnm LIKE CONCAT('%', #{keyword}, '%')
+        WHERE fundFnm LIKE CONCAT('%', #{keyword}, '%')
     </select>
 
     <!-- 모든 펀드 조회 -->

@@ -116,6 +116,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/**").permitAll()
                 .antMatchers("/api/token").permitAll()
                 .antMatchers("/api/token/websocket-key").permitAll()
+
+                // Swagger 관련 URL에 대한 인증 비활성화
+                .antMatchers("/swagger-ui.html**", "/swagger-resources/**", "/webjars/**", "/v2/api-docs").permitAll()
+
                 .anyRequest().authenticated();
 
         http.httpBasic().disable()
