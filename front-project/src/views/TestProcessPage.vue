@@ -1,33 +1,41 @@
 <template>
   <div class="survey-view">
     <!-- 진행 상황 표시 -->
-    <div class="progress-bar">
-      <div class="progress" :style="{ width: progressWidth + '%' }"></div>
-    </div>
-
-    <!-- 현재 질문 표시 -->
-    <div class="question-card">
-      <p class="question-number">Q. {{ currentQuestionIndex + 1 }}/{{ questions.length }}</p>
-      <h2>{{ currentQuestion.question }}</h2>
-
-      <!-- 아이콘 추가 -->
-      <img v-if="currentQuestion.icon" :src="currentQuestion.icon" alt="Icon" class="question-icon" />
-
-      <!-- 선택지 -->
-      <div class="options">
-        <button v-for="(option, index) in currentQuestion.options" :key="index"
-          :class="{ selected: selectedOption === index }" @click="selectOption(index)">
-          {{ option.text }}
-        </button>
+    <div class="header">
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress" :style="{ width: progressWidth + '%' }"></div>
+          <img src="/img/emoji/balloon.svg" class="balloon-icon" alt="Balloon Icon" :style="{ left: progressWidth + '%' }">
+        </div>
       </div>
     </div>
-    <!-- 이전/다음 버튼 -->
-    <div class="navigation-buttons">
+    <br>
+    <div class="main-content">
+      <!-- 현재 질문 표시 -->
+      <div class="question-card" :class="{ fade: fading }">
+        <p class="question-number">Q. {{ currentQuestionIndex + 1 }}/{{ questions.length }}</p>
+        <h2>{{ currentQuestion.question }}</h2>
+
+        <!-- 아이콘 추가 -->
+        <img v-if="currentQuestion.icon" :src="currentQuestion.icon" alt="Icon" class="question-icon" />
+
+        <!-- 선택지 -->
+        <div class="options">
+          <button v-for="(option, index) in currentQuestion.options" :key="index"
+                  :class="{ selected: selectedOption === index }" @click="selectOption(index)">
+            {{ option.text }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 하단 중앙에 고정된 이전 버튼 -->
+    <div class="footer">
       <button v-if="currentQuestionIndex > 0" @click="prevQuestion" class="prev-button">이전으로</button>
-      <button v-if="selectedOption !== null" @click="nextQuestion" class="next-button">다음으로</button>
     </div>
   </div>
 </template>
+
 
 <script>
 export default {
@@ -35,6 +43,7 @@ export default {
     return {
       currentQuestionIndex: 0, // 현재 질문의 인덱스
       selectedOption: null, // 사용자가 선택한 옵션
+      fading: false,
       questions: [
         {
           id: 1,
@@ -155,47 +164,46 @@ export default {
     };
   },
   computed: {
-    // 현재 질문 가져오기
     currentQuestion() {
       return this.questions[this.currentQuestionIndex];
     },
-    // 진행 상황 퍼센티지 계산
     progressWidth() {
-      return ((this.currentQuestionIndex + 1) / this.questions.length) * 100;
+      return (this.currentQuestionIndex / (this.questions.length)) * 100; // 바의 길이를 100%로 만들기
     }
   },
   methods: {
-    // 옵션 선택
     selectOption(index) {
       this.selectedOption = index;
+      this.nextQuestion();
     },
-    // 다음 질문으로 이동
     nextQuestion() {
-      const selectedScore = this.currentQuestion.options[this.selectedOption].score;
-      this.answers.push({ questionId: this.currentQuestion.id, selectedOption: this.selectedOption, score: selectedScore });
-      this.totalScore += selectedScore; // 선택된 옵션의 점수 추가
-      this.selectedOption = null;
+      this.fading = true;
+      setTimeout(() => {
+        const selectedScore = this.currentQuestion.options[this.selectedOption].score;
+        this.answers.push({ questionId: this.currentQuestion.id, selectedOption: this.selectedOption, score: selectedScore });
+        this.totalScore += selectedScore;
+        this.selectedOption = null;
 
-      if (this.currentQuestionIndex < this.questions.length - 1) {
-        this.currentQuestionIndex++;
-      } else {
-        // 설문 완료 처리
-        this.finishSurvey();
-      }
+        if (this.currentQuestionIndex < this.questions.length - 1) {
+          this.currentQuestionIndex++;
+        } else {
+          this.finishSurvey();
+        }
+        setTimeout(() => {
+          this.fading = false;
+        }, 50);
+      }, 50);
     },
-    // 이전 질문으로 이동
     prevQuestion() {
       if (this.currentQuestionIndex > 0) {
         const lastAnswer = this.answers.pop();
-        this.totalScore -= lastAnswer.score; // 이전에 선택한 점수를 다시 차감
+        this.totalScore -= lastAnswer.score;
         this.currentQuestionIndex--;
       }
     },
-    // 설문 완료 처리
     finishSurvey() {
       console.log("설문이 완료되었습니다.", this.answers);
       console.log("총 점수: ", this.totalScore);
-      // 설문 완료 후 추가 작업 (예: 결과 페이지로 이동)
       this.$router.push({
         path: '/test-result',
         query: { totalScore: this.totalScore }
@@ -206,23 +214,32 @@ export default {
 </script>
 
 <style scoped>
-/* 전체 화면 스타일 */
 .survey-view {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   height: 100vh;
   background-color: #f9f9f9;
 }
 
-/* 진행 바 스타일 */
-.progress-bar {
+/* 상단 고정 영역 */
+.header {
+  flex: 0 0 auto;
+  background-color: #f9f9f9;
+  padding-top: 80px; /* 위쪽 여백 */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.progress-container {
+  position: relative; /* 프로그레스 바와 아이콘이 위치할 컨테이너 */
   width: 60%;
+  margin: 0 auto;
+}
+
+.progress-bar {
   background-color: #e0e0e0;
   height: 6px;
   border-radius: 5px;
-  margin-bottom: 20px;
 }
 
 .progress {
@@ -230,9 +247,29 @@ export default {
   background-color: #458D75;
   border-radius: 5px;
   width: 0;
+  transition: width 0.3s ease;
 }
 
-/* 질문 카드 스타일 */
+/* 풍선 아이콘을 프로그레스 바 위에 위치하도록 설정 */
+.balloon-icon {
+  position: absolute;
+  top: -45px; /* 프로그레스 바 위에 위치 조정 */
+  transform: translateX(-50%); /* 아이콘을 프로그레스 바의 끝에 걸치게 조정 */
+  width: 40px;
+  height: 40px;
+  z-index: 999;
+  transition: left 0.3s ease; /* 아이콘 이동 애니메이션 */
+  color: #458D75;
+}
+
+/* 중앙 고정된 질문 영역 */
+.main-content {
+  flex: 1 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .question-card {
   background-color: #458D75;
   padding: 40px 30px;
@@ -243,9 +280,16 @@ export default {
   text-align: center;
   color: white;
   position: relative;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  opacity: 1;
+  transform: scale(1);
 }
 
-/* 질문 번호와 질문 텍스트 스타일 */
+.question-card.fade {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
 .question-number {
   font-size: 16px;
   font-weight: bold;
@@ -258,19 +302,16 @@ h2 {
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 30px;
-  color: white;
 }
 
-/* 질문 아이콘 스타일 */
 .question-icon {
   width: 60px;
   height: 60px;
   margin-bottom: 20px;
 }
 
-/* 옵션 버튼 스타일 */
 .options {
-  display:grid;
+  display: grid;
   margin-bottom: 20px;
 }
 
@@ -283,7 +324,7 @@ h2 {
   border-radius: 10px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease;
 }
 
 .options button:hover {
@@ -296,33 +337,30 @@ h2 {
   color: white;
 }
 
-/* 이전/다음 버튼 스타일 */
-.navigation-buttons {
+/* 하단 중앙 고정 영역 */
+.footer {
+  flex: 0 0 auto;
   display: flex;
-  padding-top: 50px;
-  justify-content: space-between;
+  justify-content: center;
+  padding: 20px;
 }
 
-.prev-button,
-.next-button {
+.prev-button {
   padding: 10px 30px;
-  margin: 10px;
   border: none;
   background-color: white;
   color: #4CAF50;
   border-radius: 10px;
   font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease;
 }
 
-.prev-button:hover,
-.next-button:hover {
+.prev-button:hover {
   background-color: #eee;
 }
 
-.prev-button:disabled,
-.next-button:disabled {
+.prev-button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
