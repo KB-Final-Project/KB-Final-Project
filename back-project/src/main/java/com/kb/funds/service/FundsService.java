@@ -55,18 +55,16 @@ public class FundsService {
 
                                 if (fund.getId() == null) {
                                     System.out.println("Fund ID is null for fund: " + fund);
+                                    // Fund ID가 null인 경우에 대한 처리 추가
                                     continue;
+                                } else {
+                                    // 정상적으로 ID가 있는 경우 수익 차트 삽입
+                                    for (SuikChartDTO suikChart : suikCharts) {
+                                        suikChart.setFundId(fund.getId());
+                                    }
+                                    suikChartMapper.insertSuikCharts(suikCharts);
+                                    System.out.println("Inserted SuikCharts for Fund ID: " + fund.getId());
                                 }
-
-                                // 모든 수익 차트를 한 번에 삽입
-                                for (SuikChartDTO suikChart : suikCharts) {
-                                    suikChart.setFundId(fund.getId()); // fundId 설정
-                                }
-
-                                // 삽입 메서드 호출
-                                suikChartMapper.insertSuikCharts(suikCharts);
-                                System.out.println("Inserted SuikCharts for Fund ID: " + fund.getId());
-
                             } catch (Exception e) {
                                 System.err.println("Error inserting fund: " + fund);
                                 e.printStackTrace();
@@ -82,7 +80,6 @@ public class FundsService {
             }
         }
     }
-
 
     private List<FundsDTO> crawlFundsFromWebsite(int pageNo) throws JsonProcessingException {
         String url = "https://www.samsungfund.com/api/v1/fund/product.do?graphTerm=1&orderBy=DESC&orderByType=SUIK_RT3&pageNo=" + pageNo;
@@ -126,7 +123,9 @@ public class FundsService {
                         List<SuikChartDTO> suikCharts = new ArrayList<>();
                         for (JsonNode chart : suikChartNode) {
                             SuikChartDTO suikChart = objectMapper.treeToValue(chart, SuikChartDTO.class);
-                            suikChart.setFundId(fundId); // fundId 설정
+
+                            // fundId 설정
+                            suikChart.setFundId(fundId);
                             suikCharts.add(suikChart);
                         }
                         fund.setSuikChart(suikCharts); // Fund에 suikChart 설정

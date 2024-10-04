@@ -12,9 +12,11 @@ CREATE TABLE funds (
 );
 
 CREATE TABLE SuikChart (
-                           fundId BIGINT AUTO_INCREMENT PRIMARY KEY,         -- 펀드 ID
-                           gijunYmd DATE NOT NULL,    -- 기준일 (YYYY-MM-DD 형식)
-                           bmSuikJisu DOUBLE,                 -- 벤치마크 수익 지수
-                           silhSuikRt DOUBLE,                 -- 실현 수익률
-                           seoljAek DOUBLE                    -- 순 자산
+                           id BIGINT AUTO_INCREMENT PRIMARY KEY, -- 수익 차트 ID (기본 키)
+                           fundId BIGINT NOT NULL,                -- 펀드 ID (외래 키)
+                           gijunYmd DATE NOT NULL,                -- 기준일 (YYYY-MM-DD 형식)
+                           bmSuikJisu DOUBLE,                     -- 벤치마크 수익 지수
+                           silhSuikRt DOUBLE,                     -- 실현 수익률
+                           seoljAek DOUBLE,                       -- 순 자산
+                           FOREIGN KEY (fundId) REFERENCES funds(id) -- 외래 키 제약 조건
 );
