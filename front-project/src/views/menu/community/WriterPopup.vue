@@ -16,6 +16,8 @@ function closePopup() {
       </div>
 
       <textarea placeholder="무슨 일이 일어나고 있나요?" rows="5"></textarea>
+      <input type="file">
+      <input type="file">
     </div>
   </div>
 </template>

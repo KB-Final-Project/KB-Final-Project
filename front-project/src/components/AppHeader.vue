@@ -124,8 +124,8 @@ const menuItems = ref([
         text: '예금',
         href: '#',
         subItems: [
-          { text: '~~예금', href: '/deposit' },
-          { text: '~~예금', href: '/deposit' },
+          { text: '~~예금', href: 'deposit' },
+          { text: '~~예금상세', href: 'depositDetail' },
         ],
       },
       {
@@ -220,6 +220,10 @@ const hoverLoginDropdown = (state) => {
 </style>
 
 <style scoped>
+.navbar-expand-lg .dropdown:hover > .dropdown-menu{
+  border-radius: 15px;
+}
+
 .header.navbar.navbar-expand-lg.fixed-top.bg-light {
   --ar-navbar-toggler-padding-y: 0.625rem;
   padding: 0.25rem;
@@ -271,6 +275,13 @@ a.nav-link {
 }
 .invetiLogo{
   width: 100px;
+}
+
+.dropdown-menu{
+  --bs-dropdown-link-active-bg: rgb(61, 141, 115);
+}
+.dropdown-item .dropdown-toggle{
+  color:white;
 }
 </style>
 

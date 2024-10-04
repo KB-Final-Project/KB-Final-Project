@@ -53,11 +53,6 @@ const routes = [
     meta: { hideHeaderFooter: true },
   },
   {
-    path: '/community',
-    name: 'community',
-    component: Community,
-  },
-  {
     path: '/news',
     name: 'NewsPage',
     component: NewsPage,
@@ -114,11 +109,11 @@ const routes = [
   },
   {
     path: '/deposit', // Deposit 페이지 경로 추가
-    name: 'Deposit',
+    name: 'deposit',
     component: Deposit,
   },
   {
-    path: '/depositDetail', // Deposit 페이지 경로 추가
+    path: '/deposit/:savingId', // Deposit 페이지 경로 추가
     name: 'depositDetail',
     component: DepositDetail,
   },
@@ -185,11 +180,6 @@ const routes = [
     path: '/community',
     component: Community, // community.vue를 레이아웃 컴포넌트로 사용
     children: [
-      {
-        path: '',
-        name: 'CommunityHome',
-        component: null, // 기본적으로 아무것도 표시하지 않음
-      },
       {
         path: 'stabilitySeeking',
         name: 'stabilitySeeking',

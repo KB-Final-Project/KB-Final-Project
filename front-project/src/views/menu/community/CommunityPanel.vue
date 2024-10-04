@@ -167,6 +167,8 @@ onMounted(() => {
 
 
 .propensity {
+  width: 300px;
+  height: 80px;
   padding: 25px;
   cursor: pointer;
 }
