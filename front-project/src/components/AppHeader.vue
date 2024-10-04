@@ -162,7 +162,7 @@ const menuItems = ref([
       },
     ],
   },
-  { text: '투자 커뮤니티', href: 'analysis' },
+  { text: '투자 커뮤니티', href: '/community' },
   { text: '용어사전', href: 'dictionary' },
   {
     text: '추가기능',
@@ -214,11 +214,12 @@ const hoverLoginDropdown = (state) => {
 }
 
 .container-xxl {
-  margin-top: 60px !important;
+  margin-top: 80px !important;
+
 }
 </style>
 
-<style>
+<style scoped>
 .header.navbar.navbar-expand-lg.fixed-top.bg-light {
   --ar-navbar-toggler-padding-y: 0.625rem;
   padding: 0.25rem;
@@ -226,6 +227,10 @@ const hoverLoginDropdown = (state) => {
 
 a.nav-link {
   color: black;
+}
+
+.appHeader{
+  height: 80px;
 }
 
 /* 드롭다운 메뉴 애니메이션 및 화살표 회전 */
@@ -236,7 +241,7 @@ a.nav-link {
 }
 
 .appHeader a.nav-link i {
-  transition: transform 0.3s ease;
+  transition: transform 0.6s ease;
 }
 
 /* 아이콘이 부드럽게 회전하도록 설정 */

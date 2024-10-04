@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kb.stock.mapper.StockMapper">
+    <select id="selectAllStocks" resultType="com.kb.stock.dto.StockDTO">
+        SELECT * FROM stock;
+    </select>
+
+    <insert id="insertStock" parameterType="com.kb.stock.dto.StockDTO">
+        INSERT INTO stock (stock_code, stock_name, current_price, price_change, price_change_pct, high_price, low_price, opening_price, volume, timestamp)
+        VALUES (#{stockCode}, #{stockName}, #{currentPrice}, #{priceChange}, #{priceChangePct}, #{highPrice}, #{lowPrice}, #{openingPrice}, #{volume}, NOW());
+    </insert>
+</mapper>

@@ -1,6 +1,7 @@
 <template>
   <div class="bc">
     <div class="container text-center">
+      <br>   <br>
       <h1>용어 사전</h1><br><br>
       <div class="dic">
         <br>
@@ -135,36 +136,39 @@ export default {
       }
       return char; // 한글이 아니면 그대로 반환
     },
-    // 한글 자음으로 필터링
-    filterTermsByHangul(hangul) {
-      this.selectedHangul = hangul;
-      this.selectedAlphabet = null;
-      this.filteredTerms = this.terms.filter(term =>
-          this.getInitialConsonant(term.termName[0]) === hangul
-      );
-      this.selectedTerm = this.filteredTerms.length > 0 ? this.filteredTerms[0] : null;
-    },
-    // 알파벳으로 필터링
-    filterTermsByAlphabet(alphabet) {
-      this.selectedAlphabet = alphabet;
-      this.selectedHangul = null;
-      this.filteredTerms = this.terms.filter(term =>
-          term.termName[0].toUpperCase() === alphabet
-      );
-      this.selectedTerm = this.filteredTerms.length > 0 ? this.filteredTerms[0] : null;
-    },
-    filterTerms() {
-      const search = this.searchTerm.toLowerCase();
-      this.filteredTerms = this.terms.filter(term =>
-          term.termName.toLowerCase().includes(search)
-      );
-      this.selectedTerm = this.filteredTerms.length > 0 ? this.filteredTerms[0] : null;
-    },
-    selectTerm(term) {
-      this.selectedTerm = term;
-    },
-  },
-};
+      filterTerms() {
+        // 검색어 입력 시 한글/알파벳 필터 초기화
+        this.selectedHangul = null;
+        this.selectedAlphabet = null;
+
+        const search = this.searchTerm.toLowerCase();
+        this.filteredTerms = this.terms.filter(term =>
+            term.termName.toLowerCase().includes(search)
+        );
+        this.selectedTerm = this.filteredTerms.length > 0 ? this.filteredTerms[0] : null;
+      },
+      filterTermsByHangul(hangul) {
+        // 한글 버튼 클릭 시 검색어 초기화
+        this.searchTerm = '';
+        this.selectedHangul = hangul;
+        this.selectedAlphabet = null;
+        this.filteredTerms = this.terms.filter(term =>
+            this.getInitialConsonant(term.termName[0]) === hangul
+        );
+        this.selectedTerm = this.filteredTerms.length > 0 ? this.filteredTerms[0] : null;
+      },
+      filterTermsByAlphabet(alphabet) {
+        // 알파벳 버튼 클릭 시 검색어 초기화
+        this.searchTerm = '';
+        this.selectedAlphabet = alphabet;
+        this.selectedHangul = null;
+        this.filteredTerms = this.terms.filter(term =>
+            term.termName[0].toUpperCase() === alphabet
+        );
+        this.selectedTerm = this.filteredTerms.length > 0 ? this.filteredTerms[0] : null;
+      }
+    }
+  };
 </script>
 
 <style scoped>

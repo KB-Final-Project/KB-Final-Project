@@ -106,6 +106,10 @@ dependencies {
   implementation 'org.springframework:spring-websocket:5.3.21'
   implementation 'org.jsoup:jsoup:1.15.3'
 
+  // gson 추가
+  implementation 'com.google.code.gson:gson:2.9.0'
+
+
   // selenium
   implementation 'org.seleniumhq.selenium:selenium-java:4.0.0'
 
@@ -118,6 +122,10 @@ dependencies {
 
   // gson
   implementation 'com.google.code.gson:gson:2.10.1'
+
+
+  implementation 'org.springframework.data:spring-data-redis:2.7.18'
+  implementation 'redis.clients:jedis:3.7.0'  // 또는 최신 버전
 
   // slf4j
   implementation 'org.slf4j:slf4j-api:2.0.0'
