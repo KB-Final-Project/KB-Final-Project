@@ -9,11 +9,14 @@ import com.kb.funds.dto.SuikChartDTO;
 import com.kb.funds.mapper.FundsMapper;
 import com.kb.funds.mapper.SuikChartMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.annotations.Param;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +28,8 @@ public class FundsService {
     private final FundsMapper fundsMapper;
     private final RestTemplate restTemplate;
     private final SuikChartMapper suikChartMapper;
+    private static final Logger logger = LoggerFactory.getLogger(FundsService.class);
+
 
     @Transactional
     public void crawlAndSaveFunds() throws JsonProcessingException {
@@ -42,28 +47,35 @@ public class FundsService {
                         System.out.println("Processing fund: " + fund);
                         List<SuikChartDTO> suikCharts = crawlSuikChart(fund);
 
-                        // Fund 존재 여부 체크 및 삽입
                         if (fundsMapper.existsById(fund.getId())) {
                             fundsMapper.updateFund(fund);
+                            suikChartMapper.deleteSuikChartByFundId(fund.getId());
                         } else {
-                            fundsMapper.insertFund(fund);
-                            System.out.println("Inserted fund ID: " + fund.getId());
-                        }
+                            // 새로운 펀드 삽입
+                            try {
+                                fundsMapper.insertFund(fund);
+                                System.out.println("Inserted fund ID: " + fund.getId());
 
-                        // 수익 차트 중복 체크 및 삽입
-                        List<SuikChartDTO> uniqueSuikCharts = new ArrayList<>();
-                        for (SuikChartDTO suikChart : suikCharts) {
-                            if (!suikChartMapper.existsByFundIdAndGijunYmd(fund.getId(), suikChart.getGijunYmd())) {
-                                suikChart.setFundId(fund.getId());
-                                uniqueSuikCharts.add(suikChart);
-                            } else {
-                                System.out.println("Duplicate SuikChart found for Fund ID: " + fund.getId() + " and GijunYmd: " + suikChart.getGijunYmd());
+                                // 새로운 수익 차트 데이터 삽입
+                                System.out.println("SuikCharts size: " + suikCharts.size());
+
+                                if (fund.getId() == null) {
+                                    System.out.println("Fund ID is null for fund: " + fund);
+                                    // Fund ID가 null인 경우에 대한 처리 추가
+                                    continue;
+                                } else {
+                                    // 정상적으로 ID가 있는 경우 수익 차트 삽입
+                                    for (SuikChartDTO suikChart : suikCharts) {
+                                        suikChart.setFundId(fund.getId());
+                                    }
+                                    suikChartMapper.insertSuikCharts(suikCharts);
+                                    System.out.println("Inserted SuikCharts for Fund ID: " + fund.getId());
+                                }
+                            } catch (Exception e) {
+                                System.err.println("Error inserting fund: " + fund);
+                                e.printStackTrace();
+                                continue;
                             }
-                        }
-
-                        if (!uniqueSuikCharts.isEmpty()) {
-                            suikChartMapper.insertSuikCharts(uniqueSuikCharts); // Batch insert
-                            System.out.println("Inserted SuikCharts: " + uniqueSuikCharts);
                         }
                     } catch (Exception e) {
                         System.err.println("Error occurred while processing fund ID: " + fund.getId());
@@ -114,9 +126,15 @@ public class FundsService {
                     if (suikChartNode.isArray() && suikChartNode.size() > 0) {
                         System.out.println("suikChartNode has size: " + suikChartNode.size());
                         // 차트 데이터 처리 로직
+                        List<SuikChartDTO> suikCharts = new ArrayList<>();
                         for (JsonNode chart : suikChartNode) {
-                            // 차트 데이터 로직 추가
+                            SuikChartDTO suikChart = objectMapper.treeToValue(chart, SuikChartDTO.class);
+
+                            // fundId 설정
+                            suikChart.setFundId(fundId);
+                            suikCharts.add(suikChart);
                         }
+                        fund.setSuikChart(suikCharts); // Fund에 suikChart 설정
                     } else {
                         System.out.println("suikChartNode is empty for fund ID: " + fundId);
                     }
@@ -129,6 +147,16 @@ public class FundsService {
         }
 
         return fundList;
+    }
+
+    @Scheduled(fixedRate = 3600000) // 1시간마다 실행
+    public void scheduleCrawl() {
+        try {
+            logger.info("Scheduled crawl started at: {}", LocalDateTime.now());
+            crawlAndSaveFunds();
+        } catch (JsonProcessingException e) {
+            logger.error("Error occurred while crawling funds: {}", e.getMessage(), e);
+        }
     }
 
     private List<SuikChartDTO> crawlSuikChart(FundsDTO fund) {

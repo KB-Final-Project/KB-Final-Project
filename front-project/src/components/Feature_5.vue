@@ -1,3 +1,20 @@
+<script setup>
+import axios from "axios";
+import {ref} from "vue";
+
+const news = ref([])
+
+const fetchNews = async () => {
+  try {
+    const response = await axios.get(`/api/news`);
+    news.value = response.data;
+  } catch (error) {
+    console.error("뉴스 불러오기 오륲:", error);
+  }
+};
+
+</script>
+
 <template>
   <section>
     <div class="newsBox">
@@ -75,5 +92,3 @@
 }
 </style>
 
-<script setup lang="ts">
-</script>
