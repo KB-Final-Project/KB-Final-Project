@@ -15,4 +15,5 @@ public class SavingPrimeRate {
     private String primeRateDetail;
     private int savingId;
 
+
 }
