@@ -9,10 +9,14 @@ import com.kb.funds.dto.SuikChartDTO;
 import com.kb.funds.mapper.FundsMapper;
 import com.kb.funds.mapper.SuikChartMapper;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +28,8 @@ public class FundsService {
     private final FundsMapper fundsMapper;
     private final RestTemplate restTemplate;
     private final SuikChartMapper suikChartMapper;
+    private static final Logger logger = LoggerFactory.getLogger(FundsService.class);
+
 
     @Transactional
     public void crawlAndSaveFunds() throws JsonProcessingException {
@@ -141,6 +147,16 @@ public class FundsService {
         }
 
         return fundList;
+    }
+
+    @Scheduled(fixedRate = 3600000) // 1시간마다 실행
+    public void scheduleCrawl() {
+        try {
+            logger.info("Scheduled crawl started at: {}", LocalDateTime.now());
+            crawlAndSaveFunds();
+        } catch (JsonProcessingException e) {
+            logger.error("Error occurred while crawling funds: {}", e.getMessage(), e);
+        }
     }
 
     private List<SuikChartDTO> crawlSuikChart(FundsDTO fund) {
