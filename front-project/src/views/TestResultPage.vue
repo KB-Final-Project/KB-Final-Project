@@ -1,5 +1,6 @@
 <template>
   <div class="result-view">
+    <br><br>
     <h4 class="animated-text" style="color: #45a049;">투자 성향 테스트 결과</h4>
     <h1 class="animated-text">
       <p>나의 투자 성향은?</p>

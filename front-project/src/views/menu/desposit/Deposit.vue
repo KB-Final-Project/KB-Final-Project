@@ -1,47 +1,40 @@
 <script setup>
 import {Swiper, SwiperSlide} from 'swiper/vue';
 import 'swiper/swiper-bundle.css';
-import {ref, onMounted} from 'vue';
+import {ref, onMounted, computed, watch} from 'vue';
 import axios from 'axios';
 import {useRoute, useRouter} from 'vue-router';
 
 const savings = ref([]);
+const topSavings = ref([]);
 const loading = ref(true);
+const searchTerm = ref('');
+const currentPage = ref(1);
 
-
-// eslint-disable-next-line no-unused-vars
 const route = useRoute();
 const router = useRouter();
 
-
-// 선택된 은행, 저축 기간, 이자 유형을 추적
 const selectedBanks = ref([]);
 const selectedDurations = ref([]);
 const selectedInterestTypes = ref([]);
 
 const goToDetail = (savingId) => {
-  router.push({name: 'SavingDetail', params: {savingId}});
+  router.push({name: 'depositDetail', params: {savingId}});
 };
 
 const removeFilter = (arrayRef, value) => {
-  if (!arrayRef || !Array.isArray(arrayRef)) {
-    console.error('arrayRef is not defined or not an array:', arrayRef);
-    return;
-  }
   const index = arrayRef.indexOf(value);
   if (index !== -1) {
     arrayRef.splice(index, 1);
   }
 };
 
-// 제1금융권 목록을 정의
 const firstTierBanks = ref([
   '국민은행', '신한은행', '하나은행', '우리은행', '농협은행', '기업은행', '수협은행',
   'SC제일은행', '토스뱅크', '경남은행', '광주은행', 'KDB산업은행', '케이뱅크', 'IM뱅크',
   '카카오뱅크', '제주은행', '부산은행', '씨티은행', '전북은행'
 ]);
 
-// 체크박스 선택 처리 함수 (선택 또는 해제)
 const toggleSelection = (arrayRef, value) => {
   const index = arrayRef.value.indexOf(value);
   if (index === -1) {
@@ -51,7 +44,6 @@ const toggleSelection = (arrayRef, value) => {
   }
 };
 
-// 전체 선택 및 해제 함수
 const selectAll = (arrayRef, items) => {
   const isAllSelected = items.every(item => arrayRef.value.includes(item));
   if (isAllSelected) {
@@ -61,28 +53,23 @@ const selectAll = (arrayRef, items) => {
   }
 };
 
-// 은행 선택 처리 함수
 const selectBank = (bank) => {
   toggleSelection(selectedBanks, bank);
 };
 
-// 저축 기간 선택 처리 함수
 const selectDuration = (duration) => {
   toggleSelection(selectedDurations, duration);
 };
 
-// 이자 유형 선택 처리 함수
 const selectInterestType = (type) => {
   toggleSelection(selectedInterestTypes, type);
 };
 
-// 전체 선택 처리 함수들
 const selectAllBanks = () => selectAll(selectedBanks, firstTierBanks.value);
 const selectAllDurations = () => selectAll(selectedDurations, ['1개월', '3개월', '6개월', '12개월', '24개월', '36개월']);
 const selectAllInterestTypes = () => selectAll(selectedInterestTypes, ['단리', '복리']);
 
 const expanded = ref(false);
-
 const toggleText = () => {
   expanded.value = !expanded.value;
 };
@@ -95,13 +82,28 @@ const resetInput = (event) => {
   event.target.classList.remove('highlight');
 };
 
-
 const fetchSavings = async () => {
   loading.value = true;
   try {
-    const response = await axios.get('/deposit');
-    console.log(response);
-    savings.value = response.data.savings;
+    const params = {
+      searchValue: searchTerm.value,
+      bankId: selectedBanks.value.join(','),
+      saveTerm: selectedDurations.value.join(','),
+      page: currentPage.value,
+      interestRateType: selectedInterestTypes.value.join(','),
+    };
+
+    const response = await axios.get('/api/deposit', { params });
+    console.log('API 응답:', response.data);
+
+    if (response.data.savings && Array.isArray(response.data.savings)) {
+      savings.value = response.data.savings;
+      topSavings.value = savings.value
+          .sort((a, b) => a.interestRateList.interestRate - b.interestRateList.interestRate);
+    } else {
+      console.warn('데이터가 없습니다.'); // 데이터가 없을 경우 경고 메시지
+    }
+
   } catch (error) {
     console.error('예금 상품 목록을 가져오는 중 오류 발생:', error);
   } finally {
@@ -109,16 +111,15 @@ const fetchSavings = async () => {
   }
 };
 
+
 onMounted(() => {
   fetchSavings();
 });
-
-
 </script>
 
 <template>
   <div class="container text-center">
-    <br><br>
+    <br><br> <br><br> <br><br>
     <h1 class="d-inline">예금 </h1>
     <p class="d-inline">모은 꿈을 더 크게</p>
     <br><br>
@@ -127,59 +128,56 @@ onMounted(() => {
         <h2>ㅇㅇㅇ성향 고객님들이 선택한 BEST 인기상품</h2>
         <h4>가장 많이 사랑 받은 예금 상품</h4><br><br>
       </div>
-      <div class="itemBoxDiv row g-3 gap-3">
-        <div class="itemBox col">
-          <div class="p-3 m-6">
-            <div v-if="loading">로딩 중...</div>
-            <div v-else>
-              <div v-for="saving in savings.slice(0, 3)" :key="saving.savingId">
-                <div class="goToDetail" @click="goToDetail(saving.savingId)">
-                  <table class="savingRank text-start">
-                    <tbody>
-                    <tr>
-                      <td colspan="2" class="savingDepositMethod">
-                        <div class="savingMethod text-center">{{ saving.joinWay }}</div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colspan="2" class="bankLogo">
-                        <a href="{{saving.bank.bankUrl}}">
-                          <img style="height: 25px;" src="{{ saving.bank.bankLogoUrl }}">
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colspan="2" style="width: 300px;"><h2 class="savingName">{{ saving.savingName }}</h2><br></td>
-                    </tr>
-                    <tr>
-                      <td><h3 style="font-weight: 600">{{ saving.interestRateType }}</h3></td>
-                      <td><h3 class="d-inline" style="color: rgba(68, 140, 116, 1);">{{
-                          saving.interestRateList.savingTerm
-                        }}</h3>
-                        <h3 class="d-inline">개월</h3></td>
-                    </tr>
-                    <tr style="color:grey">
-                      <td><h3>기본금리</h3></td>
-                      <td><h3>최고금리</h3></td>
-                    </tr>
-                    <tr>
-                      <td><h3>{{ saving.interestRate }}%</h3></td>
-                      <td><h3>{{ saving.interestMaxRate }}%</h3></td>
-                    </tr>
-                    </tbody>
-                  </table>
+      <div v-if="loading">로딩 중...</div>
+      <div v-else class="itemBoxDiv">
+        <ul>
+          <li v-for="(topSaving, index) in topSavings.splice(0,3)" :key="topSaving.savingId"
+              class="d-inline-block itemBox text-start">
+            <div class="ranking">
+          <span>
+            {{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}
+          </span>
+            </div>
+            <div class="goToDetail" @click="goToDetail(topSaving.savingId)">
+              <div class="savingDepositMethod">
+                <div class="savingMethod text-center">{{ topSaving.joinWay }}</div>
+                <div class="bankLogo">
+                  <a :href="topSaving.bank.bankUrl">
+                    <img style="height: 25px;" :src="topSaving.bank.bankLogoUrl"/>
+                  </a>
+                  <br/>
+                  <h3>{{ topSaving.bank.bankName }}</h3>
+                </div>
+              </div>
+              <br/>
+              <div style="width: 300px;"><h3 class="savingName">{{ topSaving.savingName }}</h3><br/></div>
+              <div>
+                <h3 style="font-weight: 600">{{ topSaving.interestRateList.interestRateType }}</h3>
+                <h3 class="d-inline" style="color: rgba(68, 140, 116, 1);">
+                  {{ topSaving.interestRateList.savingTerm }}</h3>
+                <h3 class="d-inline">개월</h3>
+              </div>
+              <div style="display: flex; justify-content: space-between; color: grey">
+                <div>
+                  <h3>기본금리</h3>
+                  <h3>{{ topSaving.interestRateList.interestRate }}%</h3>
+                </div>
+                <div>
+                  <h3>최고금리</h3>
+                  <h3>{{ topSaving.interestRateList.interestMaxRate }}%</h3>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </li>
+        </ul>
       </div>
     </div>
     <br><br>
     <div class="text-start">
       <h4 class="search">상품 검색</h4>
       <div class="searchContainer">
-        <input class="searchBar" type="text" placeholder="검색어를 입력해주세요" @focus="highlightInput" @blur="resetInput"/>
+        <input class="searchBar" type="text" placeholder="검색어를 입력해주세요" v-model="searchTerm" @focus="highlightInput"
+               @blur="resetInput"/>
         <button class="searchBtn" type="submit">검색</button>
       </div>
       <br>
@@ -226,7 +224,6 @@ onMounted(() => {
               <label for="interest2" :class="{ 'selected': selectedInterestTypes.includes('복리') }">복리</label>
             </div>
           </li>
-
         </ul>
         <div class="checkedFilterBox">
           <div
@@ -236,7 +233,7 @@ onMounted(() => {
             <Swiper
                 :space-between="10"
                 :loop="false"
-                :slides-per-view="7"
+                :slides-per-view="7.2"
                 :centered-slides="false"
                 :edge-swipe-detection="true"
                 :pagination="{ clickable: true }"
@@ -268,7 +265,6 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <!-- 선택된 필터를 나열 -->
       <div class="toggle-wrapper">
         <br>
         <span class="more-text" v-if="!expanded" @click="toggleText">상세 검색 열기<i class="ai-chevron-down"></i></span>
@@ -281,70 +277,64 @@ onMounted(() => {
         <h2 class="d-inline"><b>검색 결과</b> 테마상품</h2>
         <br><br><br>
       </div>
-      <div class="itemBoxDiv row g-lg-3 gap-3">
-        <div class="itemBox col">
-          <div class="p-3">
-            <div class="p-3 m-6">
-              <div v-if="loading">로딩 중...</div>
-              <div v-else>
-                <div v-for="saving in savings" :key="saving.savingId">
-                  <div class="goToDetail" @click="goToDetail(saving.savingId)">
-                    <table class="savingRank text-start">
-                      <tbody>
-                      <tr>
-                        <td colspan="2" class="savingDepositMethod">
-                          <div class="savingMethod text-center">{{ saving.joinWay }}</div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td colspan="2" class="bankLogo">
-                          <a href="{{saving.bank.bankUrl}}">
-                            <img style="height: 25px;" src="{{ saving.bank.bankLogoUrl }}">
-                          </a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td colspan="2" style="width: 300px;"><h2 class="savingName">{{ saving.savingName }}</h2><br>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td><h3 style="font-weight: 600">{{ saving.interestRateType }}</h3></td>
-                        <td><h3 class="d-inline" style="color: rgba(68, 140, 116, 1);">
-                          {{ saving.interestRateList.savingTerm }}</h3>
-                          <h3 class="d-inline">개월</h3></td>
-                      </tr>
-                      <tr style="color:grey">
-                        <td><h3>기본금리</h3></td>
-                        <td><h3>최고금리</h3></td>
-                      </tr>
-                      <tr>
-                        <td><h3>{{ saving.interestRate }}%</h3></td>
-                        <td><h3>{{ saving.interestMaxRate }}%</h3></td>
-                      </tr>
-                      </tbody>
-                    </table>
-                  </div>
+      <div v-if="loading">로딩 중...</div>
+      <div v-else class="itemBoxDiv">
+        <ul>
+          <li v-for="saving in savings" :key="saving.savingId"
+              class="d-inline-block itemBox text-start">
+            <div class="goToDetail" @click="goToDetail(saving.savingId)">
+              <div class="savingDepositMethod">
+                <div class="depositMethod text-center">{{ saving.joinWay }}</div>
+                <div class="bankLogo">
+                  <a :href="saving.bank.bankUrl">
+                    <img style="height: 25px;" :src="saving.bank.bankLogoUrl"/>
+                  </a>
+                  <h3>{{ saving.bank.bankName }}</h3>
+                </div>
+              </div>
+              <br/>
+              <div style="width: 300px;"><h3 class="savingName">{{ saving.savingName }}</h3><br/></div>
+              <div>
+                <h3 style="font-weight: 600">{{ saving.interestRateList.interestRateType }}</h3>
+                <h3 class="d-inline" style="color: rgba(68, 140, 116, 1);">
+                  {{ saving.interestRateList.savingTerm }}</h3>
+                <h3 class="d-inline">개월</h3>
+              </div>
+              <div style="display: flex; justify-content: space-between; color: grey">
+                <div>
+                  <h3>기본금리</h3>
+                  <h3>{{ saving.interestRateList.interestRate }}%</h3>
+                </div>
+                <div>
+                  <h3>최고금리</h3>
+                  <h3>{{ saving.interestRateList.interestMaxRate }}%</h3>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </li>
+        </ul>
+      </div>
+      <div class="pagination">
+        <button v-if="currentPage > 1" @click="changePage(currentPage - 1)">이전</button>
+        <span>{{ currentPage }} / {{ totalPages }}</span>
+        <button v-if="currentPage < totalPages" @click="changePage(currentPage + 1)">다음</button>
       </div>
     </div>
     <br><br>
   </div>
 </template>
 
+
 <style scoped>
+.ranking {
+  font-size: 30px;
+  font-weight: bold;
+  color: rgba(68, 140, 116, 1);
+  margin-top: -25px;
+}
 
 .goToDetail {
   cursor: pointer;
-}
-
-.savingRank {
-  margin: 20px;
-  border-collapse: separate;
-  border-spacing: 5px 0px;
 }
 
 .savingName {
@@ -359,11 +349,19 @@ onMounted(() => {
 
 .savingMethod {
   position: absolute;
-  top: -10px;
-  right: -20px;
+  top: -20px;
+  right: 5px;
   border-radius: 20px;
   border: 1px solid lightgrey;
-  width: 70px;
+  width: 100px;
+}
+.depositMethod{
+  position: absolute;
+  top: -10px;
+  right: 5px;
+  border-radius: 20px;
+  border: 1px solid lightgrey;
+  width: 100px;
 }
 
 .savingRank > tbody tr {
@@ -378,6 +376,19 @@ onMounted(() => {
   text-align: start;
   width: 850px;
   margin-left: 200px;
+}
+
+.itemBoxDiv {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.itemBox {
+  padding: 20px;
+  margin: 20px;
+  max-width: 400px;
+  box-sizing: border-box;
 }
 
 .checkedFilter {
@@ -421,6 +432,9 @@ onMounted(() => {
   color: rgba(68, 140, 116, 1);
 }
 
+.filter .selected:hover{
+  color: white;
+}
 input[type="checkbox"] {
   display: none;
 }
@@ -464,13 +478,9 @@ input[type="checkbox"] {
 .itemBox {
   border: 1px solid rgba(231, 236, 243, 1);
   border-radius: 30px;
-  display: inline-block;
-  width: 300px;
-  height: 300px;
   background-color: white;
-  padding-left: 30px;
+  list-style: none;
 }
-
 
 .savingsContent {
   background-color: rgba(247, 249, 252, 1);
@@ -517,7 +527,6 @@ input[type="checkbox"] {
 .active > .page-link {
   background-color: rgba(68, 140, 116, 1);
   border: none;
-
 }
 
 .page-link:hover {
@@ -527,7 +536,6 @@ input[type="checkbox"] {
 .pagination {
   --bs-pagination-color: rgba(68, 140, 116, 1);
   --bs-pagination-hover-color: rgba(68, 140, 116, 1);
-
 }
 
 .searchContainer {

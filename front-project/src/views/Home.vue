@@ -1,20 +1,20 @@
 <template>
   <div class="home">
-    <Feature_1 />
+    <Feature_1 v-if="feature1Visible" class="animated-item" />
     <br><br><br><br>
-    <Feature_2 />
+    <Feature_2 v-if="feature2Visible" class="animated-item" />
     <br><br>
-    <Feature_3 />
+    <Feature_3 v-if="feature3Visible" class="animated-item" />
     <br><br>
-    <Feature_4 />
+    <Feature_4 v-if="feature4Visible" class="animated-item" />
     <br><br>
-    <Feature_5 />
+    <Feature_5 v-if="feature5Visible" class="animated-item" />
     <br><br>
-    <Feature_6 />
+    <Feature_6 v-if="feature6Visible" class="animated-item" />
     <br><br>
-    <Feature_7 />
+    <Feature_7 v-if="feature7Visible" class="animated-item" />
     <br><br>
-    <Feature_8 />
+    <Feature_8 v-if="feature8Visible" class="animated-item" />
   </div>
 </template>
 
@@ -39,6 +39,52 @@ export default {
     Feature_6,
     Feature_7,
     Feature_8
+  },
+  data() {
+    return {
+      feature1Visible: false,
+      feature2Visible: false,
+      feature3Visible: false,
+      feature4Visible: false,
+      feature5Visible: false,
+      feature6Visible: false,
+      feature7Visible: false,
+      feature8Visible: false,
+    };
+  },
+  mounted() {
+    this.animateFeatures(); // 페이지 로드 시 애니메이션 적용
+  },
+  methods: {
+    animateFeatures() {
+      // 각 Feature를 순차적으로 표시
+      setTimeout(() => { this.feature1Visible = true; }, 0);
+      setTimeout(() => { this.feature2Visible = true; }, 300);
+      setTimeout(() => { this.feature3Visible = true; }, 600);
+      setTimeout(() => { this.feature4Visible = true; }, 900);
+      setTimeout(() => { this.feature5Visible = true; }, 1200);
+      setTimeout(() => { this.feature6Visible = true; }, 1500);
+      setTimeout(() => { this.feature7Visible = true; }, 1800);
+      setTimeout(() => { this.feature8Visible = true; }, 2100);
+    }
   }
 }
 </script>
+
+<style scoped>
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animated-item {
+  animation: slideIn 0.5s ease-out forwards; /* 애니메이션 추가 */
+  transition: opacity 0.5s ease; /* 부드러운 전환 효과 */
+}
+</style>
