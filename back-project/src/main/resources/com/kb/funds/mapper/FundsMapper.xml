@@ -9,8 +9,8 @@
         <selectKey keyProperty="id" resultType="long" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        INSERT INTO funds (fundFnm, gijunGa, gijunYmd, suikRt1, suikRt3, suikRt12, investGrade, feeTot, bmNm)
-        VALUES (#{fundFnm}, #{gijunGa}, #{gijunYmd}, #{suikRt1}, #{suikRt3}, #{suikRt12}, #{investGrade}, #{feeTot}, #{bmNm})
+        INSERT INTO funds (fundFnm, gijunGa, gijunYmd, suikRt1, suikRt3, suikRt12, investGrade, feeTot, bmNm, fundCd)
+        VALUES (#{fundFnm}, #{gijunGa}, #{gijunYmd}, #{suikRt1}, #{suikRt3}, #{suikRt12}, #{investGrade}, #{feeTot}, #{bmNm}, #{fundCd})
     </insert>
 
     <!-- 펀드 업데이트 -->
@@ -25,13 +25,14 @@
             suikRt12 = #{suikRt12},
             investGrade = #{investGrade},
             feeTot = #{feeTot},
-            bmNm = #{bmNm}
+            bmNm = #{bmNm},
+            fundCd = #{fundCd}
         WHERE id = #{id}
     </update>
 
     <!-- 기존 수익 차트 삭제 -->
     <delete id="deleteSuikChartByFundId" parameterType="long">
-        DELETE FROM suik_chart WHERE fund_id = #{id}
+        DELETE FROM suikChart WHERE fundId = #{id}
     </delete>
 
     <!-- ID로 펀드 존재 여부 확인 -->
@@ -52,6 +53,7 @@
         <result property="investGrade" column="investGrade"/>
         <result property="feeTot" column="feeTot"/>
         <result property="bmNm" column="bmNm"/>
+        <result property="fundCd" column="fundCd"/>
 
         <collection property="suikChart" ofType="com.kb.funds.dto.SuikChartDTO">
             <result property="fundId" column="fundId"/>
