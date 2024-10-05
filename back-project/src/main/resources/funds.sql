@@ -8,7 +8,8 @@ CREATE TABLE funds (
                        suikRt12 DECIMAL(19, 4),           -- 1년 수익률
                        investGrade INT,                -- 투자 위험 등급
                        feeTot DECIMAL(19, 4),              -- 총 유동
-                       bmNm VARCHAR(255)                   -- 벤치마크
+                       bmNm VARCHAR(255),                   -- 벤치마크
+                       fundCd VARCHAR(100)					-- 펀드코드
 );
 
 CREATE TABLE SuikChart (
