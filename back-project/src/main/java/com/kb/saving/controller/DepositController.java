@@ -1,6 +1,7 @@
 package com.kb.saving.controller;
 
 import com.kb.saving.dto.Saving;
+import com.kb.saving.dto.SavingListDTO;
 import com.kb.saving.dto.SavingListResponseDTO;
 import com.kb.saving.dto.SavingParam;
 import com.kb.saving.service.SavingService;
@@ -9,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RestController
@@ -36,6 +40,12 @@ public class DepositController {
         savingParam.setInterestRateType(interestRateType);
 
         SavingListResponseDTO response = service.getProductList(savingParam);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/top")
+    public ResponseEntity<List<SavingListDTO>> getTopDeposits() {
+        List<SavingListDTO> response = service.getTopProductList();
         return ResponseEntity.ok(response);
     }
 

@@ -149,6 +149,8 @@ public class FundsService {
         return fundList;
     }
 
+
+
     @Scheduled(fixedRate = 3600000) // 1시간마다 실행
     public void scheduleCrawl() {
         try {
@@ -168,6 +170,8 @@ public class FundsService {
         });
         return suikCharts;
     }
+
+
 
     public List<FundsDTO> searchFunds(String keyword) {
         return fundsMapper.searchFunds(keyword);

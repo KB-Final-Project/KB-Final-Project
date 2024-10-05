@@ -46,4 +46,12 @@ public class SavingController {
         return ResponseEntity.ok(service.getProductDetail(2, savingId));
     }
 
+
+    @GetMapping("/top")
+    public ResponseEntity<List<SavingListDTO>> getTopDeposits() {
+        List<SavingListDTO> response = service.getTopSavingsProductList();
+        return ResponseEntity.ok(response);
+    }
+
+
 }

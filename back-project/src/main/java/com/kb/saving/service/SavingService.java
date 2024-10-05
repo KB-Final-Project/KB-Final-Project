@@ -41,4 +41,10 @@ public class SavingService {
         return saving;
     }
 
+    public List<SavingListDTO> getTopProductList() {
+        return mapper.getTopProductList();
+    }
+    public List<SavingListDTO> getTopSavingsProductList() {
+        return mapper.getTopSavingsProductList();
+    }
 }
