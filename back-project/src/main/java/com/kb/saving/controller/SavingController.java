@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/saving")
+@RequestMapping("/api/saving")
 @RequiredArgsConstructor
 @Slf4j
 @Api(value = "SavingController", tags = "적금")
@@ -41,7 +41,6 @@ public class SavingController {
         SavingListResponseDTO response = service.getProductList(savingParam);
         return ResponseEntity.ok(response);
     }
-
 
     @GetMapping("/detail/{savingId}")
     public ResponseEntity<Saving> getDepositProductById(@PathVariable int savingId) {

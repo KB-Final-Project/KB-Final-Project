@@ -30,7 +30,7 @@
 .submit{
   width: 100px;
   height: 30px;
-  border-radius: 30px;
+  border-radius: 20px;
   border: none;
   background-color: rgb(67, 140, 116);
   color: white;
@@ -39,7 +39,7 @@
 .cancel{
   width: 100px;
   height: 30px;
-  border-radius: 30px;
+  border-radius: 20px;
   border: none;
   font-size: 15px;
 }

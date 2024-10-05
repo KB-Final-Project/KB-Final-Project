@@ -52,4 +52,7 @@ public class FundsDTO {
 
     // 벤치마크
     private String bmNm;
+
+    // 펀드 코드
+    private String fundCd;
 }
