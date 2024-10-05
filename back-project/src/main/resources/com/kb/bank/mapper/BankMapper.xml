@@ -12,11 +12,13 @@
         <result property="bankUrl" column="bank_url"/>
     </resultMap>
 
-    <select id="getBankList" resultMap="BankResultMap">
+    <select id="getBankListByType" resultMap="BankResultMap">
         SELECT
             bank_id, bank_name, bank_logo_url, bank_url
         FROM
-            banks
+            BANKS
+        WHERE
+            bank_type = 1;
     </select>
 
 </mapper>
