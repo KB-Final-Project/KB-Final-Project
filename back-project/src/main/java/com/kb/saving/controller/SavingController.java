@@ -24,18 +24,17 @@ public class SavingController {
 
     @GetMapping("")
     public ResponseEntity<SavingListResponseDTO> getDepositListDefault(
+            @RequestParam(value = "searchType", required = false) String searchType,
             @RequestParam(value = "searchValue", required = false) String searchValue,
             @RequestParam(value = "bankId", required = false) Integer bankId,
             @RequestParam(value = "saveTerm", defaultValue = "36") Integer saveTerm,
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "interestRateType", defaultValue = "단리") String interestRateType){
+            @RequestParam(value = "inteinterestRateTyperestType", defaultValue = "단리") String interestRateType){
 
         SavingParam savingParam = new SavingParam();
         savingParam.setSearchValue(searchValue);
         savingParam.setBankId(bankId);
         savingParam.setSaveTerm(saveTerm);
         savingParam.setFinCategoryId(2);
-        savingParam.setPage(page);
         savingParam.setInterestRateType(interestRateType);
 
         SavingListResponseDTO response = service.getProductList(savingParam);
@@ -46,5 +45,13 @@ public class SavingController {
     public ResponseEntity<Saving> getDepositProductById(@PathVariable int savingId) {
         return ResponseEntity.ok(service.getProductDetail(2, savingId));
     }
+
+
+    @GetMapping("/top")
+    public ResponseEntity<List<SavingListDTO>> getTopDeposits() {
+        List<SavingListDTO> response = service.getTopSavingsProductList();
+        return ResponseEntity.ok(response);
+    }
+
 
 }

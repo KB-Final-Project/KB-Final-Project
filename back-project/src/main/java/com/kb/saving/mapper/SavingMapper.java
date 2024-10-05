@@ -1,9 +1,6 @@
 package com.kb.saving.mapper;
 
-import com.kb.saving.dto.Saving;
-import com.kb.saving.dto.SavingInterestRate;
-import com.kb.saving.dto.SavingListDTO;
-import com.kb.saving.dto.SavingParam;
+import com.kb.saving.dto.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,4 +13,7 @@ public interface SavingMapper {
 
     int getTotalCount(SavingParam savingParam);
 
+    List<SavingListDTO> getTopProductList();
+
+    List<SavingListDTO> getTopSavingsProductList();
 }
