@@ -78,9 +78,9 @@
         ir.save_term,
         ir.intr_rate,
         ir.intr_rate2
-        FROM SAVINGS_PRODUCTS AS s
-        INNER JOIN BANKS AS b ON s.bank_id = b.bank_id
-        LEFT JOIN SAVING_INTEREST_RATES AS ir ON s.saving_id = ir.saving_id
+        FROM savings_products AS s
+        INNER JOIN banks AS b ON s.bank_id = b.bank_id
+        LEFT JOIN saving_interest_rates AS ir ON s.saving_id = ir.saving_id
         WHERE s.fin_category_id = #{finCategoryId}
 
         <if test="searchValue != null">
@@ -127,19 +127,19 @@
             pr.prime_rate_percent,
             pr.prime_rate_detail
         ]]>
-        FROM SAVINGS_PRODUCTS AS s
-        INNER JOIN BANKS AS b ON s.bank_id = b.bank_id
-        LEFT JOIN SAVING_INTEREST_RATES AS ir ON s.saving_id = ir.saving_id
-        LEFT JOIN SAVING_PRIME_RATES AS pr ON s.saving_id = pr.saving_id
+        FROM savings_products AS s
+        INNER JOIN banks AS b ON s.bank_id = b.bank_id
+        LEFT JOIN saving_interest_rates AS ir ON s.saving_id = ir.saving_id
+        LEFT JOIN saving_prime_Rates AS pr ON s.saving_id = pr.saving_id
         WHERE s.fin_category_id = #{finCategoryId} AND s.saving_id = #{savingId}
         ORDER BY s.max_prime_rate DESC;
     </select>
 
     <select id="getTotalCount" resultType="int">
         SELECT COUNT(*)
-        FROM SAVINGS_PRODUCTS AS s
-        INNER JOIN BANKS AS b ON s.bank_id = b.bank_id
-        LEFT JOIN SAVING_INTEREST_RATES AS ir ON s.saving_id = ir.saving_id
+        FROM savings_products AS s
+        INNER JOIN banks AS b ON s.bank_id = b.bank_id
+        LEFT JOIN saving_interest_rates AS ir ON s.saving_id = ir.saving_id
         WHERE s.fin_category_id = #{finCategoryId}
 
         <if test="searchValue != null">
@@ -151,6 +151,56 @@
         <if test="saveTerm != null">
             AND ir.save_term = #{saveTerm}
         </if>
+    </select>
+
+    <select id="getTopProductList" resultMap="DepositDetailResultMap" parameterType="int">
+        SELECT s.saving_id,
+               s.bank_id,
+               s.saving_name,
+               s.dcls_strt_day,
+               s.join_deny,
+               s.join_member,
+               s.fin_category_id,
+               s.join_way,
+               s.mtrt_int,
+               s.etc_note,
+               s.max_prime_rate,
+               MIN(sir.intr_rate2) AS intr_rate2,
+               b.bank_name,
+               MIN(sir.intr_rate_type) AS intr_rate_type,
+               MIN(sir.save_term) AS save_term
+        FROM savings_products s
+                 JOIN saving_interest_rates sir ON s.saving_id = sir.saving_id
+                 JOIN banks b ON s.bank_id = b.bank_id
+        WHERE s.fin_category_id = 1
+        GROUP BY s.saving_id
+        ORDER BY intr_rate2 DESC
+            LIMIT 3;
+    </select>
+
+    <select id="getTopSavingsProductList" resultMap="DepositDetailResultMap" parameterType="int">
+        SELECT s.saving_id,
+               s.bank_id,
+               s.saving_name,
+               s.dcls_strt_day,
+               s.join_deny,
+               s.join_member,
+               s.fin_category_id,
+               s.join_way,
+               s.mtrt_int,
+               s.etc_note,
+               s.max_prime_rate,
+               MIN(sir.intr_rate2) AS intr_rate2,
+               b.bank_name,
+               MIN(sir.intr_rate_type) AS intr_rate_type,
+               MIN(sir.save_term) AS save_term
+        FROM savings_products s
+                 JOIN saving_interest_rates sir ON s.saving_id = sir.saving_id
+                 JOIN banks b ON s.bank_id = b.bank_id
+        WHERE s.fin_category_id = 2
+        GROUP BY s.saving_id
+        ORDER BY intr_rate2 DESC
+            LIMIT 3;
     </select>
 
 </mapper>
