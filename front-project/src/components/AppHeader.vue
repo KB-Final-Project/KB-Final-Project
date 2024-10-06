@@ -319,6 +319,10 @@ a.nav-link {
 .dropdown-item .dropdown-toggle{
   color:white;
 }
+
+.nav-item {
+  font-family: J3;
+}
 </style>
 
 <!-- <style lang="scss" scoped>

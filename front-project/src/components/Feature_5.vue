@@ -120,7 +120,12 @@ onMounted(fetchNews);
 
 
 <style scoped>
+.newsMain {
+  position: relative;
+}
+
 .newsMain b {
+  z-index: 2;
   position: absolute;
   font-size: 40px;
   font-weight: 700;
@@ -142,20 +147,18 @@ onMounted(fetchNews);
   position: relative;
   padding: 20px 0;
   background-color: rgba(249, 250, 251, 1);
+  font-family: J2;
 }
 
 .newsBox h1 {
   padding: 0 90px;
-  font-weight: 700;
+  font-family: J5;
+  font-size: 40px
 }
 
 .headline {
   display: flex;
   padding: 0 20px;
-}
-
-.headline h1 {
-  font-size: 40px
 }
 
 .headline button {
@@ -171,7 +174,17 @@ onMounted(fetchNews);
   border-radius: 30px;
   width: 500px;
   height: 500px;
+  transition: transform 0.3s ease;
 }
+
+.newsMain img:hover {
+  transform: scale(1.05);
+}
+
+.newsMain {
+  font-family: J5;
+}
+
 
 button.seeMore_btn {
   background: none;
