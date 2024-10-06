@@ -70,19 +70,36 @@
 
         <!-- 로그인 버튼을 투자성향과 동일하게 변경 -->
         <ul class="navbar-nav">
-          <li id="headerLoginBtn" class="nav-item dropdown" @mouseenter="hoverLoginDropdown(true)" @mouseleave="hoverLoginDropdown(false)">
-            <router-link style="font-size:17px;" class="dropdown-item" to="/signin">
-              로그인 <i :class="loginDropdownState ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
-            </router-link>
-            <ul class="dropdown-menu" v-show="loginDropdownState">
-              <li>
-                <a style="font-size:17px;" class="dropdown-item" href="#">내 계정</a>
-              </li>
-              <li>
-                <router-link style="font-size:17px;" class="dropdown-item" to="/signup">회원가입</router-link>
-              </li>
-            </ul>
-          </li>
+          <template v-if="islogin">
+            <li id="headerLoginBtn" class="nav-item dropdown" @mouseenter="hoverLoginDropdown(true)" @mouseleave="hoverLoginDropdown(false)">
+              <router-link style="font-size:17px;" class="dropdown-item" to="/myPage">
+                {{id}} <i :class="loginDropdownState ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
+              </router-link>
+              <ul class="dropdown-menu" v-show="loginDropdownState">
+                <li>
+                  <router-link style="font-size:17px;" class="dropdown-item" to="/mypage">마이페이지</router-link>
+                </li>
+                <li>
+                  <a style="font-size:17px;" class="dropdown-item" @click.prevent="logout">로그아웃</a>
+                </li>
+              </ul>
+            </li>
+          </template>
+          <template v-else>
+            <li id="headerLoginBtn" class="nav-item dropdown" @mouseenter="hoverLoginDropdown(true)" @mouseleave="hoverLoginDropdown(false)">
+              <router-link style="font-size:17px;" class="dropdown-item" to="/signin">
+                로그인 <i :class="loginDropdownState ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
+              </router-link>
+              <ul class="dropdown-menu" v-show="loginDropdownState">
+                <li>
+                  <a style="font-size:17px;" class="dropdown-item" href="#">내 계정</a>
+                </li>
+                <li>
+                  <router-link style="font-size:17px;" class="dropdown-item" to="/signup">회원가입</router-link>
+                </li>
+              </ul>
+            </li>
+          </template>
         </ul>
 
         <div class="d-sm-none p-3 mt-n3">
@@ -98,7 +115,23 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router';
+
+const auth = useAuthStore();
+const islogin = computed(() => auth.isLogin);
+const id = computed(() => auth.id);
+
+
+const store = useAuthStore();
+const router = useRouter();
+
+const logout = (e) => {
+  // 로그아웃
+  store.logout();
+  router.push('/');
+};
 
 const menuItems = ref([
   {

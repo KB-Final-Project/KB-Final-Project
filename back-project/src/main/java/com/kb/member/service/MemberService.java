@@ -31,7 +31,6 @@ public class MemberService{
     final PasswordEncoder passwordEncoder;
     final MemberMapper mapper;
 
-
     public Member login(Member member) {
         Member saveMember = mapper.selectById(member.getId());
         if(passwordEncoder.matches(member.getPassword(), saveMember.getPassword())) {
@@ -48,9 +47,14 @@ public class MemberService{
         return member != null;
     }
 
+    public Member getMemberByKakaoId(String id) {
+        return Optional.ofNullable(mapper.selectBykakaoId(id))
+                .orElseThrow(NoSuchElementException::new);
+    }
+
     public Member getMember(String id) {
         return Optional.ofNullable(mapper.selectById(id))
-                        .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(NoSuchElementException::new);
     }
 
     private void saveAvatar(MultipartFile avatar, String id) {
@@ -117,7 +121,7 @@ public class MemberService{
                 changePassword.getOldPassword(),
                 member.getPassword()
         )) {
-              throw new PasswordMissmatchException();
+            throw new PasswordMissmatchException();
         }
         changePassword.setNewPassword(passwordEncoder.encode(changePassword.getNewPassword()));
         mapper.updatePassword(changePassword);
