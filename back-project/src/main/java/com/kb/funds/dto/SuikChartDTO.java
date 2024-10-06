@@ -34,7 +34,7 @@ public class SuikChartDTO {
     @JsonProperty("CATEGORY") // 구분을 나타내는 필드
     private String category;
 
-    @JsonProperty("EVALUATION_AMOUNT") // 새로운 평가액 필드
+    @JsonProperty("EVALUATIONAMOUNT") // 새로운 평가액 필드
     private double evaluationAmount; // 평가액(억원)
 
     @JsonProperty("WEIGHT") // 새로운 비중 필드
