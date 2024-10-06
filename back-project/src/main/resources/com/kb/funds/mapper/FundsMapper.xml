@@ -61,6 +61,9 @@
             <result property="bmSuikJisu" column="bmSuikJisu"/>
             <result property="silhSuikRt" column="silhSuikRt"/>
             <result property="seoljAek" column="seoljAek"/>
+            <result property="category" column="category" />
+            <result property="evaluationAmount" column="evaluationAmount" />
+            <result property="weight" column="weight" />
         </collection>
     </resultMap>
 
