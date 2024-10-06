@@ -27,7 +27,7 @@
           <img src="/img/emoji/fundemoji.PNG" alt="Fund Emoji" class="saving-emoji" />
         </div>
       </router-link>
-      <router-link class="link" to="/stock">
+      <router-link class="link" to="/stockMain">
         <div class="mainBtn m1">
           <h3>주식</h3>
           <img src="/img/emoji/investEmoji.PNG" alt="Investment Emoji" class="saving-emoji" />

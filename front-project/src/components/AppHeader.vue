@@ -140,7 +140,10 @@ const menuItems = ref([
       {
         text: '주식',
         href: '#',
-        subItems: [{ text: '국내주식', href: '/stock' }],
+        subItems: [
+          { text: '주식메인', href: '/StockMain' },
+          { text: '주식상세페이지', href: '/StockDetail' },
+      ],
       },
       {
         text: '펀드',
