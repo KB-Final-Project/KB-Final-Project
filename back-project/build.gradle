@@ -111,7 +111,9 @@ dependencies {
 
 
   // selenium
-  implementation 'org.seleniumhq.selenium:selenium-java:4.0.0'
+  implementation 'org.seleniumhq.selenium:selenium-java:4.25.0'
+  implementation 'org.seleniumhq.selenium:selenium-http-jdk-client:4.9.1'
+
 
   // jackson
   implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0' // 최신 버전으로 변경 가능
