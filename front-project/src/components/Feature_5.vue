@@ -120,7 +120,12 @@ onMounted(fetchNews);
 
 
 <style scoped>
+.newsMain {
+  position: relative;
+}
+
 .newsMain b {
+  z-index: 2;
   position: absolute;
   font-size: 40px;
   font-weight: 700;
@@ -171,7 +176,13 @@ onMounted(fetchNews);
   border-radius: 30px;
   width: 500px;
   height: 500px;
+  transition: transform 0.3s ease;
 }
+
+.newsMain img:hover {
+  transform: scale(1.05);
+}
+
 
 button.seeMore_btn {
   background: none;
