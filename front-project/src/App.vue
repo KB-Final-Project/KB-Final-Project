@@ -64,6 +64,37 @@ export default {
   src: url('/public/fonts/Recipekorea 레코체 FONT.ttf') format('truetype');
 }
 
+@font-face {
+  font-family: 'J1';
+  src: url('/public/fonts/The Jamsil 1 Thin.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'J2';
+  src: url('/public/fonts/The Jamsil 2 Light.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'J3';
+  src: url('/public/fonts/The Jamsil 3 Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'J4';
+  src: url('/public/fonts/The Jamsil 4 Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'J5';
+  src: url('/public/fonts/The Jamsil 5 Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'J6';
+  src: url('/public/fonts/The Jamsil 6 ExtraBold.ttf') format('truetype');
+}
+
+
 #mainContent {
   padding-top: 80px;
 }
