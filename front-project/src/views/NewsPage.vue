@@ -1,5 +1,5 @@
 <template>
-    <div class="news-view text-center">
+    <div class="news-view text-center animate-on-load">
         <h1><b>뉴스 보기</b></h1>
         <div class="container">
             
@@ -37,6 +37,7 @@
         </div>
     </div>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -315,4 +316,38 @@ h1 {
         grid-template-columns: 1fr;
     }
 }
+
+@keyframes riseUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-on-load > * {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: riseUp 1s ease-out forwards;
+  }
+  
+  .animate-on-load > *:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+  
+  .animate-on-load > *:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  
+  .animate-on-load > *:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  
+  .animate-on-load > *:nth-child(4) {
+    animation-delay: 0.4s;
+  }
+  
 </style>
