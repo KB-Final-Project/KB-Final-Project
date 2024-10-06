@@ -1,5 +1,10 @@
 package com.kb.news.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +24,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 @RestController
+@Api(tags = "뉴스 API", description = "네이버 뉴스 검색 API를 이용한 뉴스 조회")
 public class NewsController {
 
     private static final Logger logger = LoggerFactory.getLogger(NewsController.class);
@@ -30,8 +36,16 @@ public class NewsController {
     private String clientSecret;
 
     @GetMapping("/api/news")
+    @ApiOperation(value = "뉴스 검색", notes = "주어진 쿼리로 뉴스를 검색합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "성공적으로 뉴스를 조회함"),
+            @ApiResponse(code = 400, message = "잘못된 요청"),
+            @ApiResponse(code = 500, message = "서버 내부 오류")
+    })
     public ResponseEntity<String> getNews(
+            @ApiParam(value = "검색할 뉴스 키워드", example = "금융", defaultValue = "금융")
             @RequestParam(value = "query", required = false, defaultValue = "금융") String query,
+            @ApiParam(value = "표시할 뉴스 개수", example = "10", defaultValue = "10")
             @RequestParam(required = false, defaultValue = "10") int display) {
 
         logger.info("Received request for news. Query: {}, Display: {}", query, display);
