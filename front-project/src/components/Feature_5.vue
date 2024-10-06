@@ -147,20 +147,18 @@ onMounted(fetchNews);
   position: relative;
   padding: 20px 0;
   background-color: rgba(249, 250, 251, 1);
+  font-family: J2;
 }
 
 .newsBox h1 {
   padding: 0 90px;
-  font-weight: 700;
+  font-family: J5;
+  font-size: 40px
 }
 
 .headline {
   display: flex;
   padding: 0 20px;
-}
-
-.headline h1 {
-  font-size: 40px
 }
 
 .headline button {
@@ -181,6 +179,10 @@ onMounted(fetchNews);
 
 .newsMain img:hover {
   transform: scale(1.05);
+}
+
+.newsMain {
+  font-family: J5;
 }
 
 

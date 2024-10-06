@@ -82,11 +82,12 @@
 
 .trendGraph {
   display: flex;
+  font-family: J3;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  width: 400px; /* 적절한 폭 설정 */
-  margin-left: 60px; /* trendMenu와 간격 */
+  width: 400px;
+  margin-left: 60px;
 }
 
 .trendGraph span {
@@ -129,6 +130,10 @@
 h3 {
   margin-left: 25px;
   margin-top: 20px;
+}
+
+.trendMenu {
+  font-family: J5;
 }
 
 </style>

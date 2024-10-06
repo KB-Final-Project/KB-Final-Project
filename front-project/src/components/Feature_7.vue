@@ -69,11 +69,13 @@
 .title-txt {
   font-size: 50px;
   line-height: 1.1;
+  font-family: J4;
 }
 
 .content-txt {
   font-size: 30px;
   line-height: 2;
+  font-family: J3;
 }
 
 @media (min-width: 768px) {
