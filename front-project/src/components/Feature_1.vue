@@ -17,7 +17,7 @@
             <div class="row justify-content-center text-center pt-md-2 pt-lg-0 pt-xl-2 pb-5 mb-md-2">
               <div class="col-lg-10 col-xl-9 col-xxl-8 text-start">
                 <div class="d-flex justify-content-between align-items-center ">
-                  <h1 class="display-3 mb-sm-4 me-2" style="width: 140%; height: 100%; text-align: start;"><span
+                  <h1 class="font-t display-3 mb-sm-4 me-2" style="width: 140%; height: 100%; text-align: start;"><span
                       class="badgeText badge bg-faded-light fs-sm text-white px-3 ">
                       <h3>Let's have a dream</h3>
                     </span><br>취향대로 투자하자</h1>
@@ -25,7 +25,7 @@
                     <img src="/img/logoYong.png" alt="Logo">
                   </div>
                 </div>
-                <h3 class="pb-3 ">투자 성향을 분석하고 <br> 성향 기반 투자 상품 추천받기</h3>
+                <h3 class="pb-3 font-c">투자 성향을 분석하고 <br> 성향 기반 투자 상품 추천받기</h3>
               </div>
               <div class="text-center mt-4">
                 <button class="investChoiceBtn" @click="testStart">투자 성향 분석 Click!</button>
@@ -50,7 +50,7 @@
             <div class="row justify-content-center text-center pt-md-2 pt-lg-0 pt-xl-2 pb-5 mb-md-2">
               <div class="mode2 col-lg-10 col-xl-9 col-xxl-8 text-start">
                 <div class="d-flex justify-content-between align-items-center ">
-                  <h1 class="display-3 mb-sm-4 me-2" style="width: 170%; height: 100%; text-align: start;">
+                  <h1 class="font-t display-3 mb-sm-4 me-2" style="width: 170%; height: 100%; text-align: start;">
                     <span class="mode2Badge badgeText badge bg-faded-light fs-sm text-white px-3 ">
                       <h3>Choose at a glance</h3>
                     </span><br>투자 상품을 한 눈에
@@ -59,7 +59,7 @@
                     <img src="/img/logoYong2.png" alt="Logo">
                   </div>
                 </div>
-                <h3 class="pb-3  ">
+                <h3 class="pb-3 font-c">
                   다양한 투자 상품을<br>
                   하나의 플랫폼에서 한 눈에 비교</h3>
               </div>
@@ -85,7 +85,7 @@
             <div class="row justify-content-center text-center pt-md-2 pt-lg-0 pt-xl-2 pb-5 mb-md-2">
               <div class="mode3 col-lg-10 col-xl-9 col-xxl-8 text-start">
                 <div class="d-flex justify-content-between align-items-center ">
-                  <h1 class="display-3 mb-sm-4 me-2" style="width: 150%; height: 100%; text-align: start;">
+                  <h1 class="font-t display-3 mb-sm-4 me-2" style="width: 150%; height: 100%; text-align: start;">
                     <span class="mode3Badge badgeText badge bg-faded-light fs-sm text-white px-3 ">
                       <h3>Let's have a dream</h3>
                     </span><br>취향대로 투자하자
@@ -94,9 +94,9 @@
                     <img src="/img/logoYong.png" alt="Logo">
                   </div>
                 </div>
-                <h3 class="pb-3  ">투자 성향을 분석하고 <br> 성향 기반 투자 상품 추천받기</h3>
+                <h3 class="pb-3 font-c">투자 성향을 분석하고 <br> 성향 기반 투자 상품 추천받기</h3>
               </div>
-              <div class="text-center mt-4">
+              <div class="text-center mt-4 font-c">
                 <button class="investChoiceBtn" @click="testStart">투자 성향 분석 Click!</button>
               </div>
             </div>
@@ -142,12 +142,10 @@ const testStart = () => {
 .display-3 {
   color: white;
   line-height: 1.5;
-  font-weight: 700;
 }
 
 h3.pb-3 {
   color: white;
-  font-weight: bold;
   font-size: 28px;
   line-height: 1.3;
 }
@@ -188,7 +186,7 @@ h3.pb-3 {
   border: none;
   border-radius: 20px;
   font-size: 25px;
-  font-weight: bold;
+  font-family: J3;
   cursor: pointer;
   margin-top: -50px;
   cursor: pointer;
@@ -198,5 +196,13 @@ h3.pb-3 {
   background-color: rgba(236, 203, 80, 1);
   transform: scale(1.2);
   z-index: 11111;
+}
+
+.font-t {
+  font-family: J5;
+}
+
+.font-c {
+  font-family: J4;
 }
 </style>

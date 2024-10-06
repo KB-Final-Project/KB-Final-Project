@@ -1,6 +1,6 @@
 <template>
   <section class="review-section container pt-5 pb-4 mb-2 my-lg-3 my-xl-4 my-xxl-5">
-    <h2 class="review-section__title h1 mb-2 text-center">금융상품 알아보기</h2>
+    <h2 class="font-t review-section__title h1 mb-2 text-center">금융상품 알아보기</h2>
     <br>
     <div class="main1 flex-wrap justify-content-center "> <!-- Flexbox 사용 -->
       <router-link class="link" to="/savings">
@@ -41,7 +41,6 @@
 
 
 .review-section__title {
-  font-weight: 600;
   font-size: 40px;
 }
 
@@ -50,6 +49,7 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 30px;
+  font-family: J4;
 }
 
 .mainBtn {
@@ -79,7 +79,6 @@
 
 .mainBtn h3 {
   font-size: 40px;
-  font-weight: 700;
   color: white;
   margin: 0;
 }
@@ -93,6 +92,10 @@
 }
 .link{
   text-decoration: none;
+}
+
+.font-t {
+  font-family: J5;
 }
 </style>
 

@@ -104,6 +104,7 @@
 }
 
 .f6_trendMain {
+  font-family: J3;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -204,6 +205,10 @@
 h3 {
   margin-left: 25px;
   margin-top: 20px;
+}
+
+.trendMenu {
+  font-family: J5;
 }
 </style>
 

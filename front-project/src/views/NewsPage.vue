@@ -1,6 +1,6 @@
 <template>
-    <div class="news-view text-center">
-        <h1><b>뉴스 보기</b></h1>
+    <div class="news-view text-center animate-on-load">
+        <h1>뉴스 보기</h1>
         <div class="container">
             
             <!-- 메인 뉴스 -->
@@ -37,6 +37,7 @@
         </div>
     </div>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -161,6 +162,7 @@ export default {
 .news-view {
     margin: 0 auto;
     background-color: #F9FAFC;
+    font-family: J5;
 }
 
 .container {
@@ -173,6 +175,7 @@ h1 {
 }
 
 .main-news {
+    font-family: J5;
     display: flex;
     margin-bottom: 30px;
     background-color: white;
@@ -226,6 +229,7 @@ h1 {
 }
 
 .category-selector {
+    font-family: J5;
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
@@ -234,14 +238,13 @@ h1 {
 
 .category-selector button {
     margin: 5px;
-    padding: 20px 35px;
+    padding: 15px 35px;
     border: none;
     background-color: #90DAAA;
     color: white;
     cursor: pointer;
-    border-radius: 20%;
+    border-radius: 20px;
     font-size: 15px;
-    font-weight: bold;
     transition: background-color 0.3s;
 }
 
@@ -262,6 +265,7 @@ h1 {
 }
 
 .news-card {
+    font-family: J3;
     background-color: white;
     border-radius: 30px;
     overflow: hidden;
@@ -315,4 +319,38 @@ h1 {
         grid-template-columns: 1fr;
     }
 }
+
+@keyframes riseUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-on-load > * {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: riseUp 1s ease-out forwards;
+  }
+  
+  .animate-on-load > *:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+  
+  .animate-on-load > *:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  
+  .animate-on-load > *:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  
+  .animate-on-load > *:nth-child(4) {
+    animation-delay: 0.4s;
+  }
+  
 </style>
