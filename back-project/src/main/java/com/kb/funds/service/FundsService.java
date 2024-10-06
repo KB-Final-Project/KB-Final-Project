@@ -56,7 +56,10 @@ public class FundsService {
             } else {
                 for (FundsDTO fund : funds) {
                     try {
+<<<<<<< Updated upstream
                         logger.info("Processing fund: {}", fund);
+=======
+>>>>>>> Stashed changes
                         List<SuikChartDTO> suikCharts = crawlSuikChart(fund);
 
                         if (fund.getId() == null) {
@@ -82,15 +85,42 @@ public class FundsService {
                         } else {
                             fundsMapper.updateFund(fund);
                             suikChartMapper.deleteSuikChartByFundId(fund.getId());
+<<<<<<< Updated upstream
                             List<SuikChartDTO> detailedCharts = crawlDetailedData(fund);
                             for (SuikChartDTO detailedChart : detailedCharts) {
                                 detailedChart.setFundId(fund.getId());
+=======
+                        } else {
+                            // 새로운 펀드 삽입
+                            try {
+                                fundsMapper.insertFund(fund);
+
+                                // 새로운 수익 차트 데이터 삽입
+
+                                if (fund.getId() == null) {
+                                    // Fund ID가 null인 경우에 대한 처리 추가
+                                    continue;
+                                } else {
+                                    // 정상적으로 ID가 있는 경우 수익 차트 삽입
+                                    for (SuikChartDTO suikChart : suikCharts) {
+                                        suikChart.setFundId(fund.getId());
+                                    }
+                                    suikChartMapper.insertSuikCharts(suikCharts);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                continue;
+>>>>>>> Stashed changes
                             }
                             suikChartMapper.insertSuikCharts(detailedCharts);
                             logger.info("Inserted Detailed SuikCharts for existing Fund ID: {}", fund.getFundCd());
                         }
                     } catch (Exception e) {
+<<<<<<< Updated upstream
                         logger.error("Error occurred while processing fund ID: {}", fund.getId(), e);
+=======
+                        e.printStackTrace();
+>>>>>>> Stashed changes
                     }
                 }
                 pageNo++;
@@ -121,6 +151,7 @@ public class FundsService {
             }
 
             if (fundNode != null) {
+<<<<<<< Updated upstream
                 JsonNode suikChartNode = fundNode.get("suikChart");
 
                 if (suikChartNode != null && suikChartNode.isArray() && suikChartNode.size() > 0) {
@@ -132,6 +163,28 @@ public class FundsService {
                     }
                     fund.setSuikChart(suikCharts);
                 }
+=======
+
+                JsonNode suikChartNode = fundNode.get("suikChart");
+
+                if (suikChartNode != null) {
+                    if (suikChartNode.isArray() && suikChartNode.size() > 0) {
+                        // 차트 데이터 처리 로직
+                        List<SuikChartDTO> suikCharts = new ArrayList<>();
+                        for (JsonNode chart : suikChartNode) {
+                            SuikChartDTO suikChart = objectMapper.treeToValue(chart, SuikChartDTO.class);
+
+                            // fundId 설정
+                            suikChart.setFundId(fundId);
+                            suikCharts.add(suikChart);
+                        }
+                        fund.setSuikChart(suikCharts); // Fund에 suikChart 설정
+                    } else {
+                    }
+                } else {
+                }
+            } else {
+>>>>>>> Stashed changes
             }
         }
 

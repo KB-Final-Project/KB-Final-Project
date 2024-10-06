@@ -92,6 +92,7 @@ const handleSignup = () => {
   background-color: #37715d;
   color: white;
   font-size: 20px;
+  border:none;
 }
 
 .signUpBtn:hover{

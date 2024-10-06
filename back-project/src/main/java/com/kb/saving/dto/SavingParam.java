@@ -1,8 +1,8 @@
 package com.kb.saving.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,4 +17,6 @@ public class SavingParam {
     private int page = 1;
     private int limit;
     private int offset;
+
+
 }

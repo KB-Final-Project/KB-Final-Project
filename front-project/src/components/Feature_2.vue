@@ -3,26 +3,36 @@
     <h2 class="review-section__title h1 mb-2 text-center">금융상품 알아보기</h2>
     <br>
     <div class="main1 flex-wrap justify-content-center "> <!-- Flexbox 사용 -->
-      <div class="mainBtn m1">
-        <h3>적금</h3>
-        <img src="/img/emoji/savingHand.PNG" alt="Saving Hand Emoji" class="saving-emoji" />
-      </div>
-      <div class="mainBtn m2">
-        <h3>예금</h3>
-        <img src="/img/emoji/despositHand.PNG" alt="Deposit Emoji" class="saving-emoji" />
-      </div>
-      <div class="mainBtn m1">
-        <h3>ISA</h3>
-        <img src="/img/emoji/isaEmoji.PNG" alt="ISA Emoji" class="saving-emoji" />
-      </div>
-      <div class="mainBtn m2">
-        <h3>펀드</h3>
-        <img src="/img/emoji/fundemoji.PNG" alt="Fund Emoji" class="saving-emoji" />
-      </div>
-      <div class="mainBtn m1">
-        <h3>주식</h3>
-        <img src="/img/emoji/investEmoji.PNG" alt="Investment Emoji" class="saving-emoji" />
-      </div>
+      <router-link class="link" to="/savings">
+        <div class="mainBtn m1">
+            <h3>적금</h3>
+          <img src="/img/emoji/savingHand.PNG" alt="Saving Hand Emoji" class="saving-emoji" />
+        </div>
+      </router-link>
+      <router-link class="link" to="/deposit">
+        <div class="mainBtn m2">
+            <h3>예금</h3>
+          <img src="/img/emoji/despositHand.PNG" alt="Deposit Emoji" class="saving-emoji" />
+        </div>
+      </router-link>
+      <router-link class="link" to="/isa">
+        <div class="mainBtn m1">
+          <h3>ISA</h3>
+          <img src="/img/emoji/isaEmoji.PNG" alt="ISA Emoji" class="saving-emoji" />
+        </div>
+      </router-link>
+      <router-link class="link" to="/fund">
+        <div class="mainBtn m2">
+          <h3>펀드</h3>
+          <img src="/img/emoji/fundemoji.PNG" alt="Fund Emoji" class="saving-emoji" />
+        </div>
+      </router-link>
+      <router-link class="link" to="/stockMain">
+        <div class="mainBtn m1">
+          <h3>주식</h3>
+          <img src="/img/emoji/investEmoji.PNG" alt="Investment Emoji" class="saving-emoji" />
+        </div>
+      </router-link>
     </div><br><br><br>
   </section>
 </template>
@@ -81,7 +91,9 @@
   width: 95px;
   height: 95px;
 }
-
+.link{
+  text-decoration: none;
+}
 </style>
 
 <script setup>

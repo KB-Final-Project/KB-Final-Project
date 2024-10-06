@@ -4,12 +4,66 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.kb.stock.mapper.StockMapper">
-    <select id="selectAllStocks" resultType="com.kb.stock.dto.StockDTO">
-        SELECT * FROM stock;
+
+    <select id="selectAllStockCodes" resultType="String">
+        SELECT stock_code FROM stock_codes
     </select>
 
-    <insert id="insertStock" parameterType="com.kb.stock.dto.StockDTO">
-        INSERT INTO stock (stock_code, stock_name, current_price, price_change, price_change_pct, high_price, low_price, opening_price, volume, timestamp)
-        VALUES (#{stockCode}, #{stockName}, #{currentPrice}, #{priceChange}, #{priceChangePct}, #{highPrice}, #{lowPrice}, #{openingPrice}, #{volume}, NOW());
+
+    <insert id="upsertStock" parameterType="com.kb.stock.dto.StockDTO">
+        INSERT INTO stock (
+            stock_code, stock_name, current_price, price_change, price_change_pct,
+            high_price, low_price, opening_price, volume, industry, last_updated,
+            prdt_type_cd, prdt_name120, prdt_abrv_name, prdt_eng_name, prdt_eng_name120,
+            prdt_eng_abrv_name, std_pdno, shtn_pdno, prdt_sale_stat_cd, prdt_risk_grad_cd,
+            prdt_clsf_cd, prdt_clsf_name, sale_strt_dt, sale_end_dt, wrap_asst_type_cd,
+            ivst_prdt_type_cd, ivst_prdt_type_cd_name, frst_erlm_dt
+        )
+        VALUES (
+                   #{stockCode}, #{stockName}, #{currentPrice}, #{priceChange}, #{priceChangePct},
+                   #{highPrice}, #{lowPrice}, #{openingPrice}, #{volume}, #{industry}, NOW(),
+                   #{prdtTypeCd}, #{prdtName120}, #{prdtAbrvName}, #{prdtEngName}, #{prdtEngName120},
+                   #{prdtEngAbrvName}, #{stdPdno}, #{shtnPdno}, #{prdtSaleStatCd}, #{prdtRiskGradCd},
+                   #{prdtClsfCd}, #{prdtClsfName}, #{saleStrtDt}, #{saleEndDt}, #{wrapAsstTypeCd},
+                   #{ivstPrdtTypeCd}, #{ivstPrdtTypeCdName}, #{frstErlmDt}
+               )
+            ON DUPLICATE KEY UPDATE
+                                 stock_name = #{stockName},
+                                 current_price = #{currentPrice},
+                                 price_change = #{priceChange},
+                                 price_change_pct = #{priceChangePct},
+                                 high_price = #{highPrice},
+                                 low_price = #{lowPrice},
+                                 opening_price = #{openingPrice},
+                                 volume = #{volume},
+                                 industry = #{industry},
+                                 last_updated = NOW(),
+                                 prdt_type_cd = #{prdtTypeCd},
+                                 prdt_name120 = #{prdtName120},
+                                 prdt_abrv_name = #{prdtAbrvName},
+                                 prdt_eng_name = #{prdtEngName},
+                                 prdt_eng_name120 = #{prdtEngName120},
+                                 prdt_eng_abrv_name = #{prdtEngAbrvName},
+                                 std_pdno = #{stdPdno},
+                                 shtn_pdno = #{shtnPdno},
+                                 prdt_sale_stat_cd = #{prdtSaleStatCd},
+                                 prdt_risk_grad_cd = #{prdtRiskGradCd},
+                                 prdt_clsf_cd = #{prdtClsfCd},
+                                 prdt_clsf_name = #{prdtClsfName},
+                                 sale_strt_dt = #{saleStrtDt},
+                                 sale_end_dt = #{saleEndDt},
+                                 wrap_asst_type_cd = #{wrapAsstTypeCd},
+                                 ivst_prdt_type_cd = #{ivstPrdtTypeCd},
+                                 ivst_prdt_type_cd_name = #{ivstPrdtTypeCdName},
+                                 frst_erlm_dt = #{frstErlmDt};
     </insert>
+
+
+    <select id="selectStockNameByCode" parameterType="String" resultType="String">
+        SELECT sc.stock_name
+        FROM stock_codes sc
+        WHERE sc.stock_code = #{stockCode}
+    </select>
+
+
 </mapper>
