@@ -53,11 +53,10 @@ export default {
     };
   },
   mounted() {
-    this.animateFeatures(); // 페이지 로드 시 애니메이션 적용
+    this.animateFeatures();
   },
   methods: {
     animateFeatures() {
-      // 각 Feature를 순차적으로 표시
       setTimeout(() => { this.feature1Visible = true; }, 0);
       setTimeout(() => { this.feature2Visible = true; }, 300);
       setTimeout(() => { this.feature3Visible = true; }, 600);
@@ -84,7 +83,7 @@ export default {
 }
 
 .animated-item {
-  animation: slideIn 0.5s ease-out forwards; /* 애니메이션 추가 */
-  transition: opacity 0.5s ease; /* 부드러운 전환 효과 */
+  animation: slideIn 0.5s ease-out forwards;  
+  transition: opacity 0.5s ease;
 }
 </style>

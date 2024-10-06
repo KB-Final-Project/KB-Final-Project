@@ -1,227 +1,221 @@
 <template>
- <div class="bc  text-center">
-  <div class="container ">
-    <br /><br />
-    <div v-if="loading">로딩중..</div>
-    <div v-else class="savingDetailBox">
-      <div class="text-start m-4 rank-section">
-        <img class="rankMedal" src="/img/emoji/goldmedal.png" alt="Gold Medal">
-        <div class="rank-content">
-          <h4 class="rank-title">적금 최고금리 순위</h4>
-          <h4 class="rank">{{ deposit.rank }}위</h4>
+  <div class="bc text-center">
+    <div class="container">
+      <div v-if="loading">로딩중..</div>
+      <div v-else class="savingDetailBox">
+        <div class="text-start m-4 rank-section animated-item">
+          <img class="rankMedal" src="/img/emoji/goldmedal.png" alt="Gold Medal">
+          <div class="rank-content">
+            <h4 class="rank-title">적금 최고금리 순위</h4>
+            <h4 class="rank">{{ deposit.rank }}위</h4>
+          </div>
         </div>
-      </div>
-      <ul class="text-start">
-        <li>
-          <img
-              :src="deposit.bank?.bankLogoUrl || '/img/emoji/bank.png'"
-              alt="Bank Logo"
-          />
-        </li>
-        <li><h1>{{ deposit.savingName }}</h1></li>
-        <li><br /><br /></li>
-      </ul>
 
-      <div class="rate-container">
-        <div class="rate-row">
-          <span class="subject2">최고 금리</span>
-          <span class="subject2">기본 금리 ({{ maxSavingTerm }}개월)</span>
+        <ul class="text-start">
+          <li>
+            <img class="d-inline" :src="deposit.bank?.bankLogoUrl || '/img/emoji/bank.png'" alt="Bank Logo" />
+            <h2 class="d-inline">{{ deposit.bank.bankName }}</h2>
+          </li>
+          <li><h1>{{ deposit.savingName }}</h1></li>
+          <li><br /><br /></li>
+        </ul>
+
+        <div class="rate-container animated-item">
+          <div class="rate-row">
+            <span class="subject2">최고 금리</span>
+            <span class="subject2">기본 금리 ({{ maxSavingTerm }}개월)</span>
+          </div>
+          <div class="rate-row">
+            <span class="bestSubject">{{ formatRate(maxInterestMaxRate) }}%</span>
+            <span class="normalSubject">{{ formatRate(maxSavingTermRate) }}%</span>
+          </div>
         </div>
-        <div class="rate-row">
-          <span class=" bestSubject">{{ formatRate(maxInterestMaxRate) }}%</span>
-          <span class="normalSubject">{{ formatRate(maxSavingTermRate) }}%</span>
-        </div>
-      </div>
 
-      <ul class="text-start mt-5">
-        <li>
-          <a
-              :href="deposit.bank?.bankUrl || '#'"
-              target="_blank"
-              rel="noopener noreferrer"
-          >
-            {{ deposit.bank?.bankName || '은행명' }}에서 보기 <i class="ai-chevron-right"></i>
-          </a>
-        </li>
-      </ul>
-      <hr class="mt-5 hr" />
+        <ul class="text-start mt-5">
+          <li>
+            <a :href="deposit.bank?.bankUrl || '#'" target="_blank" rel="noopener noreferrer">
+              {{ deposit.bank?.bankName || '은행명' }}에서 보기 <i class="ai-chevron-right"></i>
+            </a>
+          </li>
+        </ul>
 
-      <div class="text-start m-4">
-        <h3>이자 계산기</h3>
-        <br /><br />
-        <div class="basicRates text-start m-4">
-          <div class="basicRateBoxes">
-            <div
-                v-for="rate in deposit.interestRateList"
-                :key="rate.interestRateId"
-                :class="['calBox', { selected: rate.interestRateId === selectedBaseRate }]"
-                @click="selectBaseRate(rate.interestRateId)"
-            >
-              <h5>{{ rate.savingTerm }}개월</h5>
-              <p>{{ formatRate(rate.interestRate) }}%</p>
+        <hr class="mt-5 hr" />
+
+        <div class="text-start m-4">
+          <h3>이자 계산기</h3>
+          <br /><br />
+          <div class="basicRates text-start m-4">
+            <div class="basicRateBoxes">
+              <div
+                  v-for="rate in deposit.interestRateList"
+                  :key="rate.interestRateId"
+                  :class="['calBox', { selected: rate.interestRateId === selectedBaseRate }]"
+                  @click="selectBaseRate(rate.interestRateId)"
+              >
+                <h5>{{ rate.savingTerm }}개월</h5>
+                <p>{{ formatRate(rate.interestRate) }}%</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="calRate text-center"><br />
-        <p class="d-inline">금리 {{ formatRate(totalRate) }}%</p>
-      </div>
-
-      <div class="text-center">
-        <p class="d-inline">기본 {{ formatRate(selectedBaseRateRate) }}% + </p>
-        <div class="calSpecialRate d-inline">
-          <p class="d-inline">우대 {{ formatRate(specialRate) }}%</p>
+        <div class="calRate text-center"><br />
+          <p class="d-inline">금리 {{ formatRate(totalRate) }}%</p>
         </div>
-      </div><br /><br /><br />
 
-      <div class="calNumber flex-container" @click="toggleKeypad">
-        <img src="/img/emoji/calculator.png" alt="Calculator" class="calculator-icon">
-        <div class="interest-info">
-          <p style="font-size: 15px;">월 {{ formatCurrency(monthlyAmount) }} 예금하면</p>
-          <p style="font-size: 15px; font-weight: 600;">
-            총 세후 이자 {{ formatCurrency(calculatedInterest) }}원
-          </p>
-          <p style="font-size: 15px; color: #777777;">우대금리가 존재하는 상품엔 우대금리가 반영됩니다</p>
-        </div>
-        <i class="ai-chevron-right rightAiArrow" style="font-size: 30px;" aria-label="More details"></i>
-      </div>
-    </div>
-
-
-    <table class="calTable text-start" v-if="deposit.primeRatesList && deposit.primeRatesList.length">
-      <tbody>
-      <tr v-for="primeRate in deposit.primeRatesList" :key="primeRate.primeRateId">
-        <td style="width: 120%;">
-          <label class="form-check-label" :for="`primeSwitch-${primeRate.primeRateId}`">
-            {{ primeRate.primeRateDetail }} 달성 시
-          </label>
-        </td>
-        <td>
-          <label class="calPercent" :for="`primeSwitch-${primeRate.primeRateId}`">
-            {{ formatRate(primeRate.primeRatePercent) }}%
-          </label>
-        </td>
-        <td>
-          <div class="form-check form-switch">
-            <input
-                type="checkbox"
-                class="form-check-input"
-                :id="`primeSwitch-${primeRate.primeRateId}`"
-                v-model="activePrimeRates[primeRate.primeRateId]"
-                @change="calculateInterest"
-            >
+        <div class="text-center">
+          <p class="d-inline">기본 {{ formatRate(selectedBaseRateRate) }}% + </p>
+          <div class="calSpecialRate d-inline">
+            <p class="d-inline">우대 {{ formatRate(specialRate) }}%</p>
           </div>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-    <hr class="mt-5 hr" />
+        </div><br /><br /><br />
 
-    <div class="moreInfo text-start m-4 ms-5">
-      <h3>상품 정보</h3><br />
-      <div class="default-info">
-        <ul class="info-list">
-          <li>
-            <h4>가입 대상</h4>
-            <h5>{{ deposit.joinMember }}</h5>
-          </li>
-          <li>
-            <h4>가입 방법</h4>
-            <h5>{{ deposit.joinWay }}</h5>
-          </li>
-        </ul>
-        <div v-if="showAdditionalInfo" class="additional-info">
-          <ul class="info-list">
-            <li>
-              <h4>가입 제한</h4>
-              <h5>{{ deposit.note }}</h5>
-            </li>
-            <li>
-              <h4>만기 후 이자율</h4>
-              <h5>{{ deposit.maturityInterest }}%</h5>
-            </li>
-            <li>
-              <h4>공시 날짜</h4>
-              <h5>{{ formatDate(deposit.disclosureStartDay) }}</h5>
-            </li>
-          </ul>
-        </div>
-        <div class="toggle-wrapper">
-          <span
-              class="more-text"
-              v-if="!showAdditionalInfo"
-              @click="toggleText"
-          >
-            더보기<i class="ai-chevron-down"></i>
-          </span>
-          <span
-              class="less-text"
-              v-if="showAdditionalInfo"
-              @click="toggleText"
-          >
-            줄이기<i class="ai-chevron-up"></i>
-          </span>
+        <div class="calNumber flex-container" @click="toggleKeypad">
+          <img src="/img/emoji/calculator.png" alt="Calculator" class="calculator-icon">
+          <div class="interest-info">
+            <p style="font-size: 15px;">월 {{ formatCurrency(monthlyAmount) }} 예금하면</p>
+            <p style="font-size: 15px; font-weight: 600;">
+              총 세후 이자 {{ formatCurrency(calculatedInterest) }}원
+            </p>
+            <p style="font-size: 15px; color: #777777;">우대금리가 존재하는 상품엔 우대금리가 반영됩니다</p>
+          </div>
+          <i class="ai-chevron-right rightAiArrow" style="font-size: 30px;" aria-label="More details"></i>
         </div>
       </div>
-    </div>
 
-    <hr class="mt-5 hr" />
-    <br />
-
-    <div class="text-start m-5 ms-5">
-      <h3>기간별 금리</h3><br />
-      <table class="dayInfo text-start">
-        <thead>
-        <tr>
-          <th><h4>기간</h4></th>
-          <th><h4>최고금리(기본금리)</h4></th>
-        </tr>
-        </thead>
+      <table class="calTable text-start" v-if="deposit.primeRatesList && deposit.primeRatesList.length">
         <tbody>
-        <tr v-for="rate in deposit.interestRateList" :key="rate.interestRateId">
-          <td><h3>{{ rate.savingTerm }}개월</h3></td>
-          <td><h3>{{ formatRate(rate.interestMaxRate) }}%({{ formatRate(rate.interestRate) }}%)</h3></td>
-          <td><br><br></td>
+        <tr v-for="primeRate in deposit.primeRatesList" :key="primeRate.primeRateId">
+          <td style="width: 120%;">
+            <label class="form-check-label" :for="`primeSwitch-${primeRate.primeRateId}`">
+              {{ primeRate.primeRateDetail }} 달성 시
+            </label>
+          </td>
+          <td>
+            <label class="calPercent" :for="`primeSwitch-${primeRate.primeRateId}`">
+              {{ formatRate(primeRate.primeRatePercent) }}%
+            </label>
+          </td>
+          <td>
+            <div class="form-check form-switch">
+              <input
+                  type="checkbox"
+                  class="form-check-input"
+                  :id="`primeSwitch-${primeRate.primeRateId}`"
+                  v-model="activePrimeRates[primeRate.primeRateId]"
+                  @change="calculateInterest"
+              >
+            </div>
+          </td>
         </tr>
         </tbody>
       </table>
-    </div>
-    <br><br>
-    <a
-        class="detailMove"
-        :href="deposit.bank?.bankUrl || '#'"
-        target="_blank"
-        rel="noopener noreferrer"
-    >
-      상품 페이지로 이동
-    </a>
-  </div>
-  <br /><br />
-
-  <div v-if="showKeypad" class="keypad-modal">
-    <div class="keypad">
-      <div class="keypad-display">{{ keypadInput }}</div>
-      <div class="keypad-buttons">
-        <button @click="appendKey('1')">1</button>
-        <button @click="appendKey('2')">2</button>
-        <button @click="appendKey('3')">3</button>
-        <button @click="appendKey('4')">4</button>
-        <button @click="appendKey('5')">5</button>
-        <button @click="appendKey('6')">6</button>
-        <button @click="appendKey('7')">7</button>
-        <button @click="appendKey('8')">8</button>
-        <button @click="appendKey('9')">9</button>
-        <button @click="appendKey('0')">0</button>
-        <button class="backspace" @click="backspace">←</button>
-        <button class="clear" @click="clearKeypad">C</button>
-        <button class="submit" @click="submitKeypad">OK</button>
-        <img class="calLogo" src="/img/inveti.png">
+      <hr class="mt-5 hr" />
+      <br>
+      <div class="moreInfo text-start ">
+        <h3>상품 정보</h3><br />
+        <div class="default-info">
+          <ul class="info-list">
+            <li>
+              <h4>가입 대상</h4>
+              <h5>{{ deposit.joinMember }}</h5>
+            </li>
+            <li>
+              <h4>가입 방법</h4>
+              <h5>{{ deposit.joinWay }}</h5>
+            </li>
+          </ul>
+          <div v-if="showAdditionalInfo" class="additional-info">
+            <ul class="info-list">
+              <li>
+                <h4>가입 제한</h4>
+                <h5>{{ deposit.note }}</h5>
+              </li>
+              <li>
+                <h4>만기 후 이자율</h4>
+                <h5>{{ deposit.maturityInterest }}%</h5>
+              </li>
+              <li>
+                <h4>공시 날짜</h4>
+                <h5>{{ formatDate(deposit.disclosureStartDay) }}</h5>
+              </li>
+            </ul>
+          </div>
+          <div class="toggle-wrapper">
+            <span
+                class="more-text"
+                v-if="!showAdditionalInfo"
+                @click="toggleText"
+            >
+              더보기<i class="ai-chevron-down"></i>
+            </span>
+            <span
+                class="less-text"
+                v-if="showAdditionalInfo"
+                @click="toggleText"
+            >
+              줄이기<i class="ai-chevron-up"></i>
+            </span>
+          </div>
+        </div>
       </div>
+
+      <hr class="mt-5 hr" />
+      <br />
+
+      <div class="text-start moreInfo">
+        <h3>기간별 금리</h3><br />
+        <table class="dayInfo text-start">
+          <thead>
+          <tr>
+            <th><h4>기간</h4></th>
+            <th><h4>최고금리(기본금리)</h4></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="rate in deposit.interestRateList" :key="rate.interestRateId">
+            <td><h3>{{ rate.savingTerm }}개월</h3></td>
+            <td><h3>{{ formatRate(rate.interestMaxRate) }}%({{ formatRate(rate.interestRate) }}%)</h3></td>
+            <td><br><br></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <br><br>
+      <a
+          class="detailMove"
+          :href="deposit.bank?.bankUrl || '#'"
+          target="_blank"
+          rel="noopener noreferrer"
+      >
+        상품 페이지로 이동
+      </a>
     </div>
-    <div class="keypad-overlay" @click="toggleKeypad"></div>
+    <br /><br />
+
+    <div v-if="showKeypad" class="keypad-modal">
+      <div class="keypad">
+        <div class="keypad-display">{{ keypadInput }}</div>
+        <div class="keypad-buttons">
+          <button @click="appendKey('1')">1</button>
+          <button @click="appendKey('2')">2</button>
+          <button @click="appendKey('3')">3</button>
+          <button @click="appendKey('4')">4</button>
+          <button @click="appendKey('5')">5</button>
+          <button @click="appendKey('6')">6</button>
+          <button @click="appendKey('7')">7</button>
+          <button @click="appendKey('8')">8</button>
+          <button @click="appendKey('9')">9</button>
+          <button @click="appendKey('0')">0</button>
+          <button class="backspace" @click="backspace">←</button>
+          <button class="clear" @click="clearKeypad">C</button>
+          <button class="submit" @click="submitKeypad">OK</button>
+          <img class="calLogo" src="/img/inveti.png">
+        </div>
+      </div>
+      <div class="keypad-overlay" @click="toggleKeypad"></div>
+    </div>
   </div>
- </div>
 </template>
 
 
@@ -409,6 +403,32 @@ onMounted(() => {
 </script>
 
 <style scoped>
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animated-item {
+  animation: slideIn 0.5s ease-out forwards; /* 애니메이션 추가 */
+}
+
+/* 나머지 스타일링 */
+.rate-container {
+  width: 150%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  margin-left: 30px;
+}
+
+
+
 .rate-container {
   width: 150%;
   display: flex;
@@ -470,10 +490,6 @@ onMounted(() => {
   vertical-align: middle;
 }
 
-.rightArrow {
-  font-size: 24px;
-  color: #6c6e6e;
-}
 .rankMedal {
   width: 60px;
   margin: 10px;
@@ -491,11 +507,14 @@ onMounted(() => {
   margin-top: 10px;
 }
 
+.moreInfo{
+  width: 85%;
+  margin: 0 auto;
+  gap: 10px;
+}
 .info-list {
-  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 
 .more-text,
@@ -585,11 +604,11 @@ onMounted(() => {
 .calSpecialRate {
   color: rgba(67, 140, 116, 1);
 }
+
 .bc {
   width: 60%;
   margin: 0 auto;
 }
-
 
 .subject2 {
   font-size: 25px;
@@ -778,7 +797,6 @@ a {
 .keypad-buttons button.submit:hover {
   background-color: #4cae4c;
 }
-
 
 
 .toggle-wrapper {
