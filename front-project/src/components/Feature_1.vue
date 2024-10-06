@@ -1,26 +1,31 @@
 <template>
   <section>
-    <div id="carouselExample" class="carousel slide"  data-bs-ride="carousel" data-bs-interval="5000">
+    <div id="carouselExample" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
       <div class="carousel-inner">
         <div class="carousel-item active">
           <div class="position-absolute top-0 start-0 w-100" style="height:92%;">
             <div class="bg-primary position-absolute top-0 start-0 w-100 h-100"></div>
-            <div class="position-absolute start-0 bottom-0 w-100 overflow-hidden mb-n1" style="padding-bottom: 6.2%; color: var(--ar-body-bg);">
-              <svg class="position-absolute start-0 bottom-0 w-100 h-100" viewBox="0 0 3000 185.4" xmlns="http://www.w3.org/2000/svg">
+            <div class="position-absolute start-0 bottom-0 w-100 overflow-hidden mb-n1"
+              style="padding-bottom: 6.2%; color: var(--ar-body-bg);">
+              <svg class="position-absolute start-0 bottom-0 w-100 h-100" viewBox="0 0 3000 185.4"
+                xmlns="http://www.w3.org/2000/svg">
                 <path fill="white" d="M3000,0v185.4H0V0c496.4,115.6,996.4,173.4,1500,173.4S2503.6,115.6,3000,0z"></path>
               </svg>
             </div>
           </div>
-          <div class="container dark-mode position-relative zindex-5 pt-5 mt-4 mt-lg-5">
+          <div class="container position-relative zindex-5 pt-5 mt-4">
             <div class="row justify-content-center text-center pt-md-2 pt-lg-0 pt-xl-2 pb-5 mb-md-2">
               <div class="col-lg-10 col-xl-9 col-xxl-8 text-start">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h1 class="display-3 mb-sm-4 me-2" style="width: 140%; height: 100%; text-align: start;"><span class="badgeText badge bg-faded-light fs-sm text-white px-3 mb-3"><h3>Let's have a dream</h3></span><br>취향대로 투자하자</h1>
+                <div class="d-flex justify-content-between align-items-center ">
+                  <h1 class="display-3 mb-sm-4 me-2" style="width: 140%; height: 100%; text-align: start;"><span
+                      class="badgeText badge bg-faded-light fs-sm text-white px-3 ">
+                      <h3>Let's have a dream</h3>
+                    </span><br>취향대로 투자하자</h1>
                   <div class="logoYong">
                     <img src="/img/logoYong.png" alt="Logo">
                   </div>
                 </div>
-                <h3 class="pb-3 mb-3 mb-lg-4">투자 성향을 분석하고 <br> 성향 기반 투자 상품 추천받기</h3>
+                <h3 class="pb-3 ">투자 성향을 분석하고 <br> 성향 기반 투자 상품 추천받기</h3>
               </div>
               <div class="text-center mt-4">
                 <button class="investChoiceBtn" @click="testStart">투자 성향 분석 Click!</button>
@@ -33,31 +38,33 @@
         <div class="carousel-item">
           <div class="position-absolute top-0 start-0 w-100" style="height:92%;">
             <div class="mode2Color position-absolute top-0 start-0 w-100 h-100"></div>
-            <div class="position-absolute start-0 bottom-0 w-100 overflow-hidden mb-n1" style="padding-bottom: 6.2%; color: var(--ar-body-bg);">
-              <svg class="position-absolute start-0 bottom-0 w-100 h-100" viewBox="0 0 3000 185.4" xmlns="http://www.w3.org/2000/svg">
+            <div class="position-absolute start-0 bottom-0 w-100 overflow-hidden mb-n1"
+              style="padding-bottom: 6.2%; color: var(--ar-body-bg);">
+              <svg class="position-absolute start-0 bottom-0 w-100 h-100" viewBox="0 0 3000 185.4"
+                xmlns="http://www.w3.org/2000/svg">
                 <path fill="white" d="M3000,0v185.4H0V0c496.4,115.6,996.4,173.4,1500,173.4S2503.6,115.6,3000,0z"></path>
               </svg>
             </div>
           </div>
-          <div class="container dark-mode position-relative zindex-5 pt-5 mt-4 mt-lg-5">
+          <div class="container position-relative zindex-5 pt-5 mt-4">
             <div class="row justify-content-center text-center pt-md-2 pt-lg-0 pt-xl-2 pb-5 mb-md-2">
               <div class="mode2 col-lg-10 col-xl-9 col-xxl-8 text-start">
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex justify-content-between align-items-center ">
                   <h1 class="display-3 mb-sm-4 me-2" style="width: 170%; height: 100%; text-align: start;">
-                  <span class="mode2Badge badgeText badge bg-faded-light fs-sm text-white px-3 mb-3">
-                    <h3>Choose at a glance</h3>
-                  </span><br>투자 상품을 한 눈에
+                    <span class="mode2Badge badgeText badge bg-faded-light fs-sm text-white px-3 ">
+                      <h3>Choose at a glance</h3>
+                    </span><br>투자 상품을 한 눈에
                   </h1>
                   <div class="logoYong">
                     <img src="/img/logoYong2.png" alt="Logo">
                   </div>
                 </div>
-                <h3 class="pb-3 mb-3 mb-lg-4">
+                <h3 class="pb-3  ">
                   다양한 투자 상품을<br>
                   하나의 플랫폼에서 한 눈에 비교</h3>
               </div>
               <div class="text-center mt-4">
-                <button class="investChoiceBtn"  @click="testStart">투자 성향 분석 Click!</button>
+                <button class="investChoiceBtn" @click="testStart">투자 성향 분석 Click!</button>
               </div>
             </div>
             <div class="overflow-hidden" style="border-radius: calc(var(--ar-border-radius) * 1.25);"></div>
@@ -66,18 +73,20 @@
         <div class="carousel-item">
           <div class="position-absolute top-0 start-0 w-100" style="height:92%;">
             <div class="mode3Color position-absolute top-0 start-0 w-100 h-100"></div>
-            <div class="position-absolute start-0 bottom-0 w-100 overflow-hidden mb-n1" style="padding-bottom: 6.2%; color: var(--ar-body-bg);">
-              <svg class="position-absolute start-0 bottom-0 w-100 h-100" viewBox="0 0 3000 185.4" xmlns="http://www.w3.org/2000/svg">
+            <div class="position-absolute start-0 bottom-0 w-100 overflow-hidden mb-n1"
+              style="padding-bottom: 6.2%; color: var(--ar-body-bg);">
+              <svg class="position-absolute start-0 bottom-0 w-100 h-100" viewBox="0 0 3000 185.4"
+                xmlns="http://www.w3.org/2000/svg">
                 <path fill="white" d="M3000,0v185.4H0V0c496.4,115.6,996.4,173.4,1500,173.4S2503.6,115.6,3000,0z"></path>
               </svg>
             </div>
           </div>
-          <div class="container position-relative zindex-5 pt-5 mt-4 mt-lg-5">
+          <div class="container position-relative zindex-5 pt-5 mt-4">
             <div class="row justify-content-center text-center pt-md-2 pt-lg-0 pt-xl-2 pb-5 mb-md-2">
               <div class="mode3 col-lg-10 col-xl-9 col-xxl-8 text-start">
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex justify-content-between align-items-center ">
                   <h1 class="display-3 mb-sm-4 me-2" style="width: 150%; height: 100%; text-align: start;">
-                    <span class="mode3Badge badgeText badge bg-faded-light fs-sm text-white px-3 mb-3">
+                    <span class="mode3Badge badgeText badge bg-faded-light fs-sm text-white px-3 ">
                       <h3>Let's have a dream</h3>
                     </span><br>취향대로 투자하자
                   </h1>
@@ -85,7 +94,7 @@
                     <img src="/img/logoYong.png" alt="Logo">
                   </div>
                 </div>
-                <h3 class="pb-3 mb-3 mb-lg-4">투자 성향을 분석하고 <br> 성향 기반 투자 상품 추천받기</h3>
+                <h3 class="pb-3  ">투자 성향을 분석하고 <br> 성향 기반 투자 상품 추천받기</h3>
               </div>
               <div class="text-center mt-4">
                 <button class="investChoiceBtn" @click="testStart">투자 성향 분석 Click!</button>
@@ -111,55 +120,36 @@
 
 import router from "@/router";
 
-const testStart = () =>{
+const testStart = () => {
   router.push('/test-start');
 }
 
 </script>
 
 <style scoped>
-.investChoiceBtn {
-  transition: transform 0.6s ease;
-  cursor: pointer;
-}
-
-.investChoiceBtn:hover{
-  background-color: rgba(236, 203, 80, 1);
-  transform: scale(1.2);
-  z-index: 11111;
-}
-
-.carousel-item {
-  transition: transform 1s ease-in-out;
-}
-
-.logoYong img{
-  width: 70%;
-  margin-left: 250px;
-  margin-top: -10px;
-}
-
-section {
-  padding-top: 0 !important;
-}
-
-.content {
-  padding: 0;
+.logoYong img {
+  margin-left: 200px;
+  margin-top: 30px;
 }
 
 .badgeText {
   width: 50%;
   height: 10%;
+  border-radius: 10px;
   font-size: 30px;
 }
 
 .display-3 {
   color: white;
+  line-height: 1.5;
   font-weight: 700;
 }
 
 h3.pb-3 {
   color: white;
+  font-weight: bold;
+  font-size: 28px;
+  line-height: 1.3;
 }
 
 .mode3 h1 {
@@ -190,17 +180,23 @@ h3.pb-3 {
 }
 
 .investChoiceBtn {
+  transition: transform 0.6s ease;
   width: 300px;
   height: 60px;
   background-color: rgba(236, 203, 80, 1);
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 20px;
   font-size: 25px;
-  font-weight: 600;
+  font-weight: bold;
   cursor: pointer;
   margin-top: -50px;
+  cursor: pointer;
 }
 
-
+.investChoiceBtn:hover {
+  background-color: rgba(236, 203, 80, 1);
+  transform: scale(1.2);
+  z-index: 11111;
+}
 </style>
