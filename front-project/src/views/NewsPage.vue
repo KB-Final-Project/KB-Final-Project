@@ -1,6 +1,6 @@
 <template>
     <div class="news-view text-center animate-on-load">
-        <h1><b>뉴스 보기</b></h1>
+        <h1>뉴스 보기</h1>
         <div class="container">
             
             <!-- 메인 뉴스 -->
@@ -162,6 +162,7 @@ export default {
 .news-view {
     margin: 0 auto;
     background-color: #F9FAFC;
+    font-family: J5;
 }
 
 .container {
@@ -174,6 +175,7 @@ h1 {
 }
 
 .main-news {
+    font-family: J5;
     display: flex;
     margin-bottom: 30px;
     background-color: white;
@@ -227,6 +229,7 @@ h1 {
 }
 
 .category-selector {
+    font-family: J5;
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
@@ -235,14 +238,13 @@ h1 {
 
 .category-selector button {
     margin: 5px;
-    padding: 20px 35px;
+    padding: 15px 35px;
     border: none;
     background-color: #90DAAA;
     color: white;
     cursor: pointer;
-    border-radius: 20%;
+    border-radius: 20px;
     font-size: 15px;
-    font-weight: bold;
     transition: background-color 0.3s;
 }
 
@@ -263,6 +265,7 @@ h1 {
 }
 
 .news-card {
+    font-family: J3;
     background-color: white;
     border-radius: 30px;
     overflow: hidden;
