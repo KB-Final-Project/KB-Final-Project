@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kb.funds.mapper.FundsDetailMapper">
+
+    <insert id="insertFundsDetails" parameterType="java.util.List">
+        INSERT INTO fundsDetail (fundId, gijunYmd, evaluationAmount, weight, category)
+        VALUES
+        <foreach collection="fundDetails" item="detail" separator=",">
+            (#{detail.fundId}, #{detail.gijunYmd}, #{detail.evaluationAmount}, #{detail.weight}, #{detail.category})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        evaluationAmount = VALUES(evaluationAmount),
+        weight = VALUES(weight),
+        category = VALUES(category);
+    </insert>
+
+</mapper>

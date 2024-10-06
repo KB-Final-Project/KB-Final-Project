@@ -61,9 +61,6 @@
             <result property="bmSuikJisu" column="bmSuikJisu"/>
             <result property="silhSuikRt" column="silhSuikRt"/>
             <result property="seoljAek" column="seoljAek"/>
-            <result property="category" column="category" />
-            <result property="evaluationAmount" column="evaluationAmount" />
-            <result property="weight" column="weight" />
         </collection>
     </resultMap>
 
@@ -80,4 +77,21 @@
         FROM funds f
                  LEFT JOIN suikChart s ON f.id = s.fundId;
     </select>
+
+    <!-- FundsDetailDTO 관련 메서드 -->
+    <insert id="insertFundDetails" parameterType="java.util.List">
+        INSERT INTO fundsDetail (fundId, gijunYmd, evaluationAmount, weight, category)
+        VALUES
+        <foreach collection="fundDetails" item="detail" separator=",">
+            (#{detail.fundId}, #{detail.gijunYmd}, #{detail.evaluationAmount}, #{detail.weight}, #{detail.category})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        evaluationAmount = VALUES(evaluationAmount),
+        weight = VALUES(weight),
+        category = VALUES(category);
+    </insert>
+
+    <delete id="deleteFundDetailsByFundId" parameterType="long">
+        DELETE FROM fundsDetail WHERE fundId = #{fundId}
+    </delete>
 </mapper>
