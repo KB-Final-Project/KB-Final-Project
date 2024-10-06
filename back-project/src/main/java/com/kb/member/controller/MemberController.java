@@ -51,7 +51,7 @@ public class MemberController {
 
     @GetMapping("/kakaoInfo/{code}")
     public ResponseEntity<Map<String,Object>> getKakaoInfo(@PathVariable String code) throws IOException {
-        String enrollUrl = "http://localhost:5173/auth/kakaojoin";
+        String enrollUrl = "http://localhost:8081/auth/kakaojoin";
         String token = kaKaoLoginService.getToken(code, enrollUrl);
         Map<String, Object> map = kaKaoLoginService.getUserInfo(token);
         return ResponseEntity.ok(map);

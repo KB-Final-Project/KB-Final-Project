@@ -34,7 +34,10 @@ import AggressiveInvestment from "@/views/menu/community/AggressiveInvestment.vu
 import Stability from "@/views/menu/community/Stability.vue";
 import RiskNeutral from "@/views/menu/community/RiskNeutral.vue";
 import Community from "@/views/menu/community/Community.vue";
-
+import LoginPage from '@/views/auth/LoginPage.vue';
+import LoginPageForKakao from '@/views/auth/LoginPageForKakao.vue';
+import JoinPage from '@/views/auth/JoinPage.vue';
+import JoinPageForKakao from '@/views/auth/JoinPageForKakao.vue';
 
 const routes = [
   {
@@ -103,6 +106,30 @@ const routes = [
     path: '/saving/:savingId',
     name: 'savingDetail',
     component: SavingsDetail,
+  },
+  {
+    path: '/auth/login',
+    name: 'login',
+    component: LoginPage,
+    meta: { hideHeaderFooter: true, hidePadding: true  },
+  },
+  {
+    path: '/auth/kakaologin',
+    name: 'kakaologin',
+    component: LoginPageForKakao,
+    meta: { hideHeaderFooter: true, hidePadding: true  },
+  },
+  {
+    path: '/auth/join',
+    name: 'join',
+    component: JoinPage,
+    meta: { hideHeaderFooter: true, hidePadding: true  },
+  },
+  {
+    path: '/auth/kakaojoin',
+    name: 'kakaojoin',
+    component: JoinPageForKakao,
+    meta: { hideHeaderFooter: true, hidePadding: true  },
   },
 
   {
