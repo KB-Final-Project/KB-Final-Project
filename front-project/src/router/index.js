@@ -6,10 +6,12 @@ import NewsPage from '@/views/NewsPage.vue';
 import TestStartPage from '@/views/TestStartPage.vue';
 import TestProcessPage from '@/views/TestProcessPage.vue';
 import TestResultPage from '@/views/TestResultPage.vue';
-import StockPage from '@/views/StockPage.vue';
 import Dictionary from '@/views/menu/dictionary/Dictionary.vue';
 import Savings from '@/views/menu/savings/Savings.vue';
 import SavingsDetail from '@/views/menu/savings/SavingsDetail.vue';
+import StockMain from '@/views/StockMain.vue';
+import StockDetail from '@/views/StockDetail.vue';
+import StockCategory from '@/views/StockCategory.vue'
 import Gold from '@/views/menu/gold/Gold.vue';
 import GoldInvest from '@/views/menu/gold/GoldInvest.vue';
 import Calculator from '@/views/modal/Calculator.vue';
@@ -35,6 +37,11 @@ import Community from "@/views/menu/community/Community.vue";
 
 
 const routes = [
+  {
+    path: '/stockcategory',
+    name: 'StockCategory',
+    component: StockCategory
+  },
   {
     path: '/',
     name: 'Home',
@@ -73,9 +80,14 @@ const routes = [
     component: TestResultPage,
   },
   {
-    path: '/stock',
-    name: 'StockPage',
-    component: StockPage,
+    path: '/stockMain',
+    name: 'StockMain',
+    component: StockMain,
+  },
+  {
+    path: '/stockdetail',
+    name: 'StockDetail',
+    component: StockDetail,
   },
   {
     path: '/dictionary',
@@ -92,6 +104,7 @@ const routes = [
     name: 'savingDetail',
     component: SavingsDetail,
   },
+
   {
     path: '/gold',
     name: 'gold',
