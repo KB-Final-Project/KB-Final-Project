@@ -9,8 +9,8 @@
 <script>
 import AppHeader from './components/AppHeader.vue';
 import AppFooter from './components/AppFooter.vue';
-import {useRouter} from "vue-router";
-import {onMounted} from "vue";
+import { useRouter } from "vue-router";
+import { onMounted } from "vue";
 
 export default {
   components: {
@@ -36,6 +36,33 @@ export default {
 @import './assets/css/theme.css';
 @import './assets/css/theme.min.css';
 @import './assets/css/style.bundle';
+
+@font-face {
+  font-family: 'NB';
+  src: url('/public/fonts/NEXON Lv2 Gothic Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'NL';
+  src: url('/public/fonts/NEXON Lv2 Gothic Light.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'NM';
+  src: url('/public/fonts/NEXON Lv2 Gothic Medium.ttf') format('truetype');
+}
+
+@font-face {
+  /*레귤러체*/
+  font-family: 'NR';
+  src: url('/public/fonts/NEXON Lv2 Gothic.ttf') format('truetype');
+}
+
+@font-face {
+  /*볼드체로만 사용*/
+  font-family: 'BB';
+  src: url('/public/fonts/Recipekorea 레코체 FONT.ttf') format('truetype');
+}
 
 #mainContent {
   padding-top: 80px;
