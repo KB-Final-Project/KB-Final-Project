@@ -13,16 +13,16 @@
           <p class="pb-3 mb-3 mb-lg-4">
             아직 계정이 없으신가요? <router-link class="signUp" to="/signup">회원가입</router-link>
           </p>
-          <form @submit.prevent="handleSignIn" class="needs-validation" novalidate>
+          <form @submit.prevent="login" class="needs-validation" novalidate>
             <div class="pb-3 mb-3">
               <div class="emailCheck position-relative">
-                <input v-model="email" class="form-control form-control-lg ps-5" type="email" placeholder="이메일을 입력해주세요" required />
+                <input type="text" class="form-control form-control-lg ps-5" placeholder="사용자 ID" v-model="member.id" required />
               </div>
             </div>
             <div class="mb-4">
               <div class="position-relative">
                 <div class="password-toggle">
-                  <input v-model="password" class="form-control form-control-lg ps-5" type="password" placeholder="비밀번호를 입력해주세요" required />
+                  <input type="password" class="form-control form-control-lg ps-5" placeholder="비밀번호" v-model="member.password" required />
                   <label class="password-toggle-btn" aria-label="Show/hide password">
                     <input type="checkbox" class="password-toggle-check" />
                     <span class="password-toggle-indicator"></span>
@@ -30,6 +30,7 @@
                 </div>
               </div>
             </div>
+            <div v-if="error" class="text-danger">{{ error }}</div>
             <div class="d-flex flex-wrap align-items-center justify-content-between pb-4">
               <div class="form-check my-1">
                 <input class="form-check-input" type="checkbox" id="keep-signedin" />
@@ -37,8 +38,10 @@
               </div>
               <router-link class="passwordFound fs-sm fw-semibold text-decoration-none my-1" to="/forgot-password">비밀번호 찾기</router-link>
             </div>
-            <button class="signInBtn w-100 mb-4" type="submit">로그인</button>
-            <h2  style="font-size: 15px;font-weight: 700;" class="h6 text-center pt-3 pt-lg-4 mb-4">간편 로그인</h2>
+            <button class="signInBtn w-100 mb-4" type="submit" :disabled="disableSubmit">
+              로그인
+            </button>
+            <h2 style="font-size: 15px;font-weight: 700;" class="h6 text-center pt-3 pt-lg-4 mb-4">간편 로그인</h2>
             <div class="row row-cols-1 row-cols-sm-2 gy-3">
               <div class="col">
                 <a class="btn btn-icon btn-outline-secondary btn-google btn-lg w-100" href="#"><i class="ai-google fs-xl me-2"></i>Google</a>
@@ -57,20 +60,32 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import signCoverImage from "@/views/SignCoverImage.vue";
+import { useAuthStore } from '@/stores/auth'; // auth store를 가져옵니다.
+import signCoverImage from "@/views/SignCoverImage.vue"; // 필요 시 import
 
-const email = ref('');
-const password = ref('');
 const router = useRouter();
+const auth = useAuthStore();
 
-const handleSignIn = () => {
-  // 여기에 로그인 처리 로직 추가
-  console.log('Email:', email.value);
-  console.log('Password:', password.value);
-  // 로그인 성공 시 원하는 페이지로 이동
-  router.push('/dashboard');
+const member = reactive({
+  id: '',
+  password: '',
+});
+
+const error = ref('');
+
+const disableSubmit = computed(() => !(member.id && member.password));
+
+const login = async () => {
+  console.log(member);
+  try {
+    await auth.login(member);
+    router.push('/dashboard'); // 로그인 성공 시 대시보드로 이동
+  } catch (e) {
+    console.log('에러=======', e);
+    error.value = e.response.data || '로그인 실패'; // 에러 메시지를 설정합니다.
+  }
 };
 </script>
 
@@ -82,7 +97,7 @@ const handleSignIn = () => {
   background-color: #37715d;
   color: white;
   font-size: 20px;
-  border:none;
+  border: none;
 }
 
 .signInBtn:hover {
@@ -91,7 +106,7 @@ const handleSignIn = () => {
   color: black;
 }
 
-.passwordFound{
+.passwordFound {
   color: #37715d;
   font-size: 16px;
 }
@@ -101,6 +116,7 @@ const handleSignIn = () => {
   height: 61px;
   border-radius: 20px;
 }
+
 .emailCheck input {
   width: 526px;
   height: 61px;
@@ -132,7 +148,6 @@ const handleSignIn = () => {
   justify-content: center;
   height: 100vh; /* 100% height */
 }
-
 
 .form-check input:checked {
   background-color: rgba(68, 140, 116, 1);

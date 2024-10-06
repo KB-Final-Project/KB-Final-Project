@@ -111,7 +111,9 @@ dependencies {
 
 
   // selenium
-  implementation 'org.seleniumhq.selenium:selenium-java:4.0.0'
+  implementation 'org.seleniumhq.selenium:selenium-java:4.25.0'
+  implementation 'org.seleniumhq.selenium:selenium-http-jdk-client:4.9.1'
+
 
   // jackson
   implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0' // 최신 버전으로 변경 가능
@@ -130,16 +132,6 @@ dependencies {
   // slf4j
   implementation 'org.slf4j:slf4j-api:2.0.0'
   implementation 'ch.qos.logback:logback-classic:1.2.6'
-
-  implementation 'org.apache.commons:commons-csv:1.9.0'
-
-  // WebSocket
-  implementation "org.springframework:spring-websocket:${springVersion}"
-
-  // STOMP 웹소켓을 위한 의존성
-  implementation 'org.webjars:stomp-websocket:2.3.4'
-  implementation 'org.webjars:sockjs-client:1.5.1'
-
 }
 
 

@@ -13,7 +13,7 @@
     </select>
 
     <insert id="insertSuikCharts" parameterType="java.util.List">
-        INSERT INTO suikChart (fundId, gijunYmd, bmSuikJisu, silhSuikRt, seoljAek, evaluation_amount, weight, category)
+        INSERT INTO suikChart (fundId, gijunYmd, bmSuikJisu, silhSuikRt, seoljAek, evaluationAmount, weight, category)
         VALUES
         <foreach collection="suikCharts" item="chart" separator=",">
             (#{chart.fundId}, #{chart.gijunYmd}, #{chart.bmSuikJisu}, #{chart.silhSuikRt}, #{chart.seoljAek}, #{chart.evaluationAmount}, #{chart.weight}, #{chart.category})
@@ -22,11 +22,10 @@
         bmSuikJisu = VALUES(bmSuikJisu),
         silhSuikRt = VALUES(silhSuikRt),
         seoljAek = VALUES(seoljAek),
-        evaluation_amount = VALUES(evaluation_amount),
+        evaluationAmount = VALUES(evaluationAmount),
         weight = VALUES(weight),
         category = VALUES(category);
     </insert>
-
 
     <delete id="deleteSuikChartByFundId" parameterType="long">
         DELETE FROM suikChart WHERE fundId = #{fundId}

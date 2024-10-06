@@ -19,5 +19,8 @@ CREATE TABLE SuikChart (
                            bmSuikJisu DOUBLE,                     -- 벤치마크 수익 지수
                            silhSuikRt DOUBLE,                     -- 실현 수익률
                            seoljAek DOUBLE,                       -- 순 자산
+                           evaluationAmount DOUBLE,			    -- 새로운 평가액
+                           weight DOUBLE, 							-- 새로운 비중
+                           category VARCHAR(255),					-- 자산 항목 구분
                            FOREIGN KEY (fundId) REFERENCES funds(id) -- 외래 키 제약 조건
 );

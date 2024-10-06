@@ -22,13 +22,16 @@ public class Member implements UserDetails {
     private String name;        // 사용자이름
     private String email;       // 이메일
     private String status; 		// 활성화 여부, Y, N
+    private String kakaoId;     // 카카오 아이디
     private Date createDate;    // 생성일
-    private Date modifyDate;    // 수정일
-
+    private Date updateDate;    // 수정일
+    private String role;
+    private String investType;
     private String token; // JWT 토큰값, DB로는 저장하지 않음
 
     // 복수개의 권한을 관리
     // 문자열data("ROLE_USER", "ROLE_ADMIN")를 처리할 수 있는 GrantedAuthority의 하위클래스
+
     private List<SimpleGrantedAuthority> authorities; // authorities
 
     /**
