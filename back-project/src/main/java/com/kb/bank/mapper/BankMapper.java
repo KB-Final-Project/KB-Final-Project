@@ -2,6 +2,8 @@ package com.kb.bank.mapper;
 
 import com.kb.bank.dto.Bank;
 
+import java.util.List;
+
 public interface BankMapper {
-    Bank selectBankById(String bankId);
+    List<Bank> getBankListByType(int bankType);
 }
