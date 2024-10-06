@@ -29,9 +29,12 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -56,39 +59,32 @@ public class FundsService {
             } else {
                 for (FundsDTO fund : funds) {
                     try {
-                        logger.info("Processing fund: {}", fund);
+//                        logger.info("Processing fund: {}", fund);
                         List<SuikChartDTO> suikCharts = crawlSuikChart(fund);
+                        List<SuikChartDTO> detailedCharts = crawlDetailedData(fund);
 
                         if (fund.getId() == null) {
                             fundsMapper.insertFund(fund);
-                            logger.info("Inserted new fund ID: {}", fund.getFundCd());
+//                            logger.info("Inserted new fund ID: {}", fund.getFundCd());
 
-                            // ID가 업데이트된 이후에 확인
                             if (fund.getId() == null) {
                                 logger.error("Fund ID is still null after insert.");
-                                return; // 적절한 오류 처리 추가
-                            }
-
-                            List<SuikChartDTO> detailedCharts = crawlDetailedData(fund);
-                            if (detailedCharts.isEmpty()) {
-                                logger.warn("No detailed charts returned for fund ID: {}", fund.getFundCd());
-                            } else {
-                                for (SuikChartDTO detailedChart : detailedCharts) {
-                                    detailedChart.setFundId(fund.getId());
-                                }
-                                suikChartMapper.insertSuikCharts(detailedCharts);
-                                logger.info("Inserted Detailed SuikCharts for new Fund ID: {}", fund.getFundCd());
+                                continue; // 적절한 오류 처리 추가
                             }
                         } else {
                             fundsMapper.updateFund(fund);
                             suikChartMapper.deleteSuikChartByFundId(fund.getId());
-                            List<SuikChartDTO> detailedCharts = crawlDetailedData(fund);
-                            for (SuikChartDTO detailedChart : detailedCharts) {
-                                detailedChart.setFundId(fund.getId());
-                            }
-                            suikChartMapper.insertSuikCharts(detailedCharts);
-                            logger.info("Inserted Detailed SuikCharts for existing Fund ID: {}", fund.getFundCd());
                         }
+
+                        // 통합된 차트 리스트 생성
+                        List<SuikChartDTO> combinedCharts = new ArrayList<>(suikCharts);
+                        combinedCharts.addAll(detailedCharts);
+                        for (SuikChartDTO chart : combinedCharts) {
+                            chart.setFundId(fund.getId());
+                        }
+                        suikChartMapper.insertSuikCharts(combinedCharts);
+//                        logger.info("Inserted SuikCharts for Fund ID: {}", fund.getFundCd());
+
                     } catch (Exception e) {
                         logger.error("Error occurred while processing fund ID: {}", fund.getId(), e);
                     }
@@ -97,6 +93,7 @@ public class FundsService {
             }
         }
     }
+
 
     private List<FundsDTO> crawlFundsFromWebsite(int pageNo) throws JsonProcessingException {
         String url = "https://www.samsungfund.com/api/v1/fund/product.do?graphTerm=1&orderBy=DESC&orderByType=SUIK_RT3&pageNo=" + pageNo;
@@ -141,7 +138,7 @@ public class FundsService {
     @Scheduled(fixedRate = 3600000) // 1시간마다 실행
     public void scheduleCrawl() {
         try {
-            logger.info("Scheduled crawl started at: {}", LocalDateTime.now());
+//            logger.info("Scheduled crawl started at: {}", LocalDateTime.now());
             crawlAndSaveFunds();
         } catch (JsonProcessingException e) {
             logger.error("Error occurred while crawling funds: {}", e.getMessage(), e);
@@ -150,6 +147,7 @@ public class FundsService {
 
     private List<SuikChartDTO> crawlSuikChart(FundsDTO fund) {
         List<SuikChartDTO> suikCharts = new ArrayList<>(fund.getSuikChart());
+//        System.out.println("Fetched SuikCharts: " + suikCharts.size() + " for fund ID: " + fund.getId());
         suikCharts.forEach(suikChart -> {
             if (fund.getId() != null) {
                 suikChart.setFundId(fund.getId());
@@ -160,14 +158,18 @@ public class FundsService {
 
     private List<SuikChartDTO> crawlDetailedData(FundsDTO fund) {
         List<SuikChartDTO> suikCharts = new ArrayList<>();
+        if (fund == null || fund.getId() == null) {
+            logger.error("Invalid fund object or fund ID is null.");
+            return suikCharts; // fund가 null이거나 ID가 null일 경우 빈 리스트 반환
+        }
+
         String fundCd = fund.getFundCd();
         String url = "https://www.samsungfund.com/fund/product/view.do?id=" + fundCd;
 
         ChromeOptions options = new ChromeOptions();
         System.setProperty("webdriver.chrome.driver", "C:/chromeDriver/chromedriver-win64/chromedriver.exe");
-
         options.addArguments("--remote-allow-origins=*");
-//        options.addArguments("--headless");
+        options.addArguments("--headless");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--disable-gpu");
@@ -186,17 +188,30 @@ public class FundsService {
             String htmlResponse = driver.getPageSource();
             Document document = Jsoup.parse(htmlResponse);
 
-            // 기준일 가져오기
-            String gijunYmdStr = document.select("div.assets-weight__table .noti").text(); // .noti 아래의 텍스트
+            String rawGijunYmdStr = document.select("div.assets-weight__table .noti").text();
+            logger.debug("Extracted raw gijunYmdStr: {}", rawGijunYmdStr);
+
+            String gijunYmdStr = null;
+            Pattern pattern = Pattern.compile("(\\d{2})\\.\\s*(\\d{1,2})\\.\\s*(\\d{1,2})");
+            Matcher matcher = pattern.matcher(rawGijunYmdStr);
+            if (matcher.find()) {
+                gijunYmdStr = matcher.group(0).replace(" ", "");
+                logger.debug("Extracted gijunYmd: {}", gijunYmdStr);
+            } else {
+                logger.warn("Could not find valid gijunYmd in string: {}", rawGijunYmdStr);
+                return suikCharts; // gijunYmd가 없으면 빈 리스트 반환
+            }
+
             LocalDate gijunYmd = null;
             if (gijunYmdStr != null && !gijunYmdStr.isEmpty()) {
                 try {
-                    gijunYmd = LocalDate.parse(gijunYmdStr); // 형식에 맞춰 변환 필요
+                    gijunYmd = LocalDate.parse(gijunYmdStr, DateTimeFormatter.ofPattern("yy.M.d"));
                 } catch (DateTimeParseException e) {
                     logger.warn("Invalid gijunYmd format for fund ID: {}. Value: {}", fund.getId(), gijunYmdStr);
                 }
             } else {
                 logger.warn("Missing gijunYmd for fund ID: {}", fund.getId());
+                return suikCharts; // gijunYmd가 null일 경우 빈 리스트 반환
             }
 
             Elements rows = document.select("div.assets-weight__table tbody tr");
@@ -206,38 +221,50 @@ public class FundsService {
 
             for (Element row : rows) {
                 Elements columns = row.select("td");
+                logger.debug("Columns: {}", columns.eachText());
+
                 if (columns.size() < 3) {
                     continue;
                 }
+
                 SuikChartDTO suikChart = new SuikChartDTO();
                 suikChart.setFundId(fund.getId());
-                String 구분 = columns.get(0).text();
+
                 String 평가액Str = columns.get(1).text().replaceAll(",", "");
                 String 비중Str = columns.get(2).text().replaceAll("%", "").trim();
+
+                logger.debug("Columns: {}, 평가액Str: {}, 비중Str: {}", columns, 평가액Str, 비중Str);
 
                 double 평가액 = 0.0;
                 double 비중 = 0.0;
 
-                if (!"-".equals(평가액Str)) {
-                    평가액 = Double.parseDouble(평가액Str);
+                if ("-".equals(평가액Str) || 평가액Str.isEmpty()) {
+                    평가액 = 0.0;
+                    logger.warn("평가액이 '-'로 설정되어 0.0으로 변환되었습니다. fund ID: {}", fund.getId());
                 } else {
-                    logger.warn("Invalid 평가액 for fund ID: {}. Value: {}", fund.getId(), 평가액Str);
+                    try {
+                        평가액 = Double.parseDouble(평가액Str);
+                    } catch (NumberFormatException e) {
+                        logger.warn("Invalid format for 평가액: {}", 평가액Str);
+                    }
                 }
 
-                if (!"-".equals(비중Str)) {
-                    비중 = Double.parseDouble(비중Str) / 100;
+                if ("-".equals(비중Str) || 비중Str.isEmpty()) {
+                    비중 = 0.0;
+                    logger.warn("비중이 '-'로 설정되어 0.0으로 변환되었습니다. fund ID: {}", fund.getId());
                 } else {
-                    logger.warn("Invalid 비중 for fund ID: {}. Value: {}", fund.getId(), 비중Str);
+                    try {
+                        비중 = Double.parseDouble(비중Str) / 100;
+                    } catch (NumberFormatException e) {
+                        logger.warn("Invalid format for 비중: {}", 비중Str);
+                    }
                 }
 
-                // gijunYmd 값 설정
-                if (gijunYmd != null) {
-                    suikChart.setGijunYmd(gijunYmd);
-                }
-
-                suikChart.setCategory(구분);
+                suikChart.setGijunYmd(gijunYmd);
+                suikChart.setCategory(columns.get(0).text());
                 suikChart.setEvaluationAmount(평가액);
                 suikChart.setWeight(비중);
+
                 suikCharts.add(suikChart);
             }
         } catch (Exception e) {
@@ -245,11 +272,8 @@ public class FundsService {
         } finally {
             driver.quit();
         }
-
         return suikCharts;
     }
-
-
 
 
     public List<FundsDTO> searchFunds(String keyword) {
