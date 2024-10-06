@@ -237,8 +237,8 @@ const hoverLoginDropdown = (state) => {
 // @import '@/assets/css/navbar.css';
 // @import "@/assets/scss/_position.scss";
 // @import "@/assets/scss/_containers.scss";
-.row.justify-content-center.text-center.pt-md-2.pt-lg-0.pt-xl-2.pb-5.mb-md-2 {
-  height: 500px;
+.row.justify-content-center.text-center.pt-md-2.pt-xl-2.pb-5.mb-md-2 {
+  height: 600px;
 }
 // 부트스트랩 색상
 .bg-primary.position-absolute.top-0.start-0.w-100.h-100 {
