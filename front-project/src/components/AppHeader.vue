@@ -108,10 +108,10 @@ const menuItems = ref([
     megaMenu: true,
     subItems: [
       [
-        { text: '테스트하기', href: 'test-start' },
+        { text: '테스트하기', href: '/test-start' },
         {
           text: '투자성향 보기',
-          href: 'index.html'
+          href: '/index.html'
         },
       ],
     ],
@@ -122,31 +122,31 @@ const menuItems = ref([
     subItems: [
       {
         text: '예금',
-        href: '#',
+        href: '/deposit',
         subItems: [
-          { text: '~~예금', href: 'deposit' },
-          { text: '~~예금상세', href: 'depositDetail' },
+          { text: '~~예금', href: '/deposit' },
+          { text: '~~예금상세', href: '/depositDetail' },
         ],
       },
       {
         text: '적금',
         href: 'savings',
         subItems: [
-          { text: '적금', href: 'savings' },
-          { text: '~~~적금 상세페이지', href: 'savingsDetail' },
+          { text: '적금', href: '/savings' },
+          { text: '~~~적금 상세페이지', href: '/savingsDetail' },
           { text: '~~~적금', href: 'shop-catalog.html' },
         ],
       },
       {
         text: '주식',
         href: '#',
-        subItems: [{ text: '국내주식', href: 'stock' }],
+        subItems: [{ text: '국내주식', href: '/stock' }],
       },
       {
         text: '펀드',
-        href: 'fund',
+        href: '/fund',
         subItems: [
-          { text: '~~~펀드', href: 'fund' },
+          { text: '~~~펀드', href: '/fund' },
           { text: '~~~펀드', href: '/fund' },
           { text: '~~~펀드', href: '/fund' },
         ],
@@ -163,22 +163,22 @@ const menuItems = ref([
     ],
   },
   { text: '투자 커뮤니티', href: '/community' },
-  { text: '용어사전', href: 'dictionary' },
+  { text: '용어사전', href: '/dictionary' },
   {
     text: '추가기능',
     href: '#',
     subItems: [
       {
         text: '금',
-        href: 'gold',
+        href: '/gold',
         subItems: [
-          { text: '금 시세', href: 'gold' },
-          { text: '금투자', href: 'goldInvest' },
+          { text: '금 시세', href: '/gold' },
+          { text: '금투자', href: '/goldInvest' },
         ],
       },
-      { text: '환전', href: 'account-overview.html' },
-      { text: '뉴스', href: 'news' },
-      { text: '마이페이지(임시)', href: 'myPage' },
+      { text: '환전', href: '/account-overview.html' },
+      { text: '뉴스', href: '/news' },
+      { text: '마이페이지(임시)', href: '/myPage' },
     ],
   },
 ]);

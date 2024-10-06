@@ -44,13 +44,13 @@ const routes = [
     path: '/signin',
     name: 'Signin',
     component: Signin,
-    meta: { hideHeaderFooter: true },
+    meta: { hideHeaderFooter: true, hidePadding: true  },
   },
   {
     path: '/signup',
     name: 'Signup',
     component: Signup,
-    meta: { hideHeaderFooter: true },
+    meta: { hideHeaderFooter: true, hidePadding: true },
   },
   {
     path: '/news',
@@ -89,7 +89,7 @@ const routes = [
   },
   {
     path: '/saving/:savingId',
-    name: 'SavingDetail',
+    name: 'savingDetail',
     component: SavingsDetail,
   },
   {

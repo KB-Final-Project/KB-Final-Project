@@ -151,6 +151,9 @@
         <if test="saveTerm != null">
             AND ir.save_term = #{saveTerm}
         </if>
+        <if test="interestRateType != null">
+            AND ir.intr_rate_type = #{interestRateType}
+        </if>
     </select>
 
     <select id="getTopProductList" resultMap="DepositDetailResultMap" parameterType="int">

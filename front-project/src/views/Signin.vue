@@ -1,5 +1,5 @@
 <template>
-  <div class="dic">
+  <div class="bic">
     <div class="d-lg-flex position-relative h-100">
       <!-- Home button-->
       <a class="text-nav btn btn-icon bg-light border rounded-circle position-absolute top-0 end-0 p-0 mt-3 me-3 mt-sm-4 me-sm-4" href="/" data-bs-toggle="tooltip" data-bs-placement="left" title="Back to home">
@@ -82,6 +82,7 @@ const handleSignIn = () => {
   background-color: #37715d;
   color: white;
   font-size: 20px;
+  border:none;
 }
 
 .signInBtn:hover {
@@ -106,7 +107,6 @@ const handleSignIn = () => {
   border-radius: 20px;
 }
 
-
 .w-100 p {
   font-size: 15px;
 }
@@ -123,7 +123,7 @@ const handleSignIn = () => {
   font-size: 15px;
 }
 
-.dic {
+.bic {
   height: 100vh;
 }
 
@@ -133,9 +133,6 @@ const handleSignIn = () => {
   height: 100vh; /* 100% height */
 }
 
-.content {
-  padding: 0;
-}
 
 .form-check input:checked {
   background-color: rgba(68, 140, 116, 1);
