@@ -28,7 +28,7 @@ public class SavingController {
             @RequestParam(value = "searchValue", required = false) String searchValue,
             @RequestParam(value = "bankId", required = false) Integer bankId,
             @RequestParam(value = "saveTerm", defaultValue = "36") Integer saveTerm,
-            @RequestParam(value = "inteinterestRateTyperestType", defaultValue = "단리") String interestRateType){
+            @RequestParam(value = "interestRateType", defaultValue = "단리") String interestRateType){
 
         SavingParam savingParam = new SavingParam();
         savingParam.setSearchValue(searchValue);

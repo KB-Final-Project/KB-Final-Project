@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -23,14 +24,14 @@ import java.util.List;
 
 public class DepositController {
     private final SavingService service;
+
     @GetMapping("")
     public ResponseEntity<SavingListResponseDTO> getDepositListDefault(
             @RequestParam(value = "searchValue", required = false) String searchValue,
             @RequestParam(value = "bankId", required = false) Integer bankId,
             @RequestParam(value = "saveTerm", defaultValue = "36") Integer saveTerm,
             @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "interestRateType", defaultValue = "단리") String interestRateType){
-
+            @RequestParam(value = "interestRateType", defaultValue = "단리") String interestRateType) {
         SavingParam savingParam = new SavingParam();
         savingParam.setSearchValue(searchValue);
         savingParam.setBankId(bankId);
@@ -48,7 +49,6 @@ public class DepositController {
         List<SavingListDTO> response = service.getTopProductList();
         return ResponseEntity.ok(response);
     }
-
 
     @GetMapping("/detail/{savingId}")
     public ResponseEntity<Saving> getDepositProductById(@PathVariable int savingId) {
