@@ -91,7 +91,7 @@ public class MemberService{
         if(result != 1){
             throw new IllegalAccessException();
         }
-        saveAvatar(avatar, member.getUsername());
+//        saveAvatar(avatar, member.getUsername());
         return mapper.selectById(member.getId());
     }
 
@@ -102,9 +102,9 @@ public class MemberService{
         }
         updateMember.setMno(oldMember.getMno());
         mapper.updateMember(updateMember);
-        if(avatar != null && !avatar.isEmpty()) {
-            saveAvatar(avatar, oldMember.getId());
-        }
+//        if(avatar != null && !avatar.isEmpty()) {
+//            saveAvatar(avatar, oldMember.getId());
+//        }
         return mapper.selectById(updateMember.getId());
     }
 
