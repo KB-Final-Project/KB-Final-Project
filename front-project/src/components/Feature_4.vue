@@ -4,10 +4,10 @@
     <div class="f4_trendMain">
       <!-- trendMenu -->
       <div class="trendMenu">
-          <button class="trendBtn  p-1">국내주식</button>
-          <h1 class="d-inline">트렌드<br></h1>
-          <h1 class="d-inline m-l">한눈에 보기</h1><br>
-          <br><h3>전체 운용상품 보러가기 ></h3>
+        <button class="trendBtn  p-1">국내주식</button>
+        <h1 class="d-inline">트렌드<br></h1>
+        <h1 class="d-inline m-l">한눈에 보기</h1><br>
+        <br><button class="goToStock_btn" @click="goToStock">전체 운용상품 보러가기 <i class="ai-chevron-right"></i></button>
         <img src="/img/trend.png" class="trendImage">
       </div>
 
@@ -75,8 +75,8 @@
 }
 
 .trendImage {
-  margin-top: -50%;
-  margin-left: 80%;
+  margin-top: -35%;
+  margin-left: 70%;
   z-index: -1;
 }
 
@@ -123,20 +123,30 @@
   margin-left: 60px;
 }
 
-.m-l{
+.m-l {
   margin-left: 25px;
 }
 
-h3 {
+.goToStock_btn {
   margin-left: 25px;
   margin-top: 20px;
+  font-size: 25px;
+  border: none;
+  background: none;
 }
 
 .trendMenu {
   font-family: J5;
 }
-
 </style>
 
-<script setup lang="ts">
+<script setup>
+import router from '@/router';
+
+const goToStock = () => {
+  router.push('/StockMain'); // 지정된 경로로 페이지 이동
+};
+
 </script>
+
+
