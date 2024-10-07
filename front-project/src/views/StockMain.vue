@@ -77,18 +77,17 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(stock, index) in sortedStocks" :key="index">
-              <td>{{ stock.stockName }}</td>
-              <td>{{ stock.currentPrice }}</td>
-              <!-- 상승/하락에 따른 아이콘 표시 -->
-              <td :class="{ 'positive': stock.priceChange > 0, 'negative': stock.priceChange < 0 }">
-                {{ stock.priceChange }}
-              </td>
-              <td :class="{ 'positive': stock.priceChangePct > 0, 'negative': stock.priceChangePct < 0 }">
-                {{ stock.priceChangePct }}%
-              </td>
-            </tr>
-          </tbody>
+    <tr v-for="(stock, index) in sortedStocks" :key="index" @click="goToStockChart(stock)">
+      <td>{{ stock.stockName }}</td>
+      <td>{{ stock.currentPrice }}</td>
+      <td :class="{'positive': stock.priceChange > 0, 'negative': stock.priceChange < 0}">
+        {{ stock.priceChange }}
+      </td>
+      <td :class="{'positive': stock.priceChangePct > 0, 'negative': stock.priceChangePct < 0}">
+        {{ stock.priceChangePct }}%
+      </td>
+    </tr>
+  </tbody>
         </table>
       </section>
 
@@ -229,14 +228,11 @@ export default {
         const response = await axios.get('http://localhost:8080/api/websocket/prices');
         this.stocks = Object.values(response.data);
         this.updateTop3Stocks();
-        // API 요청: 주식 데이터와 지수 데이터 가져오기
 
         const kospiResponse = await axios.get('http://localhost:8080/api/index/kospi');
         const kosdaqResponse = await axios.get('http://localhost:8080/api/index/kosdaq');
         const kospi200Response = await axios.get('http://localhost:8080/api/index/kospi200');
-
-        // 데이터 저장
-
+        
         this.currentStocks = [
           {
             name: 'KOSPI',
@@ -333,13 +329,28 @@ export default {
     // 정렬 메서드
     sortBy(key) {
       if (this.sortKey === key) {
-        // 같은 키로 다시 정렬하면 순서를 반대로
         this.sortOrder *= -1;
       } else {
-        // 다른 키로 정렬하면 오름차순으로 시작
         this.sortKey = key;
         this.sortOrder = 1;
       }
+    },
+
+    // 종목 상세 페이지로 이동
+    goToStockChart(stock) {
+      this.$router.push({
+        path: `/stock/${stock.stockCode}`,
+        query: {
+          stockName: stock.stockName,
+          currentPrice: stock.currentPrice,
+          priceChange: stock.priceChange,
+          priceChangePct: stock.priceChangePct,
+          volume: stock.volume,
+          marketCap: stock.marketCap,
+          high52week: stock.high52week,
+          low52week: stock.low52week
+        }
+      });
     }
   }
 };
@@ -516,5 +527,280 @@ h1 {
   width: 80%;
   height: 150px;
   margin-left: 20px;
+=======
+      font-weight: bold;
+      margin-bottom: 20px;
+      font-size: 30px;
+  }
+  
+  .container {
+
+  }
+  
+  .title {
+
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 30px;
+  }
+  
+  h1 {
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 40px;
+  }
+  
+  .current-stocks,
+  .top3-stocks,
+  .stock-list {
+      margin-bottom: 40px;
+      border-radius: 30px;
+      background-color: #f5f8f4;
+  }
+  
+  .current-stocks h2,
+  .top3-stocks h2,
+  .stock-list h2 {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 15px;
+      text-align: center;
+  }
+  
+  .stock-cards {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      background-color: #ffffff;
+  }
+  
+  .stock-card,
+  .top3-card {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      flex: 1;
+  }
+  
+  .stock-card h3,
+  .top3-card h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #333;
+  }
+  
+  .stock-card p,
+  .top3-card p {
+      font-size: 14px;
+      color: #777;
+  }
+  
+  .top3-cards {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      background-color: #ffffff;
+  }
+  
+  .top3-card router-link {
+      display: block;
+      margin-top: 10px;
+      font-size: 12px;
+      color: #448c74;
+      text-decoration: none;
+      font-weight: bold;
+  }
+  
+  .stock-list .search-bar {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+  }
+  
+  .stock-list .search-bar input {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      width: 300px;
+  }
+  
+  .stock-list .search-bar button {
+      margin-left: 10px;
+      padding: 10px 20px;
+      background-color: #448c74;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+  }
+  
+  .stock-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 10px;
+  }
+  
+  .stock-item p {
+      margin: 0;
+      font-size: 14px;
+      color: #333;
+  }
+  
+  .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+  }
+  
+  .pagination button {
+      padding: 10px 15px;
+      border: none;
+      background-color: #448c74;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+  }
+  
+  .pagination span {
+      font-size: 14px;
+      color: #333;
+  }
+  
+
+.stock-dashboard {
+  background-color: white;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 24px;
+  margin: 0;
+}
+
+.more-link {
+  color: #448c74;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.current-stocks,
+.top3-stocks,
+.stock-list,
+.categories {
+  margin-bottom: 40px;
+  background-color: #f5f8f4;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.stock-cards,
+.top3-cards,
+.category-cards {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.stock-card,
+.top3-card,
+.category-card {
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  text-align: center;
+}
+
+.category-card img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.stock-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.stock-table th,
+.stock-table td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.stock-table th {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.stock-table th.active {
+  background-color: #f0f0f0;
+}
+
+.sort-arrow {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+  vertical-align: middle;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid #000;
+}
+
+.sort-arrow.sort-reverse {
+  border-bottom: none;
+  border-top: 4px solid #000;
+}
+
+.positive {
+  color: red;
+}
+
+.negative {
+  color: blue;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.middle-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
 }
 </style>
