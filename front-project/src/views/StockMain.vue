@@ -341,16 +341,14 @@ h1 {
   }
   
   .title {
-    padding-top: 20px;
+   
     font-weight: bold;
     margin-bottom: 20px;
     text-align: center;
     font-size: 30px;
   }
   
-  .container {
-    padding-top: 30px;
-  }
+
   
   .stock-table {
     width: 100%;
@@ -398,18 +396,18 @@ h1 {
   }
   
   .middle-title {
-      padding-top: 20px;
+
       font-weight: bold;
       margin-bottom: 20px;
       font-size: 30px;
   }
   
   .container {
-      padding-top: 30px;
+
   }
   
   .title {
-      padding-top: 20px;
+
       font-weight: bold;
       margin-bottom: 20px;
       text-align: center;
@@ -580,7 +578,7 @@ h1 {
   }
   
   .title {
-    padding-top: 20px;
+
     font-weight: bold;
     margin-bottom: 20px;
     text-align: center;
@@ -588,7 +586,7 @@ h1 {
   }
   
   .container {
-    padding-top: 30px;
+
   }
   
   .stock-table {
