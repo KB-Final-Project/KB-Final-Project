@@ -1,8 +1,5 @@
 package com.kb.saving.service;
 
-import com.kb.board.dto.Board;
-import com.kb.board.dto.BoardPageResult;
-import com.kb.board.dto.BoardParam;
 import com.kb.common.pagination.PageInfo;
 import com.kb.saving.dto.*;
 import com.kb.saving.mapper.SavingMapper;

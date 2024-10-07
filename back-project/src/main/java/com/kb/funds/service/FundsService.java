@@ -59,31 +59,31 @@ public class FundsService {
             } else {
                 for (FundsDTO fund : funds) {
                     try {
-//                        logger.info("Processing fund: {}", fund);
                         List<SuikChartDTO> suikCharts = crawlSuikChart(fund);
-                        List<SuikChartDTO> detailedCharts = crawlDetailedData(fund);
+                        logger.debug("SuikCharts size for fund ID {}: {}", fund.getId(), suikCharts.size());
 
+                        // 펀드 삽입 또는 업데이트
                         if (fund.getId() == null) {
                             fundsMapper.insertFund(fund);
-//                            logger.info("Inserted new fund ID: {}", fund.getFundCd());
 
                             if (fund.getId() == null) {
                                 logger.error("Fund ID is still null after insert.");
-                                continue; // 적절한 오류 처리 추가
+                                continue;
                             }
                         } else {
                             fundsMapper.updateFund(fund);
                             suikChartMapper.deleteSuikChartByFundId(fund.getId());
                         }
 
-                        // 통합된 차트 리스트 생성
-                        List<SuikChartDTO> combinedCharts = new ArrayList<>(suikCharts);
-                        combinedCharts.addAll(detailedCharts);
-                        for (SuikChartDTO chart : combinedCharts) {
-                            chart.setFundId(fund.getId());
+                        // 상세 차트 호출
+                        List<SuikChartDTO> detailedCharts = fetchAndCombineDetailedCharts(fund, suikCharts);
+
+                        if (detailedCharts.isEmpty()) {
+                            logger.warn("No detailed charts to insert for fund ID: {}", fund.getId());
+                        } else {
+                            suikChartMapper.insertSuikCharts(detailedCharts);
+                            logger.info("Inserted SuikCharts for Fund ID: {}", fund.getFundCd());
                         }
-                        suikChartMapper.insertSuikCharts(combinedCharts);
-//                        logger.info("Inserted SuikCharts for Fund ID: {}", fund.getFundCd());
 
                     } catch (Exception e) {
                         logger.error("Error occurred while processing fund ID: {}", fund.getId(), e);
@@ -93,6 +93,29 @@ public class FundsService {
             }
         }
     }
+
+    private List<SuikChartDTO> fetchAndCombineDetailedCharts(FundsDTO fund, List<SuikChartDTO> suikCharts) {
+        List<SuikChartDTO> detailedCharts = crawlDetailedData(fund);
+        logger.debug("Detailed Charts size for fund ID {}: {}", fund.getId(), detailedCharts.size());
+
+        // 차트 리스트 통합
+        List<SuikChartDTO> combinedCharts = new ArrayList<>(suikCharts);
+        combinedCharts.addAll(detailedCharts);
+
+        // 통합된 차트 상태 로그 추가
+        logger.debug("Combined charts size before insert: {}", combinedCharts.size());
+
+        // 각 차트 데이터 로그 출력
+        for (SuikChartDTO chart : combinedCharts) {
+            logger.debug("Chart before insert: Fund ID: {}, Evaluation Amount: {}, Weight: {}",
+                    chart.getFundId(), chart.getEvaluationAmount(), chart.getWeight());
+        }
+
+        return combinedCharts;
+    }
+
+
+
 
 
     private List<FundsDTO> crawlFundsFromWebsite(int pageNo) throws JsonProcessingException {
@@ -138,7 +161,7 @@ public class FundsService {
     @Scheduled(fixedRate = 3600000) // 1시간마다 실행
     public void scheduleCrawl() {
         try {
-//            logger.info("Scheduled crawl started at: {}", LocalDateTime.now());
+            logger.info("Scheduled crawl started at: {}", LocalDateTime.now());
             crawlAndSaveFunds();
         } catch (JsonProcessingException e) {
             logger.error("Error occurred while crawling funds: {}", e.getMessage(), e);
