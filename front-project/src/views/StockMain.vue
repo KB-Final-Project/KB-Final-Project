@@ -8,7 +8,6 @@
       <section class="current-stocks">
         <div class="section-header">
           <p class="title">이 시각 증시</p>
-      
         </div>
         <div class="stock-cards">
           <div v-for="(stock, index) in currentStocks" :key="index" class="stock-card">
@@ -55,17 +54,17 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(stock, index) in sortedStocks" :key="index">
-              <td>{{ stock.stockName }}</td>
-              <td>{{ stock.currentPrice }}</td>
-              <td :class="{'positive': stock.priceChange > 0, 'negative': stock.priceChange < 0}">
-                {{ stock.priceChange }}
-              </td>
-              <td :class="{'positive': stock.priceChangePct > 0, 'negative': stock.priceChangePct < 0}">
-                {{ stock.priceChangePct }}%
-              </td>
-            </tr>
-          </tbody>
+    <tr v-for="(stock, index) in sortedStocks" :key="index" @click="goToStockChart(stock)">
+      <td>{{ stock.stockName }}</td>
+      <td>{{ stock.currentPrice }}</td>
+      <td :class="{'positive': stock.priceChange > 0, 'negative': stock.priceChange < 0}">
+        {{ stock.priceChange }}
+      </td>
+      <td :class="{'positive': stock.priceChangePct > 0, 'negative': stock.priceChangePct < 0}">
+        {{ stock.priceChangePct }}%
+      </td>
+    </tr>
+  </tbody>
         </table>
       </section>
 
@@ -145,14 +144,11 @@ export default {
         const response = await axios.get('http://localhost:8080/api/websocket/prices');
         this.stocks = Object.values(response.data);
         this.updateTop3Stocks();
-        // API 요청: 주식 데이터와 지수 데이터 가져오기
 
         const kospiResponse = await axios.get('http://localhost:8080/api/index/kospi');
         const kosdaqResponse = await axios.get('http://localhost:8080/api/index/kosdaq');
         const kospi200Response = await axios.get('http://localhost:8080/api/index/kospi200');
 
-        // 데이터 저장
-    
         this.currentStocks = [
           { name: 'KOSPI', index: kospiResponse.data },
           { name: 'KOSDAQ', index: kosdaqResponse.data },
@@ -160,10 +156,8 @@ export default {
         ];
       } catch (error) {
         console.error('주식 데이터를 가져오는 중 오류 발생:', error);
-       
       }
     },
-    
 
     // WebSocket 연결 시작
     startWebSocket() {
@@ -176,7 +170,6 @@ export default {
 
       ws.onerror = (error) => {
         console.error('WebSocket 오류:', error);
-       
       };
     },
 
@@ -201,13 +194,28 @@ export default {
     // 정렬 메서드
     sortBy(key) {
       if (this.sortKey === key) {
-        // 같은 키로 다시 정렬하면 순서를 반대로
         this.sortOrder *= -1;
       } else {
-        // 다른 키로 정렬하면 오름차순으로 시작
         this.sortKey = key;
         this.sortOrder = 1;
       }
+    },
+
+    // 종목 상세 페이지로 이동
+    goToStockChart(stock) {
+      this.$router.push({
+        path: `/stock/${stock.stockCode}`,
+        query: {
+          stockName: stock.stockName,
+          currentPrice: stock.currentPrice,
+          priceChange: stock.priceChange,
+          priceChangePct: stock.priceChangePct,
+          volume: stock.volume,
+          marketCap: stock.marketCap,
+          high52week: stock.high52week,
+          low52week: stock.low52week
+        }
+      });
     }
   }
 };
@@ -550,110 +558,126 @@ h1 {
       font-size: 14px;
       color: #333;
   }
-  </style>
   
-  <style lang="scss">
-  :root,
-  [data-bs-theme="light"] {
-    --x-gray-200: #e2e8f0;
-    --x-light-border-subtle: #e2e8f0;
-    --x-border-color: #e2e8f0;
-    --x-purple: #8957ff;
-    --x-primary: #8957ff;
-    --x-link-color: #8957ff;
-  }
-  
-  .btn-primary {
-    --x-btn-bg: #8957ff;
-    --x-btn-border-color: #8957ff;
-    --x-btn-hover-bg: #6e46cc;
-    --x-btn-hover-border-color: #6e46cc;
-    --x-btn-active-bg: #6e46cc;
-    --x-btn-active-border-color: #6741bf;
-    --x-btn-disabled-bg: #8957ff;
-    --x-btn-disabled-border-color: #8957ff;
-  }
-  .stock-dashboard {
-    background-color: white;
-  }
-  
-  .title {
 
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
-    font-size: 30px;
-  }
-  
-  .container {
+.stock-dashboard {
+  background-color: white;
+  padding: 20px;
+}
 
-  }
-  
-  .stock-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .stock-table th, .stock-table td {
-    padding: 10px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .stock-table th {
-    cursor: pointer;
-    user-select: none;
-    position: relative;
-  }
-  
-  .stock-table th.active {
-    background-color: #f0f0f0;
-  }
-  
-  .sort-arrow {
-    display: inline-block;
-    width: 0;
-    height: 0;
-    margin-left: 5px;
-    vertical-align: middle;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-bottom: 4px solid #000;
-  }
-  
-  .sort-arrow.sort-reverse {
-    border-bottom: none;
-    border-top: 4px solid #000;
-  }
-  
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
-  }
-  
-  .pagination button {
-    padding: 10px 15px;
-    border: none;
-    background-color: #448c74;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .pagination span {
-    font-size: 14px;
-    color: #333;
-  }
-  
-  /* 가격 변동 색상 */
-  .positive {
-    color: red;
-  }
-  
-  .negative {
-    color: blue;
-  }
-  </style> 
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 24px;
+  margin: 0;
+}
+
+.more-link {
+  color: #448c74;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.current-stocks,
+.top3-stocks,
+.stock-list,
+.categories {
+  margin-bottom: 40px;
+  background-color: #f5f8f4;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.stock-cards,
+.top3-cards,
+.category-cards {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.stock-card,
+.top3-card,
+.category-card {
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  text-align: center;
+}
+
+.category-card img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.stock-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.stock-table th,
+.stock-table td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.stock-table th {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.stock-table th.active {
+  background-color: #f0f0f0;
+}
+
+.sort-arrow {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+  vertical-align: middle;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid #000;
+}
+
+.sort-arrow.sort-reverse {
+  border-bottom: none;
+  border-top: 4px solid #000;
+}
+
+.positive {
+  color: red;
+}
+
+.negative {
+  color: blue;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.middle-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+</style>
