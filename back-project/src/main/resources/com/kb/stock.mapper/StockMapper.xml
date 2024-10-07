@@ -17,7 +17,8 @@
             prdt_type_cd, prdt_name120, prdt_abrv_name, prdt_eng_name, prdt_eng_name120,
             prdt_eng_abrv_name, std_pdno, shtn_pdno, prdt_sale_stat_cd, prdt_risk_grad_cd,
             prdt_clsf_cd, prdt_clsf_name, sale_strt_dt, sale_end_dt, wrap_asst_type_cd,
-            ivst_prdt_type_cd, ivst_prdt_type_cd_name, frst_erlm_dt
+            ivst_prdt_type_cd, ivst_prdt_type_cd_name, frst_erlm_dt,
+            w52_hgpr, w52_lwpr, hts_avls
         )
         VALUES (
                    #{stockCode}, #{stockName}, #{currentPrice}, #{priceChange}, #{priceChangePct},
@@ -25,7 +26,9 @@
                    #{prdtTypeCd}, #{prdtName120}, #{prdtAbrvName}, #{prdtEngName}, #{prdtEngName120},
                    #{prdtEngAbrvName}, #{stdPdno}, #{shtnPdno}, #{prdtSaleStatCd}, #{prdtRiskGradCd},
                    #{prdtClsfCd}, #{prdtClsfName}, #{saleStrtDt}, #{saleEndDt}, #{wrapAsstTypeCd},
-                   #{ivstPrdtTypeCd}, #{ivstPrdtTypeCdName}, #{frstErlmDt}
+                   #{ivstPrdtTypeCd}, #{ivstPrdtTypeCdName}, #{frstErlmDt},
+                #{w52Hgpr}, #{w52Lwpr}, #{htsAvls}
+               )
                )
             ON DUPLICATE KEY UPDATE
                                  stock_name = #{stockName},
@@ -37,8 +40,12 @@
                                  opening_price = #{openingPrice},
                                  volume = #{volume},
                                  industry = #{industry},
+                                         w52_hgpr = #{w52Hgpr},
+                                         w52_lwpr = #{w52Lwpr},
+                                         hts_avls = #{htsAvls},
                                  last_updated = NOW(),
                                  prdt_type_cd = #{prdtTypeCd},
+
                                  prdt_name120 = #{prdtName120},
                                  prdt_abrv_name = #{prdtAbrvName},
                                  prdt_eng_name = #{prdtEngName},
