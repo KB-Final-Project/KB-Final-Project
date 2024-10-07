@@ -2,6 +2,7 @@ package com.kb.funds.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.kb._config.LocalDateDeserializer;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.List;
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FundsDTO {
+
     private Long id; // ID 필드 추가
 
     private String fundFnm;
@@ -27,15 +29,17 @@ public class FundsDTO {
     // 기준가
     private BigDecimal gijunGa;
 
-    // 기준일
-    @JsonDeserialize(using = LocalDateDeserializer.class) //
-    private LocalDate gijunYmd;
+    // 벤치마크
+    private String bmNm;
 
     // 1개월 수익률
     private BigDecimal suikRt1;
 
     // 3개월 수익률
     private BigDecimal suikRt3;
+
+    // 6개월 수익률
+    private BigDecimal suikRt6;
 
     // 1년 수익률
     private BigDecimal suikRt12;
@@ -46,13 +50,10 @@ public class FundsDTO {
     // 총 보수
     private BigDecimal feeTot;
 
-    // 수익 차트 리스트 초기화
-    @Builder.Default
-    private List<SuikChartDTO> suikChart = new ArrayList<>(); // SuikChartDTO 리스트
+    @JsonDeserialize(using = LocalDateDeserializer.class) //
+    private LocalDate gijunYmd;
 
-    // 벤치마크
-    private String bmNm;
+    @JsonProperty("SEOLJ_AEK")
+    private double seoljAek;
 
-    // 펀드 코드
-    private String fundCd;
 }

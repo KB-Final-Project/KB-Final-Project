@@ -9,8 +9,8 @@
         <selectKey keyProperty="id" resultType="long" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        INSERT INTO funds (fundFnm, gijunGa, gijunYmd, suikRt1, suikRt3, suikRt12, investGrade, feeTot, bmNm, fundCd)
-        VALUES (#{fundFnm}, #{gijunGa}, #{gijunYmd}, #{suikRt1}, #{suikRt3}, #{suikRt12}, #{investGrade}, #{feeTot}, #{bmNm}, #{fundCd})
+        INSERT INTO funds (fundFnm, gijunGa, gijunYmd, suikRt1, suikRt3, suikRt6, suikRt12, investGrade, feeTot, bmNm)
+        VALUES (#{fundFnm}, #{gijunGa}, #{gijunYmd}, #{suikRt1}, #{suikRt3}, #{suikRt6}, #{suikRt12}, #{investGrade}, #{feeTot}, #{bmNm})
     </insert>
 
     <!-- 펀드 업데이트 -->
@@ -22,18 +22,13 @@
             gijunYmd = #{gijunYmd},
             suikRt1 = #{suikRt1},
             suikRt3 = #{suikRt3},
+            suikRt6 = #{suikRt6},
             suikRt12 = #{suikRt12},
             investGrade = #{investGrade},
             feeTot = #{feeTot},
-            bmNm = #{bmNm},
-            fundCd = #{fundCd}
+            bmNm = #{bmNm}
         WHERE id = #{id}
     </update>
-
-    <!-- 기존 수익 차트 삭제 -->
-    <delete id="deleteSuikChartByFundId" parameterType="long">
-        DELETE FROM suikChart WHERE fundId = #{id}
-    </delete>
 
     <!-- ID로 펀드 존재 여부 확인 -->
     <select id="existsById" resultType="boolean" parameterType="Long">
@@ -49,35 +44,23 @@
         <result property="gijunYmd" column="gijunYmd"/>
         <result property="suikRt1" column="suikRt1"/>
         <result property="suikRt3" column="suikRt3"/>
+        <result property="suikRt6" column="suikRt6"/>
         <result property="suikRt12" column="suikRt12"/>
         <result property="investGrade" column="investGrade"/>
         <result property="feeTot" column="feeTot"/>
         <result property="bmNm" column="bmNm"/>
-        <result property="fundCd" column="fundCd"/>
-
-        <collection property="suikChart" ofType="com.kb.funds.dto.SuikChartDTO">
-            <result property="fundId" column="fundId"/>
-            <result property="gijunYmd" column="gijunYmd"/>
-            <result property="bmSuikJisu" column="bmSuikJisu"/>
-            <result property="silhSuikRt" column="silhSuikRt"/>
-            <result property="seoljAek" column="seoljAek"/>
-            <result property="category" column="category" />
-            <result property="evaluationAmount" column="evaluationAmount" />
-            <result property="weight" column="weight" />
-        </collection>
     </resultMap>
 
     <!-- 키워드로 펀드 검색 -->
     <select id="searchFunds" resultMap="FundsResultMap">
-        SELECT f.*, s.*
+        SELECT f.*
         FROM funds f
-                 LEFT JOIN suikChart s ON f.id = s.fundId
         WHERE f.fundFnm LIKE CONCAT('%', #{keyword}, '%');
     </select>
+
     <!-- 모든 펀드 조회 -->
     <select id="findAllFunds" resultMap="FundsResultMap">
-        SELECT f.*, s.*
-        FROM funds f
-                 LEFT JOIN suikChart s ON f.id = s.fundId;
+        SELECT f.*
+        FROM funds f;
     </select>
 </mapper>
