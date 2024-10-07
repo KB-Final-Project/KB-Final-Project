@@ -35,7 +35,7 @@
 
       </section>
 
-      <p class="middle-title">현재 상위권 TOP3 🏆</p>
+      <p class="middle-title">현재 상위권 TOP2 🏆</p>
       <section class="top3-stocks">
         <div class="top3-cards">
           <div v-for="(stock, index) in top3Stocks" :key="index" class="top3-card">
@@ -77,17 +77,17 @@
             </tr>
           </thead>
           <tbody>
-    <tr v-for="(stock, index) in sortedStocks" :key="index" @click="goToStockChart(stock)">
-      <td>{{ stock.stockName }}</td>
-      <td>{{ stock.currentPrice }}</td>
-      <td :class="{'positive': stock.priceChange > 0, 'negative': stock.priceChange < 0}">
-        {{ stock.priceChange }}
-      </td>
-      <td :class="{'positive': stock.priceChangePct > 0, 'negative': stock.priceChangePct < 0}">
-        {{ stock.priceChangePct }}%
-      </td>
-    </tr>
-  </tbody>
+            <tr v-for="(stock, index) in sortedStocks" :key="index" @click="goToStockChart(stock)">
+              <td>{{ stock.stockName }}</td>
+              <td>{{ stock.currentPrice }}</td>
+              <td :class="{ 'positive': stock.priceChange > 0, 'negative': stock.priceChange < 0 }">
+                {{ stock.priceChange }}
+              </td>
+              <td :class="{ 'positive': stock.priceChangePct > 0, 'negative': stock.priceChangePct < 0 }">
+                {{ stock.priceChangePct }}%
+              </td>
+            </tr>
+          </tbody>
         </table>
       </section>
 
@@ -213,15 +213,15 @@ export default {
 
   methods: {
     createGradient(ctx, chartArea) {
-    const { top, bottom } = chartArea;
-    const gradient = ctx.createLinearGradient(0, top, 0, bottom);
+      const { top, bottom } = chartArea;
+      const gradient = ctx.createLinearGradient(0, top, 0, bottom);
 
-    // 빨간색에서 투명한 빨간색으로 그라데이션 설정
-    gradient.addColorStop(0, 'rgba(255, 0, 0, 0.6)'); // 빨간색 위쪽
-    gradient.addColorStop(1, 'rgba(255, 0, 0, 0)');   // 아래쪽은 투명한 빨간색
+      // 빨간색에서 투명한 빨간색으로 그라데이션 설정
+      gradient.addColorStop(0, 'rgba(255, 0, 0, 0.6)'); // 빨간색 위쪽
+      gradient.addColorStop(1, 'rgba(255, 0, 0, 0)');   // 아래쪽은 투명한 빨간색
 
-    return gradient;
-  },
+      return gradient;
+    },
     // 초기 주식 데이터를 가져오는 메서드
     async fetchStockData() {
       try {
@@ -232,7 +232,7 @@ export default {
         const kospiResponse = await axios.get('http://localhost:8080/api/index/kospi');
         const kosdaqResponse = await axios.get('http://localhost:8080/api/index/kosdaq');
         const kospi200Response = await axios.get('http://localhost:8080/api/index/kospi200');
-        
+
         this.currentStocks = [
           {
             name: 'KOSPI',
@@ -375,7 +375,8 @@ export default {
   margin-bottom: 20px;
 }
 
-.top3-cards {
+.top3-cards,
+.category-cards {
   display: flex;
   padding: 20px;
 
@@ -401,6 +402,8 @@ export default {
   background-color: white;
   border-radius: 30px;
   padding: 20px;
+  justify-content: space-between;
+  gap: 20px;
 }
 
 .stock-card,
@@ -472,45 +475,8 @@ export default {
   border-collapse: collapse;
 }
 
-.stock-table th,
-.stock-table td {
-  padding: 10px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
-
-.stock-table th {
-  cursor: pointer;
-  user-select: none;
-  position: relative;
-}
-
-.stock-table th.active {
-  background-color: #f0f0f0;
-}
-
-.sort-arrow {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  margin-left: 5px;
-  vertical-align: middle;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-bottom: 4px solid #000;
-}
-
-.sort-arrow.sort-reverse {
-  border-bottom: none;
-  border-top: 4px solid #000;
-}
-
-h1 {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
 .middle-title {
+  margin-left: 30px;
   font-size: 30px;
   margin-bottom: 15px;
 }
@@ -527,229 +493,39 @@ h1 {
   width: 80%;
   height: 150px;
   margin-left: 20px;
-=======
-      font-weight: bold;
-      margin-bottom: 20px;
-      font-size: 30px;
-  }
-  
-  .container {
-
-  }
-  
-  .title {
-
-      font-weight: bold;
-      margin-bottom: 20px;
-      text-align: center;
-      font-size: 30px;
-  }
-  
-  h1 {
-      font-weight: bold;
-      margin-bottom: 20px;
-      text-align: center;
-      font-size: 40px;
-  }
-  
-  .current-stocks,
-  .top3-stocks,
-  .stock-list {
-      margin-bottom: 40px;
-      border-radius: 30px;
-      background-color: #f5f8f4;
-  }
-  
-  .current-stocks h2,
-  .top3-stocks h2,
-  .stock-list h2 {
-      font-size: 18px;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 15px;
-      text-align: center;
-  }
-  
-  .stock-cards {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 20px;
-      border-radius: 10px;
-      background-color: #ffffff;
-  }
-  
-  .stock-card,
-  .top3-card {
-      background-color: #ffffff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      flex: 1;
-  }
-  
-  .stock-card h3,
-  .top3-card h3 {
-      font-size: 16px;
-      margin-bottom: 10px;
-      color: #333;
-  }
-  
-  .stock-card p,
-  .top3-card p {
-      font-size: 14px;
-      color: #777;
-  }
-  
-  .top3-cards {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 20px;
-      border-radius: 10px;
-      background-color: #ffffff;
-  }
-  
-  .top3-card router-link {
-      display: block;
-      margin-top: 10px;
-      font-size: 12px;
-      color: #448c74;
-      text-decoration: none;
-      font-weight: bold;
-  }
-  
-  .stock-list .search-bar {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-  }
-  
-  .stock-list .search-bar input {
-      padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      width: 300px;
-  }
-  
-  .stock-list .search-bar button {
-      margin-left: 10px;
-      padding: 10px 20px;
-      background-color: #448c74;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-  }
-  
-  .stock-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 20px;
-      background-color: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      margin-bottom: 10px;
-  }
-  
-  .stock-item p {
-      margin: 0;
-      font-size: 14px;
-      color: #333;
-  }
-  
-  .pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin-top: 20px;
-  }
-  
-  .pagination button {
-      padding: 10px 15px;
-      border: none;
-      background-color: #448c74;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-  }
-  
-  .pagination span {
-      font-size: 14px;
-      color: #333;
-  }
-  
-
-.stock-dashboard {
-  background-color: white;
-  padding: 20px;
+  margin-bottom: 20px;
+  font-size: 30px;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
 
-.section-header {
+
+
+
+
+
+
+
+.stock-list .search-bar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: center;
   margin-bottom: 20px;
 }
 
-.title {
-  font-weight: bold;
-  font-size: 24px;
-  margin: 0;
+.stock-list .search-bar input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 300px;
 }
 
-.more-link {
-  color: #448c74;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.current-stocks,
-.top3-stocks,
-.stock-list,
-.categories {
-  margin-bottom: 40px;
-  background-color: #f5f8f4;
-  border-radius: 10px;
-  padding: 20px;
-}
-
-.stock-cards,
-.top3-cards,
-.category-cards {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.stock-card,
-.top3-card,
-.category-card {
-  background-color: white;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  flex: 1;
-  text-align: center;
-}
-
-.category-card img {
-  width: 50px;
-  height: 50px;
-  margin-bottom: 10px;
-}
-
-.stock-table {
-  width: 100%;
-  border-collapse: collapse;
+.stock-list .search-bar button {
+  margin-left: 10px;
+  padding: 10px 20px;
+  background-color: #448c74;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .stock-table th,
@@ -784,23 +560,8 @@ h1 {
   border-bottom: none;
   border-top: 4px solid #000;
 }
-
-.positive {
-  color: red;
-}
-
-.negative {
-  color: blue;
-}
-
 h1 {
   text-align: center;
   margin-bottom: 30px;
-}
-
-.middle-title {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 15px;
 }
 </style>
