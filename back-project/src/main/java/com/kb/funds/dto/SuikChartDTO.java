@@ -16,6 +16,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class SuikChartDTO {
+    private Long id; // 추가된 ID 필드
+
     private Long fundId;
 
     @JsonDeserialize(using = LocalDateDeserializer.class) //

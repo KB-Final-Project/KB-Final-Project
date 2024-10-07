@@ -55,5 +55,6 @@ public class FundsDTO {
     @Builder.Default
     private List<SuikChartDTO> suikChart = new ArrayList<>(); // SuikChartDTO 리스트
 
-    private List<FundsDetailDTO> fundsDetail;
+    @Builder.Default
+    private List<FundsDetailDTO> fundsDetail = new ArrayList<>();
 }

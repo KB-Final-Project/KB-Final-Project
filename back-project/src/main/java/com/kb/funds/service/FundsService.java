@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kb.funds.dto.FundsDTO;
 import com.kb.funds.dto.FundsDetailDTO;
 import com.kb.funds.dto.SuikChartDTO;
+import com.kb.funds.mapper.FundsDetailMapper;
 import com.kb.funds.mapper.FundsMapper;
 import com.kb.funds.mapper.SuikChartMapper;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -24,8 +27,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -45,15 +46,18 @@ public class FundsService {
     private final FundsMapper fundsMapper;
     private final RestTemplate restTemplate;
     private final SuikChartMapper suikChartMapper;
+    private final FundsDetailMapper fundsDetailMapper;
     private static final Logger logger = LoggerFactory.getLogger(FundsService.class);
 
     @Transactional
     public void crawlAndSaveFunds() throws JsonProcessingException {
+        logger.error("Starting crawlAndSaveFunds method.");
         int pageNo = 1;
         boolean hasMoreFunds = true;
 
         while (hasMoreFunds) {
             List<FundsDTO> funds = crawlFundsFromWebsite(pageNo);
+            logger.info("Fetched funds for page {}: {}", pageNo, funds.size());
 
             if (funds.isEmpty()) {
                 hasMoreFunds = false;
@@ -61,7 +65,6 @@ public class FundsService {
                 for (FundsDTO fund : funds) {
                     try {
                         logger.info("Processing fund: {}", fund);
-
                         if (fund.getId() == null) {
                             fundsMapper.insertFund(fund);
                             logger.info("Inserted new fund ID: {}", fund.getFundCd());
@@ -72,6 +75,7 @@ public class FundsService {
                                 return; // 오류 처리
                             }
 
+                            logger.info("Calling crawlFundDetails for fund ID: {}", fund.getId());
                             // 상세 데이터 수집 및 저장
                             List<FundsDetailDTO> fundDetails = crawlFundDetails(fund);
                             saveFundDetails(fundDetails, fund.getId());
@@ -80,6 +84,7 @@ public class FundsService {
                             List<SuikChartDTO> suikCharts = fund.getSuikChart();
                             saveSuikCharts(suikCharts, fund.getId());
                         } else {
+                            logger.info("이미 데이터 있음. 업데이트 중");
                             fundsMapper.updateFund(fund);
                             suikChartMapper.deleteSuikChartByFundId(fund.getId()); // 기존 데이터 삭제
 
@@ -102,11 +107,11 @@ public class FundsService {
 
     private void saveFundDetails(List<FundsDetailDTO> fundDetails, Long fundId) {
         if (fundDetails != null && !fundDetails.isEmpty()) {
-            fundsMapper.deleteFundDetailsByFundId(fundId); // 기존 상세 정보 삭제
+            fundsDetailMapper.deleteFundDetailsByFundId(fundId); // 기존 상세 정보 삭제
             for (FundsDetailDTO detail : fundDetails) {
                 detail.setFundId(fundId); // 펀드 ID 설정
             }
-            fundsMapper.insertFundDetails(fundDetails);
+            fundsDetailMapper.insertFundDetails(fundDetails);
         } else {
             logger.warn("No fund details available to save for fund ID: {}", fundId);
         }
@@ -124,7 +129,6 @@ public class FundsService {
             logger.warn("No charts available to save for fund ID: {}", fundId);
         }
     }
-
 
     private List<FundsDTO> crawlFundsFromWebsite(int pageNo) throws JsonProcessingException {
         String url = "https://www.samsungfund.com/api/v1/fund/product.do?graphTerm=1&orderBy=DESC&orderByType=SUIK_RT3&pageNo=" + pageNo;
@@ -177,9 +181,8 @@ public class FundsService {
         String url = "https://www.samsungfund.com/fund/product/view.do?id=" + fundCd;
 
         ChromeOptions options = new ChromeOptions();
-        System.setProperty("webdriver.chrome.driver", "C:/chromeDriver/chromedriver-win64/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "C:/Tools/chromedriver/chromedriver.exe");
         options.addArguments("--remote-allow-origins=*");
-        options.addArguments("--headless");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--disable-gpu");
@@ -188,14 +191,19 @@ public class FundsService {
         options.addArguments("disable-blink-features=AutomationControlled");
         System.setProperty("webdriver.http.factory", "jdk-http-client");
 
-        WebDriver driver = new ChromeDriver(options);
-
+        WebDriver driver = null;
         try {
+            driver = new ChromeDriver(options);
+            logger.info("Attempting to navigate to URL: {}", url);
             driver.get(url);
+            logger.info("Successfully navigated to URL: {}", url);
+
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.assets-weight__table")));
+            logger.info("Element is visible: div.assets-weight__table");
 
             String htmlResponse = driver.getPageSource();
+            logger.info("Page source loaded successfully.");
             Document document = Jsoup.parse(htmlResponse);
 
             String rawGijunYmdStr = document.select("div.assets-weight__table .noti").text();
@@ -280,7 +288,9 @@ public class FundsService {
         } catch (Exception e) {
             logger.error("Error occurred while crawling detailed data for fund ID: {}. Error: {}", fund.getId(), e);
         } finally {
-            driver.quit();
+            if (driver != null) {
+                driver.quit();
+            }
         }
         return fundDetails; // List<FundsDetailDTO> 반환
     }
@@ -292,6 +302,8 @@ public class FundsService {
             crawlAndSaveFunds();
         } catch (JsonProcessingException e) {
             logger.error("Error occurred while crawling funds: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            logger.error("Unexpected error during scheduled crawl: {}", e.getMessage(), e);
         }
     }
 

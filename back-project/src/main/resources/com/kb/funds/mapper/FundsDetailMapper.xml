@@ -5,10 +5,11 @@
 
 <mapper namespace="com.kb.funds.mapper.FundsDetailMapper">
 
-    <insert id="insertFundsDetails" parameterType="java.util.List">
+    <!-- FundsDetailDTO 관련 메서드 -->
+    <insert id="insertFundDetails" parameterType="java.util.List">
         INSERT INTO fundsDetail (fundId, gijunYmd, evaluationAmount, weight, category)
         VALUES
-        <foreach collection="fundDetails" item="detail" separator=",">
+        <foreach collection="fundsDetail" item="detail" separator=",">
             (#{detail.fundId}, #{detail.gijunYmd}, #{detail.evaluationAmount}, #{detail.weight}, #{detail.category})
         </foreach>
         ON DUPLICATE KEY UPDATE
@@ -16,5 +17,9 @@
         weight = VALUES(weight),
         category = VALUES(category);
     </insert>
+
+    <delete id="deleteFundDetailsByFundId" parameterType="long">
+        DELETE FROM fundsDetail WHERE fundId = #{fundId}
+    </delete>
 
 </mapper>
