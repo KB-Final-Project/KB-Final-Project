@@ -14,7 +14,7 @@
           <p class="text-end">📚</p>
         </div>
         <div class="suggest">
-          <p>투자성향 TEST</p><br>
+          <p>투자성향TEST</p><br>
           <p class="text-end">💖</p>
         </div>
         <div class="suggest">

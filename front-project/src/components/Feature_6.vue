@@ -203,7 +203,7 @@
 }
 
 h3 {
-  margin-left: 25px;
+  margin-left: 5px;
   margin-top: 20px;
 }
 

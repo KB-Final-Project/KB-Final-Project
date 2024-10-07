@@ -5,7 +5,7 @@
         <br><br><br><br>
         <div class="headline">
           <h1>실시간 주요뉴스</h1>
-          <button class="seeMore_btn" @click="seeMore">더보기 > </button>
+          <button class="seeMore_btn" @click="seeMore">더보기 <i class="ai-chevron-right"></i></button>
         </div>
         <br>
         <div class="newsContent">
