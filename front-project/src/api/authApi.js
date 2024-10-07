@@ -34,6 +34,11 @@ export default {
     return data;
   },
 
+  async checkKakaoMember(kakaoId) {
+    const {data} = await api.get(`${BASE_URL}/checkkakao/${kakaoId}`)
+    return data;
+  },
+
  ///////////////// 회원 정보 가입 //////////////////////////
   async create(member) {
     const formData = new FormData();
@@ -82,5 +87,6 @@ export default {
     console.log('AUTH PUT: ', data);
     return data;
   },
+
 
 };

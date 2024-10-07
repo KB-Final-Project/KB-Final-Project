@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 @Data
 public class LoginDTO {
     private String id;
+    private String code;
     private String password;
+    private String redirectUrl;
 
     public static LoginDTO of(HttpServletRequest request) throws AuthenticationException {
         ObjectMapper om = new ObjectMapper();
