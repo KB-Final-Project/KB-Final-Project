@@ -73,6 +73,7 @@ const auth = useAuthStore();
 const member = reactive({
   id: '',
   password: '',
+  redirectUrl: '',
 });
 
 const error = ref('');
@@ -95,7 +96,9 @@ const login = async () => {
 };
 
 const kakaoLogin = async () => {
-    const kakaoAuthUrl = 'https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=b419d631890e7eb2484c6bd82b626d3e&redirect_uri=http://localhost:8081/auth/kakaologin';
+    const host = window.location.origin;
+    const redirectUri = `${host}/auth/kakaologin`;
+    const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=b419d631890e7eb2484c6bd82b626d3e&redirect_uri=${encodeURIComponent(redirectUri)}`;
     window.location.href = kakaoAuthUrl;
 };
 </script>
