@@ -19,8 +19,15 @@ CREATE TABLE SuikChart (
                            bmSuikJisu DOUBLE,                     -- 벤치마크 수익 지수
                            silhSuikRt DOUBLE,                     -- 실현 수익률
                            seoljAek DOUBLE,                       -- 순 자산
-                           evaluationAmount DOUBLE,			    -- 새로운 평가액
-                           weight DOUBLE, 							-- 새로운 비중
-                           category VARCHAR(255),					-- 자산 항목 구분
                            FOREIGN KEY (fundId) REFERENCES funds(id) -- 외래 키 제약 조건
+);
+
+CREATE TABLE FundsDetail (
+                             id BIGINT AUTO_INCREMENT PRIMARY KEY,  -- 자동 생성 ID
+                             fundId BIGINT NOT NULL,                -- 관련된 fund ID
+                             gijunYmd DATE NOT NULL,                -- 기준일
+                             evaluationAmount DOUBLE NOT NULL,      -- 평가액
+                             weight DOUBLE NOT NULL,                  -- 비중
+                             category VARCHAR(255),                   -- 카테고리
+                             FOREIGN KEY (fundId) REFERENCES Funds(id) -- Funds 테이블과의 외래 키 제약조건
 );
