@@ -9,11 +9,14 @@ const auth = useAuthStore();
 const error = ref('');
 const member = reactive({
   code: '',
+  redirectUrl: '',
 });
 
 
 onMounted(async () => {
   try {
+    const host = window.location.origin;
+    member.redirectUrl = `${host}/auth/kakaologin`;
     member.code = route.query.code;
     console.log(member);
 

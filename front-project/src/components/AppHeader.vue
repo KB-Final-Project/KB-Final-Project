@@ -73,7 +73,7 @@
           <template v-if="islogin">
             <li id="headerLoginBtn" class="nav-item dropdown" @mouseenter="hoverLoginDropdown(true)" @mouseleave="hoverLoginDropdown(false)">
               <router-link style="font-size:17px;" class="dropdown-item" to="/myPage">
-                {{id}} <i :class="loginDropdownState ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
+                {{name}} <i :class="loginDropdownState ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
               </router-link>
               <ul class="dropdown-menu" v-show="loginDropdownState">
                 <li>
@@ -87,7 +87,7 @@
           </template>
           <template v-else>
             <li id="headerLoginBtn" class="nav-item dropdown" @mouseenter="hoverLoginDropdown(true)" @mouseleave="hoverLoginDropdown(false)">
-              <router-link style="font-size:17px;" class="dropdown-item" to="/signin">
+              <router-link style="font-size:17px;" class="dropdown-item" to="/auth/login">
                 로그인 <i :class="loginDropdownState ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
               </router-link>
               <ul class="dropdown-menu" v-show="loginDropdownState">
@@ -95,7 +95,7 @@
                   <a style="font-size:17px;" class="dropdown-item" href="#">내 계정</a>
                 </li>
                 <li>
-                  <router-link style="font-size:17px;" class="dropdown-item" to="/signup">회원가입</router-link>
+                  <router-link style="font-size:17px;" class="dropdown-item" to="/auth/join">회원가입</router-link>
                 </li>
               </ul>
             </li>
