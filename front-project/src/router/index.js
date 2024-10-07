@@ -9,9 +9,9 @@ import TestResultPage from '@/views/menu/analysis/TestResultPage.vue';
 import Dictionary from '@/views/menu/dictionary/Dictionary.vue';
 import Savings from '@/views/menu/savings/Savings.vue';
 import SavingsDetail from '@/views/menu/savings/SavingsDetail.vue';
-import StockMain from '@/views/menu/stock/StockMain.vue';
-import StockDetail from '@/views/menu/stock/StockDetail.vue';
-import StockCategory from '@/views/menu/stock/StockCategory.vue'
+import StockMain from '@/views/StockMain.vue';
+import StockDetail from '@/views/StockDetail.vue';
+import StockCategory from '@/views/StockCategory.vue'
 import Gold from '@/views/menu/gold/Gold.vue';
 import GoldInvest from '@/views/menu/gold/GoldInvest.vue';
 import Calculator from '@/views/modal/Calculator.vue';
