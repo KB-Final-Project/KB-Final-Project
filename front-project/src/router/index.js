@@ -3,9 +3,9 @@ import Home from '@/views/Home.vue';
 import Signin from '@/views/Signin.vue';
 import Signup from '@/views/Signup.vue';
 import NewsPage from '@/views/NewsPage.vue';
-import TestStartPage from '@/views/TestStartPage.vue';
-import TestProcessPage from '@/views/TestProcessPage.vue';
-import TestResultPage from '@/views/TestResultPage.vue';
+import TestStartPage from '@/views/menu/analysis/TestStartPage.vue';
+import TestProcessPage from '@/views/menu/analysis/TestProcessPage.vue';
+import TestResultPage from '@/views/menu/analysis/TestResultPage.vue';
 import Dictionary from '@/views/menu/dictionary/Dictionary.vue';
 import Savings from '@/views/menu/savings/Savings.vue';
 import SavingsDetail from '@/views/menu/savings/SavingsDetail.vue';
@@ -38,12 +38,24 @@ import LoginPage from '@/views/auth/LoginPage.vue';
 import LoginPageForKakao from '@/views/auth/LoginPageForKakao.vue';
 import JoinPage from '@/views/auth/JoinPage.vue';
 import JoinPageForKakao from '@/views/auth/JoinPageForKakao.vue';
+import PrivacyPage from "@/views/PrivacyPage.vue";
+import CommunityPrivacy from "@/views/menu/community/CommunityPrivacy.vue";
 
 const routes = [
   {
     path: '/stockcategory',
     name: 'StockCategory',
     component: StockCategory
+  },
+  {
+    path: '/communityPrivacy',
+    name: 'communityPrivacy',
+    component: CommunityPrivacy
+  },
+  {
+    path: '/privacyPage',
+    name: 'privacyPage',
+    component: PrivacyPage
   },
   {
     path: '/',

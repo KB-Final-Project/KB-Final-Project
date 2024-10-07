@@ -537,6 +537,7 @@ export default {
 }
 
 .result-view {
+  font-family: J5;
   text-align: center;
   background-color: #f9f9f9;
   display: flex;
@@ -576,6 +577,7 @@ b {
 }
 
 .result-card {
+  font-family: J3;
   background-color: #ECCB50;
   padding: 20px;
   border-radius: 15px;
@@ -583,6 +585,10 @@ b {
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   width: 300px;
   text-align: center;
+}
+
+.result-card h3 {
+  font-family: J5;
 }
 
 .result-icon {
@@ -595,6 +601,7 @@ b {
 }
 
 .content-cards {
+  font-family: J3;
   display: flex;
   color: white;
   margin-top: 35px;

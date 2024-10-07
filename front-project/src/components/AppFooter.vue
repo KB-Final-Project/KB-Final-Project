@@ -20,7 +20,7 @@
           <li class="footerInfo d-inline">
             <span>회사소개</span>
             <span>|</span>
-            <span><a href="#">개인정보처리방침</a></span>
+            <span><a href="/privacyPage">개인정보처리방침</a></span>
             <span>|</span>
             <span>자주 묻는 질문</span>
             <span>|</span>
@@ -38,6 +38,7 @@ footer {
   display: flex;
   justify-content: center; /* 수평 가운데 정렬 */
   align-items: flex-start; /* 상단 정렬 */
+  font-family: J3;
 }
 
 .footer {

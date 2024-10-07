@@ -137,6 +137,14 @@ onMounted(() => {
     </div>
     <br />
   </div>
+  <br> <br> <br> <br>
+  <div class="warnSign">
+    <h5>커뮤니티는 게시글 제공만 하고 있습니다<br>
+      서비스는
+      <a href="/communityPrivacy" class="d-inline"> 커뮤니티정책</a>에 따라 운영됩니다</h5>
+  </div>
+
+
   <!-- WriterPopup 컴포넌트 (모달) -->
   <WriterPopup v-if="showModal" @close="closePopup" />
 
@@ -145,6 +153,14 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.warnSign p{
+  color: #0f9d58;
+}
+
+a{
+  color:#0f9d58;
+}
+
 .writerBtn {
   width: 300px;
   height: 50px;

@@ -36,12 +36,13 @@
 </script>
 
 <style scoped>
-.todayStock h3 {
-  margin: 20px;
+.todayExchange a{
+  text-decoration: none;
+  color: black;
 }
 .review-section__title {
-  font-weight: 600;
   font-size: 40px;
+  font-family: J6;
 }
 
 .currency-buttons {
@@ -60,7 +61,6 @@
 
 .todayBox h3 {
   font-size: 30px;
-  font-weight: 600;
 }
 
 .todayCo {
@@ -94,7 +94,8 @@
   font-size: 20px;
 }
 
-.todayExchange h3 {
+h3 {
+  font-family: J4;
   margin: 20px;
 }
 
@@ -110,5 +111,9 @@
 
 .exchangeTitle{
   width: 300px;
+}
+
+button {
+  font-family: J3;
 }
 </style>

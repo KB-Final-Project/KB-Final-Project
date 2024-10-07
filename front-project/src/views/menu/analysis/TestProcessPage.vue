@@ -5,7 +5,8 @@
       <div class="progress-container">
         <div class="progress-bar">
           <div class="progress" :style="{ width: progressWidth + '%' }"></div>
-          <img src="/img/emoji/balloon.svg" class="balloon-icon" alt="Balloon Icon" :style="{ left: progressWidth + '%' }">
+          <img src="/img/emoji/balloon.svg" class="balloon-icon" alt="Balloon Icon"
+            :style="{ left: progressWidth + '%' }">
         </div>
       </div>
     </div>
@@ -22,7 +23,7 @@
         <!-- 선택지 -->
         <div class="options">
           <button v-for="(option, index) in currentQuestion.options" :key="index"
-                  :class="{ selected: selectedOption === index }" @click="selectOption(index)">
+            :class="{ selected: selectedOption === index }" @click="selectOption(index)">
             {{ option.text }}
           </button>
         </div>
@@ -215,6 +216,7 @@ export default {
 
 <style scoped>
 .survey-view {
+  font-family: J2;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -225,13 +227,15 @@ export default {
 .header {
   flex: 0 0 auto;
   background-color: #f9f9f9;
-  padding-top: 80px; /* 위쪽 여백 */
+  padding-top: 80px;
+  /* 위쪽 여백 */
   width: 100%;
   box-sizing: border-box;
 }
 
 .progress-container {
-  position: relative; /* 프로그레스 바와 아이콘이 위치할 컨테이너 */
+  position: relative;
+  /* 프로그레스 바와 아이콘이 위치할 컨테이너 */
   width: 60%;
   margin: 0 auto;
 }
@@ -253,12 +257,15 @@ export default {
 /* 풍선 아이콘을 프로그레스 바 위에 위치하도록 설정 */
 .balloon-icon {
   position: absolute;
-  top: -45px; /* 프로그레스 바 위에 위치 조정 */
-  transform: translateX(-50%); /* 아이콘을 프로그레스 바의 끝에 걸치게 조정 */
+  top: -45px;
+  /* 프로그레스 바 위에 위치 조정 */
+  transform: translateX(-50%);
+  /* 아이콘을 프로그레스 바의 끝에 걸치게 조정 */
   width: 40px;
   height: 40px;
   z-index: 999;
-  transition: left 0.3s ease; /* 아이콘 이동 애니메이션 */
+  transition: left 0.3s ease;
+  /* 아이콘 이동 애니메이션 */
   color: #458D75;
 }
 
@@ -339,7 +346,6 @@ h2 {
 
 /* 하단 중앙 고정 영역 */
 .footer {
-  flex: 0 0 auto;
   display: flex;
   justify-content: center;
   padding: 20px;

@@ -1,7 +1,6 @@
 <template>
   <div class="home">
     <Feature_1 v-if="feature1Visible" class="animated-item" />
-    <br><br><br><br>
     <Feature_2 v-if="feature2Visible" class="animated-item" />
     <br><br>
     <Feature_3 v-if="feature3Visible" class="animated-item" />

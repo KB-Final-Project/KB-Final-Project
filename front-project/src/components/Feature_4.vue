@@ -4,30 +4,31 @@
     <div class="f4_trendMain">
       <!-- trendMenu -->
       <div class="trendMenu">
-          <button class="trendBtn d-inline text-start p-1">국내주식</button>
-          <h1 class="d-inline">트렌드<br>한눈에 보기</h1><br>
-          <br><h3>전체 운용상품 보러가기 ></h3>
+        <button class="trendBtn  p-1">국내주식</button>
+        <h1 class="d-inline">트렌드<br></h1>
+        <h1 class="d-inline m-l">한눈에 보기</h1><br>
+        <br><button class="goToStock_btn" @click="goToStock">전체 운용상품 보러가기 <i class="ai-chevron-right"></i></button>
         <img src="/img/trend.png" class="trendImage">
       </div>
 
       <!-- trendGraph -->
       <div class="trendGraph">
-        <div class="btn1 text-start">
+        <div class="btn1 ">
           <img src="/img/imsi.png">
           <span>삼성전자</span>
           <img src="/img/graph.png">
         </div>
-        <div class="btn2 text-start">
+        <div class="btn2 ">
           <img src="/img/imsi.png">
           <span>유한양행</span>
           <img src="/img/graph.png">
         </div>
-        <div class="btn1 text-start">
+        <div class="btn1 ">
           <img src="/img/imsi.png">
           <span>SK 하이닉스</span>
           <img src="/img/graph.png">
         </div>
-        <div class="btn2 text-start">
+        <div class="btn2 ">
           <img src="/img/imsi.png">
           <span>LG 전자</span>
           <img src="/img/graph.png">
@@ -64,30 +65,29 @@
 
 .trendBtn {
   width: 220px;
-  height: 70px;
   font-size: 50px;
   font-weight: 700;
   border: none;
   border-radius: 30px;
   background-color: rgba(241, 250, 247, 1);
   color: rgba(68, 140, 116, 1);
-  letter-spacing: -1px;
   z-index: 2;
 }
 
 .trendImage {
-  margin-top: -40%;
+  margin-top: -35%;
   margin-left: 70%;
   z-index: -1;
 }
 
 .trendGraph {
   display: flex;
+  font-family: J3;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  width: 400px; /* 적절한 폭 설정 */
-  margin-left: 60px; /* trendMenu와 간격 */
+  width: 400px;
+  margin-left: 60px;
 }
 
 .trendGraph span {
@@ -123,7 +123,30 @@
   margin-left: 60px;
 }
 
+.m-l {
+  margin-left: 25px;
+}
+
+.goToStock_btn {
+  margin-left: 25px;
+  margin-top: 20px;
+  font-size: 25px;
+  border: none;
+  background: none;
+}
+
+.trendMenu {
+  font-family: J5;
+}
 </style>
 
-<script setup lang="ts">
+<script setup>
+import router from '@/router';
+
+const goToStock = () => {
+  router.push('/StockMain'); // 지정된 경로로 페이지 이동
+};
+
 </script>
+
+

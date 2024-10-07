@@ -18,7 +18,7 @@
           <p class="text-end">💖</p>
         </div>
         <div class="suggest">
-          <p>챗붓 상담</p><br>
+          <p>챗봇 상담</p><br>
           <p class="text-end">👨‍🎓</p>
         </div>
         <br><br>
@@ -49,6 +49,7 @@
   padding: 25px;
   font-size: 30px;
   text-align: start;
+  font-family: J4;
 }
 
 .suggestion{
@@ -60,6 +61,7 @@
 
 .text-start{
   margin-left: 40px;
+  font-family: J6;
 }
 </style>
 

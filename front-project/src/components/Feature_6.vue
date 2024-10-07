@@ -73,8 +73,9 @@
 
       <!-- trendMenu -->
       <div class="trendMenu">
-        <button class="trendBtn d-inline text-start p-1">국내펀드</button>
-        <h1 class="d-inline">트렌드<br>한눈에 보기</h1><br>
+        <button class="trendBtn">국내펀드</button>
+        <h1 class="d-inline">트렌드<br></h1>
+        <h1 class="d-inline m-l">한눈에 보기</h1><br>
         <br><h3>전체 운용상품 보러가기 ></h3>
         <img src="/img/emoji/fund4.PNG" class="trendImage">
       </div>
@@ -103,6 +104,7 @@
 }
 
 .f6_trendMain {
+  font-family: J3;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -127,7 +129,6 @@
 
 .trendBtn {
   width: 220px;
-  height: 70px;
   font-size: 50px;
   font-weight: 700;
   border: none;
@@ -140,8 +141,8 @@
 
 .trendImage {
   width: 200px;
-  margin-top: -20%;
-  margin-left: 70%;
+  margin-top: -40%;
+  margin-left: 75%;
   z-index: -1;
 }
 
@@ -195,6 +196,19 @@
   height: 50px;
   margin: 0 27px;
   border-radius: 50%;
+}
+
+.m-l{
+  margin-left: 25px;
+}
+
+h3 {
+  margin-left: 5px;
+  margin-top: 20px;
+}
+
+.trendMenu {
+  font-family: J5;
 }
 </style>
 
