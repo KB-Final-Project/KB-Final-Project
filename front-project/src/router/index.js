@@ -12,6 +12,7 @@ import SavingsDetail from '@/views/menu/savings/SavingsDetail.vue';
 import StockMain from '@/views/StockMain.vue';
 import StockDetail from '@/views/StockDetail.vue';
 import StockCategory from '@/views/StockCategory.vue'
+import StockChart from '@/views/StockChart.vue'
 import Gold from '@/views/menu/gold/Gold.vue';
 import GoldInvest from '@/views/menu/gold/GoldInvest.vue';
 import Calculator from '@/views/modal/Calculator.vue';
@@ -42,6 +43,22 @@ import PrivacyPage from "@/views/PrivacyPage.vue";
 import CommunityPrivacy from "@/views/menu/community/CommunityPrivacy.vue";
 
 const routes = [
+  {
+    path: '/stock/:stockCode',
+    name: 'StockChart',
+    component: StockChart,
+    props: route => ({
+      stockCode: route.params.stockCode,
+      stockName: route.query.stockName,
+      currentPrice: route.query.currentPrice,
+      priceChange: route.query.priceChange,
+      priceChangePct: route.query.priceChangePct,
+      volume: route.query.volume,
+      marketCap: route.query.marketCap,
+      high52week: route.query.high52week,
+      low52week: route.query.low52week
+    })
+  },
   {
     path: '/stockcategory',
     name: 'StockCategory',
