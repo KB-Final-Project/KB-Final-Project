@@ -18,6 +18,9 @@ public class StockDTO {
     private Long volume;                 // 거래량
     private LocalDateTime lastUpdated;   // 마지막 업데이트 시간
     private String industry;             // 업종
+    private BigDecimal w52Hgpr;          // 52주 최고가
+    private BigDecimal w52Lwpr;          // 52주 최저가
+    private BigDecimal htsAvls;          // HTS 시가총액
 
     //주식상품종목
     private String prdtTypeCd;           // 상품유형코드
