@@ -35,6 +35,7 @@
 }
 
 .test-start-view {
+  font-family: J5;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -52,7 +53,6 @@
 
 .test-start-view h1 {
   font-size: 36px;
-  font-weight: bold;
   margin-bottom: 20px;
 }
 
