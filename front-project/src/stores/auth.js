@@ -52,6 +52,12 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('auth', JSON.stringify(state.value));
   };
 
+//   const kakaoLogin = async (member) => {
+//     const { data } = await axios.post('/api/auth/kakao-login', member);
+//     console.log(data);
+//     state.value = { ...data };
+//     localStorage.setItem('auth', JSON.stringify(state.value));
+// };
 // 로그인 요청을 보내고, 서버로부터 받은 인증 정보를 상태와 localStorage에 저장하는 역할
 // axios.post('/api/auth/login', member): member 정보를 사용해 /api/auth/login API에 로그인 요청을 보냄.
 // { data } = await axios.post(...): API 요청이 완료되면 서버에서 받은 응답 데이터를 data에 저장

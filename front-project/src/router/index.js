@@ -9,9 +9,9 @@ import TestResultPage from '@/views/menu/analysis/TestResultPage.vue';
 import Dictionary from '@/views/menu/dictionary/Dictionary.vue';
 import Savings from '@/views/menu/savings/Savings.vue';
 import SavingsDetail from '@/views/menu/savings/SavingsDetail.vue';
-import StockMain from '@/views/StockMain.vue';
-import StockDetail from '@/views/StockDetail.vue';
-import StockCategory from '@/views/StockCategory.vue'
+import StockMain from '@/views/menu/stock/StockMain.vue';
+import StockDetail from '@/views/menu/stock/StockDetail.vue';
+import StockCategory from '@/views/menu/stock/StockCategory.vue'
 import Gold from '@/views/menu/gold/Gold.vue';
 import GoldInvest from '@/views/menu/gold/GoldInvest.vue';
 import Calculator from '@/views/modal/Calculator.vue';
@@ -34,13 +34,28 @@ import AggressiveInvestment from "@/views/menu/community/AggressiveInvestment.vu
 import Stability from "@/views/menu/community/Stability.vue";
 import RiskNeutral from "@/views/menu/community/RiskNeutral.vue";
 import Community from "@/views/menu/community/Community.vue";
-
+import LoginPage from '@/views/auth/LoginPage.vue';
+import LoginPageForKakao from '@/views/auth/LoginPageForKakao.vue';
+import JoinPage from '@/views/auth/JoinPage.vue';
+import JoinPageForKakao from '@/views/auth/JoinPageForKakao.vue';
+import PrivacyPage from "@/views/PrivacyPage.vue";
+import CommunityPrivacy from "@/views/menu/community/CommunityPrivacy.vue";
 
 const routes = [
   {
     path: '/stockcategory',
     name: 'StockCategory',
     component: StockCategory
+  },
+  {
+    path: '/communityPrivacy',
+    name: 'communityPrivacy',
+    component: CommunityPrivacy
+  },
+  {
+    path: '/privacyPage',
+    name: 'privacyPage',
+    component: PrivacyPage
   },
   {
     path: '/',
@@ -103,6 +118,30 @@ const routes = [
     path: '/saving/:savingId',
     name: 'savingDetail',
     component: SavingsDetail,
+  },
+  {
+    path: '/auth/login',
+    name: 'login',
+    component: LoginPage,
+    meta: { hideHeaderFooter: true, hidePadding: true  },
+  },
+  {
+    path: '/auth/kakaologin',
+    name: 'kakaologin',
+    component: LoginPageForKakao,
+    meta: { hideHeaderFooter: true, hidePadding: true  },
+  },
+  {
+    path: '/auth/join',
+    name: 'join',
+    component: JoinPage,
+    meta: { hideHeaderFooter: true, hidePadding: true  },
+  },
+  {
+    path: '/auth/kakaojoin',
+    name: 'kakaojoin',
+    component: JoinPageForKakao,
+    meta: { hideHeaderFooter: true, hidePadding: true  },
   },
 
   {

@@ -2,13 +2,13 @@
   <div class="bc">
     <div class="container text-center animate-on-load">
       <br><br>
-      <h1>용어 사전</h1><br><br>
-      <div class="content" :class="{ 'slide-up': loading }">
-        <div class="dic">
+      <h1 class="text-slide-up">용어 사전</h1><br><br>
+      <div class="content" :class="{ 'slide-up': filteredTerms.length > 0 && !loading }">
+        <div class="dic text-slide-up">
           <br>
           <table class="text-start">
             <tbody>
-            <tr class="firstFilter">
+            <tr class="firstFilter text-slide-up">
               <td>
                 <h4>금융용어</h4>
               </td>
@@ -24,7 +24,7 @@
                 </div>
               </td>
             </tr>
-            <tr class="firstFilter">
+            <tr class="firstFilter text-slide-up">
               <td style="width: 15%;">
                 <h4>한글 순</h4>
               </td>
@@ -33,12 +33,12 @@
                     v-for="hangul in hangulList"
                     :key="hangul"
                     :class="{ 'activeBtn': selectedHangul === hangul }"
-                    class="hangul"
+                    class="hangul text-slide-up"
                     @click="filterTermsByHangul(hangul)"
                 >{{ hangul }}</button>
               </td>
             </tr>
-            <tr class="firstFilter">
+            <tr class="firstFilter text-slide-up">
               <td>
                 <h4>알파벳 순</h4>
               </td>
@@ -47,7 +47,7 @@
                     v-for="alphabet in alphabetList"
                     :key="alphabet"
                     :class="{ 'activeBtn': selectedAlphabet === alphabet }"
-                    class="hangul"
+                    class="hangul text-slide-up"
                     @click="filterTermsByAlphabet(alphabet)"
                 >{{ alphabet }}</button>
               </td>
@@ -57,29 +57,29 @@
           <br>
         </div>
         <br>
-        <h5 class="text-end" style="width: 93%;">
+        <h5 class="text-end text-slide-up" style="width: 93%;">
           <i class="ai-search"></i>"{{ searchTerm }}{{selectedHangul}}{{selectedAlphabet}}" 검색 결과 "{{ filteredTerms.length }}"건의 정보가 검색되었습니다.
         </h5>
         <div class="row">
           <div class="p-2 col-4 scrollbar">
             <ul class="text-start dicSubject">
-              <li v-if="filteredTerms.length === 0">
+              <li v-if="filteredTerms.length === 0" class="text-slide-up">
                 <h3>검색된 검색어가 없습니다.</h3>
               </li>
               <li v-for="(term, index) in filteredTerms"
                   :key="index"
                   @click="selectTerm(term)"
                   :class="{ 'active': selectedTerm === term }">
-                <h3>{{ term.termName }}</h3>
+                <h3 class="text-slide-up">{{ term.termName }}</h3>
               </li>
             </ul>
           </div>
           <div class="p-2 col-7 text-start">
             <span v-if="filteredTerms.length === 0">
-              <h3 class="test-center m-5">검색된 검색어가 없습니다.</h3>
+              <h3 class="test-center m-5 text-slide-up">검색된 검색어가 없습니다.</h3>
             </span>
-            <h2 v-if="selectedTerm">{{ selectedTerm.termName }}</h2>
-            <p v-if="selectedTerm">{{ selectedTerm.termDescription }}</p>
+            <h2 v-if="selectedTerm" class="text-slide-up">{{ selectedTerm.termName }}</h2>
+            <p v-if="selectedTerm" class="text-slide-up">{{ selectedTerm.termDescription }}</p>
           </div>
         </div>
       </div>
@@ -178,6 +178,7 @@ export default {
 .active {
   text-decoration: underline;
 }
+
 .scrollbar {
   overflow-y: scroll; /* 세로 스크롤바 */
   scrollbar-width: thin; /* Firefox에서 스크롤바 폭 설정 */
@@ -198,6 +199,10 @@ export default {
 
 .scrollbar::-webkit-scrollbar-track {
   background: transparent; /* 스크롤바 배경 투명하게 설정 */
+}
+
+.container {
+  font-family: J5;
 }
 
 .scrollbar::-webkit-scrollbar-corner {
@@ -235,6 +240,8 @@ export default {
   border-radius: 30px;
 }
 
+h3{ font-family: J3;}
+
 .searchBtn {
   display: inline-block;
   width: 80px;
@@ -270,6 +277,7 @@ table {
 
 h4 {
   margin-right: 2%;
+  font-family: J3;
 }
 
 .search {
@@ -337,5 +345,9 @@ template {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+.text-slide-up {
+  animation: slideUp 0.9s ease forwards;
 }
 </style>
