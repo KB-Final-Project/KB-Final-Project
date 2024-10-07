@@ -36,6 +36,10 @@
 </script>
 
 <style scoped>
+.todayExchange a{
+  text-decoration: none;
+  color: black;
+}
 .review-section__title {
   font-size: 40px;
   font-family: J6;

@@ -1,5 +1,6 @@
 <template>
   <div class="container text-center">
+    <br><br>
     <h1 class="d-inline">펀드 </h1><p class="d-inline"></p>
     <br><br>
     <div class="savingBest">
