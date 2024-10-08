@@ -80,12 +80,14 @@ CREATE TABLE funds (
                        gijunYmd DATE,                      -- 기준일 (LocalDate에 해당)
                        suikRt1 DECIMAL(19, 4),            -- 1개월 수익률
                        suikRt3 DECIMAL(19, 4),            -- 3개월 수익률
+                       suikRt6 DECIMAL(19, 4),            -- 6개월 수익률
                        suikRt12 DECIMAL(19, 4),           -- 1년 수익률
                        investGrade INT,                -- 투자 위험 등급
                        feeTot DECIMAL(19, 4),              -- 총 유동
                        bmNm VARCHAR(255),                   -- 벤치마크
-                       fundCd VARCHAR(100)					-- 펀드코드
+                       navTot DECIMAL(19, 4)                           -- 순 자산
 );
+
 
 CREATE TABLE SuikChart (
                            id BIGINT AUTO_INCREMENT PRIMARY KEY, -- 수익 차트 ID (기본 키)
