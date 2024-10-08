@@ -17,33 +17,36 @@ function closePopup() {
 
       <textarea placeholder="무슨 일이 일어나고 있나요?" rows="5"></textarea>
       <div class="filebox">
-        <input type="file" id="file">
-      </div>
-      <div class="filebox">
-        <input type="file" id="file">
+        <label for="file">
+          <i class="ai-image"></i>
+        </label>
+        <input type="file" id="file" style="display: none;" />
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.filebox input[type="file"] {
-  position: absolute;
-  width: 0;
-  height: 0;
-  padding: 0;
-  overflow: hidden;
-  border: 0;
+.filebox {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.ai-image {
+  font-size: 24px;
+  cursor: pointer;
+  color: rgba(67, 140, 116, 1);
 }
 
 .popup-content img {
   width: 70px;
   border-radius: 50%;
+
 }
 
 .writer {
   width: 449px;
-  height: 300px;
+  height: 330px;
   border: 1px solid lightgrey;
   border-radius: 30px;
 }

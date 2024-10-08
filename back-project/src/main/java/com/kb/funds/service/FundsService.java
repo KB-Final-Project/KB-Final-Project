@@ -109,4 +109,6 @@ public class FundsService {
     public List<FundsDTO> findAllFunds() {
         return fundsMapper.findAllFunds();
     }
+
 }
+

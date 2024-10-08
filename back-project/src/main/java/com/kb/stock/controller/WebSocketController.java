@@ -50,7 +50,7 @@ public class WebSocketController {
         }
     }
 
-    @ApiOperation(value = "10개 실시간 소켓", notes = "WebSocket을 통해 수신된 10개 종목의 최신 주식 가격 정보를 반환합니다.")
+    @ApiOperation(value = "현재 주식 가격을 조회합니다.", notes = "WebSocket을 통해 수신된 10개 종목의 최신 주식 가격 정보를 반환합니다.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "조회 성공"),
             @ApiResponse(code = 204, message = "데이터 없음")
@@ -93,7 +93,7 @@ public class WebSocketController {
         }
     }
 
-    @ApiOperation(value = "웹소켓 10개 코드 목록을 조회합니다.", notes = "현재 실시간 데이터를 수신 중인 10개 주식 코드 목록을 반환합니다.")
+    @ApiOperation(value = "구독 중인 주식 코드 목록을 조회합니다.", notes = "현재 실시간 데이터를 수신 중인 10개 주식 코드 목록을 반환합니다.")
     @PostMapping("/subscribe")
     public ResponseEntity<String> subscribeStocks(@RequestBody List<String> stockCodes) {
         for (String stockCode : stockCodes) {

@@ -18,6 +18,7 @@ import javax.servlet.ServletRegistration;
 
 @Slf4j
 @Configuration
+
 @PropertySource({"classpath:/application.properties"})
 public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer implements WebMvcConfigurer {
     @Value("#{'${os_type}' == 'win' ? '${file_save_location_win}':'${file_save_location_other}'}")

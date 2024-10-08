@@ -30,10 +30,9 @@ import MyPageWarning from "@/views/myPage/MyPageWarning.vue";
 import DepositDetail from "@/views/menu/desposit/DepositDetail.vue";
 import SignCoverImage from "@/views/SignCoverImage.vue";
 import ActiveInvestment from "@/views/menu/community/ActiveInvestment.vue";
-import StabilitySeeking from "@/views/menu/community/StabilitySeeking.vue";
 import AggressiveInvestment from "@/views/menu/community/AggressiveInvestment.vue";
 import Stability from "@/views/menu/community/Stability.vue";
-import RiskNeutral from "@/views/menu/community/RiskNeutral.vue";
+import Neutral from "@/views/menu/community/Neutral.vue";
 import Community from "@/views/menu/community/Community.vue";
 import LoginPage from '@/views/auth/LoginPage.vue';
 import LoginPageForKakao from '@/views/auth/LoginPageForKakao.vue';
@@ -41,6 +40,7 @@ import JoinPage from '@/views/auth/JoinPage.vue';
 import JoinPageForKakao from '@/views/auth/JoinPageForKakao.vue';
 import PrivacyPage from "@/views/PrivacyPage.vue";
 import CommunityPrivacy from "@/views/menu/community/CommunityPrivacy.vue";
+import FundTheme from "@/views/menu/fund/FundTheme.vue";
 
 const routes = [
   {
@@ -192,6 +192,11 @@ const routes = [
     component: Fund,
   },
   {
+    path: '/fundTheme', // Fund 페이지 경로 추가
+    name: 'fundTheme',
+    component: FundTheme,
+  },
+  {
     path: '/fundDetail', // Fund 페이지 경로 추가
     name: 'fundDetail',
     component: FundDetail,
@@ -250,9 +255,9 @@ const routes = [
     component: Community, // community.vue를 레이아웃 컴포넌트로 사용
     children: [
       {
-        path: 'stabilitySeeking',
-        name: 'stabilitySeeking',
-        component: StabilitySeeking,
+        path: 'stability',
+        name: 'stability',
+        component: Stability,
       },
       {
         path: 'aggressiveInvestment',
@@ -265,14 +270,9 @@ const routes = [
         component: ActiveInvestment,
       },
       {
-        path: 'stability',
-        name: 'stability',
-        component: Stability,
-      },
-      {
-        path: 'riskNeutral',
-        name: 'riskNeutral',
-        component: RiskNeutral,
+        path: 'neutral',
+        name: 'neutral',
+        component: Neutral,
       },
     ],
   },

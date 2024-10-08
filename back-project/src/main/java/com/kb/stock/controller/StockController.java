@@ -50,23 +50,4 @@ public class StockController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    @ApiOperation(value = "주식 기본 정보를 조회합니다.", notes = "해당 주식 코드를 통해 한국투자증권 API로부터 주식 기본 정보를 가져옵니다.")
-    @GetMapping("/basic-info/{stockCode}")
-    public ResponseEntity<StockDTO> getStockBasicInfo(
-            @ApiParam(value = "조회할 주식 종목 코드", required = true)
-            @PathVariable String stockCode) {
-        logger.info("getStockBasicInfo 메서드 호출됨, 종목 코드: {}", stockCode);
-        try {
-            StockDTO stockInfo = stockService.getStockBasicInfo(stockCode);
-            if (stockInfo != null) {
-                return ResponseEntity.ok(stockInfo);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();  // 주식 정보를 찾을 수 없을 경우 404 반환
-            }
-        } catch (Exception e) {
-            logger.error("주식 기본 정보 조회 중 오류 발생: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
 }

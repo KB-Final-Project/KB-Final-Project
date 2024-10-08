@@ -211,6 +211,7 @@ button.seeMore_btn {
   line-height: 2;
   float: left;
   padding-right: 50px;
+  cursor: pointer;
 }
 
 .sideNewsDate {

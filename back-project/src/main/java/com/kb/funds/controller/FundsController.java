@@ -4,13 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kb.funds.dto.FundsDTO;
 import com.kb.funds.service.FundsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-
 @RequestMapping("/api/funds")
 public class FundsController {
 
@@ -31,7 +31,9 @@ public class FundsController {
 
     // 모든 펀드 조회 엔드포인트 (옵션)
     @GetMapping("/all")
-    public List<FundsDTO> findAllFunds() {
-        return fundsService.findAllFunds();
+    public ResponseEntity<List<FundsDTO>> findAllFunds() {
+        return ResponseEntity.ok(fundsService.findAllFunds());
     }
+
+
 }

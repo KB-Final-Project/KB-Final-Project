@@ -41,7 +41,6 @@ public class StockService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    private static final String PRODUCT_TYPE_CODE = "300";
     private static final int MAX_RETRIES = 3;
     private static final long RETRY_DELAY_MS = 1000;
     private static final int REQUESTS_PER_SECOND = 20;
@@ -49,10 +48,8 @@ public class StockService {
 
     private StockWebSocketHandler webSocketHandler;
     private final Set<String> subscribedStocks = ConcurrentHashMap.newKeySet();
-
     @Autowired
     private WebSocketService webSocketService;
-
     @PostConstruct
     public void init() {
         int result = stockMapper.checkDatabaseConnection();
@@ -68,6 +65,7 @@ public class StockService {
 
     public void addSubscription(String stockCode) {
         subscribedStocks.add(stockCode);
+
     }
 
     public void removeSubscription(String stockCode) {
@@ -118,13 +116,8 @@ public class StockService {
                     StockDTO stockDTO = mapToStockDTO(stockData);
                     if (stockDTO != null) {
                         upsertStockData(stockDTO);
-
-                        if (webSocketService != null) {
-                            webSocketService.updateLastPrices(stockDTO.getStockCode(), stockDTO.getCurrentPrice().doubleValue());
-                            logger.info("Successfully updated stock data for {}", stockCode);
-                        } else {
-                            logger.warn("WebSocketService is null, cannot update last prices for stock code: {}", stockCode);
-                        }
+                        webSocketService.updateLastPrices(stockDTO.getStockCode(), stockDTO.getCurrentPrice().doubleValue());
+                        logger.info("Successfully updated stock data for {}", stockCode);
 
                     } else {
                         logger.warn("Stock data is incomplete for {}", stockCode);
@@ -214,30 +207,6 @@ public class StockService {
             stockDTO.setOpeningPrice(stockData.get("stck_oprc") != null ? new BigDecimal(stockData.get("stck_oprc").toString()) : BigDecimal.ZERO);
             stockDTO.setIndustry(stockData.get("bstp_kor_isnm") != null ? stockData.get("bstp_kor_isnm").toString() : "");
             stockDTO.setVolume(stockData.get("acml_vol") != null ? Long.parseLong(stockData.get("acml_vol").toString()) : 0L);
-            stockDTO.setW52Hgpr(stockData.get("w52_hgpr") != null ? new BigDecimal(stockData.get("w52_hgpr").toString()) : BigDecimal.ZERO);
-            stockDTO.setW52Lwpr(stockData.get("w52_lwpr") != null ? new BigDecimal(stockData.get("w52_lwpr").toString()) : BigDecimal.ZERO);
-            stockDTO.setHtsAvls(stockData.get("hts_avls") != null ? new BigDecimal(stockData.get("hts_avls").toString()) : BigDecimal.ZERO);
-
-            // 추가된 주식 상품 정보 매핑
-            stockDTO.setPrdtTypeCd(stockData.get("prdt_type_cd") != null ? stockData.get("prdt_type_cd").toString() : "");
-            stockDTO.setPrdtName120(stockData.get("prdt_name120") != null ? stockData.get("prdt_name120").toString() : "");
-            stockDTO.setPrdtAbrvName(stockData.get("prdt_abrv_name") != null ? stockData.get("prdt_abrv_name").toString() : "");
-            stockDTO.setPrdtEngName(stockData.get("prdt_eng_name") != null ? stockData.get("prdt_eng_name").toString() : "");
-            stockDTO.setPrdtEngName120(stockData.get("prdt_eng_name120") != null ? stockData.get("prdt_eng_name120").toString() : "");
-            stockDTO.setPrdtEngAbrvName(stockData.get("prdt_eng_abrv_name") != null ? stockData.get("prdt_eng_abrv_name").toString() : "");
-            stockDTO.setStdPdno(stockData.get("std_pdno") != null ? stockData.get("std_pdno").toString() : "");  // 표준상품번호
-            stockDTO.setShtnPdno(stockData.get("shtn_pdno") != null ? stockData.get("shtn_pdno").toString() : "");  // 단축상품번호
-            stockDTO.setPrdtSaleStatCd(stockData.get("prdt_sale_stat_cd") != null ? stockData.get("prdt_sale_stat_cd").toString() : "");
-            stockDTO.setPrdtRiskGradCd(stockData.get("prdt_risk_grad_cd") != null ? stockData.get("prdt_risk_grad_cd").toString() : "");
-            stockDTO.setPrdtClsfCd(stockData.get("prdt_clsf_cd") != null ? stockData.get("prdt_clsf_cd").toString() : "");
-            stockDTO.setPrdtClsfName(stockData.get("prdt_clsf_name") != null ? stockData.get("prdt_clsf_name").toString() : "");
-            stockDTO.setSaleStrtDt(stockData.get("sale_strt_dt") != null ? stockData.get("sale_strt_dt").toString() : "");
-            stockDTO.setSaleEndDt(stockData.get("sale_end_dt") != null ? stockData.get("sale_end_dt").toString() : "");
-            stockDTO.setWrapAsstTypeCd(stockData.get("wrap_asst_type_cd") != null ? stockData.get("wrap_asst_type_cd").toString() : "");
-            stockDTO.setIvstPrdtTypeCd(stockData.get("ivst_prdt_type_cd") != null ? stockData.get("ivst_prdt_type_cd").toString() : "");
-            stockDTO.setIvstPrdtTypeCdName(stockData.get("ivst_prdt_type_cd_name") != null ? stockData.get("ivst_prdt_type_cd_name").toString() : "");
-            stockDTO.setFrstErlmDt(stockData.get("frst_erlm_dt") != null ? stockData.get("frst_erlm_dt").toString() : "");
-
             logger.info("Mapped StockDTO: {}", stockDTO);
             return stockDTO;
         } catch (Exception e) {
@@ -291,69 +260,4 @@ public class StockService {
             }
         }).start();
     }
-    /**
-     * 주식 기본 정보를 한국투자증권 API를 통해 조회
-     */
-    public StockDTO getStockBasicInfo(String stockCode) {
-        logger.info("Attempting to get basic stock info for code: {}", stockCode);
-
-        for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
-            try {
-                // Access Token 가져오기
-                String accessToken = tokenService.getAccessToken();
-                logger.info("Retrieved access token: {}", accessToken);
-
-                // 한국투자증권 API URL 구성
-                String url = baseUrl + "/uapi/domestic-stock/v1/quotations/search-stock-info" +
-                        "?PRDT_TYPE_CD=" + PRODUCT_TYPE_CODE + "&PDNO=" + stockCode;
-                logger.info("API request URL: {}", url);
-
-                // 요청 헤더 설정
-                HttpHeaders headers = new HttpHeaders();
-                headers.set("Content-Type", "application/json; charset=utf-8");
-                headers.set("authorization", "Bearer " + accessToken);
-                headers.set("appkey", appKey);
-                headers.set("appsecret", appSecret);
-                headers.set("tr_id", "CTPF1002R");
-
-                HttpEntity<String> request = new HttpEntity<>(headers);
-
-                // API 요청 전송
-                ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, request, Map.class);
-                logger.info("API response for stock code {}: Status={}, Body={}", stockCode, response.getStatusCode(), response.getBody());
-
-                if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                    // API 응답에서 주식 기본 정보 추출
-                    Map<String, Object> output = (Map<String, Object>) response.getBody().get("output");
-                    if (output != null) {
-                        return mapToStockDTO(output);  // DTO로 변환
-                    } else {
-                        logger.warn("No stock data retrieved for {}", stockCode);
-                    }
-                } else {
-                    logger.error("Failed to retrieve stock data. Status code: {}", response.getStatusCode());
-                }
-            } catch (HttpClientErrorException e) {
-                logger.error("HTTP client error occurred: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
-                if (attempt < MAX_RETRIES - 1) {
-                    try {
-                        Thread.sleep(RETRY_DELAY_MS);
-                    } catch (InterruptedException ie) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            } catch (Exception e) {
-                logger.error("Error getting stock basic info for code {}: {}", stockCode, e.getMessage(), e);
-                if (attempt < MAX_RETRIES - 1) {
-                    try {
-                        Thread.sleep(RETRY_DELAY_MS);
-                    } catch (InterruptedException ie) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
 }

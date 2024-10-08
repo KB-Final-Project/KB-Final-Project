@@ -32,11 +32,11 @@ public class TokenService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     private String currentAccessToken;
-    private LocalDateTime tokenExpirationTime;
-    private static final long TOKEN_EXPIRY_BUFFER = 300; // 5분 버퍼
+    private LocalDateTime tokenIssuedTime;
+    private long tokenExpiryDuration = 24 * 60 * 60; // 기본 유효 기간 24시간 (초)
 
     // 토큰 발급 API 호출 메서드
-    private synchronized String requestNewToken() {
+    public String requestNewToken() {
         logger.info("새로운 Access Token 요청 중...");
 
         String url = baseUrl + "/oauth2/tokenP";
@@ -59,9 +59,10 @@ public class TokenService {
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 currentAccessToken = (String) response.getBody().get("access_token");
-                long expiresIn = ((Integer) response.getBody().get("expires_in")).longValue();
-                tokenExpirationTime = LocalDateTime.now().plusSeconds(expiresIn - TOKEN_EXPIRY_BUFFER);
-                logger.info("Access Token 발급 성공. 만료 시간: {}", tokenExpirationTime);
+                long expiresIn = (Integer) response.getBody().get("expires_in"); // 토큰 유효기간 (초)
+                tokenExpiryDuration = expiresIn;
+                tokenIssuedTime = LocalDateTime.now(); // 토큰 발급 시간 저장
+                logger.info("Access Token 발급 성공: {}", currentAccessToken);
                 return currentAccessToken;
             } else {
                 logger.error("Access Token 발급 실패: {}", response.getBody());
@@ -74,18 +75,23 @@ public class TokenService {
     }
 
     // 토큰 유효성 확인 메서드
-    private boolean isTokenValid() {
-        return currentAccessToken != null && LocalDateTime.now().isBefore(tokenExpirationTime);
+    public boolean isTokenValid() {
+        if (currentAccessToken == null || tokenIssuedTime == null) {
+            return false; // 토큰이 없으면 유효하지 않음
+        }
+
+        long secondsElapsed = ChronoUnit.SECONDS.between(tokenIssuedTime, LocalDateTime.now());
+        return secondsElapsed < tokenExpiryDuration; // 유효기간 확인
     }
 
     // 유효한 토큰을 가져오는 메서드 (없으면 새로 발급)
-    public synchronized String getAccessToken() {
+    public String getAccessToken() {
         if (isTokenValid()) {
-            logger.debug("기존 유효한 토큰 반환");
+            logger.info("기존 유효한 토큰 반환");
             return currentAccessToken;
         } else {
-            logger.info("토큰 만료 또는 미발급. 새 토큰 요청");
-            return requestNewToken();
+            logger.info("토큰 만료로 인해 새로 발급 요청");
+            return requestNewToken(); // 토큰이 없거나 만료되었으면 새로 발급
         }
     }
 }
