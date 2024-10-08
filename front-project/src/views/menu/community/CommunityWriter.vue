@@ -19,6 +19,13 @@
             <p class="fs-6 fw-normal">
               <textarea class="writer"  type="text" placeholder="무슨 일이 일어나고 있나요?"></textarea>
             </p>
+              <div class="filebox">
+              <label for="file">
+                <i class="ai-image"></i>
+              </label>
+              <input type="file" id="file" style="display: none;" />
+                <br> <br>
+            </div>
           </div>
         </div>
       </div>
@@ -27,6 +34,18 @@
 </template>
 
 <style scoped>
+.filebox {
+  display: inline-block;
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+.ai-image {
+  font-size: 24px;
+  cursor: pointer;
+  color: rgba(67, 140, 116, 1);
+}
+
 .submit{
   width: 100px;
   height: 30px;

@@ -1,20 +1,49 @@
+<script setup>
+
+import {ref} from "vue";
+import axios from "axios";
+
+const loading = ref(true);
+const boards = ref([]);
+
+  const fetchBoard = async ()=>{
+    loading.value = true;
+    try {
+      const response = await axios.get('/api/board');
+      if (response.data && response.data.length > 0) {
+        boards.value = response.data;
+        console.log(boards);
+      } else {
+        boards.value = [];
+        console.warn('데이터가 없습니다.');
+      }
+    } catch (error) {
+      console.error('목록을 가져오는 중 오류 발생:', error);
+      boards.value = [];
+    } finally {
+      loading.value = false;
+    }
+  };
+</script>
+
 <template>
   <div class="container">
     <div class="col">
       <div class="feeds card mb-5 mb-xxl-8">
+        <div v-for="board in boards" :key="board.bno" >
         <div class="card-body pb-0">
           <div class="d-flex align-items-center">
             <div class="symbol symbol-45px me-5">
               <img :src="require('@/assets/media/avatars/300-25.jpg')" alt="" />
             </div>
             <div class="d-flex flex-column">
-              <a href="#" class="name text-gray-800 mb-1  fw-bolder">Brad Dennis</a>
-              <span class="text-gray-500 fw-semibold">Yesterday at 5:06 PM</span>
+              <a href="#" class="name text-gray-800 mb-1  fw-bolder">{{  board.memberName }}</a>
+              <span class="text-gray-500 fw-semibold">{{ board.createDate }}</span>
             </div>
           </div>
           <div class="pt-5">
             <p class="text-gray-800  fw-normal mb-3">
-              안녕하세요
+              {{ board.content }}
             </p>
             <div class="d-flex align-items-center">
               <a href="#" class="btn btn-sm btn-color-muted btn-active-light-primary fw-bolder fs-6 py-1 px-2 me-4">
@@ -47,6 +76,7 @@
               </span>
             </div>
           </form>
+        </div>
         </div>
       </div>
       <button class="moreBtn w-100 text-center" id="kt_widget_5_load_more_btn" >
@@ -91,5 +121,3 @@
 
 
 </style>
-<script setup>
-</script>
