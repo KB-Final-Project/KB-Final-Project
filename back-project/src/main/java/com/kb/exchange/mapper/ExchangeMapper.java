@@ -16,7 +16,7 @@ public interface ExchangeMapper {
     int checkExistExchangeFee(ExchangeFee exchangeFeeDTO);
     int checkSameExchangeFee(ExchangeFee exchangeFeeDTO);
     int getCurrenyIdByCurUnit(String curUnit);
-
+    List<Currency> getExchangeBankCategory();
     int checkCurrencyExists(String currencyCode);
 
 }

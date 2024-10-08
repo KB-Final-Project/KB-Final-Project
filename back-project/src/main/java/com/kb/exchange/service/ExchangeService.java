@@ -2,6 +2,7 @@ package com.kb.exchange.service;
 
 import com.kb.common.util.WebDriverFactory;
 import com.kb.exchange.dto.*;
+import com.kb.exchange.dto.Currency;
 import com.kb.exchange.mapper.ExchangeMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -217,5 +218,9 @@ public class ExchangeService {
         } finally {
             driver.quit();
         }
+    }
+
+    public List<Currency> getExchangeBankCategory(){
+        return mapper.getExchangeBankCategory();
     }
 }
