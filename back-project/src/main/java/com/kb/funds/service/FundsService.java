@@ -109,10 +109,6 @@ public class FundsService {
     public List<FundsDTO> findAllFunds() {
         return fundsMapper.findAllFunds();
     }
-<<<<<<< Updated upstream
-}
-=======
-
 
 }
->>>>>>> Stashed changes
+
