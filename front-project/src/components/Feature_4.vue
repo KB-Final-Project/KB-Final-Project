@@ -39,6 +39,15 @@
   </section>
 </template>
 
+<script setup>
+import router from '@/router';
+
+const goToStock = () => {
+  router.push('/StockMain'); // 지정된 경로로 페이지 이동
+};
+
+</script>
+
 <style scoped>
 .f4_trendMain {
   display: flex;
@@ -139,14 +148,5 @@
   font-family: J5;
 }
 </style>
-
-<script setup>
-import router from '@/router';
-
-const goToStock = () => {
-  router.push('/StockMain'); // 지정된 경로로 페이지 이동
-};
-
-</script>
 
 
