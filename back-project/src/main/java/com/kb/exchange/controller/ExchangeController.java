@@ -54,4 +54,10 @@ public class ExchangeController {
             @RequestParam(value = "currencyId", defaultValue = "23") int currencyId) {
         return ResponseEntity.ok(service.getExchangeFeeList(currencyId));
     }
+
+    @GetMapping("/category")
+    public ResponseEntity<ExchangeCategory> getCurrencyCategory(){
+        return ResponseEntity.ok().body(service.getCategory());
+    }
+    
 }
