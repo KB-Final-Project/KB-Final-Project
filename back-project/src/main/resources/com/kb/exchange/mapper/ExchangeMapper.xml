@@ -226,4 +226,15 @@
             e.currency_id = #{currencyId}
     </select>
 
+    <select id="getExchangeBankCategory" resultType="com.kb.exchange.dto.Currency">
+        SELECT *
+        FROM currency
+        WHERE currency_id IN (SELECT DISTINCT currency_id FROM bank_exchange_fees);
+    </select>
+
+    <select id="getCurrencyCategory" resultType="com.kb.exchange.dto.Currency">
+        SELECT
+            *
+        FROM currency;
+    </select>
 </mapper>
