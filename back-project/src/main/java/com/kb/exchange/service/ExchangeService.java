@@ -223,4 +223,12 @@ public class ExchangeService {
     public List<Currency> getExchangeBankCategory(){
         return mapper.getExchangeBankCategory();
     }
+
+    public List<Currency> getCurrencyCategory(){
+        return mapper.getCurrencyCategory();
+    }
+
+    public ExchangeCategory getCategory(){
+        return new ExchangeCategory(getCurrencyCategory(), getExchangeBankCategory());
+    }
 }

@@ -55,10 +55,9 @@ public class ExchangeController {
         return ResponseEntity.ok(service.getExchangeFeeList(currencyId));
     }
 
-    @GetMapping("/fee/category")
-    public ResponseEntity<List<Currency>> getExchangeBankCategory(){
-        return ResponseEntity.ok().body(service.getExchangeBankCategory());
+    @GetMapping("/category")
+    public ResponseEntity<ExchangeCategory> getCurrencyCategory(){
+        return ResponseEntity.ok().body(service.getCategory());
     }
-
     
 }
