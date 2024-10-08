@@ -202,7 +202,12 @@ const changePage = (newPage) => {
         <h4>가장 많이 사랑 받은 적금 상품</h4>
         <h5 style="color: rgba(68, 140, 116, 1);">가장 적은 개월 수에 많은 금리</h5><br><br>
       </div>
-      <div v-if="loading">로딩 중...</div>
+      <!-- 로딩 메시지 -->
+      <div v-if="loading" class="loading-box">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">데이터를 불러오는 중...</span>
+        </div>
+      </div>
       <div v-else class="itemBoxDiv">
         <ul>
           <li v-for="(topSaving, index) in topSavings" :key="topSaving.savingId"
@@ -254,6 +259,7 @@ const changePage = (newPage) => {
         </ul>
       </div>
     </div>
+
     <br><br>
     <div class="text-start">
       <h4 class="search">상품 검색</h4>
@@ -391,7 +397,12 @@ const changePage = (newPage) => {
         <h2 class="d-inline"><b>검색 결과</b> 테마상품</h2>
         <br><br><br>
       </div>
-      <div v-if="loading">로딩 중...</div>
+      <!-- 로딩 메시지 -->
+      <div v-if="loading" class="loading-box">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">데이터를 불러오는 중...</span>
+        </div>
+      </div>
       <div v-else>
         <div v-if="savings.length === 0 && !loading">검색 결과가 없습니다.</div>
         <div v-else class="itemBoxDiv">
@@ -436,7 +447,6 @@ const changePage = (newPage) => {
           </ul>
         </div>
       </div>
-      <div class="pagination">
         <nav aria-label="Page navigation">
           <ul class="pagination">
             <li class="page-item" :class="{ disabled: currentPage === 1 }">
@@ -456,13 +466,22 @@ const changePage = (newPage) => {
             </li>
           </ul>
         </nav>
-      </div>
     </div>
     <br><br>
   </div>
 </template>
 
 <style scoped>
+.loading-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+  padding: 30px;
+  margin: 20px;
+  text-align: center;
+}
+
 .selected-filters {
   overflow: hidden; /* Swiper가 넘치는 부분 숨김 */
 }
@@ -772,12 +791,12 @@ input[type="checkbox"] {
 
 
 .page-link {
-  color: white;
+  color: #0c0c0c;
 }
 
 .active > .page-link {
-  background-color: white;
-  color: rgba(68, 140, 116, 1);
+  background-color: rgba(68, 140, 116, 1);
+  color: white;
   border: none;
 }
 

@@ -1,49 +1,38 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 
-// 반응형 데이터
 const searchQuery = ref('');
-const funds = ref([]);
+const allFunds = ref([]); // 전체 펀드 데이터
+const displayedFunds = ref([]); // 현재 페이지에 표시할 펀드 데이터
 const currentPage = ref(1);
 const totalPages = ref(1);
-const pageSize = ref(10); // 페이지당 항목 수
-const pageLimit = ref(10); // 페이지당 페이지 수 (옵션, 백엔드에 따라 다름)
+const pageSize = ref(20); // 페이지당 항목 수
 
-// 로딩 및 에러 상태
 const isLoading = ref(false);
 const error = ref(null);
 
-// 날짜 형식 변환 함수
+const sortKey = ref('');
+const sortOrder = ref('desc');
+
 const formatDate = (dateString) => {
   if (!dateString) return '';
   const date = new Date(dateString);
-  const year = date.getFullYear() % 100; // 2024 -> 24
-  const month = date.getMonth() + 1; // 월 (0부터 시작하므로 1을 더함)
-  const day = date.getDate(); // 일
+  const year = date.getFullYear() % 100;
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
   return `${year}.${month}.${day}`;
 };
 
-// 펀드 데이터 가져오기 함수
-const fetchFunds = async (endpoint) => {
+const fetchAllFunds = async () => {
   isLoading.value = true;
   error.value = null;
   try {
-    const response = await axios.get(endpoint, {
-      params: {
-        keyword: searchQuery.value,
-        page: currentPage.value - 1, // Spring의 Pageable은 0부터 시작
-        size: pageSize.value,
-        pageLimit: pageLimit.value,
-      },
-    });
-    funds.value = response.data;
-    const pageInfo = response.data.pageInfo;
-    if (pageInfo && pageInfo.totalSize && pageInfo.listLimit) {
-      totalPages.value = Math.ceil(pageInfo.totalSize / pageInfo.listLimit);
-    } else {
-      totalPages.value = 1;
-    }
+    const response = await axios.get('/api/funds/all');
+    allFunds.value = response.data; // 전체 데이터 저장
+    totalPages.value = Math.ceil(allFunds.value.length / pageSize.value); // 페이지 수 계산
+    currentPage.value = 1; // 첫 페이지로 설정
+    paginateFunds(); // 첫 페이지 데이터를 표시
   } catch (err) {
     error.value = '펀드 데이터를 불러오는 데 실패했습니다.';
     console.error(err);
@@ -52,65 +41,115 @@ const fetchFunds = async (endpoint) => {
   }
 };
 
-// 검색 함수
-const searchFundsFunc = () => {
-  currentPage.value = 1;
-  fetchFunds('/api/funds/search');
+const searchFundsFunc = async () => {
+  isLoading.value = true;
+  error.value = null;
+  try {
+    const response = await axios.get('/api/funds/search', {
+      params: {
+        keyword: searchQuery.value,
+      },
+    });
+    allFunds.value = response.data;
+    totalPages.value = Math.ceil(allFunds.value.length / pageSize.value);
+    currentPage.value = 1;
+    paginateFunds();
+  } catch (err) {
+    error.value = '검색 결과를 불러오는 데 실패했습니다.';
+    console.error(err);
+  } finally {
+    isLoading.value = false;
+  }
 };
 
-// 모든 펀드 조회 함수
-const fetchAllFunds = () => {
-  currentPage.value = 1;
-  fetchFunds('/api/funds/all');
+const paginateFunds = () => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  displayedFunds.value = allFunds.value.slice(start, end);
 };
 
-// 특정 페이지로 이동하는 함수
 const goToPage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
-    if (searchQuery.value) {
-      fetchFunds('/api/funds/search');
-    } else {
-      fetchFunds('/api/funds/all');
-    }
+    paginateFunds();
   }
 };
 
-// 이전 페이지로 이동하는 함수
 const goToPreviousPage = () => {
   if (currentPage.value > 1) {
     currentPage.value--;
-    if (searchQuery.value) {
-      fetchFunds('/api/funds/search');
-    } else {
-      fetchFunds('/api/funds/all');
-    }
+    paginateFunds();
   }
 };
 
-// 다음 페이지로 이동하는 함수
 const goToNextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++;
-    if (searchQuery.value) {
-      fetchFunds('/api/funds/search');
-    } else {
-      fetchFunds('/api/funds/all');
-    }
+    paginateFunds();
   }
 };
 
-// 컴포넌트 마운트 시 펀드 데이터 가져오기
+const sortFunds = (key) => {
+  if (sortKey.value === key) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortKey.value = key;
+    sortOrder.value = 'desc';
+  }
+
+  allFunds.value.sort((a, b) => {
+    const aVal = a[key];
+    const bVal = b[key];
+    if (sortOrder.value === 'desc') {
+      return bVal - aVal;
+    } else {
+      return aVal - bVal;
+    }
+  });
+
+  paginateFunds();
+};
+
+const sortIconClass = (key) => {
+  if (sortKey.value === key) {
+    return sortOrder.value === 'asc' ? 'ai ai-chevron-up' : 'ai ai-chevron-down';
+  }
+  return 'ai ai-chevron-down';
+};
+
+const getRateClass = (value) => {
+  if (value > 0) return 'text-danger';
+  if (value < 0) return 'text-primary';
+  return 'text-muted'; // 회색 (없음)
+};
+
+const visiblePages = computed(() => {
+  const pages = [];
+  const maxVisible = 5; // 최대 5개 페이지 버튼
+  let start = Math.max(currentPage.value - 2, 1);
+  let end = Math.min(start + maxVisible - 1, totalPages.value);
+
+  if (end - start < maxVisible - 1) {
+    start = Math.max(end - maxVisible + 1, 1);
+  }
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+  return pages;
+});
+
 onMounted(() => {
-  fetchFunds('/api/funds/all'); // 기본적으로 모든 펀드를 가져옵니다. 검색 시 /search 엔드포인트 사용.
+  fetchAllFunds();
 });
 </script>
 
 <template>
   <div class="bc">
+    <br><br><br><br>
     <div class="container">
       <h1 class="text-center">펀드 전체 보기</h1>
-
+      <br><br><br><br>
       <div class="text-center">
         <h2 class="d-inline search">상품 검색</h2>
         <input
@@ -125,8 +164,10 @@ onMounted(() => {
       </div>
 
       <!-- 로딩 메시지 -->
-      <div v-if="isLoading" class="text-center mt-4">
-        <p>데이터를 불러오는 중입니다...</p>
+      <div v-if="isLoading" class="loading-box">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">데이터를 불러오는 중...</span>
+        </div>
       </div>
 
       <!-- 에러 메시지 -->
@@ -134,111 +175,132 @@ onMounted(() => {
         <p>{{ error }}</p>
       </div>
 
-      <!-- 펀드 데이터 표시 -->
       <div v-if="!isLoading && !error" class="fund text-center">
         <div class="fundSearchResult text-center">
           <table class="fundSearchResultTable text-center">
             <thead>
             <tr>
-              <th style="width: 45%;" rowspan="2">상품명</th>
+              <th style="width: 40%;" rowspan="2">상품명</th>
               <th style="width: 10%;">기준가</th>
-              <th style="width: 35%;" colspan="3">수익률(%)</th>
+              <th style="width: 35%;" colspan="4">수익률(%)</th>
               <th style="width: 6%;" class="rate" rowspan="2">총 보수(연)</th>
-              <th style="width: 5%;" rowspan="2">기준일</th>
+              <th style="width: 6%;" rowspan="2">기준일</th>
             </tr>
             <tr>
               <th>순자산(억원)</th>
-              <th style="width: 3%;">1개월<i class="ai-chevron-down"></i></th>
-              <th style="width: 3%;">3개월<i class="ai-chevron-down"></i></th>
-              <th style="width: 3%;" class="rate">1년<i class="ai-chevron-down"></i></th>
+              <th style="width: 3%; cursor: pointer;" @click="sortFunds('suikRt1')">
+                1개월 <i style="font-size: 2rem;" :class="sortIconClass('suikRt1')"></i>
+              </th>
+              <th style="width: 3%; cursor: pointer;" @click="sortFunds('suikRt3')">
+                3개월 <i style="font-size: 2rem;" :class="sortIconClass('suikRt3')"></i>
+              </th>
+              <th style="width: 3%; cursor: pointer;" @click="sortFunds('suikRt6')">
+                6개월 <i style="font-size: 2rem;" :class="sortIconClass('suikRt6')"></i>
+              </th>
+              <th style="width: 3%; cursor: pointer;" @click="sortFunds('suikRt12')">
+                1년 <i style="font-size: 2rem;" :class="sortIconClass('suikRt12')"></i>
+              </th>
             </tr>
             </thead>
           </table>
         </div>
-        <hr class="hr" />
+        <hr class="hr"/>
 
         <div class="fundSearchResult text-center">
           <table class="fundSearchResultTable text-center">
-            <tbody v-for="fund in funds" :key="fund.id">
+            <tbody v-for="fund in displayedFunds" :key="fund.id">
             <tr>
-              <td style="width: 45%;" rowspan="2"><h4>{{ fund.investGrade }}등급 {{ fund.fundFnm }}</h4></td>
+              <td class="fundName" style="width: 40%;" rowspan="2"><h4>{{ fund.fundFnm }}</h4></td>
               <td style="width: 10%;"><h4>{{ fund.gijunGa }}</h4></td>
-              <td style="width: 35%;" colspan="3">
-                <div class="bm">
-                  <h5>벤치</h5>
-                </div>
-                <h4 class="bmFund">{{ fund.bmSuikJisu }}</h4>
+              <td style="width: 35%;" colspan="4">
+                <div class="grade"><h5>{{ fund.investGrade }}등급</h5></div>
               </td>
               <td style="width: 6%;" class="rate" rowspan="2"><h4>{{ fund.feeTot }}</h4></td>
-              <td style="width: 5%;" rowspan="2"><h4>{{ formatDate(fund.gijunYmd) }}</h4></td>
+              <td style="width: 6%;" rowspan="2"><h4>{{ formatDate(fund.gijunYmd) }}</h4></td>
             </tr>
             <tr>
-              <td><h4>{{ fund.seoljAek }}</h4></td>
+              <td><h4>{{ fund.navTot }}</h4></td>
               <td style="width: 3%;">
-                <div class="bm">
-                  <h5>펀드</h5>
-                </div>
-                <h4 class="bmFund">{{ fund.suikRt1 }}</h4>
+                <h4 :class="getRateClass(fund.suikRt1)">
+                  {{ fund.suikRt1 != null ? fund.suikRt1 : '없음' }}
+                </h4>
               </td>
-              <td style="width: 3%;"><h4>{{ fund.suikRt3 }}</h4></td>
-              <td style="width: 3%;" class="rate"><h4>{{ fund.suikRt12 }}</h4></td>
+              <td style="width: 3%;">
+                <h4 :class="getRateClass(fund.suikRt3)">
+                  {{ fund.suikRt3 != null ? fund.suikRt3 : '없음' }}
+                </h4>
+              </td>
+              <td style="width: 3%;">
+                <h4 :class="getRateClass(fund.suikRt6)">
+                  {{ fund.suikRt6 != null ? fund.suikRt6 : '없음' }}
+                </h4>
+              </td>
+              <td style="width: 3%;">
+                <h4 :class="getRateClass(fund.suikRt12)">
+                  {{ fund.suikRt12 != null ? fund.suikRt12 : '없음' }}
+                </h4>
+              </td>
             </tr>
             </tbody>
           </table>
         </div>
       </div>
-
-      <!-- Pagination -->
-      <nav aria-label="Page navigation" v-if="!isLoading && !error && totalPages > 1">
-        <ul class="pagination justify-content-center mt-4">
-          <li class="page-item" :class="{ disabled: currentPage === 1 }">
-            <button class="page-link" @click="goToPreviousPage" :disabled="currentPage === 1">이전</button>
-          </li>
-          <li
-              class="page-item d-none d-sm-block"
-              v-for="page in totalPages"
-              :key="page"
-              :class="{ active: page === currentPage }"
-          >
-            <button class="page-link" @click="goToPage(page)">{{ page }}</button>
-          </li>
-          <li class="page-item d-sm-none">
-            <span class="page-link pe-none">{{ currentPage }} / {{ totalPages }}</span>
-          </li>
-          <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-            <button class="page-link" @click="goToNextPage" :disabled="currentPage === totalPages">다음</button>
-          </li>
-        </ul>
-      </nav>
     </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation example" v-if="totalPages > 1">
+      <ul class="pagination justify-content-center mt-4">
+        <li class="page-item" :class="{ disabled: currentPage === 1 }">
+          <a @click.prevent="goToPreviousPage" class="page-link" aria-label="Prev page">
+            <i class="ai ai-arrow-left fs-4"></i> <!-- fs-4 클래스 적용 -->
+          </a>
+        </li>
+        <li
+            class="page-item"
+            v-for="page in visiblePages"
+            :key="page"
+            :class="{ active: page === currentPage }"
+        >
+          <a @click.prevent="goToPage(page)" class="page-link">{{ page }}</a>
+        </li>
+        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+          <a @click.prevent="goToNextPage" class="page-link" aria-label="Next page">
+            <i class="ai ai-arrow-right fs-4"></i> <!-- fs-4 클래스 적용 -->
+          </a>
+        </li>
+      </ul>
+    </nav>
   </div>
 </template>
 
 <style scoped>
-.bmFund {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%; /* bm와 같은 높이 설정 */
-  margin: 0; /* 추가 여백 제거 */
+.fundName{
+  font-family: J3;
+  color: rgba(68, 140, 116, 1);
 }
 
-.bm {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center; /* 수직 가운데 정렬 */
-  height: 30px; /* bmFund와 동일한 높이로 설정 */
-  border-radius: 30px;
+.grade {
   border: 1px solid lightgrey;
-  width: 40px;
-  font-size: 10px;
-  margin-bottom: -31px;
+  border-radius: 30px;
+  color: rgb(121, 121, 121);
+  width: 50px;
+  margin: 0 auto;
 }
 
+tbody td {
+  padding: 10px;
+}
 
-.rate2 {
-  border-right: none;
+tbody tr {
+  border-bottom: 1px solid lightgrey;
+}
+
+.fundSearchResultTable th {
+  font-size: 20px;
+}
+
+.sortIconClass {
+  font-size: 25px;
 }
 
 .hr {
@@ -281,18 +343,6 @@ thead tr:last-child th:last-child {
   border-right: 1px solid lightgrey;
 }
 
-.suggest {
-  display: inline-block;
-  border: 1px solid rgba(153, 153, 153, 0.6);
-  border-radius: 20px;
-  width: 250px;
-  height: 200px;
-  margin: 10px;
-  padding: 25px;
-  font-size: 30px;
-  text-align: start;
-}
-
 .fundSearchResult {
   border: 1px solid lightgrey;
   border-radius: 30px;
@@ -308,14 +358,21 @@ thead tr:last-child th:last-child {
   background-color: white;
 }
 
-.fundBeanBox {
-  border: 1px solid rgba(153, 153, 153, 1);
+.loading-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+  padding: 30px;
+  margin: 20px;
+  text-align: center;
 }
 
 .bc {
   padding: 50px;
   background-color: rgba(248, 244, 244, 1);
   border-radius: 30px;
+  font-family: J3;
 }
 
 .searchBar {
@@ -332,7 +389,6 @@ thead tr:last-child th:last-child {
   margin-top: 30px;
   border-radius: 30px;
   padding: 20px;
-  background-color: white;
 }
 
 .searchBtn {
@@ -374,10 +430,30 @@ thead tr:last-child th:last-child {
 
 .pagination {
   --bs-pagination-color: rgba(68, 140, 116, 1);
-  --bs-pagination-hover-color: rgba(68, 140, 116, 1);
+  --bs-pagination-hover-color: rgb(255, 255, 255);
 }
 
 .text-danger {
   color: red;
+}
+
+.text-primary {
+  color: blue;
+}
+
+.text-muted {
+  color: grey;
+}
+
+.icon-large {
+  font-size: 2rem;
+}
+
+.icon-medium {
+  font-size: 1.5rem;
+}
+
+.icon-small {
+  font-size: 1rem;
 }
 </style>
