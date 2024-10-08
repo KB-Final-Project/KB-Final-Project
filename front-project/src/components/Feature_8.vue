@@ -5,18 +5,24 @@
         <br><br>
         <h1 class="text-start">주요 서비스 한 눈에 보기</h1>
         <br>
-        <div class="suggest">
-          <p>커뮤니티</p><br>
-          <p class="text-end">👨‍👩‍👧‍</p>
-        </div>
-        <div class="suggest">
-          <p>용어사전</p><br>
-          <p class="text-end">📚</p>
-        </div>
-        <div class="suggest">
-          <p>투자성향TEST</p><br>
-          <p class="text-end">💖</p>
-        </div>
+        <router-link class="link" to="/community">
+          <div class="suggest">
+            <p>커뮤니티</p><br>
+            <p class="text-end">👨‍👩‍👧‍</p>
+          </div>
+        </router-link>
+        <router-link class="link" to="/dictionary">
+          <div class="suggest">
+            <p>용어사전</p><br>
+            <p class="text-end">📚</p>
+          </div>
+        </router-link>
+        <router-link class="link" to="/test-start">
+          <div class="suggest">
+            <p>투자성향TEST</p><br>
+            <p class="text-end">💖</p>
+          </div>
+        </router-link>
         <div class="suggest">
           <p>챗봇 상담</p><br>
           <p class="text-end">👨‍🎓</p>
@@ -28,6 +34,10 @@
 </template>
 
 <style scoped>
+.link{
+  text-decoration: none;
+  color: black;
+}
 .suggest {
   transition: transform 0.6s ease;
   cursor: pointer;
