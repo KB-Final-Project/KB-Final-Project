@@ -17,35 +17,35 @@
 
     <!-- 3rdparty Loggers -->
     <logger name="org.springframework.core">
-        <level value="info" />
+        <level value="trace" />
     </logger>
     <logger name="org.springframework.beans">
-        <level value="info" />
+        <level value="trace" />
     </logger>
 
     <logger name="org.springframework.context">
-        <level value="info" />
+        <level value="trace" />
     </logger>
 
     <logger name="org.springframework.web">
-        <level value="info" />
+        <level value="trace" />
     </logger>
 
 
     <logger name="jdbc.audit">
-        <level value="warn" />
+        <level value="trace" />
     </logger>
 
     <logger name="org.springframework.web.servlet.DispatcherServlet">
-        <level value="warn" />
+        <level value="trace" />
     </logger>
 
     <logger name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
-        <level value="warn" />
+        <level value="trace" />
     </logger>
 
     <logger name="_org.springframework.web.servlet.HandlerMapping.Mappings">
-        <level value="debug" />
+        <level value="trace" />
     </logger>
     <logger name="jdbc">
         <level value="trace" />

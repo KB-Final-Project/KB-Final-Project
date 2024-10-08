@@ -43,6 +43,10 @@ public class MemberController {
         return ResponseEntity.ok().body(service.checkDuplicate(id));
     }
 
+    @GetMapping("/checkkakao/{kakaoId}")
+    public ResponseEntity<Boolean> checkDuplicateKakao(@PathVariable String kakaoId) {
+        return ResponseEntity.ok().body(service.checkKakaoDuplicate(kakaoId));
+    }
     @GetMapping("/{id}")
     public ResponseEntity<Member> get(@PathVariable String id) {
         return ResponseEntity.ok(service.getMember(id));

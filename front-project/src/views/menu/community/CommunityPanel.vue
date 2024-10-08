@@ -1,28 +1,80 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import WriterPopup from './WriterPopup.vue'; // WriterPopup 컴포넌트 불러오기
+import WriterPopup from './WriterPopup.vue';
+import axios from 'axios';
 
 const activePropensity = ref('');
-const showModal = ref(false); // 팝업을 제어하는 변수
+const showModal = ref(false);
+const userPropensity = ref('');
 
 const router = useRouter();
 const route = useRoute();
 
+const dummyUser = {
+  name: '이사벨라',
+  email: 'abcd@gmail.com',
+  propensity: 1, // 안정형
+};
+
+async function fetchTypes() {
+  try {
+    const response = await axios.get('/types');
+    const typeValue = response.data[0];
+    setUserPropensity(typeValue);
+    setActivePropensityByType(typeValue);
+  } catch (error) {
+    console.error('Error fetching types:', error);
+  }
+}
+
+function setUserPropensity(typeValue) {
+  switch (typeValue) {
+    case 1:
+      userPropensity.value = '안정형';
+      break;
+    case 2:
+      userPropensity.value = '중립형';
+      break;
+    case 3:
+      userPropensity.value = '적극투자형';
+      break;
+    case 4:
+      userPropensity.value = '공격투자형';
+      break;
+    default:
+      console.error('유효하지 않은 유형');
+  }
+}
+
+function setActivePropensityByType(typeValue) {
+  switch (typeValue) {
+    case 1:
+      setActive('안정형');
+      break;
+    case 2:
+      setActive('중립형');
+      break;
+    case 3:
+      setActive('적극투자형');
+      break;
+    case 4:
+      setActive('공격투자형');
+      break;
+    default:
+      console.error('유효하지 않은 유형');
+  }
+}
+
 function setActive(propensity) {
   activePropensity.value = propensity;
-
-  // 현재 경로와 비교하여 동일하지 않으면 이동
   let targetRoute = '';
   switch (propensity) {
     case '안정형':
       targetRoute = '/community/stability';
       break;
-    case '안정추구형':
-      targetRoute = '/community/stabilitySeeking';
-      break;
-    case '위험중립형':
-      targetRoute = '/community/riskNeutral';
+    case '중립형':
+      targetRoute = '/community/neutral';
       break;
     case '적극투자형':
       targetRoute = '/community/activeInvestment';
@@ -33,51 +85,23 @@ function setActive(propensity) {
     default:
       return;
   }
-
-  // 현재 경로와 비교해서 동일하지 않을 경우에만 이동
   if (route.path !== targetRoute) {
     router.push(targetRoute);
   }
 }
 
 function openPopup() {
-  showModal.value = true; // 팝업 열기
+  showModal.value = true;
 }
 
 function closePopup() {
-  showModal.value = false; // 팝업 닫기
+  showModal.value = false;
 }
 
-// 라우트 변경 시 activePropensity 업데이트
-watch(
-    () => route.path,
-    (newPath) => {
-      // 경로가 변경될 때 activePropensity를 정확히 업데이트
-      updateActivePropensity(newPath);
-    },
-    { immediate: true }
-);
-
-// 경로에 맞게 activePropensity 값을 설정하는 함수
-function updateActivePropensity(path) {
-  if (path === '/community/stability') {
-    activePropensity.value = '안정형';
-  } else if (path === '/community/stabilitySeeking') {
-    activePropensity.value = '안정추구형';
-  } else if (path === '/community/riskNeutral') {
-    activePropensity.value = '위험중립형';
-  } else if (path === '/community/activeInvestment') {
-    activePropensity.value = '적극투자형';
-  } else if (path === '/community/aggressiveInvestment') {
-    activePropensity.value = '공격투자형';
-  } else {
-    activePropensity.value = '';
-  }
-}
-
-// 페이지 로드 시 '안정추구형' 게시판으로 자동 이동
 onMounted(() => {
-  setActive('안정추구형');
+  const { propensity } = dummyUser; // 이사벨라의 propensity를 가져옴
+  setUserPropensity(propensity);
+  setActivePropensityByType(propensity);
 });
 </script>
 
@@ -98,17 +122,10 @@ onMounted(() => {
     </div>
     <div
         class="propensity"
-        @click="setActive('안정추구형')"
-        :class="{ active: activePropensity === '안정추구형' }"
+        @click="setActive('중립형')"
+        :class="{ active: activePropensity === '중립형' }"
     >
-      <h2>안정추구형</h2>
-    </div>
-    <div
-        class="propensity"
-        @click="setActive('위험중립형')"
-        :class="{ active: activePropensity === '위험중립형' }"
-    >
-      <h2>위험중립형</h2>
+      <h2>중립형</h2>
     </div>
     <div
         class="propensity"
@@ -133,13 +150,18 @@ onMounted(() => {
     </div>
     <br />
     <div>
-      <button class="writerBtn"  @click="openPopup">새 글 작성하기</button>
+      <button
+          class="writerBtn"
+          @click="openPopup"
+          :disabled="userPropensity !== activePropensity"
+      >새 글 작성하기
+      </button>
     </div>
     <br />
   </div>
   <br> <br> <br> <br>
   <div class="warnSign">
-    <h5>커뮤니티는 게시글 제공만 하고 있습니다<br>
+    <h5>커뮤니티는 게시판 제공만 하고 있습니다<br>
       서비스는
       <a href="/communityPrivacy" class="d-inline"> 커뮤니티정책</a>에 따라 운영됩니다</h5>
   </div>
@@ -181,6 +203,10 @@ a{
   z-index: 10; /* 팝업 뒤에 위치하도록 */
 }
 
+.writerBtn:disabled{
+  background-color: rgba(225, 225, 225, 0.5); /* 흐린 배경 */
+  color: #8f8f8f;
+}
 
 .propensity {
   width: 300px;

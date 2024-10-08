@@ -457,8 +457,6 @@ const changePage = (newPage) => {
           </ul>
         </nav>
       </div>
-
-
     </div>
     <br><br>
   </div>
@@ -748,23 +746,8 @@ input[type="checkbox"] {
   font-weight: 700;
 }
 
-.page-link {
-  color: rgba(68, 140, 116, 1);
-}
 
-.active > .page-link {
-  background-color: rgba(68, 140, 116, 1);
-  border: none;
-}
 
-.page-link:hover {
-  color: white;
-}
-
-.pagination {
-  --bs-pagination-color: rgba(68, 140, 116, 1);
-  --bs-pagination-hover-color: rgba(68, 140, 116, 1);
-}
 
 .searchContainer {
   margin-left: 15%;
@@ -773,6 +756,7 @@ input[type="checkbox"] {
 .container {
   width: 80%;
 }
+
 
 .selected {
   background-color: rgba(68, 140, 116, 1) !important;
@@ -785,6 +769,31 @@ input[type="checkbox"] {
   background-color: white;
   border: 1px solid rgba(48, 120, 96, 1);
 }
+
+
+.page-link {
+  color: white;
+}
+
+.active > .page-link {
+  background-color: white;
+  color: rgba(68, 140, 116, 1);
+  border: none;
+}
+
+.page-link:hover {
+  color: rgba(68, 140, 116, 1);
+}
+
+.pagination {
+  --bs-pagination-color: rgba(68, 140, 116, 1);
+  --bs-pagination-hover-color: rgba(68, 140, 116, 1);
+}
+
+.pagination button{
+  background-color: #e5e5e5;
+}
+
 </style>
 
 
