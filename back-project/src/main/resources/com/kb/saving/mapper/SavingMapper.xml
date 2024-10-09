@@ -145,7 +145,7 @@
         LEFT JOIN saving_interest_rates AS ir ON s.saving_id = ir.saving_id
         WHERE s.fin_category_id = #{finCategoryId}
 
-        <if test="searchValue != null">
+        <if test="searchValue != null and searchValue !=''">
             AND s.saving_name LIKE CONCAT('%', #{searchValue}, '%')
         </if>
         <if test="bankNameList != null and !bankNameList.isEmpty() > 0">

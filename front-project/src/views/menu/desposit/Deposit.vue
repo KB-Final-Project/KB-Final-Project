@@ -300,7 +300,7 @@ const truncateText = (text, maxLength) => {
             <li>
               <h4 style="font-weight: 700;">은행</h4>
               <div class="filter d-inline">
-                <input type="button" id="all" @click="selectAllBanks"/>
+                <input type="button" id="all" @click="(event) => {selectAllBanks(); fetchSavings();}"/>
                 <label for="all">전체</label>
               </div>
               <div class="filter d-inline" v-for="(bank, index) in bankList" :key="index">
