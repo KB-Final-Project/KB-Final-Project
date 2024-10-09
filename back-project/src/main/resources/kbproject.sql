@@ -1064,7 +1064,6 @@ INSERT INTO stock_codes (stock_code, stock_name) VALUES
                                                      ('003280', '흥아해운');
 
 
-
 CREATE TABLE board_category (
                                 id INT AUTO_INCREMENT PRIMARY KEY,  -- 기본 키
                                 type VARCHAR(50) NOT NULL,           -- type 필드
@@ -1073,6 +1072,10 @@ CREATE TABLE board_category (
                                 order_no INT NOT NULL,                -- orderNo 필드
                                 UNIQUE KEY (type)                     -- type 컬럼에 유니크 인덱스 추가
 );
+
+ALTER TABLE board
+    MODIFY COLUMN type VARCHAR(50) NOT NULL;
+
 
 CREATE TABLE MEMBER (
                         mno INT NOT NULL AUTO_INCREMENT COMMENT '자동 증가',
@@ -1097,15 +1100,17 @@ CREATE TABLE `member_auth` (
                                CONSTRAINT `fk_authorities_users` FOREIGN KEY (`id`) REFERENCES `member` (`id`)
 )
 
+
 CREATE TABLE board (
                        bno BIGINT NOT NULL,
-                       type VARCHAR(50),  -- 문자열로 수정
+                       type VARCHAR(50) NOT NULL,  -- NOT NULL 추가
                        title VARCHAR(200) NOT NULL,
                        content TEXT,
                        status ENUM('y', 'n') DEFAULT 'y',
                        PRIMARY KEY (bno),
                        FOREIGN KEY (type) REFERENCES board_category(type)  -- 외래 키 설정
 );
+
 
 CREATE TABLE board_post (
                             board_id INT NOT NULL AUTO_INCREMENT COMMENT 'AUTO INCREMENT',
@@ -1150,4 +1155,3 @@ CREATE TABLE `BOARD_ATTACH_FILE` (
                                      KEY `board_id` (`board_id`),
                                      CONSTRAINT `board_attach_file_ibfk_1` FOREIGN KEY (`board_id`) REFERENCES `BOARD_POST` (`board_id`)
 );
-
