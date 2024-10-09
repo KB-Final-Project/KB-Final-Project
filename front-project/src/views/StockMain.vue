@@ -14,7 +14,7 @@
   :class="{ 'positive-card': stock.change && stock.change.includes('+'), 'negative-card': stock.change && stock.change.includes('-') }"
   class="stock-card">
   <p class="stock-title">{{ stock.name }}</p>
-
+  <p class="amount-txt">{{ stock.amount }}</p>
   <p>
     <span v-if="stock.change && stock.change.includes('+')" class="positive">
       {{ stock.change }}
