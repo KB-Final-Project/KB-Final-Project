@@ -42,12 +42,11 @@ public class MemberService{
         }
     }
     public boolean checkKakaoDuplicate(String kakaoId){
-        Member member = mapper.selectBykakaoId(kakaoId);
-        return member != null;
+        return mapper.checkDuplicateByKakaoId(kakaoId) == 0;
     }
     public boolean checkDuplicate(String id) {
-        Member member = mapper.selectById(id);
-        return member != null;
+        int count = mapper.checkDuplicateById(id);
+        return count == 0;
     }
 
     public Member getMemberByKakaoId(String id) {

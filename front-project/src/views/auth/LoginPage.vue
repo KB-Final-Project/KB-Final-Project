@@ -98,7 +98,7 @@ const login = async () => {
 const kakaoLogin = async () => {
     const host = window.location.origin;
     const redirectUri = `${host}/auth/kakaologin`;
-    const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=b419d631890e7eb2484c6bd82b626d3e&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=f5c0ffbadcd4586df232b26623c1f227&redirect_uri=${encodeURIComponent(redirectUri)}`;
     window.location.href = kakaoAuthUrl;
 };
 </script>

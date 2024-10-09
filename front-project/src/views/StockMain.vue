@@ -11,26 +11,26 @@
         </div>
         <div class="stock-cards">
           <div v-for="(stock, index) in currentStocks" :key="index"
-            :class="{ 'positive-card': stock.change.includes('+'), 'negative-card': stock.change.includes('-') }"
-            class="stock-card">
-            <p class="stock-title">{{ stock.name }}</p>
-            <p class="amount-txt">{{ stock.amount }}</p>
-            <!-- 상승/하락에 따른 아이콘 표시 -->
-            <p>
-              <span v-if="stock.change.includes('+')" class="positive">
-                {{ stock.change }}
-              </span>
-              <span v-else-if="stock.change.includes('-')" class="negative">
-                {{ stock.change }}
-              </span>
-              <span v-else>
-                {{ stock.change }}
-              </span>
-            </p>
-            <div class="line-c">
-              <Line :data="stock.chartData" :options="chartOptions" />
-            </div>
-          </div>
+  :class="{ 'positive-card': stock.change && stock.change.includes('+'), 'negative-card': stock.change && stock.change.includes('-') }"
+  class="stock-card">
+  <p class="stock-title">{{ stock.name }}</p>
+  <p class="amount-txt">{{ stock.amount }}</p>
+  <p>
+    <span v-if="stock.change && stock.change.includes('+')" class="positive">
+      {{ stock.change }}
+    </span>
+    <span v-else-if="stock.change && stock.change.includes('-')" class="negative">
+      {{ stock.change }}
+    </span>
+    <span v-else>
+      {{ stock.change ? stock.change : 'N/A' }}
+    </span>
+  </p>
+  <div class="line-c">
+    <Line :data="stock.chartData" :options="chartOptions" />
+  </div>
+</div>
+
         </div>
 
       </section>
@@ -90,21 +90,83 @@
           </tbody>
         </table>
       </section>
-
-      <!-- 카테고리 섹션 -->
+      
       <section class="categories">
         <div class="section-header">
           <p class="title">카테고리</p>
-          <router-link to="/stockcategory" class="more-link">더보기</router-link>
+          <button @click="showCategoryModal = true" class="more-link">더보기</button>
         </div>
         <div class="category-cards">
-          <div v-for="(category, index) in categories" :key="index" class="category-card">
-            <img :src="category.icon" :alt="category.name">
+          <div v-for="(category, index) in categories.slice(0, 6)" :key="index" class="category-card" @click="showCategoryStocks(category)">
+            <img :src="getCategoryIcon(category.name)" :alt="category.name">
             <h3>{{ category.name }}</h3>
-            <p>{{ category.change }}%</p>
+            <p :class="{ 'positive': category.avgChange >= 0, 'negative': category.avgChange < 0 }">
+              {{ category.avgChange.toFixed(2) }}%
+            </p>
           </div>
         </div>
       </section>
+
+      <!-- 카테고리 모달 -->
+      <div v-if="showCategoryModal" class="modal-overlay" @click="showCategoryModal = false">
+        <div class="modal-content" @click.stop>
+          <div class="modal-header">
+            <h2>지금 뜨는 카테고리</h2>
+            <button @click="showCategoryModal = false" class="close-button">×</button>
+          </div>
+          <div class="modal-body">
+            <div class="category-list">
+              <div v-for="(category, index) in categories" :key="index" class="category-item" @click="showCategoryStocks(category)">
+                <div class="category-rank">{{ index + 1 }}</div>
+                <div class="category-icon">
+                  <img :src="getCategoryIcon(category.name)" :alt="category.name">
+                </div>
+                <div class="category-name">{{ category.name }}</div>
+                <div :class="['category-change', { 'positive': category.avgChange >= 0, 'negative': category.avgChange < 0 }]">
+                  {{ category.avgChange >= 0 ? '+' : '' }}{{ category.avgChange.toFixed(2) }}%
+                </div>
+                <div class="category-detail">{{  category.totalStocksCount}}개 중 {{  category.risingStocksCount}}개 종목 상승</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 카테고리별 주식 목록 모달 -->
+    <!-- 카테고리별 주식 목록 모달 -->
+    <div v-if="showStockListModal" class="modal-overlay" @click="showStockListModal = false">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h2>{{ selectedCategory.name }} 주식 목록</h2>
+          <button @click="showStockListModal = false" class="close-button">×</button>
+        </div>
+        <div class="modal-body">
+          <table class="stock-table">
+            <thead>
+              <tr>
+                <th>종목명</th>
+                <th>현재가</th>
+                <th>대비</th>
+                <th>등락률</th>
+              </tr>
+            </thead>
+            <tbody>
+  <tr v-for="stock in categoryStocks" :key="stock.stockCode" @click="goToStockChart(stock)">
+    <td>{{ stock.stockName }}</td>
+    <td>{{ stock.currentPrice }}</td>
+    <td :class="{ 'positive': stock.priceChange > 0, 'negative': stock.priceChange < 0 }">
+      {{ stock.priceChange }}
+    </td>
+    <td :class="{ 'positive': stock.priceChangePct > 0, 'negative': stock.priceChangePct < 0 }">
+      {{ stock.priceChangePct }}%
+    </td>
+  </tr>
+</tbody>
+
+          </table>
+        </div>
+      </div>
+      </div>
     </div>
   </div>
 </template>
@@ -172,12 +234,12 @@ export default {
           },
         },
       },
-      categories: [
-        { name: '운수·창고', change: -3.12, icon: '/path/to/icon1.png' },
-        { name: '의약품', change: 2.06, icon: '/path/to/icon2.png' },
-        { name: '통신업', change: 1.96, icon: '/path/to/icon3.png' },
-        { name: '보험', change: 1.81, icon: '/path/to/icon4.png' },
-      ]
+      showCategoryModal: false,
+      showStockListModal: false,
+      selectedCategory: null,
+      categoryStocks: [],
+      categories: [],
+      allStocks: [], // 추가: 전체 주식 데이터를 저장할 배열
     };
   },
 
@@ -204,6 +266,8 @@ export default {
   async mounted() {
     try {
       await this.fetchStockData();
+      await this.fetchAllStocksData();
+      await this.fetchCategoryData();
       this.startWebSocket();
     } catch (error) {
       console.error('초기 데이터 로드 중 오류 발생:', error);
@@ -222,6 +286,19 @@ export default {
 
       return gradient;
     },
+    async fetchAllStocksData() {
+  try {
+    const response = await axios.get('http://localhost:8080/api/stocks/all');
+    
+    // 카테고리가 null이 아닌 항목들만 필터링
+    this.allStocks = response.data.filter(stock => stock.industry !== null);
+
+    console.log('전체 주식 데이터 (카테고리가 null이 아닌 항목만):', this.allStocks);
+  } catch (error) {
+    console.error('전체 주식 데이터를 가져오는 중 오류 발생:', error);
+    this.error = '전체 주식 데이터를 가져오는 중 오류가 발생했습니다.';
+  }
+},
     // 초기 주식 데이터를 가져오는 메서드
     async fetchStockData() {
       try {
@@ -232,63 +309,63 @@ export default {
         const kospiResponse = await axios.get('http://localhost:8080/api/index/kospi');
         const kosdaqResponse = await axios.get('http://localhost:8080/api/index/kosdaq');
         const kospi200Response = await axios.get('http://localhost:8080/api/index/kospi200');
-
         this.currentStocks = [
-          {
-            name: 'KOSPI',
-            amount: kospiResponse.data.코스피,
-            change: kospiResponse.data.변동,
-            chartData: {
-              labels: ['2023-10-01', '2023-10-02', '2023-10-03', '2023-10-04', '2023-10-05'],
-              datasets: [
-                {
-                  label: 'KOSPI',
-                  data: [20, 10, 10, 5, 7],
-                  borderColor: 'rgba(75, 192, 192, 1)',
-                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                  fill: false,
-                  pointRadius: 0,
-                },
-              ],
-            },
-          },
-          {
-            name: 'KOSDAQ',
-            amount: kosdaqResponse.data.코스닥,
-            change: kosdaqResponse.data.변동,
-            chartData: {
-              labels: ['2023-10-01', '2023-10-02', '2023-10-03', '2023-10-04', '2023-10-05'],
-              datasets: [
-                {
-                  label: 'KOSDAQ',
-                  data: [12, 3, 4, 15, 4],
-                  borderColor: 'rgba(153, 102, 255, 1)',
-                  backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                  fill: true,
-                  pointRadius: 0,
-                },
-              ],
-            }
-          },
-          {
-            name: 'KOSPI200',
-            amount: kospi200Response.data.코스피200,
-            change: kospi200Response.data.변동,
-            chartData: {
-              labels: ['2023-10-01', '2023-10-02', '2023-10-03', '2023-10-04', '2023-10-05'],
-              datasets: [
-                {
-                  label: 'KOSPI200',
-                  data: [23, 1, 3, 5, 10],
-                  borderColor: 'rgba(255, 159, 64, 1)',
-                  backgroundColor: 'rgba(255, 159, 64, 0.2)',
-                  fill: true,
-                  pointRadius: 0,
-                },
-              ],
-            },
-          }
-        ]
+  {
+    name: 'KOSPI',
+    amount: kospiResponse.data.코스피,
+    change: kospiResponse.data.변동,
+    chartData: {
+      labels: ['2023-10-01', '2023-10-02', '2023-10-03', '2023-10-04', '2023-10-05'],
+      datasets: [
+        {
+          label: 'KOSPI',
+          data: [20, 10, 10, 5, 7],
+          borderColor: 'rgba(75, 192, 192, 1)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          fill: false,
+          pointRadius: 0,
+        },
+      ],
+    },
+  },
+  {
+    name: 'KOSDAQ',
+    amount: kosdaqResponse.data.코스닥,
+    change: kosdaqResponse.data.변동,
+    chartData: {
+      labels: ['2023-10-01', '2023-10-02', '2023-10-03', '2023-10-04', '2023-10-05'],
+      datasets: [
+        {
+          label: 'KOSDAQ',
+          data: [12, 3, 4, 15, 4],
+          borderColor: 'rgba(153, 102, 255, 1)',
+          backgroundColor: 'rgba(153, 102, 255, 0.2)',
+          fill: true,
+          pointRadius: 0,
+        },
+      ],
+    }
+  },
+  {
+    name: 'KOSPI200',
+    amount: kospi200Response.data.코스피200,
+    change: `${kospi200Response.data.전일대비} (${kospi200Response.data.등락률})`, // 전일대비 및 등락률 조합
+    chartData: {
+      labels: ['2023-10-01', '2023-10-02', '2023-10-03', '2023-10-04', '2023-10-05'],
+      datasets: [
+        {
+          label: 'KOSPI200',
+          data: [23, 1, 3, 5, 10],
+          borderColor: 'rgba(255, 159, 64, 1)',
+          backgroundColor: 'rgba(255, 159, 64, 0.2)',
+          fill: true,
+          pointRadius: 0,
+        },
+      ],
+    },
+  }
+];
+
       } catch (error) {
         console.error('주식 데이터를 가져오는 중 오류 발생:', error);
       }
@@ -307,7 +384,6 @@ export default {
         console.error('WebSocket 오류:', error);
       };
     },
-
     // 웹소켓에서 받은 데이터로 주식 정보 업데이트
     updateStockData(data) {
       const index = this.stocks.findIndex(stock => stock.stockCode === data.stockCode);
@@ -346,12 +422,58 @@ export default {
           priceChange: stock.priceChange,
           priceChangePct: stock.priceChangePct,
           volume: stock.volume,
-          marketCap: stock.marketCap,
-          high52week: stock.high52week,
-          low52week: stock.low52week
+          htsAvls: stock.htsAvls,
+          w52Hgpr: stock.w52Hgpr,
+          w52Lwpr: stock.w52Lwpr
         }
       });
+    },
+
+    // 카테고리 데이터를 가져오는 메서드
+    async fetchCategoryData() {
+      try {
+        const response = await axios.get('http://localhost:8080/api/stocks/categories');
+        this.categories = response.data.map(category => ({
+          name: category.name,
+          avgChange: category.avgChange,
+          risingStocksCount: category.risingStocksCount,
+          totalStocksCount: category.totalStocksCount,
+        }));
+      } catch (error) {
+        console.error('카테고리 데이터를 가져오는 중 오류 발생:', error);
+        this.error = '카테고리 데이터를 가져오는 중 오류가 발생했습니다.';
+      }
+    },
+
+    getCategoryIcon(categoryName) {
+      return `/path/to/icons/${categoryName.toLowerCase().replace(/\s+/g, '-')}.png`;
+    },
+    async showCategoryStocks(category) {
+  this.selectedCategory = category;
+  this.showCategoryModal = false;
+  this.showStockListModal = true;
+  try {
+    if (!category || !category.name) {
+      throw new Error('선택된 카테고리 정보가 올바르지 않습니다.');
     }
+
+    console.log('선택된 카테고리:', category);
+    console.log('전체 주식 데이터:', this.allStocks);
+
+    // 카테고리가 null이 아닌 항목 중 선택된 카테고리와 일치하는 주식만 필터링
+    this.categoryStocks = this.allStocks.filter(stock => {
+      return stock.industry &&
+             stock.industry.toString().trim().toLowerCase() === category.name.toString().trim().toLowerCase();
+    });
+
+    console.log('필터링된 주식 데이터:', this.categoryStocks);
+    this.categoryStocks.sort((a, b) => b.priceChangePct - a.priceChangePct);
+  } catch (error) {
+    console.error(`${category.name} 카테고리의 주식 데이터를 처리하는 중 오류 발생:`, error);
+    this.error = '주식 데이터를 처리하는 중 오류가 발생했습니다.';
+  }
+}
+
   }
 };
 </script>
@@ -563,5 +685,141 @@ export default {
 h1 {
   text-align: center;
   margin-bottom: 30px;
+}
+
+/* 준섭 css 추가*/
+
+.categories {
+  margin-bottom: 40px;
+  background-color: white;
+  border-radius: 30px;
+  padding: 20px;
+}
+
+.category-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+}
+.category-card {
+  background-color: white;
+  padding: 15px;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-basis: calc(33.333% - 20px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.category-card img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.category-card h3 {
+  margin-bottom: 5px;
+}
+
+.category-card p {
+  font-weight: bold;
+}
+
+.positive {
+  color: #FF0008;
+}
+
+.negative {
+  color: #005CF6;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.category-rank {
+  width: 30px;
+  font-weight: bold;
+}
+
+.category-icon img {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+.category-name {
+  flex: 1;
+}
+
+.category-change {
+  width: 80px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.category-detail {
+  width: 150px;
+  text-align: right;
+  color: #666;
+}
+
+.positive {
+  color: #FF0008;
+}
+
+.negative {
+  color: #005CF6;
 }
 </style>

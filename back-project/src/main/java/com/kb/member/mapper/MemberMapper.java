@@ -16,4 +16,7 @@ public interface MemberMapper {
     int deleteMember(long mno);
     int insertAuth(Auth auth);
     int deleteAuth(Auth auth);
+    int checkDuplicateById(String id);
+    int checkDuplicateByKakaoId(String id);
+
 }

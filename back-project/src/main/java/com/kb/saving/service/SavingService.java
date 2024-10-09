@@ -1,5 +1,6 @@
 package com.kb.saving.service;
 
+import com.kb.bank.mapper.BankMapper;
 import com.kb.common.pagination.PageInfo;
 import com.kb.saving.dto.*;
 import com.kb.saving.mapper.SavingMapper;
@@ -14,6 +15,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class SavingService {
     private final SavingMapper mapper;
+    private final BankMapper bankMapper;
     private final static int LIST_LIMIT = 9;
     private final static int PAGE_LIMIT = 5;
 
@@ -43,5 +45,11 @@ public class SavingService {
     }
     public List<SavingListDTO> getTopSavingsProductList() {
         return mapper.getTopSavingsProductList();
+    }
+
+    public SavingCategory getCategoryList(){
+        SavingCategory savingCategory = new SavingCategory();
+        savingCategory.setBankList(bankMapper.getBankListByType(1));
+        return savingCategory;
     }
 }

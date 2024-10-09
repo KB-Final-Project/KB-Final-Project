@@ -33,7 +33,7 @@ public class TokenService {
 
     private String currentAccessToken;
     private LocalDateTime tokenIssuedTime;
-    private long tokenExpiryDuration = 24 * 60 * 60; // 기본 유효 기간 24시간 (초)
+    private long tokenExpiryDuration = 24 * 60 * 60; // 24시간 (초)
 
     // 토큰 발급 API 호출 메서드
     public String requestNewToken() {
@@ -81,7 +81,7 @@ public class TokenService {
         }
 
         long secondsElapsed = ChronoUnit.SECONDS.between(tokenIssuedTime, LocalDateTime.now());
-        return secondsElapsed < tokenExpiryDuration; // 유효기간 확인
+        return secondsElapsed < tokenExpiryDuration; // 24시간 내에 유효한지 확인
     }
 
     // 유효한 토큰을 가져오는 메서드 (없으면 새로 발급)
@@ -90,7 +90,6 @@ public class TokenService {
             logger.info("기존 유효한 토큰 반환");
             return currentAccessToken;
         } else {
-            logger.info("토큰 만료로 인해 새로 발급 요청");
             return requestNewToken(); // 토큰이 없거나 만료되었으면 새로 발급
         }
     }

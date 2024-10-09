@@ -10,15 +10,14 @@
         <result property="bankName" column="bank_name"/>
         <result property="bankLogoUrl" column="bank_logo_url"/>
         <result property="bankUrl" column="bank_url"/>
+        <result property="bankType" column="bank_type"/>
     </resultMap>
 
     <select id="getBankListByType" resultMap="BankResultMap">
         SELECT
-            bank_id, bank_name, bank_logo_url, bank_url
+            bank_id, bank_name, bank_logo_url, bank_url, bank_type
         FROM
             BANKS
-        WHERE
-            bank_type = 1;
     </select>
 
 </mapper>
