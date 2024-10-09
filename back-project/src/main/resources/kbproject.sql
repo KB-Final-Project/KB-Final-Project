@@ -1064,3 +1064,96 @@ INSERT INTO stock_codes (stock_code, stock_name) VALUES
                                                      ('003280', '흥아해운');
 
 
+
+
+CREATE TABLE MEMBER (
+                        mno INT NOT NULL AUTO_INCREMENT COMMENT '자동 증가',
+                        id VARCHAR(50) NOT NULL COMMENT '고유',
+                        password VARCHAR(100) NOT NULL,
+                        name VARCHAR(30) NOT NULL,
+                        kakao_id VARCHAR(30) DEFAULT NULL,
+                        create_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                        update_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                        email VARCHAR(50) DEFAULT NULL,
+                        status VARCHAR(1) DEFAULT 'y',
+                        invest_type VARCHAR(50) DEFAULT NULL,
+                        PRIMARY KEY (mno),
+                        UNIQUE KEY id (id)
+);
+
+CREATE TABLE `member_auth` (
+                               `id` varchar(50) NOT NULL,
+                               `authority` char(50) NOT NULL,
+                               PRIMARY KEY (`id`,`authority`),
+                               CONSTRAINT `fk_authorities_users` FOREIGN KEY (`id`) REFERENCES `member` (`id`)
+)
+
+
+CREATE TABLE board (
+                       bno BIGINT NOT NULL,
+                       title VARCHAR(200) NOT NULL,
+                       content TEXT,
+                       writer_mno INT NOT NULL,
+                       create_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+                       update_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                       status ENUM('y', 'n') DEFAULT 'y',
+                       board_category_type VARCHAR(50) DEFAULT NULL,
+                       read_count INT DEFAULT 0,
+                       comment_count INT DEFAULT 0,
+                       likes_count INT DEFAULT 0,
+                       PRIMARY KEY (bno),
+                       FOREIGN KEY (writer_mno) REFERENCES MEMBER(mno)  -- 추가된 부분
+);
+
+
+CREATE TABLE board_post (
+                            board_id INT NOT NULL AUTO_INCREMENT COMMENT 'AUTO INCREMENT',
+                            title VARCHAR(255) NOT NULL,
+                            content TEXT NOT NULL,
+                            read_count INT NOT NULL DEFAULT 0,
+                            created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            modified_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                            board_category VARCHAR(30) NOT NULL COMMENT '전체 및 투자 성향 별',
+                            comment_count INT DEFAULT 0,
+                            likes_count INT DEFAULT 0,
+                            member_id INT NOT NULL,
+                            PRIMARY KEY (board_id),
+                            KEY member_id (member_id),
+                            CONSTRAINT board_post_ibfk_1 FOREIGN KEY (member_id) REFERENCES MEMBER (mno)
+);
+
+CREATE TABLE `BOARD_REPLY` (
+                               `reply_id` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
+                               `reply_content` varchar(2000) NOT NULL,
+                               `reply_created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                               `reply_modified_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                               `bno` int NOT NULL,
+                               `mno` int NOT NULL,
+                               PRIMARY KEY (`reply_id`),
+                               KEY `bno` (`bno`),
+                               KEY `mno` (`mno`),
+                               CONSTRAINT `board_reply_ibfk_1` FOREIGN KEY (`bno`) REFERENCES `BOARD_POST` (`board_id`),
+                               CONSTRAINT `board_reply_ibfk_2` FOREIGN KEY (`mno`) REFERENCES `MEMBER` (`mno`)
+);
+
+CREATE TABLE `BOARD_ATTACH_FILE` (
+                                     `file_id` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
+                                     `board_id` int NOT NULL,
+                                     `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                     `file_type` varchar(56) NOT NULL,
+                                     `file_size` bigint NOT NULL,
+                                     `file_name` varchar(200) NOT NULL,
+                                     `file_path` varchar(200) NOT NULL,
+                                     PRIMARY KEY (`file_id`),
+                                     KEY `board_id` (`board_id`),
+                                     CONSTRAINT `board_attach_file_ibfk_1` FOREIGN KEY (`board_id`) REFERENCES `BOARD_POST` (`board_id`)
+);
+
+CREATE TABLE board_category (
+                                id INT AUTO_INCREMENT PRIMARY KEY,
+                                name VARCHAR(255) NOT NULL,
+                                type VARCHAR(50),
+                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
