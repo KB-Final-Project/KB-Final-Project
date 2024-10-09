@@ -7,14 +7,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 public class SavingParam {
     private String searchValue;
     private String interestRateType;
-    private Integer bankId;
+    private List<String> bankNameList;
     private Integer saveTerm;
     private Integer finCategoryId;
 
-    private int page = 1;
+    private int page;
     private int limit;
     private int offset;
 

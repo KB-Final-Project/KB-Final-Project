@@ -46,8 +46,8 @@ public class MemberService{
         return member != null;
     }
     public boolean checkDuplicate(String id) {
-        Member member = mapper.selectById(id);
-        return member != null;
+        int count = mapper.checkDuplicateById(id);
+        return count == 0;
     }
 
     public Member getMemberByKakaoId(String id) {
