@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface BoardMapper {
     List<BoardCategory> selectBoardCategory();
-    List<Board> selectBoardList(BoardParam param);
+    List<BoardPost> selectBoardList(BoardParam param);
     int selectBoardCount(BoardParam param);
-    Board selectBoardByBno(long bno);
-    int insertBoard(Board board);
-    int updateBoard(Board board);
-    int updateReadCount(Board board);
-    int deleteBoard(long bno);
+    BoardPost selectBoardByBoardId(long boardId);
+    int insertBoard(BoardPost boardPost);
+    int updateBoard(BoardPost boardPost);
+    int updateReadCount(BoardPost boardPost);
+    int deleteBoard(long boardId);
     BoardAttachFile selectAttachFileByFno(long fno);
     List<BoardAttachFile> selectAttachFileByBno(long bno);
     int insertAttachFile(BoardAttachFile attachFile);

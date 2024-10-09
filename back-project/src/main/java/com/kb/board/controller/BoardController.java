@@ -17,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -46,33 +47,33 @@ public class BoardController {
     }
 
     @GetMapping("/{bno}")
-    public ResponseEntity<Board> getById(@PathVariable long bno) {
+    public ResponseEntity<BoardPost> getById(@PathVariable long bno) {
         return ResponseEntity.ok(service.getBoard(bno));
     }
 
     @PostMapping("")
-    public ResponseEntity<Board> create(
-            BoardDTO boardDTO,
+    public ResponseEntity<BoardPost> create(
+            @ModelAttribute @Valid  BoardDTO boardDTO,
             @RequestParam(name = "files", required = false) List<MultipartFile> files,
             @AuthenticationPrincipal Member principal) {
 //        System.out.println(boardDTO);
-        Board board = boardDTO.toBoard();
-        board.setMno(principal.getMno());
-        return ResponseEntity.ok(service.createBoard(board, files));
+        BoardPost boardPost = boardDTO.toBoard();
+        boardPost.setMemberId(principal.getMno()); // memberId로 변경
+        return ResponseEntity.ok(service.createBoard(boardPost, files));
     }
 
     @PutMapping("/{bno}")
-    public ResponseEntity<Board> update(@PathVariable long bno,
-        BoardDTO boardDTO,
-        @RequestParam(name = "files", required = false) List<MultipartFile> files) {
-        Board board = boardDTO.toBoard();
-        board.setBno(bno);
+    public ResponseEntity<BoardPost> update(@PathVariable long bno,
+                                            BoardDTO boardDTO,
+                                            @RequestParam(name = "files", required = false) List<MultipartFile> files) {
+        BoardPost boardPost = boardDTO.toBoard();
+        boardPost.setBoardId(bno);
         System.out.println("files " + files);
-        return ResponseEntity.ok(service.updateBoard(board, files));
+        return ResponseEntity.ok(service.updateBoard(boardPost, files));
     }
 
     @DeleteMapping("/{bno}")
-    public ResponseEntity<Board> delete(@PathVariable long bno) {
+    public ResponseEntity<BoardPost> delete(@PathVariable long bno) {
         return ResponseEntity.ok(service.deleteBoard(bno));
     }
 
