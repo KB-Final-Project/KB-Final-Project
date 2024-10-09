@@ -99,8 +99,7 @@ const member = reactive({
   kakaoId: '',
 });
 
-const disableSubmit = ref(true);
-const emailValid = ref(true);
+const disableSubmit = ref(false);
 const passwordValid = ref(false);
 const passwordMatch = ref(false);
 
@@ -108,34 +107,33 @@ const checkId = async () => {
   const idPattern = /^[a-zA-Z0-9]{5,20}$/; 
 
   if (!member.id) {
+    disableSubmit.value = false;
     checkError.value = '사용자 ID를 입력하세요.';
     return;
   }
 
   if (member.id.length < 5 || member.id.length > 20) {
+    disableSubmit.value = false;
     checkError.value = '아이디는 5글자 이상 20글자 미만이어야 합니다.';
     return;
   }
 
   if (!idPattern.test(member.id)) {
+    disableSubmit.value = false;
     checkError.value = '아이디는 영문자와 숫자만 사용할 수 있습니다.';
     return;
   }
 
   try {
     disableSubmit.value = await authApi.checkId(member.id);
-    checkError.value = disableSubmit.value ? '이미 사용중인 ID입니다.' : '사용 가능한 ID입니다.';
+    checkError.value = disableSubmit.value ? '사용 가능한 ID입니다.' : '이미 사용중인 ID입니다.';
+    console.log(disableSubmit.value);
   } catch (error) {
     checkError.value = 'ID 중복 확인에 실패했습니다.';
     console.error('ID 중복 확인 오류:', error);
   }
 };
 
-const checkEmail = () => {
-  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  emailValid.value = emailPattern.test(member.email);
-  emailError.value = emailValid.value ? '사용 가능한 이메일입니다.' : '유효한 이메일 형식을 입력하세요.';
-};
 
 const checkPassword = () => {
   const passwordPattern = /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$/;
@@ -149,13 +147,13 @@ const checkPasswordMatch = () => {
 };
 
 const join = async () => {
-  if (!disableSubmit.value || !passwordValid.value || !passwordMatch.value || !emailValid.value) {
+  if (!disableSubmit.value || !passwordValid.value || !passwordMatch.value) {
     return alert('모든 필드를 올바르게 입력하세요.');
   }
 
   try {
     await authApi.create(member);
-    router.push({name:'LoginPage', replace: true});
+    router.push({name:'login', replace: true});
   } catch (e) {
     console.error(e);
   }
@@ -171,7 +169,7 @@ onMounted(async () => {
 
   
       const isAlreadyMember = await authApi.checkKakaoMember(member.kakaoId);
-      if (isAlreadyMember) {
+      if (!isAlreadyMember) {
         alert('이미 가입된 회원입니다. 로그인 페이지로 이동합니다.');
         router.push({ name: 'login', replace: true });
       }

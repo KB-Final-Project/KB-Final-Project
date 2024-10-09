@@ -2,6 +2,7 @@
 import { ref, reactive, onMounted, } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRoute, useRouter } from 'vue-router';
+import authApi from '@/api/authApi';
 
 const route = useRoute();
 const router = useRouter();
@@ -19,10 +20,14 @@ onMounted(async () => {
     member.redirectUrl = `${host}/auth/kakaologin`;
     member.code = route.query.code;
     console.log(member);
-
-    await auth.login(member);
-    alert('로그인이 완료 되었습니다.');
-    router.push('/');
+    try {
+      await auth.login(member);
+      alert('로그인이 완료 되었습니다.');
+      router.push('/');
+    }catch(e) {
+      alert('로그인에 실패했습니다.');
+      router.push('login');
+    }
     
   } catch (e) {
     // 로그인 에러
