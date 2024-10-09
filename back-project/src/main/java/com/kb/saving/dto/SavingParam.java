@@ -11,7 +11,7 @@ import java.util.List;
 public class SavingParam {
     private String searchValue;
     private String interestRateType;
-    private List<String> bankIdList;
+    private List<String> bankNameList;
     private Integer saveTerm;
     private Integer finCategoryId;
 

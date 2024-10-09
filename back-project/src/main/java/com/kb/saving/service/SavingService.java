@@ -1,9 +1,6 @@
 package com.kb.saving.service;
 
 import com.kb.bank.mapper.BankMapper;
-import com.kb.board.dto.Board;
-import com.kb.board.dto.BoardPageResult;
-import com.kb.board.dto.BoardParam;
 import com.kb.common.pagination.PageInfo;
 import com.kb.saving.dto.*;
 import com.kb.saving.mapper.SavingMapper;
@@ -27,7 +24,12 @@ public class SavingService {
         PageInfo pageInfo = new PageInfo(savingParam.getPage(), totalSize, LIST_LIMIT, PAGE_LIMIT);
         savingParam.setLimit(pageInfo.getListLimit());
         savingParam.setOffset(pageInfo.getStartList() - 1);
-        log.info(savingParam.toString());
+
+        if(savingParam.getSaveTerm() == null)
+            savingParam.setSaveTerm(36);
+        if(savingParam.getInterestRateType() == null)
+            savingParam.setInterestRateType("단리");
+
         List<SavingListDTO> savingList = mapper.getProductList(savingParam);
         if (savingList == null || savingList.isEmpty()) {
             savingList = new ArrayList<>();

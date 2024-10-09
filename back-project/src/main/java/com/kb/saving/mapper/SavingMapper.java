@@ -16,4 +16,5 @@ public interface SavingMapper {
     List<SavingListDTO> getTopProductList();
 
     List<SavingListDTO> getTopSavingsProductList();
+
 }
