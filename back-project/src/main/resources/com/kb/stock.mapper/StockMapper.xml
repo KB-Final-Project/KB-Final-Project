@@ -9,29 +9,28 @@
         SELECT stock_code FROM stock_codes
     </select>
 
-
     <insert id="upsertStock" parameterType="com.kb.stock.dto.StockDTO">
-        INSERT INTO stock (stock_code, stock_name, current_price, price_change, price_change_pct, high_price, low_price, opening_price, volume, industry, last_updated)
-        VALUES (#{stockCode}, #{stockName}, #{currentPrice}, #{priceChange}, #{priceChangePct}, #{highPrice}, #{lowPrice}, #{openingPrice}, #{volume}, #{bstpKorIsnm}, NOW())
+        INSERT INTO stocks (stock_code, stock_name, current_price, price_change, price_change_pct, high_price, low_price, opening_price, industry, volume, hts_avls, w52_hgpr, w52_lwpr)
+        VALUES (#{stockCode}, #{stockName}, #{currentPrice}, #{priceChange}, #{priceChangePct}, #{highPrice}, #{lowPrice}, #{openingPrice}, #{industry}, #{volume}, #{htsAvls}, #{w52Hgpr}, #{w52Lwpr})
             ON DUPLICATE KEY UPDATE
-                                 stock_name = #{stockName},
-                                 current_price = #{currentPrice},
-                                 price_change = #{priceChange},
-                                 price_change_pct = #{priceChangePct},
-                                 high_price = #{highPrice},
-                                 low_price = #{lowPrice},
-                                 opening_price = #{openingPrice},
-                                 volume = #{volume},
-                                 industry = #{bstpKorIsnm},
-                                 last_updated = NOW();
+                                 stock_name = VALUES(stock_name),
+                                 current_price = VALUES(current_price),
+                                 price_change = VALUES(price_change),
+                                 price_change_pct = VALUES(price_change_pct),
+                                 high_price = VALUES(high_price),
+                                 low_price = VALUES(low_price),
+                                 opening_price = VALUES(opening_price),
+                                 industry = VALUES(industry),
+                                 volume = VALUES(volume),
+                                 hts_avls = VALUES(hts_avls),
+                                 w52_hgpr = VALUES(w52_hgpr),
+                                 w52_lwpr = VALUES(w52_lwpr)
     </insert>
-
 
     <select id="selectStockNameByCode" parameterType="String" resultType="String">
         SELECT sc.stock_name
         FROM stock_codes sc
         WHERE sc.stock_code = #{stockCode}
     </select>
-
 
 </mapper>
