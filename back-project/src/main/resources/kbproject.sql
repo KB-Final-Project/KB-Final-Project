@@ -1063,7 +1063,6 @@ INSERT INTO stock_codes (stock_code, stock_name) VALUES
                                                      ('000545', '흥국화재우'),
                                                      ('003280', '흥아해운');
 
-
 CREATE TABLE board_category (
                                 id INT AUTO_INCREMENT PRIMARY KEY,  -- 기본 키
                                 type VARCHAR(50) NOT NULL,           -- type 필드
@@ -1102,7 +1101,7 @@ CREATE TABLE `member_auth` (
 
 
 CREATE TABLE board (
-                       bno BIGINT NOT NULL,
+                       bno BIGINT NOT null AUTO_INCREMENT,
                        type VARCHAR(50) NOT NULL,  -- NOT NULL 추가
                        title VARCHAR(200) NOT NULL,
                        content TEXT,
@@ -1113,9 +1112,10 @@ CREATE TABLE board (
 
 
 CREATE TABLE board_post (
-                            board_id INT NOT NULL AUTO_INCREMENT COMMENT 'AUTO INCREMENT',
+                            board_id INT NOT NULL AUTO_INCREMENT,
                             title VARCHAR(255) NOT NULL,
                             content TEXT NOT NULL,
+                            status ENUM('y', 'n') DEFAULT 'y',
                             read_count INT NOT NULL DEFAULT 0,
                             created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                             modified_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

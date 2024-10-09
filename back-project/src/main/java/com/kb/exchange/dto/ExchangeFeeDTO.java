@@ -1,8 +1,6 @@
 package com.kb.exchange.dto;
 
-import com.kb.board.dto.Board;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
