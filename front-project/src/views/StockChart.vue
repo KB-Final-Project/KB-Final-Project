@@ -19,15 +19,15 @@
         </div>
         <div class="detail-item">
           <span>시가총액</span>
-          <span>{{ marketCap }}</span>
+          <span>{{ htsAvls }}</span>
         </div>
         <div class="detail-item">
           <span>52주 최고</span>
-          <span>{{ high52week }}</span>
+          <span>{{ w52Hgpr }}</span>
         </div>
         <div class="detail-item">
           <span>52주 최저</span>
-          <span>{{ low52week }}</span>
+          <span>{{ w52Lwpr }}</span>
         </div>
       </div>
       <div class="tabs">
@@ -76,15 +76,15 @@
         </div>
         <div class="detail-item">
           <span>시가총액</span>
-          <span>{{ marketCap }}</span>
+          <span>{{ htsAvls }}</span>
         </div>
         <div class="detail-item">
           <span>52주 최고</span>
-          <span>{{ high52week }}</span>
+          <span>{{ w52Hgpr }}</span>
         </div>
         <div class="detail-item">
           <span>52주 최저</span>
-          <span>{{ low52week }}</span>
+          <span>{{ w52Lwpr }}</span>
         </div>
       </div>
   
@@ -107,9 +107,11 @@
   
   export default {
     props: [
-      'stockCode', 'stockName', 'currentPrice', 'priceChange', 
-      'priceChangePct', 'volume', 'marketCap', 'high52week', 'low52week'
-    ],
+  'stockCode', 'stockName', 'currentPrice', 'priceChange', 
+  'priceChangePct', 'volume', 'htsAvls', 'w52Hgpr', 'w52Lwpr'
+],
+
+
     data() {
       return {
         tabs: ['차트', '뉴스',],
