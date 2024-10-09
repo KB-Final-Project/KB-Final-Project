@@ -72,82 +72,35 @@
     selectBoardCount : selectBoardList와 쌍으로 갯수를 세오는 Count문, 검색조건이 selectBoardList 일치 해야함
     -->
     <select id="selectBoardList" parameterType="com.kb.board.dto.BoardParam" resultMap="boardResultMap">
-     <![CDATA[
-        select
-            distinct b.bno, b.board_category_type, b.title, m1.id as member_id, m1.name,
+    <![CDATA[
+        SELECT DISTINCT
+            b.bno, b.board_category_type, b.title, m1.id AS member_id, m1.name,
             b.read_count, b.status, b.create_date, c.level
-        from board b
-        left outer join member m1 on b.member_mno = m1.mno
-        left outer join board_reply r on r.board_bno = b.bno
-        left outer join member m2 on r.member_mno = m2.mno
-        join board_category c on (b.board_category_type = c.type)
-        where]]>
-        b.status = 'y' <!-- 1=1을 사용해도 무관  -->
-        <if test="types != null">
-            and b.board_category_type in
-            <foreach item="item" collection="types" open="(" separator="," close=")">
-                #{item}
-            </foreach>
-        </if>
-        <if test="searchType == 'writer'">
-            and m1.id like '%${searchValue}%'
-        </if>
-        <if test="searchType == 'title'">
-            and b.title like '%${searchValue}%'
-        </if>
-        <if test="searchType == 'content'">
-            and b.content like '%${searchValue}%'
-        </if>
-        <if test="searchType == 'all'">
-            and(
-                b.title like '%${searchValue}%'
-                or b.content like '%${searchValue}%'
-                or m1.id like '%${searchValue}%'
-                or m1.name like '%${searchValue}%'
-                or r.content like '%${searchValue}%'
-                or m2.id like '%${searchValue}%'
-                or m2.name like '%${searchValue}%'
-            )
-        </if>
-        order by c.level, b.bno desc limit ${limit} offset ${offset}
-    </select>
+        FROM board b
+                 LEFT OUTER JOIN member m1 ON b.writer_mno = m1.mno
+                 LEFT OUTER JOIN board_reply r ON r.bno = b.bno
+                 LEFT OUTER JOIN member m2 ON r.mno = m2.mno
+                 JOIN board_category c ON (b.board_category_type = c.type)
+        WHERE
+            b.status = 'y' -- 1=1을 사용해도 무관
+        ORDER BY c.level, b.bno DESC
+            LIMIT #{limit} OFFSET #{offset}
+        ]]>
+</select>
+
 
     <select id="selectBoardCount" parameterType="com.kb.board.dto.BoardParam" resultType="int">
+    <![CDATA[
         select count(distinct b.bno)
         from board b
-        left outer join member m1 on b.member_mno = m1.mno
-        left outer join board_reply r on r.board_bno = b.bno
-        left outer join member m2 on r.member_mno = m2.mno
-        join board_category c on (b.board_category_type = c.type)
+                 left outer join member m1 on b.writer_mno = m1.mno
+                 left outer join board_reply r on r.bno = b.bno
+                 left outer join member m2 on r.mno = m2.mno
+                 join board_category c on (b.board_category_type = c.type)
         where
-        b.status = 'y' <!-- 1=1을 사용해도 무관  -->
-        <if test="types != null">
-            and b.board_category_type in
-            <foreach  item="item" collection="types" open="(" separator="," close=")">
-                #{item}
-            </foreach>
-        </if>
-        <if test="searchType == 'writer'">
-            and m1.id like '%${searchValue}%'
-        </if>
-        <if test="searchType == 'title'">
-            and b.title like '%${searchValue}%'
-        </if>
-        <if test="searchType == 'content'">
-            and b.content like '%${searchValue}%'
-        </if>
-        <if test="searchType == 'all'">
-            and(
-                b.title like '%${searchValue}%'
-                or b.content like '%${searchValue}%'
-                or m1.id like '%${searchValue}%'
-                or m1.name like '%${searchValue}%'
-                or r.content like '%${searchValue}%'
-                or m2.id like '%${searchValue}%'
-                or m2.name like '%${searchValue}%'
-            )
-        </if>
-    </select>
+            b.status = 'y'
+        ]]>
+</select>
 
     <!-- 상세보기 용도, 모든 인자를 가져와야한다. -->
     <select id="selectBoardByBno" parameterType="long" resultMap="boardDetailResultMap">
@@ -155,7 +108,7 @@
             b.bno, b.board_category_type, m.id as member_id, m.name, b.title, b.content,
             b.read_count, b.create_date, b.modify_date
         from board b
-            join member m on (b.member_mno = m.mno)
+            join member m on (b.bno = m.mno)
         where b.status = 'y' and b.bno = #{bno}
     </select>
 
@@ -195,7 +148,7 @@
     <!-- 파일 가져오기 -->
     <select id="selectAttachFileByFno" parameterType="long" resultMap="boardAttachFileResultMap">
         select
-            fno, board_bno, original_filename, renamed_filename, content_type, size, create_date
+            fno, bno, original_filename, renamed_filename, content_type, size, create_date
         from board_attach_file
         where fno = #{fno}
     </select>
@@ -203,15 +156,15 @@
     <!-- 파일 리스트 -->
     <select id="selectAttachFileByBno" resultMap="boardAttachFileResultMap">
         select
-            fno, board_bno, original_filename, renamed_filename, content_type, size, create_date
+            fno, bno, original_filename, renamed_filename, content_type, size, create_date
         from board_attach_file
-        where board_bno = #{bno}
+        where bno = #{bno}
     </select>
 
     <!-- 파일 첨부 -->
     <insert id="insertAttachFile" parameterType="com.kb.board.dto.BoardAttachFile">
         INSERT INTO BOARD_ATTACH_FILE
-            (fno, board_bno, original_filename, renamed_filename, content_type, size, create_date)
+            (fno, bno, original_filename, renamed_filename, content_type, size, create_date)
         VALUES(default, #{bno}, #{originalFilename}, #{renamedFilename}, #{contentType}, ${size}, DEFAULT)
     </insert>
 
@@ -226,7 +179,7 @@
             SELECT @@identity as rno
         </selectKey>
         insert into board_reply(
-            rno, board_bno, member_mno, content, status,
+            rno, bno, member_mno, content, status,
             create_date, modify_date)
         VALUES(
                   default, #{bno}, #{mno}, #{content},
@@ -237,18 +190,18 @@
     <!-- 댓글 리스트 -->
     <select id="selectReplyByBno" resultMap="boardReplyResultMap" >
         select
-            r.rno, r.board_bno, r.content, m.id as member_id, m.name, r.create_date, r.modify_date
+            r.rno, r.bno, r.content, m.id as member_id, m.name, r.create_date, r.modify_date
         from board_reply r
-        join member m on(r.member_mno = m.mno)
-        where r.status='y' and r.board_bno = #{bno}
+        join member m on(r.mno = m.mno)
+        where r.status='y' and r.bno = #{bno}
         order by r.rno desc
     </select>
 
     <select id="selectReplyByRno" parameterType="long" resultType="com.kb.board.dto.BoardReply">
         select
-            r.rno, r.board_bno, r.content, m.id as member_id, m.name, r.create_date, r.modify_date
+            r.rno, r.bno, r.content, m.id as member_id, m.name, r.create_date, r.modify_date
         from board_reply r
-        join member m on(r.member_mno = m.mno)
+        join member m on(r.mno = m.mno)
         where r.status='y' and r.rno = #{rno}
     </select>
 
