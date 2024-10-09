@@ -1065,6 +1065,14 @@ INSERT INTO stock_codes (stock_code, stock_name) VALUES
 
 
 
+CREATE TABLE board_category (
+                                id INT AUTO_INCREMENT PRIMARY KEY,  -- 기본 키
+                                type VARCHAR(50) NOT NULL,           -- type 필드
+                                name VARCHAR(50) NOT NULL,           -- name 필드
+                                level INT NOT NULL,                   -- level 필드
+                                order_no INT NOT NULL,                -- orderNo 필드
+                                UNIQUE KEY (type)                     -- type 컬럼에 유니크 인덱스 추가
+);
 
 CREATE TABLE MEMBER (
                         mno INT NOT NULL AUTO_INCREMENT COMMENT '자동 증가',
@@ -1078,7 +1086,8 @@ CREATE TABLE MEMBER (
                         status VARCHAR(1) DEFAULT 'y',
                         invest_type VARCHAR(50) DEFAULT NULL,
                         PRIMARY KEY (mno),
-                        UNIQUE KEY id (id)
+                        UNIQUE KEY id (id),
+                        FOREIGN KEY (invest_type) REFERENCES board_category(type)  -- 외래 키 설정
 );
 
 CREATE TABLE `member_auth` (
@@ -1088,23 +1097,15 @@ CREATE TABLE `member_auth` (
                                CONSTRAINT `fk_authorities_users` FOREIGN KEY (`id`) REFERENCES `member` (`id`)
 )
 
-
 CREATE TABLE board (
                        bno BIGINT NOT NULL,
+                       type VARCHAR(50),  -- 문자열로 수정
                        title VARCHAR(200) NOT NULL,
                        content TEXT,
-                       writer_mno INT NOT NULL,
-                       create_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-                       update_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                        status ENUM('y', 'n') DEFAULT 'y',
-                       board_category_type VARCHAR(50) DEFAULT NULL,
-                       read_count INT DEFAULT 0,
-                       comment_count INT DEFAULT 0,
-                       likes_count INT DEFAULT 0,
                        PRIMARY KEY (bno),
-                       FOREIGN KEY (writer_mno) REFERENCES MEMBER(mno)  -- 추가된 부분
+                       FOREIGN KEY (type) REFERENCES board_category(type)  -- 외래 키 설정
 );
-
 
 CREATE TABLE board_post (
                             board_id INT NOT NULL AUTO_INCREMENT COMMENT 'AUTO INCREMENT',
@@ -1113,7 +1114,7 @@ CREATE TABLE board_post (
                             read_count INT NOT NULL DEFAULT 0,
                             created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                             modified_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                            board_category VARCHAR(30) NOT NULL COMMENT '전체 및 투자 성향 별',
+                            type VARCHAR(50) NOT NULL,  -- 문자열로 수정
                             comment_count INT DEFAULT 0,
                             likes_count INT DEFAULT 0,
                             member_id INT NOT NULL,
@@ -1121,6 +1122,7 @@ CREATE TABLE board_post (
                             KEY member_id (member_id),
                             CONSTRAINT board_post_ibfk_1 FOREIGN KEY (member_id) REFERENCES MEMBER (mno)
 );
+
 
 CREATE TABLE `BOARD_REPLY` (
                                `reply_id` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
@@ -1147,13 +1149,5 @@ CREATE TABLE `BOARD_ATTACH_FILE` (
                                      PRIMARY KEY (`file_id`),
                                      KEY `board_id` (`board_id`),
                                      CONSTRAINT `board_attach_file_ibfk_1` FOREIGN KEY (`board_id`) REFERENCES `BOARD_POST` (`board_id`)
-);
-
-CREATE TABLE board_category (
-                                id INT AUTO_INCREMENT PRIMARY KEY,
-                                name VARCHAR(255) NOT NULL,
-                                type VARCHAR(50),
-                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
