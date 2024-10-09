@@ -54,6 +54,15 @@
             id = #{id};
     </select>
 
+    <select id="checkDuplicateByKakaoId" resultType="int" parameterType="string">
+        SELECT
+            count(*)
+        FROM
+            MEMBER
+        WHERE
+            kakao_id = #{kakaoId};
+    </select>
+
     <select id="selectBykakaoId" resultMap="memberResultMap" parameterType="string">
         SELECT
             mno, m.id, password, name, email, status, create_date, update_date, a.authority

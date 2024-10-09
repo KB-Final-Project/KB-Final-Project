@@ -165,7 +165,7 @@ const join = async () => {
 };
 
 const kakaoJoin = () => {
-  const kakaoUrl = 'https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=b419d631890e7eb2484c6bd82b626d3e&redirect_uri=http://localhost:8081/auth/kakaojoin';
+  const kakaoUrl = 'https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=f5c0ffbadcd4586df232b26623c1f227&redirect_uri=http://localhost:8081/auth/kakaojoin';
   window.location.href = kakaoUrl; 
 };
 
