@@ -164,9 +164,9 @@ h3.pb-3 {
   color: rgba(67, 139, 115, 1);
   background-color: rgb(214, 255, 188);
   border-radius: 10px;
-  width: 250px;
+  width: 230px;
   height: 40px;
-  padding: 12px;
+  padding: 5px;
   margin-left: -10px;
   margin-top: -10px;
   text-align: start;
