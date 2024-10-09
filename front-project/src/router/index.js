@@ -54,10 +54,11 @@ const routes = [
       priceChange: route.query.priceChange,
       priceChangePct: route.query.priceChangePct,
       volume: route.query.volume,
-      marketCap: route.query.marketCap,
-      high52week: route.query.high52week,
-      low52week: route.query.low52week
-    })
+      htsAvls: route.query.htsAvls, // HTS 시가총액 추가
+      w52Hgpr: route.query.w52Hgpr, // 52주일 최고가 추가
+      w52Lwpr: route.query.w52Lwpr  // 52주일 최저가 추가
+  })
+  
   },
   {
     path: '/stockcategory',
