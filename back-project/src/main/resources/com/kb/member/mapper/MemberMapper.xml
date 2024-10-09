@@ -45,6 +45,14 @@
         WHERE m.status = 'y' and m.id = #{id}
     </select>
 
+    <select id="checkDuplicateById" resultType="int" parameterType="string">
+        SELECT
+            count(*)
+        FROM
+            MEMBER
+        WHERE
+            id = #{id};
+    </select>
 
     <select id="selectBykakaoId" resultMap="memberResultMap" parameterType="string">
         SELECT
