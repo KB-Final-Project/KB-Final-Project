@@ -21,8 +21,8 @@ public interface StockMapper {
     List<String> selectAllStockCodes();
 
     @Insert({
-            "INSERT INTO stock (stock_code, stock_name, current_price, price_change, price_change_pct, high_price, low_price, opening_price, volume, industry, last_updated)",
-            "VALUES (#{stockCode}, #{stockName}, #{currentPrice}, #{priceChange}, #{priceChangePct}, #{highPrice}, #{lowPrice}, #{openingPrice}, #{volume}, #{industry}, NOW())",
+            "INSERT INTO stock (stock_code, stock_name, current_price, price_change, price_change_pct, high_price, low_price, opening_price, volume, industry, hts_avls, w52_hgpr, w52_lwpr, last_updated)",
+            "VALUES (#{stockCode}, #{stockName}, #{currentPrice}, #{priceChange}, #{priceChangePct}, #{highPrice}, #{lowPrice}, #{openingPrice}, #{volume}, #{industry}, #{htsAvls}, #{w52Hgpr}, #{w52Lwpr}, NOW())",
             "ON DUPLICATE KEY UPDATE",
             "stock_name = #{stockName},",
             "current_price = #{currentPrice},",
@@ -33,9 +33,11 @@ public interface StockMapper {
             "opening_price = #{openingPrice},",
             "volume = #{volume},",
             "industry = #{industry},",
+            "hts_avls = #{htsAvls},",
+            "w52_hgpr = #{w52Hgpr},",
+            "w52_lwpr = #{w52Lwpr},",
             "last_updated = NOW()"
     })
-
     void upsertStock(StockDTO stock);
 
     @Select("SELECT * FROM stock WHERE stock_code = #{stockCode}")

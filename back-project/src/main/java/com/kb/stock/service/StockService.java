@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -42,14 +45,15 @@ public class StockService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     private static final int MAX_RETRIES = 3;
-    private static final long RETRY_DELAY_MS = 1000;
+    private static final long RETRY_DELAY_MS = 1500;
     private static final int REQUESTS_PER_SECOND = 20;
-    private static final long REQUEST_INTERVAL_MS = 1000 / REQUESTS_PER_SECOND;
+    private static final long REQUEST_INTERVAL_MS = 1500 / REQUESTS_PER_SECOND;
 
     private StockWebSocketHandler webSocketHandler;
     private final Set<String> subscribedStocks = ConcurrentHashMap.newKeySet();
     @Autowired
     private WebSocketService webSocketService;
+
     @PostConstruct
     public void init() {
         int result = stockMapper.checkDatabaseConnection();
@@ -65,7 +69,6 @@ public class StockService {
 
     public void addSubscription(String stockCode) {
         subscribedStocks.add(stockCode);
-
     }
 
     public void removeSubscription(String stockCode) {
@@ -86,7 +89,7 @@ public class StockService {
 
         for (int i = 0; i < stockCodes.size(); i += 20) {
             List<String> batch = stockCodes.subList(i, Math.min(i + 20, stockCodes.size()));
-            processStockBatch(batch);
+            processStockBatch(batch, i / 20 + 1);
 
             try {
                 Thread.sleep(REQUEST_INTERVAL_MS * 20);
@@ -98,40 +101,35 @@ public class StockService {
         logger.info("Finished updateAllStocks method");
     }
 
-    private void processStockBatch(List<String> stockCodes) {
-        long lastRequestTime = 0;
+    // 주식 배치 처리
+    private void processStockBatch(List<String> stockCodes, int batchNumber) {
+        long batchStartTime = System.currentTimeMillis(); // 배치 시작 시간
 
         for (String stockCode : stockCodes) {
-            logger.info("Processing stock code: {}", stockCode);
+            long stockStartTime = System.currentTimeMillis(); // 각 주식 코드 시작 시간
 
             try {
-                long currentTime = System.currentTimeMillis();
-                long elapsedTime = currentTime - lastRequestTime;
-                if (elapsedTime < REQUEST_INTERVAL_MS) {
-                    Thread.sleep(REQUEST_INTERVAL_MS - elapsedTime);
-                }
-
                 Map<String, Object> stockData = getStockPrice(stockCode);
                 if (stockData != null) {
                     StockDTO stockDTO = mapToStockDTO(stockData);
                     if (stockDTO != null) {
                         upsertStockData(stockDTO);
                         webSocketService.updateLastPrices(stockDTO.getStockCode(), stockDTO.getCurrentPrice().doubleValue());
-                        logger.info("Successfully updated stock data for {}", stockCode);
-
+                        logger.info("Batch {}, Stock {} successfully updated in {} ms", batchNumber, stockCode, System.currentTimeMillis() - stockStartTime);
                     } else {
-                        logger.warn("Stock data is incomplete for {}", stockCode);
+                        logger.warn("Batch {}, Stock {} data incomplete in {} ms", batchNumber, stockCode, System.currentTimeMillis() - stockStartTime);
                     }
                 } else {
-                    logger.warn("No stock data retrieved for {}", stockCode);
+                    logger.warn("Batch {}, No stock data retrieved for stock {} in {} ms", batchNumber, stockCode, System.currentTimeMillis() - stockStartTime);
                 }
 
-                lastRequestTime = System.currentTimeMillis();
-
             } catch (Exception e) {
-                logger.error("Error processing stock code {}: {}", stockCode, e.getMessage(), e);
+                logger.error("Batch {}, Error processing stock {}: {}", batchNumber, stockCode, e.getMessage());
             }
         }
+
+        long batchEndTime = System.currentTimeMillis(); // 배치 종료 시간
+        logger.info("Batch {} processed in {} ms", batchNumber, batchEndTime - batchStartTime);
     }
 
     public Map<String, Object> getStockPrice(String stockCode) {
@@ -158,10 +156,11 @@ public class StockService {
                 logger.info("API response for stock code {}: Status={}, Body={}", stockCode, response.getStatusCode(), response.getBody());
 
                 if (response.getStatusCode() == HttpStatus.OK) {
-                    logger.info("Successfully retrieved stock data: {}", response.getBody());
+                    logger.info("API response body: {}", response.getBody());
                     return (Map<String, Object>) response.getBody().get("output");
+
                 } else {
-                    logger.error("Failed to retrieve stock data. Status code: {}", response.getStatusCode());
+                    logger.error("Failed to retrieve stock data for {}. Status code: {}", stockCode, response.getStatusCode());
                 }
             } catch (HttpClientErrorException e) {
                 logger.error("HTTP client error occurred: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
@@ -173,7 +172,7 @@ public class StockService {
                     }
                 }
             } catch (Exception e) {
-                logger.error("Error getting stock price for code {}: {}", stockCode, e.getMessage(), e);
+                logger.error("Error getting stock price for code {}: {}", stockCode, e.getMessage());
                 if (attempt < MAX_RETRIES - 1) {
                     try {
                         TimeUnit.MILLISECONDS.sleep(RETRY_DELAY_MS);
@@ -207,6 +206,11 @@ public class StockService {
             stockDTO.setOpeningPrice(stockData.get("stck_oprc") != null ? new BigDecimal(stockData.get("stck_oprc").toString()) : BigDecimal.ZERO);
             stockDTO.setIndustry(stockData.get("bstp_kor_isnm") != null ? stockData.get("bstp_kor_isnm").toString() : "");
             stockDTO.setVolume(stockData.get("acml_vol") != null ? Long.parseLong(stockData.get("acml_vol").toString()) : 0L);
+            stockDTO.setHtsAvls(stockData.get("hts_avls") != null ? new BigDecimal(stockData.get("hts_avls").toString()) : BigDecimal.ZERO); // HTS 시가총액 추가
+            stockDTO.setW52Hgpr(stockData.get("w52_hgpr") != null ? new BigDecimal(stockData.get("w52_hgpr").toString()) : BigDecimal.ZERO); // 52주일 최고가 추가
+            stockDTO.setW52Lwpr(stockData.get("w52_lwpr") != null ? new BigDecimal(stockData.get("w52_lwpr").toString()) : BigDecimal.ZERO); // 52주일 최저가 추가
+
+            logger.info("Stock data received: {}", stockData);
             logger.info("Mapped StockDTO: {}", stockDTO);
             return stockDTO;
         } catch (Exception e) {
@@ -259,5 +263,51 @@ public class StockService {
                 }
             }
         }).start();
+    }
+    public List<Map<String, Object>> getCategoryRankings() {
+        List<StockDTO> allStocks = getAllStocks();
+        Map<String, List<StockDTO>> categoryStocks = new HashMap<>();
+
+        // 카테고리별로 주식 그룹화
+        for (StockDTO stock : allStocks) {
+            categoryStocks.computeIfAbsent(stock.getIndustry(), k -> new ArrayList<>()).add(stock);
+        }
+
+        List<Map<String, Object>> categoryRankings = new ArrayList<>();
+
+        // 각 카테고리의 평균 등락률 계산
+        for (Map.Entry<String, List<StockDTO>> entry : categoryStocks.entrySet()) {
+            String category = entry.getKey();
+            List<StockDTO> stocks = entry.getValue();
+
+            double avgChangeRate = stocks.stream()
+                    .mapToDouble(s -> s.getPriceChangePct().doubleValue())
+                    .average()
+                    .orElse(0.0);
+
+            long risingStocksCount = stocks.stream()
+                    .filter(s -> s.getPriceChangePct().compareTo(BigDecimal.ZERO) > 0)
+                    .count();
+
+            StockDTO topStock = stocks.stream()
+                    .max(Comparator.comparing(StockDTO::getPriceChangePct))
+                    .orElse(null);
+
+            Map<String, Object> categoryInfo = new HashMap<>();
+            categoryInfo.put("name", category);
+            categoryInfo.put("avgChange", avgChangeRate);
+            categoryInfo.put("risingStocksCount", risingStocksCount);
+            categoryInfo.put("totalStocksCount", stocks.size());
+            if (topStock != null) {
+                categoryInfo.put("topStock", Map.of("name", topStock.getStockName(), "changeRate", topStock.getPriceChangePct()));
+            }
+
+            categoryRankings.add(categoryInfo);
+        }
+
+        // 평균 등락률로 정렬
+        categoryRankings.sort((c1, c2) -> Double.compare((Double) c2.get("avgChange"), (Double) c1.get("avgChange")));
+
+        return categoryRankings;
     }
 }
