@@ -24,12 +24,6 @@ public class SavingService {
         PageInfo pageInfo = new PageInfo(savingParam.getPage(), totalSize, LIST_LIMIT, PAGE_LIMIT);
         savingParam.setLimit(pageInfo.getListLimit());
         savingParam.setOffset(pageInfo.getStartList() - 1);
-
-        if(savingParam.getSaveTerm() == null)
-            savingParam.setSaveTerm(36);
-        if(savingParam.getInterestRateType() == null)
-            savingParam.setInterestRateType("단리");
-
         List<SavingListDTO> savingList = mapper.getProductList(savingParam);
         if (savingList == null || savingList.isEmpty()) {
             savingList = new ArrayList<>();
