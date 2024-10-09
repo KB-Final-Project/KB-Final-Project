@@ -608,6 +608,7 @@ onMounted(() => {
 .bc {
   width: 60%;
   margin: 0 auto;
+  font-family: J3;
 }
 
 .subject2 {

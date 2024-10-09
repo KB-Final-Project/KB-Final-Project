@@ -43,9 +43,12 @@ public class DepositController {
         return ResponseEntity.ok(service.getProductDetail(1, savingId));
     }
 
+<<<<<<< Updated upstream
     @GetMapping("/category")
     public ResponseEntity<SavingCategory> getDepositCategory(){
         return ResponseEntity.ok(service.getCategoryList());
     }
 
+=======
+>>>>>>> Stashed changes
 }

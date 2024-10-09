@@ -1,6 +1,6 @@
 <template>
   <div class="bc">
-    <div class="container text-center animate-on-load">
+    <div class="container text-center">
       <br><br>
       <h1 class="text-slide-up">용어 사전</h1><br><br>
       <div class="content" :class="{ 'slide-up': filteredTerms.length > 0 && !loading }">
@@ -336,18 +336,17 @@ template {
   animation: slideUp 0.9s ease forwards;
 }
 
+.text-slide-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideUp 0.9s ease forwards;
+}
+
 @keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
   to {
     transform: translateY(0);
     opacity: 1;
   }
 }
 
-.text-slide-up {
-  animation: slideUp 0.9s ease forwards;
-}
 </style>

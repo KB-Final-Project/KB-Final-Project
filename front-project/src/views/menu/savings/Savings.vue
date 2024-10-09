@@ -1,17 +1,18 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import {ref, onMounted, watch, computed} from 'vue';
 import axios from 'axios';
-import { useRouter } from 'vue-router';
-import { Swiper, SwiperSlide } from 'swiper/vue'; // Swiper와 SwiperSlide import
+import {useRouter} from 'vue-router';
+import {Swiper, SwiperSlide} from 'swiper/vue';
 import 'swiper/swiper-bundle.css';
+import qs from 'qs'; // qs 라이브러리 임포트
 
 const savings = ref([]);
 const topSavings = ref([]);
 const loading = ref(true);
 const searchTerm = ref('');
 const currentPage = ref(1);
-const totalPages = ref(1); // 총 페이지 수
-const totalCount = ref(); // 총 페이지 수
+const totalPages = ref(1);
+const totalCount = ref(0);
 const expanded = ref(false);
 const router = useRouter();
 
@@ -19,6 +20,25 @@ const selectedBanks = ref([]);
 const selectedDurations = ref([]);
 const selectedInterestTypes = ref([]);
 
+// 모든 은행 목록을 저장하는 반응형 변수
+const allBanks = ref([]);
+
+// 은행을 "1금융"과 "기타"로 그룹화하는 계산된 속성
+const groupedBanks = computed(() => {
+  if (!Array.isArray(allBanks.value)) {
+    return {};
+  }
+  return allBanks.value.reduce((groups, bank) => {
+    const type = bank.bankType === 1 ? '1금융' : '기타';
+    if (!groups[type]) {
+      groups[type] = [];
+    }
+    groups[type].push(bank);
+    return groups;
+  }, {});
+});
+
+// 페이지네이션 함수
 const getPaginationPages = () => {
   const pages = [];
   const maxPagesToShow = 5;
@@ -31,10 +51,10 @@ const getPaginationPages = () => {
   return pages;
 };
 
-
+// 상세 페이지로 이동하는 함수
 const goToDetail = (savingId) => {
   if (savingId) {
-    router.push({ name: 'savingDetail', params: { savingId } });
+    router.push({name: 'savingDetail', params: {savingId}});
   } else {
     console.warn('Invalid savingId provided:', savingId);
   }
@@ -45,51 +65,32 @@ const removeFilter = (arrayRef, value) => {
   if (index !== -1) {
     arrayRef.splice(index, 1);
   }
+  fetchSavings();
 };
 
-const firstTierBanks = ref([
-  '국민은행', '신한은행', '하나은행', '우리은행', '농협은행', '기업은행', '수협은행',
-  'SC제일은행', '토스뱅크', '경남은행', '광주은행', 'KDB산업은행', '케이뱅크', 'IM뱅크',
-  '카카오뱅크', '제주은행', '부산은행', '씨티은행', '전북은행'
-]);
-
-const toggleSelection = (arrayRef, value) => {
-  const index = arrayRef.value.indexOf(value);
-  if (index === -1) {
-    arrayRef.value.push(value);
+const selectBank = (bankId) => {
+  if (selectedBanks.value.includes(bankId)) {
+    selectedBanks.value = [];
   } else {
-    arrayRef.value.splice(index, 1);
+    selectedBanks.value = [bankId]; // 하나의 은행만 선택
   }
-};
-
-const selectAll = (arrayRef, items) => {
-  const isAllSelected = items.every(item => arrayRef.value.includes(item));
-  if (isAllSelected) {
-    arrayRef.value = arrayRef.value.filter(item => !items.includes(item));
-  } else {
-    arrayRef.value.push(...items.filter(item => !arrayRef.value.includes(item)));
-  }
-};
-
-const selectBank = (bank) => {
-  toggleSelection(selectedBanks, bank);
 };
 
 const selectDuration = (duration) => {
-  toggleSelection(selectedDurations, duration);
+  if (selectedDurations.value.includes(duration)) {
+    selectedDurations.value = [];
+  } else {
+    selectedDurations.value = [duration]; // 하나의 저축 기간만 선택
+  }
 };
 
 const selectInterestType = (type) => {
   if (selectedInterestTypes.value.includes(type)) {
     selectedInterestTypes.value = selectedInterestTypes.value.filter(t => t !== type);
   } else {
-    selectedInterestTypes.value = [type]; // 기존 선택을 제거하고 새로 추가
+    selectedInterestTypes.value = [type];
   }
 };
-
-const selectAllBanks = () => selectAll(selectedBanks, firstTierBanks.value);
-const selectAllDurations = () => selectAll(selectedDurations, ['1', '3', '6', '12', '24', '36']);
-const selectAllInterestTypes = () => selectAll(selectedInterestTypes, ['단리', '복리']);
 
 const highlightInput = (event) => {
   event.target.classList.add('highlight');
@@ -99,83 +100,104 @@ const resetInput = (event) => {
   event.target.classList.remove('highlight');
 };
 
+const LIST_LIMIT = 9;
+
+const handleBankChange = (bankId) => {
+  const id = Number(bankId); // bankId를 정수로 변환
+  selectBank(id);
+  fetchSavings();
+};
+
+const fetchSavings = async () => {
+  loading.value = true;
+  try {
+    const params = {
+      searchValue: searchTerm.value || '',
+      bankId: selectedBanks.value.length > 0 ? selectedBanks.value.join(',') : undefined,
+      saveTerm: selectedDurations.value.length > 0 ? selectedDurations.value.join(',') : undefined,
+      page: currentPage.value,
+      limit: LIST_LIMIT,
+      interestRateType: selectedInterestTypes.value.length > 0 ? selectedInterestTypes.value.join(',') : undefined
+    };
+
+    const response = await axios.get('/api/saving', {
+      params,
+      paramsSerializer: params => qs.stringify(params, {arrayFormat: 'comma', encodeValuesOnly: true})
+    });
+
+    if (response.data && response.data.savings) {
+      savings.value = response.data.savings;
+      totalCount.value = response.data.totalCount;
+      totalPages.value = Math.ceil(totalCount.value / LIST_LIMIT);
+    } else {
+      savings.value = [];
+      totalCount.value = 0;
+      totalPages.value = 1;
+    }
+  } catch (error) {
+    savings.value = [];
+    totalCount.value = 0;
+    totalPages.value = 1;
+  } finally {
+    loading.value = false;
+  }
+};
+
 const fetchTopSavings = async () => {
   loading.value = true;
   try {
     const response = await axios.get('/api/saving/top');
     if (response.data && response.data.length > 0) {
       topSavings.value = response.data;
-      console.log(topSavings);
     } else {
       topSavings.value = [];
-      console.warn('데이터가 없습니다.');
     }
   } catch (error) {
-    console.error('예금 상품 목록을 가져오는 중 오류 발생:', error);
     topSavings.value = [];
   } finally {
     loading.value = false;
   }
 };
 
-const LIST_LIMIT = 9;
-
-const fetchSavings = async () => {
-  loading.value = true;
+const fetchAllBanks = async () => {
   try {
-    const params = {
-      searchValue: searchTerm.value || '', // 초기에는 빈 문자열로 설정하여 전체 상품 가져오기
-      bankId: selectedBanks.value.length > 0 ? selectedBanks.value[0] : null,
-      saveTerm: selectedDurations.value.length > 0 ? selectedDurations.value[0] : 36,
-      page: currentPage.value,
-      limit: LIST_LIMIT
-    };
-
-    // interestRateType을 선택한 경우에만 추가
-    if (selectedInterestTypes.value.length > 0) {
-      params.interestRateType = selectedInterestTypes.value.join(',');
-    }
-
-    const response = await axios.get('/api/saving', { params });
-
-    if (response.data && response.data.savings) {
-      savings.value = response.data.savings;
-      totalCount.value = response.data.totalCount; // 총 상품 개수 업데이트
-      totalPages.value = Math.ceil(totalCount.value / LIST_LIMIT); // 페이지 수 계산
+    const response = await axios.get('/api/bank/list');
+    if (response.data && Array.isArray(response.data)) {
+      allBanks.value = response.data.map(bank => ({
+        ...bank,
+        bankId: Number(bank.bankId)
+      }));
     } else {
-      savings.value = [];
-      totalCount.value = 0; // 검색 결과가 없을 경우 0으로 설정
-      totalPages.value = 1; // 페이지 수 1로 설정
-      console.warn('검색 결과가 없습니다.');
+      allBanks.value = [];
     }
   } catch (error) {
-    console.error('예금 상품 목록을 가져오는 중 오류 발생:', error);
-    savings.value = [];
-    totalCount.value = 0; // 오류 발생 시 총 개수를 0으로 설정
-    totalPages.value = 1; // 오류 발생 시 페이지 수 1로 설정
-  } finally {
-    loading.value = false;
+    allBanks.value = [];
   }
 };
 
+const getBankNameById = (bankId) => {
+  const bank = allBanks.value.find(b => b.bankId === bankId);
+  return bank ? bank.bankName : '알 수 없는 은행';
+};
+
 onMounted(() => {
+  fetchAllBanks();
   fetchSavings();
   fetchTopSavings();
 });
 
 watch(searchTerm, () => {
   currentPage.value = 1;
-  fetchSavings(); // 검색어가 변경될 때마다 데이터를 가져옴
+  fetchSavings();
 });
 
-// 필터링 배열이 변경될 때도 페이지를 1로 설정하고 데이터 다시 가져오기
 watch([selectedBanks, selectedDurations, selectedInterestTypes], () => {
   currentPage.value = 1;
-  fetchSavings(); // 필터가 변경될 때마다 데이터를 가져옴
+  fetchSavings();
 });
 
 const toggleText = () => {
-  expanded.value = !expanded.value; // 상태 반전
+  expanded.value = !expanded.value;
   if (expanded.value) {
     fetchSavings();
   }
@@ -183,18 +205,22 @@ const toggleText = () => {
 
 const changePage = (newPage) => {
   if (newPage >= 1 && newPage <= totalPages.value) {
-    currentPage.value = newPage; // 현재 페이지 업데이트
-    fetchSavings(); // 새 페이지에 맞는 데이터 가져오기
+    currentPage.value = newPage;
+    fetchSavings();
   }
 };
 
+const truncateText = (text, maxLength) => {
+  if (typeof text !== 'string') return '';
+  return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+};
 </script>
 
 <template>
   <div class="container text-center animate-on-load">
     <br><br>
     <h1 class="d-inline">적금 </h1>
-    <p class="d-inline">큰 꿈을 모아모아</p>
+    <p class="d-inline">꿈을 모아서</p>
     <br><br>
     <div class="savingBest">
       <div class="text-start">
@@ -226,23 +252,26 @@ const changePage = (newPage) => {
                   <a :href="topSaving.bank?.bankUrl">
                     <img style="height: 25px;"
                          :src="topSaving.bank?.bankLogoUrl || '/img/emoji/bank.png'"
-                         alt="Bank Logo" />
+                         alt="Bank Logo"/>
                   </a>
                   <h3 class="d-inline">{{ topSaving.bank.bankName }}</h3>
                 </div>
               </div>
               <br/>
-              <div style="width: 300px;"><h4 class="savingName">{{ topSaving.savingName }}</h4><br/></div>
+              <div style="width: 300px;">
+                <h4 class="savingName">{{ truncateText(topSaving.savingName, 15) }}</h4>
+                <br/>
+              </div>
               <div>
                 <h3 style="font-weight: 600">{{ topSaving.interestRateList.interestRateType }}</h3>
-
               </div>
               <div style="display: flex; justify-content: space-between; color: grey">
                 <div>
                   <li v-for="(rate, index) in topSaving.interestRateList" :key="index">
-                    <h3>{{rate.interestRateType}}</h3>
+                    <h3>{{ rate.interestRateType }}</h3>
                     <h3 class="d-inline" style="color: rgba(68, 140, 116, 1);">
-                      {{ rate.savingTerm }}</h3><h3 class="d-inline">개월</h3>
+                      {{ rate.savingTerm }}</h3>
+                    <h3 class="d-inline">개월</h3>
                   </li>
                 </div>
                 <div>
@@ -259,7 +288,6 @@ const changePage = (newPage) => {
         </ul>
       </div>
     </div>
-
     <br><br>
     <div class="text-start">
       <h4 class="search">상품 검색</h4>
@@ -282,30 +310,38 @@ const changePage = (newPage) => {
             <!-- 은행 필터 -->
             <li>
               <h4 style="font-weight: 700;">은행</h4>
-              <button class="filterBtn" @click="selectAllBanks">전체</button>
-              <div class="filter d-inline" v-for="(bank, index) in firstTierBanks" :key="index">
-                <input
-                    type="checkbox"
-                    :id="'bank' + index"
-                    @change="(event) => { selectBank(bank); fetchSavings(); }"
-                    :checked="selectedBanks.includes(bank)"
-                />
-                <label :for="'bank' + index" :class="{ 'selected': selectedBanks.includes(bank) }">{{ bank }}</label>
+              <!-- 전체 선택 / 해제 버튼 제거 -->
+              <div v-if="groupedBanks && Object.keys(groupedBanks).length">
+                <div v-for="(banks, type) in groupedBanks" :key="type">
+                  <h5>{{ type }}</h5>
+                  <div class="filter d-inline-flex flex-wrap" v-for="(bank, index) in banks" :key="bank.bankId + index">
+                    <input
+                        type="checkbox"
+                        :id="'bank' + type + index"
+                        @change="handleBankChange(bank.bankId)"
+                        :checked="selectedBanks.includes(bank.bankId)"
+                    />
+                    <label :for="'bank' + type + index" :class="{ 'selected': selectedBanks.includes(bank.bankId) }">
+                      {{ bank.bankName }}
+                    </label>
+                  </div>
+                </div>
               </div>
             </li>
 
             <!-- 저축 기간 필터 -->
             <li>
               <h4 style="font-weight: 700;">저축 기간</h4>
-              <button class="filterBtn" @click="selectAllDurations">전체</button>
-              <div class="filter d-inline" v-for="duration in ['1', '3', '6', '12', '24', '36']" :key="duration">
+              <!-- 전체 선택 / 전체 해제 버튼 제거 -->
+              <div class="filter d-inline-flex flex-wrap" v-for="duration in [1, 3, 6, 12, 24, 36]" :key="duration">
                 <input
                     type="checkbox"
                     :id="'duration' + duration"
-                    @change="(event) => { selectDuration(duration); fetchSavings(); }"
+                    @change="() => { selectDuration(duration); fetchSavings(); }"
                     :checked="selectedDurations.includes(duration)"
                 />
-                <label :for="'duration' + duration" :class="{ 'selected': selectedDurations.includes(duration) }">{{ duration }}개월</label>
+                <label :for="'duration' + duration"
+                       :class="{ 'selected': selectedDurations.includes(duration) }">{{ duration }}개월</label>
               </div>
             </li>
             <li>
@@ -314,7 +350,7 @@ const changePage = (newPage) => {
                 <input
                     type="checkbox"
                     id="interest1"
-                    @change="(event) => {
+                    @change="() => {
                     selectInterestType('단리');
                     fetchSavings();
                   }"
@@ -326,7 +362,7 @@ const changePage = (newPage) => {
                 <input
                     type="checkbox"
                     id="interest2"
-                    @change="(event) => {
+                    @change="() => {
                     selectInterestType('복리');
                     fetchSavings();
                   }"
@@ -344,16 +380,16 @@ const changePage = (newPage) => {
               <Swiper
                   :space-between="10"
                   :loop="false"
-                  :slides-per-view="7.2"
+                  :slides-per-view="3"
                   :centered-slides="false"
                   :edge-swipe-detection="true"
                   :pagination="{ clickable: true }"
               >
-                <!-- 선택된 은행 -->
-                <SwiperSlide v-for="(bank, index) in selectedBanks" :key="'bank' + index">
+                <!-- 선택된 은행 (하나만 선택 가능) -->
+                <SwiperSlide v-for="(bankId, index) in selectedBanks" :key="'bank' + index">
                   <div class="checkedFilter">
-                    {{ bank }}
-                    <button @click="removeFilter(selectedBanks, bank)">X</button>
+                    {{ getBankNameById(bankId) }}
+                    <button @click="removeFilter(selectedBanks, bankId)">X</button>
                   </div>
                 </SwiperSlide>
 
@@ -414,18 +450,22 @@ const changePage = (newPage) => {
                 <div class="savingDepositMethod">
                   <div class="depositMethod text-center">{{ saving.joinWay }}</div>
                   <br>
-                  <div class="bankLog  d-inlineo">
+                  <div class="bankLog d-inline">
                     <a :href="saving.bank?.bankUrl">
                       <img style="height: 25px;"
                            :src="saving.bank?.bankLogoUrl || '/img/emoji/bank.png'"
                            alt="Bank Logo"
                       />
                     </a>
-                    <h3 class=" d-inline">{{ saving.bank.bankName }}</h3>
+                    <h3 class="d-inline">{{ saving.bank.bankName }}</h3>
                   </div>
                 </div>
                 <br/>
-                <div style="width: 300px;"><h4 class="savingName">{{ saving.savingName }}</h4><br/></div>
+                <div style="width: 300px;">
+                  <!-- **Truncated savingName** -->
+                  <h4 class="savingName">{{ truncateText(saving.savingName, 15) }}</h4>
+                  <br/>
+                </div>
                 <div>
                   <h3 style="font-weight: 600">{{ saving.interestRateList.interestRateType }}</h3>
                   <h3 class="d-inline" style="color: rgba(68, 140, 116, 1);">
@@ -447,25 +487,25 @@ const changePage = (newPage) => {
           </ul>
         </div>
       </div>
-        <nav aria-label="Page navigation">
-          <ul class="pagination">
-            <li class="page-item" :class="{ disabled: currentPage === 1 }">
-              <button class="page-link" @click="changePage(currentPage - 1)" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-              </button>
+      <nav aria-label="Page navigation">
+        <ul class="pagination">
+          <li class="page-item" :class="{ disabled: currentPage === 1 }">
+            <button class="page-link" @click="changePage(currentPage - 1)" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </button>
+          </li>
+          <template v-for="page in getPaginationPages()" :key="page">
+            <li class="page-item" :class="{ active: currentPage === page }">
+              <button class="page-link" @click="changePage(page)">{{ page }}</button>
             </li>
-            <template v-for="page in getPaginationPages()" :key="page">
-              <li class="page-item" :class="{ active: currentPage === page }">
-                <button class="page-link" @click="changePage(page)">{{ page }}</button>
-              </li>
-            </template>
-            <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-              <button class="page-link" @click="changePage(currentPage + 1)" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-              </button>
-            </li>
-          </ul>
-        </nav>
+          </template>
+          <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+            <button class="page-link" @click="changePage(currentPage + 1)" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
     </div>
     <br><br>
   </div>
@@ -483,24 +523,23 @@ const changePage = (newPage) => {
 }
 
 .selected-filters {
-  overflow: hidden; /* Swiper가 넘치는 부분 숨김 */
+  overflow: hidden;
 }
 
 .checkedFilter {
   background-color: rgba(68, 140, 116, 1);
   color: white;
-  font-size: 12px;
+  font-size: 18px;
   border: 1px solid #bebebe;
   border-radius: 20px;
   padding: 5px;
-  width: 120px;
+  width: 220px;
   height: 40px;
   text-align: start;
   margin-left: 20px;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  flex-direction: row; /* 가로 방향 정렬 */
 }
 
 .checkedFilter button {
@@ -509,9 +548,11 @@ const changePage = (newPage) => {
   cursor: pointer;
   color: white;
 }
-li{
+
+li {
   list-style: none;
 }
+
 @keyframes riseUp {
   from {
     opacity: 0;
@@ -584,6 +625,9 @@ li{
   color: rgba(68, 140, 116, 1);
   font-weight: 700;
   text-align: start;
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflowing text */
+  text-overflow: ellipsis; /* Show ellipsis when text overflows */
 }
 
 .savingDepositMethod {
@@ -599,7 +643,7 @@ li{
   width: 100px;
 }
 
-.depositMethod{
+.depositMethod {
   position: absolute;
   top: -10px;
   right: 5px;
@@ -635,21 +679,6 @@ li{
   box-sizing: border-box;
 }
 
-.checkedFilter {
-  background-color: rgba(68, 140, 116, 1);
-  color: white;
-  font-size: 12px;
-  border: 1px solid #bebebe;
-  border-radius: 20px;
-  padding: 5px;
-  width: 120px;
-  height: 40px;
-  text-align: start;
-  margin-left: 20px;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-}
 
 .checkedFilter button {
   background-color: transparent;
@@ -659,16 +688,39 @@ li{
 }
 
 .filter label {
-  width: 130px;
-  height: 40px;
+  width: auto; /* 기존 고정 너비 제거 */
+  min-width: 100px; /* 최소 너비 설정 */
+  max-width: 200px; /* 최대 너비 설정하여 너무 길어지지 않도록 */
+  padding: 10px;
   border: 1px solid lightgrey;
   border-radius: 30px;
   background-color: white;
   font-size: 15px;
   text-align: center;
   margin: 5px;
-  padding: 10px;
   cursor: pointer;
+  flex-grow: 1; /* Flexbox를 사용하여 가용 공간을 활용 */
+  white-space: nowrap; /* 텍스트가 길어질 경우 줄바꿈 방지 */
+  overflow: hidden; /* 넘치는 텍스트 숨기기 */
+  text-overflow: ellipsis; /* 넘치는 텍스트에 ... 표시 */
+}
+
+.filter.d-inline-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* 필터 간 간격 추가 */
+}
+
+.filter .selected {
+  background-color: rgba(68, 140, 116, 1) !important;
+  color: white;
+  border: 1px solid rgba(68, 140, 116, 1);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.filter .selected:hover {
+  background-color: white;
+  border: 1px solid rgba(48, 120, 96, 1);
 }
 
 .filter label:hover {
@@ -676,7 +728,7 @@ li{
   color: rgba(68, 140, 116, 1);
 }
 
-.filter .selected:hover{
+.filter .selected:hover {
   color: white;
 }
 
@@ -765,30 +817,26 @@ input[type="checkbox"] {
   font-weight: 700;
 }
 
-
-
-
 .searchContainer {
   margin-left: 15%;
 }
 
 .container {
   width: 80%;
+  font-family: J3;
 }
-
 
 .selected {
   background-color: rgba(68, 140, 116, 1) !important;
   color: white;
   border: 1px solid rgba(68, 140, 116, 1);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease
 }
 
 .selected:hover {
   background-color: white;
   border: 1px solid rgba(48, 120, 96, 1);
 }
-
 
 .page-link {
   color: #0c0c0c;
@@ -809,10 +857,8 @@ input[type="checkbox"] {
   --bs-pagination-hover-color: rgba(68, 140, 116, 1);
 }
 
-.pagination button{
+.pagination button {
   background-color: #e5e5e5;
 }
-
 </style>
-
 
