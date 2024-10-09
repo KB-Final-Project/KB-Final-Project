@@ -14,4 +14,5 @@ public class Bank {
     private String bankName;
     private String bankLogoUrl;
     private String bankUrl;
+    private Integer bankType;
 }

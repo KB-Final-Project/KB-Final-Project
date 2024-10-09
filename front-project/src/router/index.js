@@ -41,6 +41,7 @@ import JoinPageForKakao from '@/views/auth/JoinPageForKakao.vue';
 import PrivacyPage from "@/views/PrivacyPage.vue";
 import CommunityPrivacy from "@/views/menu/community/CommunityPrivacy.vue";
 import FundTheme from "@/views/menu/fund/FundTheme.vue";
+import CurrencyExchange from "@/views/menu/currencyExchange/CurrencyExchange.vue";
 
 const routes = [
   {
@@ -64,6 +65,11 @@ const routes = [
     path: '/stockcategory',
     name: 'StockCategory',
     component: StockCategory
+  },
+  {
+    path: '/currencyExchange',
+    name: 'currencyExchange',
+    component: CurrencyExchange
   },
   {
     path: '/communityPrivacy',

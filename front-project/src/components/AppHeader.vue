@@ -211,7 +211,7 @@ const menuItems = ref([
           { text: '금투자', href: '/goldInvest' },
         ],
       },
-      { text: '환전', href: '/account-overview.html' },
+      { text: '환전', href: '/currencyExchange' },
       { text: '뉴스', href: '/news' },
       { text: '마이페이지(임시)', href: '/myPage' },
     ],

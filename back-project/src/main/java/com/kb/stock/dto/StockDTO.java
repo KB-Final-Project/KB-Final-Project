@@ -18,5 +18,8 @@ public class StockDTO {
     private Long volume;
     private LocalDateTime lastUpdated;
     private String industry;
+    private BigDecimal htsAvls; // HTS 시가총액 추가
+    private BigDecimal w52Hgpr; // 52주일 최고가 추가
+    private BigDecimal w52Lwpr; // 52주일 최저가 추가
 
 }

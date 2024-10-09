@@ -45,36 +45,36 @@ public class BoardService {
         PageInfo pageInfo = new PageInfo(boardParam.getPage(), totalSize, listLimit, PAGE_LIMIT);
         boardParam.setLimit(pageInfo.getListLimit());
         boardParam.setOffset(pageInfo.getStartList() - 1);
-        List<Board> boardList = mapper.selectBoardList(boardParam);
-        if (boardList == null || boardList.isEmpty()) {
-            boardList = new ArrayList<>();
+        List<BoardPost> boardPostList = mapper.selectBoardList(boardParam);
+        if (boardPostList == null || boardPostList.isEmpty()) {
+            boardPostList = new ArrayList<>();
         }
-        return new BoardPageResult(boardList, boardParam, pageInfo, getCategoryList(),totalSize);
+        return new BoardPageResult(boardPostList, boardParam, pageInfo, getCategoryList(),totalSize);
     }
 
     @Transactional
-    public Board getBoard(long bno) {
+    public BoardPost getBoard(long bno) {
         log.info("get......" + bno);
-        Board board = mapper.selectBoardByBno(bno);
-        board.setReadCount(board.getReadCount() + 1);
-        mapper.updateReadCount(board);
-        log.info("========================" + board);
-        return Optional.of(board)
+        BoardPost boardPost = mapper.selectBoardByBoardId(bno);
+        boardPost.setReadCount(boardPost.getReadCount() + 1);
+        mapper.updateReadCount(boardPost);
+        log.info("========================" + boardPost);
+        return Optional.of(boardPost)
                 .orElseThrow(NoSuchElementException::new);
     }
 
     @Transactional(rollbackFor = Exception.class) // 2개 이상의 insert 문이 실행될 수 있으므로 트랜잭션 처리 필요
-    public Board createBoard(Board board, List<MultipartFile> files) {
-        log.info("create......" + board);
-        int result = mapper.insertBoard(board);
+    public BoardPost createBoard(BoardPost boardPost, List<MultipartFile> files) {
+        log.info("create......" + boardPost);
+        int result = mapper.insertBoard(boardPost);
         if (result != 1) {
             throw new NoSuchElementException();
         }
         // 파일 업로드 처리
         if (files != null && !files.isEmpty()) {
-            upload(board.getBno(), files);
+            upload(boardPost.getBoardId(), files);
         }
-        return getBoard(board.getBno());
+        return getBoard(boardPost.getBoardId());
     }
 
 
@@ -100,30 +100,30 @@ public class BoardService {
 
 
     @Transactional
-    public Board updateBoard(Board board, List<MultipartFile> files) {
-        log.info("update...... " + board);
+    public BoardPost updateBoard(BoardPost boardPost, List<MultipartFile> files) {
+        log.info("update...... " + boardPost);
 //        Board oldBoard = getBoard(board.getBno());
 
-        int result = mapper.updateBoard(board);
+        int result = mapper.updateBoard(boardPost);
         if (result != 1) {
             throw new NoSuchElementException();
         }
 
         // 파일 업로드 처리
         if (files != null && !files.isEmpty()) {
-            upload(board.getBno(), files);
+            upload(boardPost.getBoardId(), files);
         }
 
-        return getBoard(board.getBno());
+        return getBoard(boardPost.getBoardId());
     }
 
 
     @Transactional
-    public Board deleteBoard(long bno) {
+    public BoardPost deleteBoard(long bno) {
         log.info("delete...." + bno);
-        Board board = getBoard(bno);
+        BoardPost boardPost = getBoard(bno);
 
-        List<BoardAttachFile> oldFiles = board.getBoardAttachFileList();
+        List<BoardAttachFile> oldFiles = boardPost.getBoardAttachFileList();
         for (BoardAttachFile old : oldFiles) {
             deleteFile(BASE_DIR, old);
         }
@@ -132,7 +132,7 @@ public class BoardService {
         if (result != 1) {
             throw new NoSuchElementException();
         }
-        return board;
+        return boardPost;
     }
 
     public BoardAttachFile getAttachment(long fno) {

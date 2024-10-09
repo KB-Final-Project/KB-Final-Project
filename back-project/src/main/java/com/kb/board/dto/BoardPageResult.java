@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @Builder
 public class BoardPageResult {
-    private List<Board> boardList;
+    private List<BoardPost> boardPostList;
     private BoardParam boardParam;
     private PageInfo pageInfo;
     private List<BoardCategory> boardCategory;

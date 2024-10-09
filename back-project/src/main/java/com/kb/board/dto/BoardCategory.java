@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardCategory {
+	private int id;
 	private String type;
 	private String name;
 	private int level;
 	private int orderNo;
-	
 }
