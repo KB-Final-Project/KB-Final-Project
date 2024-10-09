@@ -141,6 +141,10 @@ dependencies {
   implementation 'org.webjars:stomp-websocket:2.3.4'
   implementation 'org.webjars:sockjs-client:1.5.1'
 
+  // Valid
+  implementation 'javax.validation:validation-api:2.0.1.Final'
+  implementation 'org.hibernate.validator:hibernate-validator:6.1.5.Final'
+  implementation 'org.glassfish:javax.el:3.0.0' // Hibernate Validator에서 EL 사용을 위한 추가 의존성
 }
 
 
