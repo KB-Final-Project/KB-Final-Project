@@ -15,6 +15,9 @@ public enum BoardStatus {
     }
 
     public static BoardStatus fromValue(String value) {
+        if (value == null) {
+            return BoardStatus.ACTIVE; // 기본값 설정
+        }
         for (BoardStatus status : values()) {
             if (status.getValue().equals(value)) {
                 return status;

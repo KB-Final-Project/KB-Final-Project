@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class BoardReply {
 	private long rno;
-	private long bno;
+	private int bno;
 	private long mno;
 	private String memberId;
 	private String memberName;

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class BoardDTO {
-    private long boardId;        // 게시물 번호
+    private int bno;        // 게시물 번호
     private String type;         // 타입
     private String title;        // 제목
     private String content;      // 내용
@@ -22,11 +22,10 @@ public class BoardDTO {
 
     public BoardPost toBoard() {
         return BoardPost.builder()
-                .boardId(boardId)
                 .type(type)
                 .title(title)
                 .content(content)
-                .status(getStatus()) // Enum으로 변환된 값
+                .status(status) // Enum으로 변환된 값
                 .build();
     }
 }
