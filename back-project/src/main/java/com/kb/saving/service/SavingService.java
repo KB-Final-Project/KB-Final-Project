@@ -1,5 +1,6 @@
 package com.kb.saving.service;
 
+import com.kb.bank.mapper.BankMapper;
 import com.kb.board.dto.Board;
 import com.kb.board.dto.BoardPageResult;
 import com.kb.board.dto.BoardParam;
@@ -17,6 +18,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class SavingService {
     private final SavingMapper mapper;
+    private final BankMapper bankMapper;
     private final static int LIST_LIMIT = 9;
     private final static int PAGE_LIMIT = 5;
 
@@ -25,6 +27,7 @@ public class SavingService {
         PageInfo pageInfo = new PageInfo(savingParam.getPage(), totalSize, LIST_LIMIT, PAGE_LIMIT);
         savingParam.setLimit(pageInfo.getListLimit());
         savingParam.setOffset(pageInfo.getStartList() - 1);
+        log.info(savingParam.toString());
         List<SavingListDTO> savingList = mapper.getProductList(savingParam);
         if (savingList == null || savingList.isEmpty()) {
             savingList = new ArrayList<>();
@@ -46,5 +49,11 @@ public class SavingService {
     }
     public List<SavingListDTO> getTopSavingsProductList() {
         return mapper.getTopSavingsProductList();
+    }
+
+    public SavingCategory getCategoryList(){
+        SavingCategory savingCategory = new SavingCategory();
+        savingCategory.setBankList(bankMapper.getBankListByType(1));
+        return savingCategory;
     }
 }

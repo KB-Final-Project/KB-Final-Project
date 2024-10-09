@@ -86,8 +86,11 @@
         <if test="searchValue != null">
             AND s.saving_name LIKE CONCAT('%', #{searchValue}, '%')
         </if>
-        <if test="bankId != null">
-            AND s.bank_id = #{bankId}
+        <if test="bankIdList != null and !bankIdList.isEmpty() > 0">
+            AND s.bank_id IN
+            <foreach item="id" collection="bankIdList" open="(" separator="," close=")">
+                #{id}
+            </foreach>
         </if>
         <if test="saveTerm != null">
             AND ir.save_term = #{saveTerm}
@@ -145,8 +148,11 @@
         <if test="searchValue != null">
             AND s.saving_name LIKE CONCAT('%', #{searchValue}, '%')
         </if>
-        <if test="bankId != null">
-            AND s.bank_id = #{bankId}
+        <if test="bankIdList != null and !bankIdList.isEmpty() > 0">
+            AND s.bank_id IN
+            <foreach item="id" collection="bankIdList" open="(" separator="," close=")">
+                #{id}
+            </foreach>
         </if>
         <if test="saveTerm != null">
             AND ir.save_term = #{saveTerm}
