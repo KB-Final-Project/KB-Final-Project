@@ -1064,23 +1064,57 @@ INSERT INTO stock_codes (stock_code, stock_name) VALUES
                                                      ('003280', '흥아해운');
 
 
-CREATE TABLE board (
-                       bno INT NOT null AUTO_INCREMENT,
-                       type VARCHAR(50) NOT NULL,  -- NOT NULL 추가
-                       title VARCHAR(200) NOT NULL,
-                       content TEXT,
-                       status ENUM('y', 'n') DEFAULT 'y',
-                       PRIMARY KEY (bno),
-                       FOREIGN KEY (type) REFERENCES board_category(type)  -- 외래 키 설정
+
+CREATE TABLE board_category (
+                                id INT AUTO_INCREMENT PRIMARY KEY,  -- 기본 키
+                                type VARCHAR(50) NOT NULL,           -- type 필드
+                                name VARCHAR(50) NOT NULL,           -- name 필드
+                                level INT NOT NULL,                   -- level 필드
+                                order_no INT NOT NULL,                -- orderNo 필드
+                                UNIQUE KEY (type)                     -- type 컬럼에 유니크 인덱스 추가
 );
 
+
+CREATE TABLE MEMBER (
+                        mno INT NOT NULL AUTO_INCREMENT COMMENT '자동 증가',
+                        id VARCHAR(50) NOT NULL COMMENT '고유',
+                        password VARCHAR(100) NOT NULL,
+                        name VARCHAR(30) NOT NULL,
+                        kakao_id VARCHAR(30) DEFAULT NULL,
+                        create_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                        update_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                        email VARCHAR(50) DEFAULT NULL,
+                        status VARCHAR(1) DEFAULT 'y',
+                        invest_type VARCHAR(50) DEFAULT NULL,
+                        PRIMARY KEY (mno),
+                        UNIQUE KEY id (id),
+                        FOREIGN KEY (invest_type) REFERENCES board_category(type)  -- 외래 키 설정
+);
+
+CREATE TABLE `member_auth` (
+                               `id` varchar(50) NOT NULL,
+                               `authority` char(50) NOT NULL,
+                               PRIMARY KEY (`id`,`authority`),
+                               CONSTRAINT `fk_authorities_users` FOREIGN KEY (`id`) REFERENCES `member` (`id`)
+)
+
+
+CREATE TABLE board (
+                       bno INT NOT NULL AUTO_INCREMENT,
+                       type VARCHAR(50) NOT NULL,
+                       title VARCHAR(200) NOT NULL,
+                       content TEXT,
+                       status VARCHAR(1) DEFAULT 'y',
+                       PRIMARY KEY (bno),
+                       FOREIGN KEY (type) REFERENCES board_category(type)
+);
 
 CREATE TABLE board_post (
                             post_id BIGINT NOT NULL AUTO_INCREMENT, -- 고유한 게시글 ID
                             bno INT NOT NULL,                     -- board 테이블의 bno를 참조
                             title VARCHAR(255) NOT NULL,
                             content TEXT NOT NULL,
-                            status ENUM('y', 'n') DEFAULT 'y',
+                            status varchar(1) DEFAULT 'y',
                             read_count INT NOT NULL DEFAULT 0,
                             created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                             modified_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
