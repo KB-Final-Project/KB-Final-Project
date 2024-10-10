@@ -53,9 +53,14 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardPost getBoard(long bno) {
+    public BoardPost getBoard(int bno) {
         log.info("get......" + bno);
-        BoardPost boardPost = mapper.selectBoardByBoardId(bno);
+        BoardPost boardPost = mapper.selectBoardByBno(bno);
+        // null 체크 추가
+        if (boardPost == null) {
+            throw new NoSuchElementException("No board found with id: " + bno);
+        }
+
         boardPost.setReadCount(boardPost.getReadCount() + 1);
         mapper.updateReadCount(boardPost);
         log.info("========================" + boardPost);
@@ -68,13 +73,17 @@ public class BoardService {
         log.info("create......" + boardPost);
         int result = mapper.insertBoard(boardPost);
         if (result != 1) {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("Failed to insert board post.");
         }
+
+        // 방금 삽입한 게시물 ID를 다시 가져오기
+        long generatedBno = boardPost.getBno(); // 여기에 데이터베이스에서 생성된 ID를 설정
+
         // 파일 업로드 처리
         if (files != null && !files.isEmpty()) {
-            upload(boardPost.getBoardId(), files);
+            upload(generatedBno, files);
         }
-        return getBoard(boardPost.getBoardId());
+        return getBoard((int) generatedBno);
     }
 
 
@@ -111,17 +120,17 @@ public class BoardService {
 
         // 파일 업로드 처리
         if (files != null && !files.isEmpty()) {
-            upload(boardPost.getBoardId(), files);
+            upload(boardPost.getBno(), files);
         }
 
-        return getBoard(boardPost.getBoardId());
+        return getBoard(boardPost.getBno());
     }
 
 
     @Transactional
     public BoardPost deleteBoard(long bno) {
         log.info("delete...." + bno);
-        BoardPost boardPost = getBoard(bno);
+        BoardPost boardPost = getBoard((int) bno);
 
         List<BoardAttachFile> oldFiles = boardPost.getBoardAttachFileList();
         for (BoardAttachFile old : oldFiles) {

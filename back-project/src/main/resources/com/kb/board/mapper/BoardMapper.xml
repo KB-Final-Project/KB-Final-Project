@@ -5,13 +5,6 @@
 
 <mapper namespace="com.kb.board.mapper.BoardMapper">
 
-    <resultMap type="com.kb.board.dto.BoardDTO" id="boardResultMap">
-        <id property="boardId" column="bno"/>
-        <result property="type" column="type"/>
-        <result property="title" column="title"/>
-        <result property="content" column="content"/>
-        <result property="status" column="status"/> <!-- 상태 필드 -->
-    </resultMap>
 
     <resultMap type="com.kb.board.dto.BoardCategory" id="boardCategoryMap">
         <id property="id" column="id"/>
@@ -21,92 +14,190 @@
         <result property="orderNo" column="order_no"/>
     </resultMap>
 
-    <resultMap type="com.kb.board.dto.BoardPost" id="boardPostResultMap">
-        <id property="boardId" column="board_id"/>
+
+    <resultMap type="com.kb.board.dto.BoardDTO" id="boardResultMap">
+        <id property="bno" column="bno"/>
+        <result property="type" column="type"/>
         <result property="title" column="title"/>
         <result property="content" column="content"/>
-        <result property="status" column="status" typeHandler="com.kb.board.handler.BoardStatusTypeHandler"/> <!-- 상태 변환기 추가 -->
+        <result property="status" column="status"/>
+    </resultMap>
+
+
+    <resultMap type="com.kb.board.dto.BoardPost" id="boardPostResultMap">
+        <id property="postId" column="post_id"/>
+        <result property="bno" column="bno"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="status" column="status"/>
         <result property="readCount" column="read_count"/>
         <result property="createdDate" column="created_date"/>
         <result property="modifiedDate" column="modified_date"/>
-        <result property="type" column="board_category"/> <!-- 카테고리 타입 -->
+        <result property="type" column="type"/>
         <result property="commentCount" column="comment_count"/>
         <result property="likesCount" column="likes_count"/>
         <result property="memberId" column="member_id"/>
     </resultMap>
 
-    <!-- boardPost 카테고리 가져오는 select문 -->
+    <resultMap type="com.kb.board.dto.BoardAttachFile" id="boardAttachFileResultMap">
+        <id property="fno" column="fno"/>
+        <result property="bno" column="board_bno"/>
+        <result property="originalFilename" column="original_filename"/>
+        <result property="renamedFilename" column="renamed_filename"/>
+        <result property="contentType" column="content_type"/>
+        <result property="size" column="size"/>
+        <result property="createDate" column="create_date"/>
+    </resultMap>
+
+
+    <resultMap type="com.kb.board.dto.BoardReply" id="boardReplyResultMap">
+        <result property="rno" column="rno" />
+        <result property="bno" column="board_bno" />
+        <result property="mno" column="member_mno" />
+        <result property="memberId" column="member_id" />
+        <result property="memberName" column="name" />
+        <result property="content" column="content" />
+        <result property="status" column="status" />
+        <result property="createDate" column="create_date" />
+        <result property="modifyDate" column="modify_date" />
+    </resultMap>
+
+
     <select id="selectBoardCategory" resultMap="boardCategoryMap">
         SELECT * FROM board_category ORDER BY id;
     </select>
 
     <select id="selectBoardList" parameterType="com.kb.board.dto.BoardParam" resultMap="boardResultMap">
-    <![CDATA[
+        <![CDATA[
         SELECT
-            b.boardId, b.type, b.title,
-            b.content, b.status
-        FROM board_post b
+            b.bno, b.type, b.title, b.content, b.status
+        FROM board b
         WHERE
             b.status = 'y'
-        ORDER BY b.boardId DESC
+        ORDER BY b.bno DESC
             LIMIT #{limit} OFFSET #{offset}
         ]]>
     </select>
 
     <select id="selectBoardCount" parameterType="com.kb.board.dto.BoardParam" resultType="int">
-    <![CDATA[
-        SELECT COUNT(DISTINCT b.boardId)
-        FROM board_post b
+        <![CDATA[
+        SELECT COUNT(DISTINCT b.bno)
+        FROM board b
         WHERE
             b.status = 'y'
         ]]>
     </select>
 
-    <select id="selectBoardByBoardId" parameterType="long" resultMap="boardResultMap">
+    <select id="selectBoardByBno" parameterType="int" resultMap="boardResultMap">
         SELECT
-            b.board_id, b.type, b.title, b.content, b.status
-        FROM board_post b
-        WHERE b.status = 'y' AND b.board_id = #{boardId}
+            b.bno, b.type, b.title, b.content, b.status
+        FROM board b
+        WHERE b.status = 'y' AND b.bno = #{bno}
     </select>
 
     <insert id="insertBoard" parameterType="com.kb.board.dto.BoardPost">
-        <selectKey keyProperty="boardId" resultType="long" order="AFTER">
+        <selectKey keyProperty="bno" resultType="int" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        INSERT INTO board_post (board_id, type, title, content, status, member_id)
-        VALUES (DEFAULT, #{type}, #{title}, #{content}, #{status.value}, #{memberId})
+        INSERT INTO board (type, title, content, status)
+        VALUES (#{type}, #{title}, #{content}, #{status})
     </insert>
 
 
-
     <update id="updateBoard" parameterType="com.kb.board.dto.BoardPost">
-        UPDATE board_post SET
-        type = #{type}, title = #{title}, content = #{content}, status = #{status}
-        WHERE board_id = #{boardId}
+        <![CDATA[
+        UPDATE board
+        SET type = #{type}, title = #{title}, content = #{content}, status = #{status}
+        WHERE bno = #{bno}
+        ]]>
+    </update>
+
+
+    <!-- 게시글 조회시 readCount 갱신용 -->
+    <update id="updateReadCount" parameterType="com.kb.board.dto.BoardPost">
+        update board set
+            read_count = #{readCount}
+        where bno = #{bno}
     </update>
 
     <update id="deleteBoard" parameterType="long">
-        UPDATE board_post SET
-            status = 'n'
-        WHERE board_id = #{boardId}
+        <![CDATA[
+        UPDATE board
+        SET status = 'n'
+        WHERE bno = #{bno}
+        ]]>
     </update>
 
-    <!-- board_post 관련 쿼리 -->
+    <!-- 파일 가져오기 -->
+    <select id="selectAttachFileByFno" parameterType="long" resultMap="boardAttachFileResultMap">
+        select
+            fno, bno, original_filename, renamed_filename, content_type, size, create_date
+        from board_attach_file
+        where fno = #{fno}
+    </select>
+
+    <!-- 파일 리스트 -->
+    <select id="selectAttachFileByBno" resultMap="boardAttachFileResultMap">
+        select
+            fno, bno, original_filename, renamed_filename, content_type, size, create_date
+        from board_attach_file
+        where bno = #{bno}
+    </select>
+
+    <!-- 파일 첨부 -->
+    <insert id="insertAttachFile" parameterType="com.kb.board.dto.BoardAttachFile">
+        INSERT INTO BOARD_ATTACH_FILE
+        (fno, bno, original_filename, renamed_filename, content_type, size, create_date)
+        VALUES(default, #{bno}, #{originalFilename}, #{renamedFilename}, #{contentType}, ${size}, DEFAULT)
+    </insert>
+
+    <!-- 파일 삭제 -->
+    <delete id="deleteAttachFile" parameterType="long">
+        delete from board_attach_file where fno = #{fno}
+    </delete>
+
+    <!-- 댓글 등록 -->
+    <insert id="insertReply" parameterType="com.kb.board.dto.BoardReply">
+        <selectKey keyProperty="rno" resultType="int" order="AFTER">
+            SELECT @@identity as rno
+        </selectKey>
+        insert into board_reply(
+        rno, bno, member_mno, content, status,
+        create_date, modify_date)
+        VALUES(
+        default, #{bno}, #{mno}, #{content},
+        default, default, default
+        )
+    </insert>
+
+
+    <!-- 댓글 리스트 -->
+    <select id="selectReplyByBno" resultMap="boardReplyResultMap" >
+        select
+            r.rno, r.bno, r.content, m.id as member_id, m.name, r.create_date, r.modify_date
+        from board_reply r
+                 join member m on(r.mno = m.mno)
+        where r.status='y' and r.bno = #{bno}
+        order by r.rno desc
+    </select>
+
     <select id="selectBoardPostList" parameterType="com.kb.board.dto.BoardParam" resultMap="boardPostResultMap">
         <![CDATA[
         SELECT
-            bp.board_id as boardId,
-            bp.title as title,
-            bp.content as content,
-            bp.read_count as readCount,
-            bp.created_date as createdDate,
-            bp.modified_date as modifiedDate,
-            bp.board_category as type,
-            bp.comment_count as commentCount,
-            bp.likes_count as likesCount,
-            bp.member_id as memberId
+            bp.post_id AS postId,
+            bp.bno AS bno,
+            bp.title AS title,
+            bp.content AS content,
+            bp.read_count AS readCount,
+            bp.created_date AS createdDate,
+            bp.modified_date AS modifiedDate,
+            bp.type AS type,
+            bp.status AS status,
+            bp.comment_count AS commentCount,
+            bp.likes_count AS likesCount,
+            bp.member_id AS memberId
         FROM board_post bp
-        ORDER BY bp.board_id DESC
+        ORDER BY bp.post_id DESC
             LIMIT #{limit} OFFSET #{offset}
         ]]>
     </select>
@@ -114,28 +205,30 @@
     <select id="selectBoardPostById" parameterType="int" resultMap="boardPostResultMap">
         <![CDATA[
         SELECT
-            bp.board_id as boardId,
-            bp.title as title,
-            bp.content as content,
-            bp.read_count as readCount,
-            bp.created_date as createdDate,
-            bp.modified_date as modifiedDate,
-            bp.board_category as type,
-            bp.comment_count as commentCount,
-            bp.likes_count as likesCount,
-            bp.member_id as memberId
+            bp.post_id AS postId,
+            bp.bno AS bno,
+            bp.title AS title,
+            bp.content AS content,
+            bp.read_count AS readCount,
+            bp.created_date AS createdDate,
+            bp.modified_date AS modifiedDate,
+            bp.type AS type,
+            bp.status AS status,
+            bp.comment_count AS commentCount,
+            bp.likes_count AS likesCount,
+            bp.member_id AS memberId
         FROM board_post bp
-        WHERE bp.board_id = #{boardId}
+        WHERE bp.post_id = #{postId}
         ]]>
     </select>
 
     <insert id="insertBoardPost" parameterType="com.kb.board.dto.BoardPost">
-        <selectKey keyProperty="boardId" resultType="int" order="AFTER">
+        <selectKey keyProperty="postId" resultType="int" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
         <![CDATA[
-        INSERT INTO board_post (title, content, member_id, type)
-        VALUES (#{title}, #{content}, #{memberId}, #{type})
+        INSERT INTO board_post (bno, title, content, member_id, type, status)
+        VALUES (#{bno}, #{title}, #{content}, #{memberId}, #{type}, #{status})
         ]]>
     </insert>
 
@@ -145,15 +238,27 @@
         SET title = #{title},
             content = #{content},
             modified_date = CURRENT_TIMESTAMP,
-            board_category = #{type}
-        WHERE board_id = #{boardId}
+            type = #{type},
+            status = #{status}
+        WHERE post_id = #{postId}
         ]]>
     </update>
 
     <update id="deleteBoardPost" parameterType="int">
         <![CDATA[
-        DELETE FROM board_post WHERE board_id = #{boardId}
+        DELETE FROM board_post WHERE post_id = #{postId}
         ]]>
     </update>
 
+    <select id="selectReplyByRno" parameterType="long" resultType="com.kb.board.dto.BoardReply">
+        select
+            r.rno, r.bno, r.content, m.id as member_id, m.name, r.create_date, r.modify_date
+        from board_reply r
+                 join member m on(r.mno = m.mno)
+        where r.status='y' and r.rno = #{rno}
+    </select>
+
+    <delete id="deleteReply" parameterType="long">
+        delete from board_reply where rno = #{rno}
+    </delete>
 </mapper>
