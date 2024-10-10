@@ -157,17 +157,14 @@ const menuItems = ref([
         text: '예금',
         href: '/deposit',
         subItems: [
-          { text: '~~예금', href: '/deposit' },
-          { text: '~~예금상세', href: '/depositDetail' },
+          { text: '예금 찾기', href: '/deposit' },
         ],
       },
       {
         text: '적금',
         href: 'savings',
         subItems: [
-          { text: '적금', href: '/savings' },
-          { text: '~~~적금 상세페이지', href: '/savingsDetail' },
-          { text: '~~~적금', href: 'shop-catalog.html' },
+          { text: '적금 찾기', href: '/savings' },
         ],
       },
       {
@@ -190,9 +187,7 @@ const menuItems = ref([
         text: 'ISA',
         href: '#',
         subItems: [
-          { text: '~~ISA', href: '/isa' },
-          { text: '~~ISA', href: '/isa' },
-          { text: '~~ISA', href: '/isa' },
+          { text: 'ISA', href: '/isa' },
         ],
       },
     ],

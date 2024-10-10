@@ -42,15 +42,10 @@
               로그인
             </button>
             <h2 style="font-size: 15px;font-weight: 700;" class="h6 text-center pt-3 pt-lg-4 mb-4">간편 로그인</h2>
-            <div class="row row-cols-1 row-cols-sm-2 gy-3">
-              <div class="col">
-                <a class="btn btn-icon btn-outline-secondary btn-facebook btn-lg w-100" @click.prevent="kakaoLogin">
-                  <i class="ai-facebook fs-xl me-2"></i>카카오 로그인
-                </a>
-              </div>
-              <div class="col">
-                <a class="btn btn-icon btn-outline-secondary btn-google btn-lg w-100" href="#"><i class="ai-google fs-xl me-2"></i>Google</a>
-              </div>
+            <div class="text-center">
+              <a style="cursor: pointer;" @click.prevent="kakaoLogin">
+                <img src="/img/kakao_login_medium_wide.png">
+              </a>
             </div>
           </form>
         </div>

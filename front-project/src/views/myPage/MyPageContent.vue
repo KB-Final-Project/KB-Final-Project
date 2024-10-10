@@ -70,7 +70,7 @@ const loading = ref(true);
 const fetchMyPage = async () => {
   loading.value = true;
   try {
-    const response = await axios.get('/api/member/{id}');
+    const response = await axios.get('/api/member/' );
     console.log(response);
     myPage.value = response.member.data
   } catch (error) {

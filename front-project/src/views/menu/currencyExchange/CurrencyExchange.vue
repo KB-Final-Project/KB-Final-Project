@@ -179,14 +179,17 @@ watch(selectedCurrencyId, (newVal) => {
               class="itemBox"
           >
             <a :href="fee.bankUrl" target="_blank" rel="noopener noreferrer" class="itemBoxLink">
-              <div class="bankCard d-inline-block">
-                <h3 class="bankName"><strong>{{ truncate(fee.bankName, 7) }}</strong></h3>
+              <div class="bankName">
+                <h3><strong>{{ truncate(fee.bankName, 7) }}</strong></h3>
               </div>
               <br>
-              <h5>살 때 {{ fee.buyingFee }}%</h5>
-              <h5>팔 때 {{ fee.sellingFee }}%</h5>
-              <p>기준일 {{ formatDate(fee.baseDate) }}</p>
-              <p class="d-inline text-end">더보기 ></p>
+              <div class="divExchange">
+                <br>
+                <h4 class="text-center">살 때 {{ fee.buyingFee }}%</h4>
+                <h4 class="text-center">팔 때 {{ fee.sellingFee }}%</h4>
+                <p class="text-center">기준일 {{ formatDate(fee.baseDate) }}</p>
+                <p class="text-end m-3">더보기 ></p>
+              </div>
             </a>
           </li>
         </ul>
@@ -253,17 +256,9 @@ watch(selectedCurrencyId, (newVal) => {
   margin: 0 auto;
 }
 
-.bankCard{
-  width:100%;
-  height: 40px;
-  text-align: center;
-  border-radius: 30px;
-  padding: 8px;
-  background-color: rgba(68, 140, 116, 1);
-}
-
-.itemBoxDiv h3{
-  color: white;
+.bankName:hover{
+  background-color: rgba(231, 236, 243, 1);
+  color: rgba(68, 140, 116, 1);
 }
 
 .selected-country {
@@ -279,6 +274,13 @@ watch(selectedCurrencyId, (newVal) => {
   text-align: center;
 }
 
+
+.divExchange{
+  border-radius: 20px;
+  background-color: white;
+  color: rgba(68, 140, 116, 1);
+  width: 100%;
+}
 
 .flag-image {
   width: 24px;
@@ -388,15 +390,17 @@ li {
   width: 100%;
   border: 1px solid rgba(231, 236, 243, 1);
   border-radius: 30px;
-  background-color: white;
+  background-color: rgba(68, 140, 116, 1);
   text-decoration: none;
-  color: inherit;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
+  color : white;
 }
 
 .itemBoxLink:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transform: translateY(-5px);
+  background-color: rgba(231, 236, 243, 1);
+  color: rgba(68, 140, 116, 1);
 }
 
 .radio-group {
@@ -414,16 +418,16 @@ li {
 
 .radio-label {
   display: inline-flex;
-  align-items: center; /* 수직 정렬 */
-  width: auto; /* 라벨의 너비를 자동으로 설정 */
+  align-items: center;
+  width: auto;
   height: 40px;
   border: 1px solid lightgrey;
   border-radius: 30px;
   background-color: white;
-  font-size: 14px; /* 폰트 크기 줄이기 */
+  font-size: 18px;
   text-align: center;
   margin: 5px;
-  padding: 0 10px; /* 좌우 패딩 줄이기 */
+  padding: 0 10px;
   cursor: pointer;
 }
 
@@ -441,7 +445,7 @@ li {
 
 .filter .selected:hover {
   background-color: white;
-  color: rgba(48, 120, 96, 1);
+  color: rgb(38, 108, 84);
   border: 1px solid rgba(48, 120, 96, 1);
 }
 
