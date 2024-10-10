@@ -23,6 +23,7 @@ public class BoardDTO {
 
     public BoardPost toBoardPost() {
         return BoardPost.builder()
+                .bno(bno) // bno 추가
                 .type(type)
                 .title(title)
                 .content(content)

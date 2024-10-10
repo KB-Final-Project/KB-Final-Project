@@ -53,37 +53,45 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardPost getBoard(int bno) {
-        log.info("get......" + bno);
-        BoardPost boardPost = mapper.selectBoardByBno(bno);
-        // null 체크 추가
+    public BoardPost getBoard(int postId) {
+        log.info("Getting post with ID: " + postId);
+        BoardPost boardPost = mapper.selectBoardByBno(postId);
+
+        // null 체크
         if (boardPost == null) {
-            throw new NoSuchElementException("No board found with id: " + bno);
+            throw new NoSuchElementException("No post found with id: " + postId);
         }
 
+        // 조회수 증가
         boardPost.setReadCount(boardPost.getReadCount() + 1);
         mapper.updateReadCount(boardPost);
-        log.info("========================" + boardPost);
-        return Optional.of(boardPost)
-                .orElseThrow(NoSuchElementException::new);
+
+        return boardPost;
     }
 
-    @Transactional(rollbackFor = Exception.class) // 2개 이상의 insert 문이 실행될 수 있으므로 트랜잭션 처리 필요
-    public BoardPost createBoard(BoardPost boardPost, List<MultipartFile> files) {
-        log.info("create......" + boardPost);
-        int result = mapper.insertBoard(boardPost);
+    @Transactional(rollbackFor = Exception.class)
+    public BoardPost createBoardPost(BoardPost boardPost, List<MultipartFile> files) {
+        log.info("Creating post: " + boardPost);
+
+
+
+        // 게시글 삽입 전 로그 추가
+        log.info("Inserting into board_post with bno: " + boardPost.getBno());
+
+        // 게시글 작성
+        int result = mapper.insertBoardPost(boardPost);
         if (result != 1) {
             throw new NoSuchElementException("Failed to insert board post.");
         }
 
-        // 방금 삽입한 게시물 ID를 다시 가져오기
-        long generatedBno = boardPost.getBno(); // 여기에 데이터베이스에서 생성된 ID를 설정
+        long generatedPostId = boardPost.getPostId(); // 게시글 ID 가져오기
 
-        // 파일 업로드 처리
+        // 파일 업로드 처리 (필요한 경우)
         if (files != null && !files.isEmpty()) {
-            upload(generatedBno, files);
+            upload(generatedPostId, files);
         }
-        return getBoard((int) generatedBno);
+
+        return boardPost; // 생성된 게시글 반환
     }
 
 
