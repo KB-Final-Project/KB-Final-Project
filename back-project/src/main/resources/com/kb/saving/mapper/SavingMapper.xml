@@ -108,7 +108,7 @@
         SELECT
             s.saving_id,
             ROW_NUMBER() OVER (PARTITION BY s.fin_category_id ORDER BY s.max_prime_rate) AS saving_rank,
-            s.bank_id,
+                s.bank_id,
             s.saving_name,
             s.dcls_strt_day,
             s.join_deny,
@@ -131,9 +131,9 @@
             pr.prime_rate_detail
         ]]>
         FROM savings_products AS s
-        INNER JOIN banks AS b ON s.bank_id = b.bank_id
-        LEFT JOIN saving_interest_rates AS ir ON s.saving_id = ir.saving_id
-        LEFT JOIN saving_prime_Rates AS pr ON s.saving_id = pr.saving_id
+                 INNER JOIN banks AS b ON s.bank_id = b.bank_id
+                 LEFT JOIN saving_interest_rates AS ir ON s.saving_id = ir.saving_id
+                 LEFT JOIN saving_prime_Rates AS pr ON s.saving_id = pr.saving_id
         WHERE s.fin_category_id = #{finCategoryId} AND s.saving_id = #{savingId}
         ORDER BY s.max_prime_rate DESC;
     </select>
@@ -145,7 +145,7 @@
         LEFT JOIN saving_interest_rates AS ir ON s.saving_id = ir.saving_id
         WHERE s.fin_category_id = #{finCategoryId}
 
-        <if test="searchValue != null">
+        <if test="searchValue != null and searchValue !=''">
             AND s.saving_name LIKE CONCAT('%', #{searchValue}, '%')
         </if>
         <if test="bankNameList != null and !bankNameList.isEmpty() > 0">

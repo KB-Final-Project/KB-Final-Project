@@ -12,8 +12,9 @@ const pageSize = ref(20); // 페이지당 항목 수
 const isLoading = ref(false);
 const error = ref(null);
 
-const sortKey = ref('');
-const sortOrder = ref('desc');
+// 초기 정렬 키와 정렬 순서 설정
+const sortKey = ref('suikRt1'); // 예: 1개월 수익률
+const sortOrder = ref('desc');   // 내림차순
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
@@ -30,6 +31,10 @@ const fetchAllFunds = async () => {
   try {
     const response = await axios.get('/api/funds/all');
     allFunds.value = response.data; // 전체 데이터 저장
+
+    // 데이터를 받은 후 초기 정렬 적용
+    sortFunds(sortKey.value, false);
+
     totalPages.value = Math.ceil(allFunds.value.length / pageSize.value); // 페이지 수 계산
     currentPage.value = 1; // 첫 페이지로 설정
     paginateFunds(); // 첫 페이지 데이터를 표시
@@ -51,6 +56,9 @@ const searchFundsFunc = async () => {
       },
     });
     allFunds.value = response.data;
+
+    sortFunds(sortKey.value, false);
+
     totalPages.value = Math.ceil(allFunds.value.length / pageSize.value);
     currentPage.value = 1;
     paginateFunds();
@@ -89,17 +97,20 @@ const goToNextPage = () => {
   }
 };
 
-const sortFunds = (key) => {
+const sortFunds = (key, toggleOrder = true) => {
   if (sortKey.value === key) {
-    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+    if (toggleOrder) {
+      sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+    }
   } else {
     sortKey.value = key;
-    sortOrder.value = 'desc';
+    sortOrder.value = 'desc'; // 새로운 키로 정렬 시 내림차순으로 초기화
   }
 
-  allFunds.value.sort((a, b) => {
-    const aVal = a[key];
-    const bVal = b[key];
+  // 새로운 배열을 생성하여 할당
+  allFunds.value = [...allFunds.value].sort((a, b) => {
+    const aVal = a[key] || 0;
+    const bVal = b[key] || 0;
     if (sortOrder.value === 'desc') {
       return bVal - aVal;
     } else {
@@ -114,7 +125,25 @@ const sortIconClass = (key) => {
   if (sortKey.value === key) {
     return sortOrder.value === 'asc' ? 'ai ai-chevron-up' : 'ai ai-chevron-down';
   }
-  return 'ai ai-chevron-down';
+  return ''; // 다른 열에는 아이콘을 표시하지 않음
+};
+
+// 정렬 버튼의 클래스를 동적으로 결정하는 함수
+const getSortButtonClass = (key) => {
+  if (sortKey.value === key) {
+    return 'sort-button-active';
+  } else {
+    return 'sort-button-inactive';
+  }
+};
+
+// 정렬 상태에 따른 툴팁을 반환하는 함수
+const getSortTooltip = (key) => {
+  if (sortKey.value === key) {
+    return sortOrder.value === 'asc' ? '오름차순 활성화' : '내림차순 활성화';
+  } else {
+    return sortOrder.value === 'asc' ? '오름차순 비활성화' : '내림차순 비활성화';
+  }
 };
 
 const getRateClass = (value) => {
@@ -148,7 +177,7 @@ onMounted(() => {
   <div class="bc">
     <br><br><br><br>
     <div class="container">
-      <h1 class="text-center">펀드 전체 보기</h1>
+      <h1 class="text-center">펀드 찾기</h1>
       <br><br><br><br>
       <div class="text-center">
         <h2 class="d-inline search">상품 검색</h2>
@@ -188,24 +217,51 @@ onMounted(() => {
             </tr>
             <tr>
               <th>순자산(억원)</th>
-              <th style="width: 3%; cursor: pointer;" @click="sortFunds('suikRt1')">
-                1개월 <i style="font-size: 2rem;" :class="sortIconClass('suikRt1')"></i>
+              <th
+                  :class="getSortButtonClass('suikRt1')"
+                  style="width: 3%; cursor: pointer;"
+                  @click="sortFunds('suikRt1')"
+                  :title="getSortTooltip('suikRt1')"
+                  id="sortBtn"
+              >
+                1개월
+                <i v-if="sortKey === 'suikRt1'" :class="sortIconClass('suikRt1')" style="font-size: 2rem;"></i>
               </th>
-              <th style="width: 3%; cursor: pointer;" @click="sortFunds('suikRt3')">
-                3개월 <i style="font-size: 2rem;" :class="sortIconClass('suikRt3')"></i>
+              <th
+                  :class="getSortButtonClass('suikRt3')"
+                  style="width: 3%; cursor: pointer;"
+                  @click="sortFunds('suikRt3')"
+                  :title="getSortTooltip('suikRt3')"
+                  id="sortBtn"
+              >
+                3개월
+                <i v-if="sortKey === 'suikRt3'" :class="sortIconClass('suikRt3')" style="font-size: 2rem;"></i>
               </th>
-              <th style="width: 3%; cursor: pointer;" @click="sortFunds('suikRt6')">
-                6개월 <i style="font-size: 2rem;" :class="sortIconClass('suikRt6')"></i>
+              <th
+                  :class="getSortButtonClass('suikRt6')"
+                  style="width: 3%; cursor: pointer;"
+                  @click="sortFunds('suikRt6')"
+                  :title="getSortTooltip('suikRt6')"
+                  id="sortBtn"
+              >
+                6개월
+                <i v-if="sortKey === 'suikRt6'" :class="sortIconClass('suikRt6')" style="font-size: 2rem;"></i>
               </th>
-              <th style="width: 3%; cursor: pointer;" @click="sortFunds('suikRt12')">
-                1년 <i style="font-size: 2rem;" :class="sortIconClass('suikRt12')"></i>
+              <th
+                  :class="getSortButtonClass('suikRt12')"
+                  style="width: 3%; cursor: pointer;"
+                  @click="sortFunds('suikRt12')"
+                  :title="getSortTooltip('suikRt12')"
+                  id="sortBtn"
+              >
+                1년
+                <i v-if="sortKey === 'suikRt12'" :class="sortIconClass('suikRt12')" style="font-size: 2rem;"></i>
               </th>
             </tr>
             </thead>
           </table>
         </div>
-        <hr class="hr"/>
-
+        <br>
         <div class="fundSearchResult text-center">
           <table class="fundSearchResultTable text-center">
             <tbody v-for="fund in displayedFunds" :key="fund.id">
@@ -252,7 +308,7 @@ onMounted(() => {
       <ul class="pagination justify-content-center mt-4">
         <li class="page-item" :class="{ disabled: currentPage === 1 }">
           <a @click.prevent="goToPreviousPage" class="page-link" aria-label="Prev page">
-            <i class="ai ai-arrow-left fs-4"></i> <!-- fs-4 클래스 적용 -->
+            <i class="ai ai-arrow-left fs-4"></i>
           </a>
         </li>
         <li
@@ -265,7 +321,7 @@ onMounted(() => {
         </li>
         <li class="page-item" :class="{ disabled: currentPage === totalPages }">
           <a @click.prevent="goToNextPage" class="page-link" aria-label="Next page">
-            <i class="ai ai-arrow-right fs-4"></i> <!-- fs-4 클래스 적용 -->
+            <i class="ai ai-arrow-right fs-4"></i>
           </a>
         </li>
       </ul>
@@ -273,7 +329,9 @@ onMounted(() => {
   </div>
 </template>
 
+
 <style scoped>
+
 .fundName{
   font-family: J3;
   color: rgba(68, 140, 116, 1);
@@ -350,11 +408,15 @@ thead tr:last-child th:last-child {
   background-color: white;
 }
 
+#sortBtn {
+  height: 40px;
+}
+
 .fundSearchResultTable {
   width: 100%;
+  height: 120px;
   table-layout: fixed;
   text-align: start;
-  border-radius: 20px;
   background-color: white;
 }
 
@@ -455,5 +517,24 @@ thead tr:last-child th:last-child {
 
 .icon-small {
   font-size: 1rem;
+}
+
+.sort-button-active {
+  background-color: rgba(68, 140, 116, 1);
+  color: white;
+  border-radius: 5px;
+}
+
+/* 정렬 비활성화일 때 연회색 버튼 */
+.sort-button-inactive {
+  background-color: #f3f3f3;
+  color: #3d3d3d;
+  border-radius: 5px;
+}
+
+/* 마우스 오버 효과 */
+.sort-button-active:hover,
+.sort-button-inactive:hover {
+  opacity: 0.8;
 }
 </style>

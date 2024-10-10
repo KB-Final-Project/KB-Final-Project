@@ -91,13 +91,13 @@ public class WebSocketService extends TextWebSocketHandler {
     public String getWebSocketApprovalKey() {
         logger.info("WebSocket Approval Key 발급 요청 중...");
 
-        String accessToken = tokenService.getAccessToken();
+//        String accessToken = tokenService.getAccessToken();
         String url = baseUrl + "/oauth2/Approval";
         logger.info("WebSocket Approval Key 요청 URL: {}", url);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(accessToken);
+//        headers.setBearerAuth(accessToken);
 
         Map<String, String> body = new HashMap<>();
         body.put("grant_type", "client_credentials");
