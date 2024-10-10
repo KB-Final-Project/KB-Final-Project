@@ -9,7 +9,7 @@ public interface BoardMapper {
     List<BoardPost> selectBoardList(BoardParam param);
     int selectBoardCount(BoardParam param);
     BoardPost selectBoardByBno(int bno);
-    int insertBoard(BoardPost boardPost);
+    int insertBoardPost(BoardPost boardPost);
     int updateBoard(BoardPost boardPost);
     int updateReadCount(BoardPost boardPost);
     int deleteBoard(long bno);

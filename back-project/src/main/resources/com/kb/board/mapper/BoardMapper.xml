@@ -90,19 +90,14 @@
 
     <select id="selectBoardByBno" parameterType="int" resultMap="boardPostResultMap">
         SELECT
-            b.bno, b.type, b.title, b.content, b.status
-        FROM board b
-        WHERE b.status = 'y' AND b.bno = #{bno}
+            bp.post_id AS postId,
+            bp.bno AS bno,
+            bp.title AS title,
+            bp.content AS content,
+            bp.status AS status
+        FROM board_post bp
+        WHERE bp.bno = #{bno} AND bp.status = 'y'
     </select>
-
-    <insert id="insertBoard" parameterType="com.kb.board.dto.BoardPost">
-        <selectKey keyProperty="bno" resultType="int" order="AFTER">
-            SELECT LAST_INSERT_ID()
-        </selectKey>
-        INSERT INTO board (type, title, content, status)
-        VALUES (#{type}, #{title}, #{content}, #{status})
-    </insert>
-
 
     <update id="updateBoard" parameterType="com.kb.board.dto.BoardPost">
         <![CDATA[
@@ -227,9 +222,10 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         <![CDATA[
-        INSERT INTO board_post (bno, title, content, member_id, type, status)
-        VALUES (#{bno}, #{title}, #{content}, #{memberId}, #{type}, #{status})
-        ]]>
+    INSERT INTO board_post (bno, title, content, member_id, type, status)
+    VALUES (#{bno}, #{title}, #{content}, #{memberId}, #{type},
+            COALESCE(#{status}, 'y'))
+    ]]>
     </insert>
 
     <update id="updateBoardPost" parameterType="com.kb.board.dto.BoardPost">
