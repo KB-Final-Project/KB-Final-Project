@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import {ref, onMounted, watch, computed} from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { Swiper, SwiperSlide } from 'swiper/vue'; // Swiper와 SwiperSlide import
@@ -22,6 +22,23 @@ const selectedInterestType = ref(null);
 const bankList = ref([]);
 const termList = ref([]);
 const interestTypeList = ref([]);
+// 모든 은행 목록을 저장하는 반응형 변수
+const allBanks = ref([]);
+
+// 은행을 "1금융"과 "기타"로 그룹화하는 계산된 속성
+const groupedBanks = computed(() => {
+  if (!Array.isArray(allBanks.value)) {
+    return {};
+  }
+  return allBanks.value.reduce((groups, bank) => {
+    const type = bank.bankType === 1 ? '1금융' : '기타';
+    if (!groups[type]) {
+      groups[type] = [];
+    }
+    groups[type].push(bank);
+    return groups;
+  }, {});
+});
 
 const fetchdepositCategory = async () => {
   try {
@@ -30,6 +47,10 @@ const fetchdepositCategory = async () => {
       bankList.value = response.data.bankList.map(bank => bank.bankName);
       termList.value = response.data.saveTerm;
       interestTypeList.value = response.data.interestType;
+      allBanks.value = response.data.map(bank => ({
+        ...bank,
+        bankId: Number(bank.bankId)
+      }));
     }
   } catch (error) {
     console.error('카테고리 받아오기 실패', error);
@@ -96,12 +117,12 @@ const selectInterestType = (interestRateType) => {
 };
 
 const resetInterestType = () => {
-  selectedInterestType.value = null; 
+  selectedInterestType.value = null;
   fetchSavings();
 };
 
 const resetDuration = () => {
-  selectedDuration.value = null; 
+  selectedDuration.value = null;
   fetchSavings();
 };
 
@@ -140,11 +161,11 @@ const fetchSavings = async () => {
   loading.value = true;
   try {
     const filterRequest = {
-      searchValue: searchTerm.value, 
-      bankNameList: selectedBanks.value, 
-      saveTerm: selectedDuration.value || 36, 
-      page: currentPage.value, 
-      interestRateType: selectedInterestType.value || "단리", 
+      searchValue: searchTerm.value,
+      bankNameList: selectedBanks.value,
+      saveTerm: selectedDuration.value || 36,
+      page: currentPage.value,
+      interestRateType: selectedInterestType.value || "단리",
     };
     console.log(filterRequest);
     const response = await axios.post('/api/deposit', filterRequest);
@@ -169,7 +190,7 @@ const fetchSavings = async () => {
   }
 };
 
-onMounted(() => {  
+onMounted(() => {
   fetchTopSavings();
   fetchdepositCategory();
   fetchSavings();
@@ -305,24 +326,24 @@ const truncateText = (text, maxLength) => {
               </div>
               <div class="filter d-inline" v-for="(bank, index) in bankList" :key="index">
                 <input
-                  type="checkbox"
-                  :id="'bank' + index"
-                  @change="(event) => { selectBank(bank); fetchSavings(); }"
-                  :checked="selectedBanks.includes(bank)"
+                    type="checkbox"
+                    :id="'bank' + index"
+                    @change="(event) => { selectBank(bank); fetchSavings(); }"
+                    :checked="selectedBanks.includes(bank)"
                 />
                 <label :for="'bank' + index" :class="{ 'selected': selectedBanks.includes(bank) }">{{ bank }}</label>
               </div>
             </li>
-            
+
             <!-- 저축 기간 필터 -->
             <li>
               <h4 style="font-weight: 700;">저축 기간</h4>
               <div class="filter d-inline" v-for="(duration, index) in termList" :key="index">
                 <input
-                  type="checkbox"
-                  :id="'duration' + index"
-                  @change="(event) => { selectDuration(duration); fetchSavings(); }"
-                  :checked="selectedDuration === duration" 
+                    type="checkbox"
+                    :id="'duration' + index"
+                    @change="(event) => { selectDuration(duration); fetchSavings(); }"
+                    :checked="selectedDuration === duration"
                 />
                 <label :for="'duration' + index" :class="{ 'selected': selectedDuration === duration }">
                   {{ duration }}개월
@@ -333,10 +354,10 @@ const truncateText = (text, maxLength) => {
               <h4 style="font-weight: 700;">이자 유형</h4>
               <div class="filter d-inline" v-for="(interestRateType, index) in interestTypeList" :key="index">
                 <input
-                  type="checkbox"
-                  :id="'interestRateType' + index"
-                  @change="(event) => { selectInterestType(interestRateType); fetchSavings(); }"
-                  :checked="selectedInterestType === interestRateType" 
+                    type="checkbox"
+                    :id="'interestRateType' + index"
+                    @change="(event) => { selectInterestType(interestRateType); fetchSavings(); }"
+                    :checked="selectedInterestType === interestRateType"
                 />
                 <label :for="'interestRateType' + index" :class="{ 'selected': selectedInterestType === interestRateType }">
                   {{ interestRateType }}
@@ -346,16 +367,16 @@ const truncateText = (text, maxLength) => {
           </ul>
           <div class="checkedFilterBox">
             <div
-              class="selected-filters"
-              v-if="selectedBanks.length || selectedDuration || selectedInterestType"
+                class="selected-filters"
+                v-if="selectedBanks.length || selectedDuration || selectedInterestType"
             >
               <Swiper
-                :space-between="10"
-                :loop="false"
-                :slides-per-view="7.2"
-                :centered-slides="false"
-                :edge-swipe-detection="true"
-                :pagination="{ clickable: true }"
+                  :space-between="10"
+                  :loop="false"
+                  :slides-per-view="5.1"
+                  :centered-slides="false"
+                  :edge-swipe-detection="true"
+                  :pagination="{ clickable: true }"
               >
                 <!-- 선택된 은행 -->
                 <SwiperSlide v-for="(bank, index) in selectedBanks" :key="'bank' + index">
@@ -364,7 +385,7 @@ const truncateText = (text, maxLength) => {
                     <button @click="removeFilter(selectedBanks, bank)">X</button>
                   </div>
                 </SwiperSlide>
-          
+
                 <!-- 선택된 저축 기간 -->
                 <SwiperSlide v-if="selectedDuration" :key="'duration' + selectedDuration">
                   <div class="checkedFilter">
@@ -372,7 +393,7 @@ const truncateText = (text, maxLength) => {
                     <button @click="resetDuration">X</button>
                   </div>
                 </SwiperSlide>
-          
+
                 <!-- 선택된 이자 유형 -->
                 <SwiperSlide v-if="selectedInterestType" :key="'type' + selectedInterestType">
                   <div class="checkedFilter">
@@ -395,7 +416,7 @@ const truncateText = (text, maxLength) => {
           </span>
         </div>
 
-      <!-- 검색 및 상세 검색 폼 끝 -->
+        <!-- 검색 및 상세 검색 폼 끝 -->
       </form>
     </div>
 
@@ -635,11 +656,11 @@ li {
 .checkedFilter {
   background-color: rgba(68, 140, 116, 1);
   color: white;
-  font-size: 18px;
+  font-size: 12px;
   border: 1px solid #bebebe;
   border-radius: 20px;
   padding: 5px;
-  width: 220px;
+  width: 160px;
   height: 40px;
   text-align: start;
   margin-left: 20px;
@@ -657,9 +678,9 @@ li {
 }
 
 .filter label {
-  width: auto; /* 기존 고정 너비 제거 */
-  min-width: 100px; /* 최소 너비 설정 */
-  max-width: 200px; /* 최대 너비 설정하여 너무 길어지지 않도록 */
+  width: auto;
+  min-width: 100px;
+  max-width: 200px;
   padding: 10px;
   border: 1px solid lightgrey;
   border-radius: 30px;
@@ -668,16 +689,16 @@ li {
   text-align: center;
   margin: 5px;
   cursor: pointer;
-  flex-grow: 1; /* Flexbox를 사용하여 가용 공간을 활용 */
-  white-space: nowrap; /* 텍스트가 길어질 경우 줄바꿈 방지 */
-  overflow: hidden; /* 넘치는 텍스트 숨기기 */
-  text-overflow: ellipsis; /* 넘치는 텍스트에 ... 표시 */
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .filter.d-inline-flex {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px; /* 필터 간 간격 추가 */
+  gap: 10px;
 }
 
 .filter .selected {
@@ -834,4 +855,3 @@ input[type="button"] {
   background-color: #e5e5e5;
 }
 </style>
-

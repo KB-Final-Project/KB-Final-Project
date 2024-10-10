@@ -354,7 +354,7 @@ const truncateText = (text, maxLength) => {
               <Swiper
                 :space-between="10"
                 :loop="false"
-                :slides-per-view="7.2"
+                :slides-per-view="5.1"
                 :centered-slides="false"
                 :edge-swipe-detection="true"
                 :pagination="{ clickable: true }"
@@ -499,11 +499,11 @@ const truncateText = (text, maxLength) => {
 .checkedFilter {
   background-color: rgba(68, 140, 116, 1);
   color: white;
-  font-size: 18px;
+  font-size: 12px;
   border: 1px solid #bebebe;
   border-radius: 20px;
   padding: 5px;
-  width: 220px;
+  width: 160px;
   height: 40px;
   text-align: start;
   margin-left: 20px;
@@ -511,7 +511,6 @@ const truncateText = (text, maxLength) => {
   justify-content: space-evenly;
   align-items: center;
 }
-
 .checkedFilter button {
   background-color: transparent;
   border: none;
