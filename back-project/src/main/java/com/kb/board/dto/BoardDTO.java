@@ -16,16 +16,17 @@ public class BoardDTO {
     private String content;      // 내용
     private String status;       // 상태 ('y' 또는 'n')
 
-    public BoardStatus getStatus() {
-        return BoardStatus.fromValue(status);
-    }
+//    public BoardStatus getStatusEnum() {
+//        return BoardStatus.fromValue(status); // BoardStatus로 변환
+//    }
 
-    public BoardPost toBoard() {
+
+    public BoardPost toBoardPost() {
         return BoardPost.builder()
                 .type(type)
                 .title(title)
                 .content(content)
-                .status(status) // Enum으로 변환된 값
+                .status(status)
                 .build();
     }
 }

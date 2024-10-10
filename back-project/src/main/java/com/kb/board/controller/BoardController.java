@@ -54,16 +54,16 @@ public class BoardController {
 
     @PostMapping("")
     public ResponseEntity<BoardPost> create(
-            @ModelAttribute @Valid  BoardDTO boardDTO,
+            @ModelAttribute @Valid BoardDTO boardDTO,
             @RequestParam(name = "files", required = false) List<MultipartFile> files,
             @AuthenticationPrincipal Member principal) {
 
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
-//        System.out.println(boardDTO);
-        BoardPost boardPost = boardDTO.toBoard();
-        boardPost.setMemberId(principal.getMno()); // memberId로 변경
+
+        BoardPost boardPost = boardDTO.toBoardPost(); // 수정된 메소드 호출
+        boardPost.setMemberId(principal.getMno());
         return ResponseEntity.ok(service.createBoard(boardPost, files));
     }
 
@@ -71,7 +71,7 @@ public class BoardController {
     public ResponseEntity<BoardPost> update(@PathVariable int bno,
                                             BoardDTO boardDTO,
                                             @RequestParam(name = "files", required = false) List<MultipartFile> files) {
-        BoardPost boardPost = boardDTO.toBoard();
+        BoardPost boardPost = boardDTO.toBoardPost();
         boardPost.setBno(bno);
         System.out.println("files " + files);
         return ResponseEntity.ok(service.updateBoard(boardPost, files));

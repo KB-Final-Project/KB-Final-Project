@@ -16,13 +16,15 @@ public enum BoardStatus {
 
     public static BoardStatus fromValue(String value) {
         if (value == null) {
-            return BoardStatus.ACTIVE; // 기본값 설정
+            return null; // null 처리
         }
-        for (BoardStatus status : values()) {
-            if (status.getValue().equals(value)) {
+        value = value.trim(); // 공백 제거
+        for (BoardStatus status : BoardStatus.values()) {
+            if (status.getValue().equalsIgnoreCase(value)) { // 대소문자 무시
                 return status;
             }
         }
-        throw new IllegalArgumentException("No enum constant for value: " + value);
+        throw new IllegalArgumentException("Unknown value: " + value);
     }
+
 }

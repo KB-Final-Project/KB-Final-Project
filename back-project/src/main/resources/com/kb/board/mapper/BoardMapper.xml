@@ -29,7 +29,7 @@
         <result property="bno" column="bno"/>
         <result property="title" column="title"/>
         <result property="content" column="content"/>
-        <result property="status" column="status" typeHandler="com.kb.board.handler.BoardStatusTypeHandler"/>
+        <result property="status" column="status"/>
         <result property="readCount" column="read_count"/>
         <result property="createdDate" column="created_date"/>
         <result property="modifiedDate" column="modified_date"/>
@@ -95,15 +95,16 @@
         WHERE b.status = 'y' AND b.bno = #{bno}
     </select>
 
-    <insert id="insertBoard" parameterType="com.kb.board.dto.BoardDTO">
+    <insert id="insertBoard" parameterType="com.kb.board.dto.BoardPost">
         <selectKey keyProperty="bno" resultType="int" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        INSERT INTO board (bno, type, title, content, status)
-        VALUES (#{bno}, #{type}, #{title}, #{content}, #{status.value})
+        INSERT INTO board (type, title, content, status)
+        VALUES (#{type}, #{title}, #{content}, #{status})
     </insert>
 
-    <update id="updateBoard" parameterType="com.kb.board.dto.BoardDTO">
+
+    <update id="updateBoard" parameterType="com.kb.board.dto.BoardPost">
         <![CDATA[
         UPDATE board
         SET type = #{type}, title = #{title}, content = #{content}, status = #{status}
@@ -111,8 +112,9 @@
         ]]>
     </update>
 
+
     <!-- 게시글 조회시 readCount 갱신용 -->
-    <update id="updateReadCount" parameterType="com.kb.board.dto.BoardDTO">
+    <update id="updateReadCount" parameterType="com.kb.board.dto.BoardPost">
         update board set
             read_count = #{readCount}
         where bno = #{bno}
@@ -226,7 +228,7 @@
         </selectKey>
         <![CDATA[
         INSERT INTO board_post (bno, title, content, member_id, type, status)
-        VALUES (#{bno}, #{title}, #{content}, #{memberId}, #{type}, #{status.value})
+        VALUES (#{bno}, #{title}, #{content}, #{memberId}, #{type}, #{status})
         ]]>
     </insert>
 
@@ -237,7 +239,7 @@
             content = #{content},
             modified_date = CURRENT_TIMESTAMP,
             type = #{type},
-            status = #{status.value}
+            status = #{status}
         WHERE post_id = #{postId}
         ]]>
     </update>

@@ -26,7 +26,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         Member member = (Member) authentication.getPrincipal();
         String token = jwtProcessor.generateToken(member.getUsername());
         member.setToken(token);
+        System.out.println("token------------------------------------------- " + token );
         JsonResponse.send(response, member);
+
     }
 
 }
