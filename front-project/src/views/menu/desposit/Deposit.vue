@@ -12,6 +12,8 @@ const currentPage = ref(1);
 const totalPages = ref(1); // 총 페이지 수
 const totalCount = ref(0); // 총 페이지 수
 const expanded = ref(false);
+const primaryBankExpanded = ref(false);
+const otherBankExpanded = ref(false);
 const router = useRouter();
 
 const searchTerm = ref('');
@@ -20,6 +22,8 @@ const selectedDuration = ref(null);
 const selectedInterestType = ref(null);
 
 const bankList = ref([]);
+const primaryBankList = ref([]);
+const otherBankList = ref([]);
 const termList = ref([]);
 const interestTypeList = ref([]);
 // 모든 은행 목록을 저장하는 반응형 변수
@@ -45,6 +49,17 @@ const fetchdepositCategory = async () => {
     const response = await axios.get('/api/deposit/category');
     if (response.data) {
       bankList.value = response.data.bankList.map(bank => bank.bankName);
+
+      // 분류 로직
+      response.data.bankList.forEach(bank => {
+        if (bank.bankType === 1) {
+          primaryBankList.value.push(bank.bankName);
+        } else {
+          otherBankList.value.push(bank.bankName);
+        }
+      });
+      console.log(primaryBankList);
+      console.log(otherBankList);
       termList.value = response.data.saveTerm;
       interestTypeList.value = response.data.interestType;
       allBanks.value = response.data.map(bank => ({
@@ -55,7 +70,7 @@ const fetchdepositCategory = async () => {
   } catch (error) {
     console.error('카테고리 받아오기 실패', error);
   }
-}
+};
 
 const getPaginationPages = () => {
   const pages = [];
@@ -126,7 +141,9 @@ const resetDuration = () => {
   fetchSavings();
 };
 
-const selectAllBanks = () => selectAll(selectedBanks, bankList.value);
+const selectAllBanksInPrimaryBankList = () => selectAll(selectedBanks, primaryBankList.value);
+
+const selectAllBanksInOtherBankList = () => selectAll(selectedBanks, otherBankList.value);
 
 const highlightInput = (event) => {
   event.target.classList.add('highlight');
@@ -210,6 +227,20 @@ watch([selectedBanks, selectedDuration, selectedInterestType], () => {
 const toggleText = () => {
   expanded.value = !expanded.value; // 상태 반전
   if (expanded.value) {
+    fetchSavings();
+  }
+};
+
+const togglePrimaryBankList = () => {
+  primaryBankExpanded.value = !primaryBankExpanded.value; // 상태 반전
+  if (primaryBankExpanded.value) {
+    fetchSavings();
+  }
+};
+
+const toggleOtherBankList = () => {
+  otherBankExpanded.value = !otherBankExpanded.value; // 상태 반전
+  if (otherBankExpanded.value) {
     fetchSavings();
   }
 };
@@ -320,21 +351,51 @@ const truncateText = (text, maxLength) => {
           <ul class="filterBar">
             <li>
               <h4 style="font-weight: 700;">은행</h4>
-              <div class="filter d-inline">
-                <input type="button" id="all" @click="(event) => {selectAllBanks(); fetchSavings();}"/>
-                <label for="all">전체</label>
-              </div>
-              <div class="filter d-inline" v-for="(bank, index) in bankList" :key="index">
-                <input
-                    type="checkbox"
-                    :id="'bank' + index"
-                    @change="(event) => { selectBank(bank); fetchSavings(); }"
-                    :checked="selectedBanks.includes(bank)"
-                />
-                <label :for="'bank' + index" :class="{ 'selected': selectedBanks.includes(bank) }">{{ bank }}</label>
-              </div>
+                <br>
+                <div>
+                  <h4 style="font-weight: 700;" @click="togglePrimaryBankList">
+                    1금융권 은행
+                    <i :class="primaryBankExpanded ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
+                  </h4>
+                  <div class="filter d-inline">
+                    <input type="button" id="primary-all" @click="() => {selectAllBanksInPrimaryBankList(); fetchSavings();}" />
+                    <label for="primary-all">전체</label>
+                  </div>
+                  <div v-show="primaryBankExpanded">
+                    <div class="filter d-inline" v-for="(bank, index) in primaryBankList" :key="'primary' + index">
+                      <input
+                        type="checkbox"
+                        :id="'primary-bank' + index"
+                        @change="() => { selectBank(bank); fetchSavings(); }"
+                        :checked="selectedBanks.includes(bank)"
+                      />
+                      <label :for="'primary-bank' + index" :class="{ 'selected': selectedBanks.includes(bank) }">{{ bank }}</label>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 style="font-weight: 700;" @click="toggleOtherBankList">
+                    기타 은행
+                    <i :class="otherBankExpanded ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
+                  </h4>
+                  <div class="filter d-inline">
+                    <input type="button" id="other-all" @click="() => {selectAllBanksInOtherBankList(); fetchSavings();}" />
+                    <label for="other-all">전체</label>
+                  </div>
+                  <div v-show="otherBankExpanded">
+                    <div class="filter d-inline" v-for="(bank, index) in otherBankList" :key="'other' + index">
+                      <input
+                        type="checkbox"
+                        :id="'other-bank' + index"
+                        @change="() => { selectBank(bank); fetchSavings(); }"
+                        :checked="selectedBanks.includes(bank)"
+                      />
+                      <label :for="'other-bank' + index" :class="{ 'selected': selectedBanks.includes(bank) }">{{ bank }}</label>
+                    </div>
+                  </div>
+                </div>
             </li>
-
+            
             <!-- 저축 기간 필터 -->
             <li>
               <h4 style="font-weight: 700;">저축 기간</h4>

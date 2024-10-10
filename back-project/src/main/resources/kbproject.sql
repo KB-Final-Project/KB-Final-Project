@@ -1063,6 +1063,8 @@ INSERT INTO stock_codes (stock_code, stock_name) VALUES
                                                      ('000545', '흥국화재우'),
                                                      ('003280', '흥아해운');
 
+
+
 CREATE TABLE board_category (
                                 id INT AUTO_INCREMENT PRIMARY KEY,  -- 기본 키
                                 type VARCHAR(50) NOT NULL,           -- type 필드
@@ -1071,9 +1073,6 @@ CREATE TABLE board_category (
                                 order_no INT NOT NULL,                -- orderNo 필드
                                 UNIQUE KEY (type)                     -- type 컬럼에 유니크 인덱스 추가
 );
-
-ALTER TABLE board
-    MODIFY COLUMN type VARCHAR(50) NOT NULL;
 
 
 CREATE TABLE MEMBER (
@@ -1101,31 +1100,32 @@ CREATE TABLE `member_auth` (
 
 
 CREATE TABLE board (
-                       bno BIGINT NOT null AUTO_INCREMENT,
-                       type VARCHAR(50) NOT NULL,  -- NOT NULL 추가
+                       bno INT NOT NULL AUTO_INCREMENT,
+                       type VARCHAR(50) NOT NULL,
                        title VARCHAR(200) NOT NULL,
                        content TEXT,
-                       status ENUM('y', 'n') DEFAULT 'y',
+                       status VARCHAR(1) DEFAULT 'y',
                        PRIMARY KEY (bno),
-                       FOREIGN KEY (type) REFERENCES board_category(type)  -- 외래 키 설정
+                       FOREIGN KEY (type) REFERENCES board_category(type)
 );
 
-
 CREATE TABLE board_post (
-                            board_id INT NOT NULL AUTO_INCREMENT,
+                            post_id BIGINT NOT NULL AUTO_INCREMENT, -- 고유한 게시글 ID
+                            bno INT NOT NULL,                     -- board 테이블의 bno를 참조
                             title VARCHAR(255) NOT NULL,
                             content TEXT NOT NULL,
-                            status ENUM('y', 'n') DEFAULT 'y',
+                            status varchar(1) DEFAULT 'y',
                             read_count INT NOT NULL DEFAULT 0,
                             created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                             modified_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                            type VARCHAR(50) NOT NULL,  -- 문자열로 수정
+                            type VARCHAR(50) NOT NULL,
                             comment_count INT DEFAULT 0,
                             likes_count INT DEFAULT 0,
                             member_id INT NOT NULL,
-                            PRIMARY KEY (board_id),
+                            PRIMARY KEY (post_id),                   -- 게시글 ID를 기본 키로 설정
                             KEY member_id (member_id),
-                            CONSTRAINT board_post_ibfk_1 FOREIGN KEY (member_id) REFERENCES MEMBER (mno)
+                            CONSTRAINT board_post_ibfk_1 FOREIGN KEY (member_id) REFERENCES MEMBER (mno),
+                            CONSTRAINT board_post_ibfk_2 FOREIGN KEY (bno) REFERENCES board(bno) -- 외래 키 추가
 );
 
 
@@ -1134,24 +1134,24 @@ CREATE TABLE `BOARD_REPLY` (
                                `reply_content` varchar(2000) NOT NULL,
                                `reply_created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                `reply_modified_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                               `bno` int NOT NULL,
+                               `bno` INT NOT NULL,
                                `mno` int NOT NULL,
                                PRIMARY KEY (`reply_id`),
                                KEY `bno` (`bno`),
                                KEY `mno` (`mno`),
-                               CONSTRAINT `board_reply_ibfk_1` FOREIGN KEY (`bno`) REFERENCES `BOARD_POST` (`board_id`),
+                               CONSTRAINT `board_reply_ibfk_1` FOREIGN KEY (`bno`) REFERENCES `BOARD_POST` (`bno`),
                                CONSTRAINT `board_reply_ibfk_2` FOREIGN KEY (`mno`) REFERENCES `MEMBER` (`mno`)
 );
 
 CREATE TABLE `BOARD_ATTACH_FILE` (
                                      `file_id` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
-                                     `board_id` int NOT NULL,
+                                     `bno` INT NOT NULL,
                                      `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                      `file_type` varchar(56) NOT NULL,
                                      `file_size` bigint NOT NULL,
                                      `file_name` varchar(200) NOT NULL,
                                      `file_path` varchar(200) NOT NULL,
                                      PRIMARY KEY (`file_id`),
-                                     KEY `board_id` (`board_id`),
-                                     CONSTRAINT `board_attach_file_ibfk_1` FOREIGN KEY (`board_id`) REFERENCES `BOARD_POST` (`board_id`)
+                                     KEY `bno` (`bno`),
+                                     CONSTRAINT `board_attach_file_ibfk_1` FOREIGN KEY (`bno`) REFERENCES `BOARD_POST`(`bno`)
 );

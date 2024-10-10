@@ -8,17 +8,17 @@ public interface BoardMapper {
     List<BoardCategory> selectBoardCategory();
     List<BoardPost> selectBoardList(BoardParam param);
     int selectBoardCount(BoardParam param);
-    BoardPost selectBoardByBoardId(long boardId);
+    BoardPost selectBoardByBno(int bno);
     int insertBoard(BoardPost boardPost);
     int updateBoard(BoardPost boardPost);
     int updateReadCount(BoardPost boardPost);
-    int deleteBoard(long boardId);
+    int deleteBoard(long bno);
     BoardAttachFile selectAttachFileByFno(long fno);
-    List<BoardAttachFile> selectAttachFileByBno(long bno);
+    List<BoardAttachFile> selectAttachFileByBno(int bno);
     int insertAttachFile(BoardAttachFile attachFile);
     int deleteAttachFile(long fno);
     int insertReply(BoardReply reply);
     BoardReply selectReplyByRno(long rno);
-    List<BoardReply> selectReplyByBno(long bno);
+    List<BoardReply> selectReplyByBno(int bno);
     int deleteReply(long rno);
 }

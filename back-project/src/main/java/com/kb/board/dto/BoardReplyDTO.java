@@ -10,7 +10,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardReplyDTO {
-	private long bno;
+	private int bno;
 	private String writer;
 	private String content;
 

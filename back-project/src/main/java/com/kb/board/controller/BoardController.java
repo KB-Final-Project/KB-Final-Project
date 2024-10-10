@@ -11,6 +11,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -47,33 +48,37 @@ public class BoardController {
     }
 
     @GetMapping("/{bno}")
-    public ResponseEntity<BoardPost> getById(@PathVariable long bno) {
+    public ResponseEntity<BoardPost> getById(@PathVariable int bno) {
         return ResponseEntity.ok(service.getBoard(bno));
     }
 
     @PostMapping("")
     public ResponseEntity<BoardPost> create(
-            @ModelAttribute @Valid  BoardDTO boardDTO,
+            @ModelAttribute @Valid BoardDTO boardDTO,
             @RequestParam(name = "files", required = false) List<MultipartFile> files,
             @AuthenticationPrincipal Member principal) {
-//        System.out.println(boardDTO);
-        BoardPost boardPost = boardDTO.toBoard();
-        boardPost.setMemberId(principal.getMno()); // memberId로 변경
+
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        BoardPost boardPost = boardDTO.toBoardPost(); // 수정된 메소드 호출
+        boardPost.setMemberId(principal.getMno());
         return ResponseEntity.ok(service.createBoard(boardPost, files));
     }
 
     @PutMapping("/{bno}")
-    public ResponseEntity<BoardPost> update(@PathVariable long bno,
+    public ResponseEntity<BoardPost> update(@PathVariable int bno,
                                             BoardDTO boardDTO,
                                             @RequestParam(name = "files", required = false) List<MultipartFile> files) {
-        BoardPost boardPost = boardDTO.toBoard();
-        boardPost.setBoardId(bno);
+        BoardPost boardPost = boardDTO.toBoardPost();
+        boardPost.setBno(bno);
         System.out.println("files " + files);
         return ResponseEntity.ok(service.updateBoard(boardPost, files));
     }
 
     @DeleteMapping("/{bno}")
-    public ResponseEntity<BoardPost> delete(@PathVariable long bno) {
+    public ResponseEntity<BoardPost> delete(@PathVariable int bno) {
         return ResponseEntity.ok(service.deleteBoard(bno));
     }
 
@@ -102,7 +107,7 @@ public class BoardController {
 
     @PostMapping("/reply/{bno}")
     public ResponseEntity<BoardReply> createReply(
-                        @PathVariable long bno,
+                        @PathVariable int bno,
                       @RequestBody BoardReplyDTO replyDTO,
                       @AuthenticationPrincipal Member principal) throws Exception {
         BoardReply reply = replyDTO.toReply();
