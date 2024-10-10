@@ -88,7 +88,7 @@
         ]]>
     </select>
 
-    <select id="selectBoardByBno" parameterType="int" resultMap="boardResultMap">
+    <select id="selectBoardByBno" parameterType="int" resultMap="boardPostResultMap">
         SELECT
             b.bno, b.type, b.title, b.content, b.status
         FROM board b
@@ -115,7 +115,7 @@
 
     <!-- 게시글 조회시 readCount 갱신용 -->
     <update id="updateReadCount" parameterType="com.kb.board.dto.BoardPost">
-        update board set
+        update board_post set
             read_count = #{readCount}
         where bno = #{bno}
     </update>
