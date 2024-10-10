@@ -59,14 +59,10 @@
             </div>
             <button class="signUpBtn w-100 mb-4" type="submit">회원가입</button>
             <h2 style="font-size: 15px;font-weight: 700;" class="h6 text-center pt-3 pt-lg-4 mb-4">간편 로그인</h2>
-            <div class="row row-cols-1 row-cols-sm-2 gy-3">
-              
-              <div class="col">
-                <a class="btn btn-icon btn-outline-secondary btn-facebook btn-lg w-100" @click.prevent="kakaoJoin">
-                  <i class="ai-facebook fs-xl me-2"></i>카카오 회원가입
+              <div class="text-center">
+                <a style="cursor: pointer;" @click.prevent="kakaoJoin">
+                  <img src="/img/kakao_join.png">
                 </a>
-              </div>
-              <div class="col"><a class="btn btn-icon btn-outline-secondary btn-google btn-lg w-100" href="#"><i class="ai-google fs-xl me-2"></i>Google</a></div>
             </div>
           </form>
         </div>
