@@ -8,7 +8,7 @@
         <h1 class="d-inline">트렌드<br></h1>
         <h1 class="d-inline m-l">한눈에 보기</h1><br>
         <br><button class="goToStock_btn" @click="goToStock">전체 운용상품 보러가기 <i class="ai-chevron-right"></i></button>
-        <img src="/img/trend.png" class="trendImage">
+        <img src="/img/emoji/trend.png" class="trendImage">
       </div>
 
       <!-- trendGraph -->
@@ -86,7 +86,7 @@ const goToStock = () => {
 
 .trendImage {
   margin-top: -35%;
-  margin-left: 70%;
+  margin-left: 60%;
   z-index: -1;
   width: 200px;
 }

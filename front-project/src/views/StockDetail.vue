@@ -1,529 +1,723 @@
 <template>
   <div class="stock-dashboard">
-    <h1><b>국내주식</b></h1>
-    <div class="container">
-      <div v-if="error" class="error-message">{{ error }}</div>
+      <h1><b>국내주식</b></h1>
+      <div class="container">
+          <div v-if="error" class="error-message">{{ error }}</div>
 
-      <!-- 이 시각 증시 (KOSPI, KOSDAQ, KOSPI200) -->
-      <section class="current-stocks">
-        <p class="title">이 시각 증시</p>
-        <div class="stock-cards">
-          <div v-for="(stock, index) in currentStocks" :key="index" class="stock-card">
-            <h3>{{ stock.name }}</h3>
-            <p>{{ stock.index }}</p>
-          </div>
-        </div>
-      </section>
-      <p class="middle-title">현재 상위권 TOP3 🏆</p>
-      <section class="top3-stocks">
-        <div class="top3-cards">
-          <div v-for="(stock, index) in top3Stocks" :key="index" class="top3-card">
-            <h3>{{ stock.stockName }}</h3>
-            <p>{{ stock.currentPrice }}</p>
-            <p :class="{'positive': stock.priceChangePct > 0, 'negative': stock.priceChangePct < 0}">
-              {{ stock.priceChange }} ({{ stock.priceChangePct }}%)
-            </p>
-            <router-link :to="'/stock/' + stock.stockCode">자세히 보기</router-link>
-          </div>
-        </div>
-      </section>
-      <!-- 주식 목록 섹션 -->
-      <section class="stock-list">
-        <p class="title">주식 목록</p>
-        <div class="search-bar">
-          <input v-model="searchKeyword" placeholder="키워드를 입력해주세요" @keyup.enter="searchStocks">
-          <button @click="searchStocks">검색</button>
-        </div>
-        
-        <!-- 주식 목록 데이터 -->
-        <table class="stock-table">
-          <thead>
-            <tr>
-              <th @click="sortBy('stockName')" :class="{ active: sortKey === 'stockName' }">
-                종목명 <span v-if="sortKey === 'stockName'" :class="{ 'sort-arrow': true, 'sort-reverse': sortOrder === -1 }"></span>
-              </th>
-              <th @click="sortBy('currentPrice')" :class="{ active: sortKey === 'currentPrice' }">
-                현재가 <span v-if="sortKey === 'currentPrice'" :class="{ 'sort-arrow': true, 'sort-reverse': sortOrder === -1 }"></span>
-              </th>
-              <th @click="sortBy('priceChange')" :class="{ active: sortKey === 'priceChange' }">
-                대비 <span v-if="sortKey === 'priceChange'" :class="{ 'sort-arrow': true, 'sort-reverse': sortOrder === -1 }"></span>
-              </th>
-              <th @click="sortBy('priceChangePct')" :class="{ active: sortKey === 'priceChangePct' }">
-                등락률 <span v-if="sortKey === 'priceChangePct'" :class="{ 'sort-arrow': true, 'sort-reverse': sortOrder === -1 }"></span>
-              </th>
-              <th @click="sortBy('volume')" :class="{ active: sortKey === 'volume' }">
-                거래량 <span v-if="sortKey === 'volume'" :class="{ 'sort-arrow': true, 'sort-reverse': sortOrder === -1 }"></span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(stock, index) in paginatedStocks" :key="index">
-              <td>{{ stock.stockName }}</td>
-              <td>{{ stock.currentPrice }}</td>
-              <td :class="{'positive': stock.priceChange > 0, 'negative': stock.priceChange < 0}">
-                {{ stock.priceChange }}
-              </td>
-              <td :class="{'positive': stock.priceChangePct > 0, 'negative': stock.priceChangePct < 0}">
-                {{ stock.priceChangePct }}%
-              </td>
-              <td>{{ stock.volume }}</td>
-            </tr>
-          </tbody>
-        </table>
-        
-        <!-- 페이지네이션 -->
-        <div class="pagination">
-          <button @click="changePage(-1)" :disabled="currentPage === 1">이전</button>
-          <span>{{ currentPage }} / {{ totalPages }}</span>
-          <button @click="changePage(1)" :disabled="currentPage === totalPages">다음</button>
-        </div>
-      </section>
-    </div>
-    <div class="crypto-chart-container mx-n4">
-      <div id="chart-crypto-price" ref="chartElement" :data-height="420"></div>
-    </div>
+          <!-- 이 시각 증시 (KOSPI, KOSDAQ, KOSPI200) -->
+          <section class="current-stocks">
+              <div class="section-header">
+                  <p class="title">이 시각 증시</p>
+              </div>
+              <div class="stock-cards">
+                  <div v-for="(stock, index) in currentStocks" :key="index" :class="{ 'positive-card': stock.change && stock.change.includes('+'), 'negative-card': stock.change && stock.change.includes('-') }" class="stock-card">
+                      <p class="stock-title">{{ stock.name }}</p>
+                      <p class="amount-txt">{{ stock.amount }}</p>
+                      <p>
+                          <span v-if="stock.change && stock.change.includes('+')" class="positive">
+                              {{ stock.change }}
+                          </span>
+                          <span v-else-if="stock.change && stock.change.includes('-')" class="negative">
+                              {{ stock.change }}
+                          </span>
+                          <span v-else>
+                              {{ stock.change ? stock.change : 'N/A' }}
+                          </span>
+                      </p>
+                      <div class="line-c">
+                          <Line :data="stock.chartData" :options="chartOptions" />
+                      </div>
+                  </div>
+
+              </div>
+          </section>
+          <p class="middle-title">현재 상위권 TOP3 🏆</p>
+          <section class="top3-stocks">
+              <div class="top3-cards">
+                  <div v-for="(stock, index) in top3Stocks" :key="index" class="top3-card" @click="goToStockChart(stock)">
+                      <h3>{{ stock.stockName }}</h3>
+                      <p>{{ stock.currentPrice }}</p>
+                      <!-- 상승/하락에 따른 아이콘 표시 -->
+                      <p :class="{ 'positive': stock.priceChangePct > 0, 'negative': stock.priceChangePct < 0 }">
+                          {{ stock.priceChange }} ({{ stock.priceChangePct }}%)
+                      </p>
+                  </div>
+              </div>
+          </section>
+          <!-- 주식 목록 섹션 -->
+          <section class="stock-list">
+              <p class="title">주식 목록</p>
+              <div class="search-bar">
+                  <input v-model="searchKeyword" placeholder="키워드를 입력해주세요" @keyup.enter="searchStocks">
+                  <button @click="searchStocks">검색</button>
+              </div>
+
+              <!-- 주식 목록 데이터 -->
+              <table class="stock-table">
+                  <thead>
+                      <tr>
+                          <th @click="sortBy('stockName')" :class="{ active: sortKey === 'stockName' }" >
+                              종목명 <span v-if="sortKey === 'stockName'" :class="{ 'sort-arrow': true, 'sort-reverse': sortOrder === -1 }"></span>
+                          </th>
+                          <th @click="sortBy('currentPrice')" :class="{ active: sortKey === 'currentPrice' }">
+                              현재가 <span v-if="sortKey === 'currentPrice'" :class="{ 'sort-arrow': true, 'sort-reverse': sortOrder === -1 }"></span>
+                          </th>
+                          <th @click="sortBy('priceChange')" :class="{ active: sortKey === 'priceChange' }">
+                              대비 <span v-if="sortKey === 'priceChange'" :class="{ 'sort-arrow': true, 'sort-reverse': sortOrder === -1 }"></span>
+                          </th>
+                          <th @click="sortBy('priceChangePct')" :class="{ active: sortKey === 'priceChangePct' }">
+                              등락률 <span v-if="sortKey === 'priceChangePct'" :class="{ 'sort-arrow': true, 'sort-reverse': sortOrder === -1 }"></span>
+                          </th>
+                          <th @click="sortBy('volume')" :class="{ active: sortKey === 'volume' }">
+                              거래량 <span v-if="sortKey === 'volume'" :class="{ 'sort-arrow': true, 'sort-reverse': sortOrder === -1 }"></span>
+                          </th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr v-for="(stock, index) in paginatedStocks" :key="index" @click="goToStockChart(stock)">
+                          <td>{{ stock.stockName }}</td>
+                          <td>{{ stock.currentPrice }}</td>
+                          <td :class="{'positive': stock.priceChange > 0, 'negative': stock.priceChange < 0}">
+                              {{ stock.priceChange }}
+                          </td>
+                          <td :class="{'positive': stock.priceChangePct > 0, 'negative': stock.priceChangePct < 0}">
+                              {{ stock.priceChangePct }}%
+                          </td>
+                          <td>{{ stock.volume }}</td>
+                      </tr>
+                  </tbody>
+              </table>
+
+              <!-- 페이지네이션 -->
+              <div class="pagination">
+                  <button @click="changePage(-1)" :disabled="currentPage === 1">이전</button>
+                  <span>{{ currentPage }} / {{ totalPages }}</span>
+                  <button @click="changePage(1)" :disabled="currentPage === totalPages">다음</button>
+              </div>
+          </section>
+      </div>
+      <!-- <div class="crypto-chart-container mx-n4">
+          <div id="chart-crypto-price" ref="chartElement" :data-height="420"></div>
+      </div> -->
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import Choices from '../js/choices.min.js';
-import graph from '../js/graph.js';
-export default {
-  data() {
-    return {
-      stocks: [], // 전체 주식 목록
-      currentStocks: [], // KOSPI, KOSDAQ, KOSPI200 데이터
-      top3Stocks: [], // 등락률 상위 3개 주식
-      error: null, // 에러 메시지
-      searchKeyword: '', // 검색 키워드
-      currentPage: 1, // 현재 페이지
-      totalPages: 1, // 전체 페이지 수
-      itemsPerPage: 10, // 한 페이지에 표시할 항목 수
-      sortKey: 'stockName', // 정렬 기준 키
-      sortOrder: 1 // 정렬 순서 (1: 오름차순, -1: 내림차순)
-    };
-  },
+  import axios from 'axios';
+  import Choices from '../js/choices.min.js';
+  import graph from '../js/graph.js';
+  export default {
+      data() {
+          return {
+              stocks: [], // 전체 주식 목록
+              currentStocks: [], // KOSPI, KOSDAQ, KOSPI200 데이터
+              top3Stocks: [], // 등락률 상위 3개 주식
+              error: null, // 에러 메시지
+              searchKeyword: '', // 검색 키워드
+              currentPage: 1, // 현재 페이지
+              totalPages: 1, // 전체 페이지 수
+              itemsPerPage: 10, // 한 페이지에 표시할 항목 수
+              sortKey: 'stockName', // 정렬 기준 키
+              sortOrder: 1 // 정렬 순서 (1: 오름차순, -1: 내림차순)
+          };
+      },
 
-  computed: {
-    // 정렬된 주식 목록
-    sortedStocks() {
-      return [...this.stocks].sort((a, b) => {
-        let aValue = a[this.sortKey];
-        let bValue = b[this.sortKey];
-        
-        // 숫자 정렬을 위한 변환
-        if (typeof aValue === 'string' && !isNaN(aValue)) {
-          aValue = parseFloat(aValue);
-          bValue = parseFloat(bValue);
-        }
-        
-        if (aValue < bValue) return -1 * this.sortOrder;
-        if (aValue > bValue) return 1 * this.sortOrder;
-        return 0;
-      });
-    },
-    // 페이지네이션 된 주식 목록을 계산
-    paginatedStocks() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.sortedStocks.slice(start, end);
-    }
-  },
+      computed: {
+          // 정렬된 주식 목록
+          sortedStocks() {
+              return [...this.stocks].sort((a, b) => {
+                  let aValue = a[this.sortKey];
+                  let bValue = b[this.sortKey];
 
-  async mounted() {
-    try {
-      await this.fetchStocks(); // 주식 목록과 지수 데이터를 초기 로드
-      this.updateTop3Stocks(); // Top3 주식 업데이트
-    } catch (error) {
-      console.error('초기 데이터 로드 중 오류 발생:', error);
-      this.error = '주식 데이터를 불러오는 중 오류가 발생했습니다.';
-    }
-  },
+                  // 숫자 정렬을 위한 변환
+                  if (typeof aValue === 'string' && !isNaN(aValue)) {
+                      aValue = parseFloat(aValue);
+                      bValue = parseFloat(bValue);
+                  }
 
-  methods: {
-    // 주식 데이터를 가져오는 메서드
-    async fetchStocks() {
-      try {
-        // API 요청: 주식 데이터와 지수 데이터 가져오기
-        const stockResponse = await axios.get('http://localhost:8080/api/stocks/all');
-        const kospiResponse = await axios.get('http://localhost:8080/api/index/kospi');
-        const kosdaqResponse = await axios.get('http://localhost:8080/api/index/kosdaq');
-        const kospi200Response = await axios.get('http://localhost:8080/api/index/kospi200');
+                  if (aValue < bValue) return -1 * this.sortOrder;
+                  if (aValue > bValue) return 1 * this.sortOrder;
+                  return 0;
+              });
+          },
+          // 페이지네이션 된 주식 목록을 계산
+          paginatedStocks() {
+              const start = (this.currentPage - 1) * this.itemsPerPage;
+              const end = start + this.itemsPerPage;
+              return this.sortedStocks.slice(start, end);
+          }
+      },
 
-        // 데이터 저장
-        this.stocks = stockResponse.data;
-        this.currentStocks = [
-          { name: 'KOSPI', index: kospiResponse.data },
-          { name: 'KOSDAQ', index: kosdaqResponse.data },
-          { name: 'KOSPI200', index: kospi200Response.data }
-        ];
+      async mounted() {
+          try {
+              await this.fetchStocks(); // 주식 목록과 지수 데이터를 초기 로드
+              this.updateTop3Stocks(); // Top3 주식 업데이트
+          } catch (error) {
+              console.error('초기 데이터 로드 중 오류 발생:', error);
+              this.error = '주식 데이터를 불러오는 중 오류가 발생했습니다.';
+          }
+      },
 
-        // 총 페이지 계산
-        this.totalPages = Math.ceil(this.stocks.length / this.itemsPerPage);
-      } catch (error) {
-        console.error('주식 목록을 가져오는 중 오류 발생:', error);
-        this.error = '주식 데이터를 불러오는 중 오류가 발생했습니다.';
+      methods: {
+          // 주식 데이터를 가져오는 메서드
+          async fetchStocks() {
+              try {
+                  // API 요청: 주식 데이터와 지수 데이터 가져오기
+                  const stockResponse = await axios.get('http://localhost:8080/api/stocks/all');
+                  const kospiResponse = await axios.get('http://localhost:8080/api/index/kospi');
+                  const kosdaqResponse = await axios.get('http://localhost:8080/api/index/kosdaq');
+                  const kospi200Response = await axios.get('http://localhost:8080/api/index/kospi200');
+
+                  // 데이터 저장
+                  this.stocks = stockResponse.data;
+                  this.currentStocks = [{
+                          name: 'KOSPI',
+                          amount: kospiResponse.data.코스피,
+                          change: kospiResponse.data.변동,
+                          chartData: {
+                              labels: ['2023-10-01', '2023-10-02', '2023-10-03', '2023-10-04', '2023-10-05'],
+                              datasets: [{
+                                  label: 'KOSPI',
+                                  data: [20, 10, 10, 5, 7],
+                                  borderColor: 'rgba(75, 192, 192, 1)',
+                                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                  fill: false,
+                                  pointRadius: 0,
+                              }, ],
+                          },
+                      },
+                      {
+                          name: 'KOSDAQ',
+                          amount: kosdaqResponse.data.코스닥,
+                          change: kosdaqResponse.data.변동,
+                          chartData: {
+                              labels: ['2023-10-01', '2023-10-02', '2023-10-03', '2023-10-04', '2023-10-05'],
+                              datasets: [{
+                                  label: 'KOSDAQ',
+                                  data: [12, 3, 4, 15, 4],
+                                  borderColor: 'rgba(153, 102, 255, 1)',
+                                  backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                                  fill: true,
+                                  pointRadius: 0,
+                              }, ],
+                          }
+                      },
+                      {
+                          name: 'KOSPI200',
+                          amount: kospi200Response.data.코스피200,
+                          change: `${kospi200Response.data.전일대비} (${kospi200Response.data.등락률})`, // 전일대비 및 등락률 조합
+                          chartData: {
+                              labels: ['2023-10-01', '2023-10-02', '2023-10-03', '2023-10-04', '2023-10-05'],
+                              datasets: [{
+                                  label: 'KOSPI200',
+                                  data: [23, 1, 3, 5, 10],
+                                  borderColor: 'rgba(255, 159, 64, 1)',
+                                  backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                                  fill: true,
+                                  pointRadius: 0,
+                              }, ],
+                          },
+                      }
+                  ];
+
+                  // 총 페이지 계산
+                  this.totalPages = Math.ceil(this.stocks.length / this.itemsPerPage);
+              } catch (error) {
+                  console.error('주식 목록을 가져오는 중 오류 발생:', error);
+                  this.error = '주식 데이터를 불러오는 중 오류가 발생했습니다.';
+              }
+          },
+
+          // Top3 주식 업데이트 메서드
+          updateTop3Stocks() {
+              this.top3Stocks = [...this.stocks]
+                  .sort((a, b) => b.priceChangePct - a.priceChangePct)
+                  .slice(0, 3);
+          },
+
+          searchStocks() {
+              // 검색어가 있는 경우 해당 주식을 필터링
+              const filteredStocks = this.stocks.filter(stock =>
+                  stock.stockName.toLowerCase().includes(this.searchKeyword.toLowerCase())
+              );
+              this.stocks = filteredStocks;
+              this.currentPage = 1; // 검색 후 첫 페이지로 이동
+              this.totalPages = Math.ceil(this.stocks.length / this.itemsPerPage); // 총 페이지 계산
+              this.updateTop3Stocks(); // 검색 결과에 따라 Top3 업데이트
+          },
+
+          changePage(direction) {
+              this.currentPage += direction;
+          },
+
+          // 정렬 메서드
+          sortBy(key) {
+              if (this.sortKey === key) {
+                  // 같은 키로 다시 정렬하면 순서를 반대로
+                  this.sortOrder *= -1;
+              } else {
+                  // 다른 키로 정렬하면 오름차순으로 시작
+                  this.sortKey = key;
+                  this.sortOrder = 1;
+              }
+              this.currentPage = 1; // 정렬 후 첫 페이지로 이동
+          },
+          goToStockChart(stock) {
+              this.$router.push({
+                  path: `/stock/${stock.stockCode}`,
+                  query: {
+                      stockName: stock.stockName,
+                      currentPrice: stock.currentPrice,
+                      priceChange: stock.priceChange,
+                      priceChangePct: stock.priceChangePct,
+                      volume: stock.volume,
+                      htsAvls: stock.htsAvls,
+                      w52Hgpr: stock.w52Hgpr,
+                      w52Lwpr: stock.w52Lwpr
+                  }
+              });
+          },
+
+          
       }
-    },
-
-    // Top3 주식 업데이트 메서드
-    updateTop3Stocks() {
-      this.top3Stocks = [...this.stocks]
-        .sort((a, b) => b.priceChangePct - a.priceChangePct)
-        .slice(0, 3);
-    },
-
-    searchStocks() {
-      // 검색어가 있는 경우 해당 주식을 필터링
-      const filteredStocks = this.stocks.filter(stock =>
-        stock.stockName.toLowerCase().includes(this.searchKeyword.toLowerCase())
-      );
-      this.stocks = filteredStocks;
-      this.currentPage = 1; // 검색 후 첫 페이지로 이동
-      this.totalPages = Math.ceil(this.stocks.length / this.itemsPerPage); // 총 페이지 계산
-      this.updateTop3Stocks(); // 검색 결과에 따라 Top3 업데이트
-    },
-
-    changePage(direction) {
-      this.currentPage += direction;
-    },
-
-    // 정렬 메서드
-    sortBy(key) {
-      if (this.sortKey === key) {
-        // 같은 키로 다시 정렬하면 순서를 반대로
-        this.sortOrder *= -1;
-      } else {
-        // 다른 키로 정렬하면 오름차순으로 시작
-        this.sortKey = key;
-        this.sortOrder = 1;
-      }
-      this.currentPage = 1; // 정렬 후 첫 페이지로 이동
-    }
-  }
-};
+  };
 </script>
+
 <style scoped>
-.stock-dashboard {
-  background-color: white;
-}
+  .stock-dashboard {
+      font-family: J5;
+      background-color: white;
+      padding: 20px;
+  }
 
-.title {
- 
-  font-weight: bold;
-  margin-bottom: 20px;
-  text-align: center;
-  font-size: 30px;
-}
+  .container {
+      max-width: 1200px;
+      margin: 0 auto;
+  }
+
+  .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+  }
+
+  .top3-cards,
+  .category-cards {
+      display: flex;
+      padding: 20px;
+
+  }
+
+  a.more-link {
+      display: flex;
+      flex-direction: column-reverse;
+  }
+
+  .title {
+      font-size: 30px;
+
+  }
+
+  .more-link {
+      color: #448c74;
+      text-decoration: none;
+      font-weight: bold;
+
+  }
+
+  .current-stocks,
+  .top3-stocks,
+  .stock-list,
+  .categories {
+      margin-bottom: 40px;
+      background-color: white;
+      border-radius: 30px;
+      padding: 20px;
+      justify-content: space-between;
+      gap: 20px;
+      font-size: 16px;
+  }
+
+  .stock-card,
+  .top3-card,
+  .category-card {
+      background-color: white;
+      padding: 15px;
+      border-radius: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      flex: 1;
+      text-align: center;
+  }
+
+  .current-stocks .stock-cards {
+      display: flex;
+      justify-content: space-around;
+      gap: 20px;
+  }
+
+  .stock-card {
+      flex: 1;
+      text-align: center;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .positive-card {
+      background-color: #FFF8F9;
+      /* 상승할 때 배경색 */
+  }
+
+  .negative-card {
+      background-color: #F9FBFF;
+      /* 하락할 때 배경색 */
+  }
+
+  .positive {
+      color: #FF0008;
+  }
+
+  .negative {
+      color: #005CF6;
+  }
+
+  .positive::before {
+      content: "▲";
+      /* 상승 화살표 */
+      color: #FF0008;
+      margin-right: 5px;
+  }
+
+  .negative::before {
+      content: "▼";
+      /* 하락 화살표 */
+      color: #005CF6;
+      margin-right: 5px;
+  }
+
+  .category-card img {
+      width: 50px;
+      height: 50px;
+      margin-bottom: 10px;
+  }
+
+  .stock-table {
+      width: 100%;
+      border-collapse: collapse;
+  }
+
+  .middle-title {
+      margin-left: 30px;
+      font-size: 30px;
+      margin-bottom: 15px;
+  }
+
+  .amount-txt {
+      font-size: 25px;
+  }
+
+  .stock-title {
+      font-size: 15px;
+  }
+
+  .line-c {
+      width: 80%;
+      height: 150px;
+      margin-left: 20px;
+      margin-bottom: 20px;
+      font-size: 30px;
+  }
+
+
+  .stock-list-subject {
+      display: flex;
+      justify-content: space-between;
+      align-content: center;
+  }
 
 
 
-.stock-table {
-  width: 100%;
-  border-collapse: collapse;
-}
 
-.stock-table th, .stock-table td {
-  padding: 10px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
 
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-top: 20px;
-}
 
-.pagination button {
-  padding: 10px 15px;
-  border: none;
-  background-color: #448c74;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-}
+  .stock-list .search-bar {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+  }
 
-.pagination span {
-  font-size: 14px;
-  color: #333;
-}
+  .stock-list .search-bar input {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      width: 300px;
+  }
 
-/* 가격 변동 색상 */
-.positive {
-  color: red;
-}
+  .stock-list .search-bar button {
+      margin-left: 10px;
+      padding: 10px 20px;
+      background-color: #448c74;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+  }
 
-.negative {
-  color: blue;
-}
-.stock-dashboard {
-    background-color: white;
-}
+  .stock-table th,
+  .stock-table td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+  }
 
-.middle-title {
+  .stock-table th {
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+  }
 
-    font-weight: bold;
-    margin-bottom: 20px;
-    font-size: 30px;
-}
+  .stock-table th.active {
+      background-color: #f0f0f0;
+  }
 
-.container {
+  .sort-arrow {
+      display: inline-block;
+      width: 0;
+      height: 0;
+      margin-left: 5px;
+      vertical-align: middle;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-bottom: 4px solid #000;
+  }
 
-}
+  .sort-arrow.sort-reverse {
+      border-bottom: none;
+      border-top: 4px solid #000;
+  }
 
-.title {
+  h1 {
+      text-align: center;
+      margin-bottom: 30px;
+  }
 
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
-    font-size: 30px;
-}
+  /* 준섭 css 추가*/
 
-h1 {
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
-    font-size: 40px;
-}
+  .categories {
+      margin-bottom: 40px;
+      background-color: white;
+      border-radius: 30px;
+      padding: 20px;
+  }
 
-.current-stocks,
-.top3-stocks,
-.stock-list {
-    margin-bottom: 40px;
-    border-radius: 30px;
-    background-color: #f5f8f4;
-}
+  .category-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 20px;
+  }
 
-.current-stocks h2,
-.top3-stocks h2,
-.stock-list h2 {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 15px;
-    text-align: center;
-}
+  .category-card {
+      background-color: white;
+      padding: 15px;
+      border-radius: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      flex-basis: calc(33.333% - 20px);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+  }
 
-.stock-cards {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 20px;
-    border-radius: 10px;
-    background-color: #ffffff;
-}
+  .category-card img {
+      width: 50px;
+      height: 50px;
+      margin-bottom: 10px;
+  }
 
-.stock-card,
-.top3-card {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    flex: 1;
-}
+  .category-card h3 {
+      margin-bottom: 5px;
+  }
 
-.stock-card h3,
-.top3-card h3 {
-    font-size: 16px;
-    margin-bottom: 10px;
-    color: #333;
-}
+  .category-card p {
+      font-weight: bold;
+  }
 
-.stock-card p,
-.top3-card p {
-    font-size: 14px;
-    color: #777;
-}
+  .positive {
+      color: #FF0008;
+  }
 
-.top3-cards {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 20px;
-    border-radius: 10px;
-    background-color: #ffffff;
-}
+  .negative {
+      color: #005CF6;
+  }
 
-.top3-card router-link {
-    display: block;
-    margin-top: 10px;
-    font-size: 12px;
-    color: #448c74;
-    text-decoration: none;
-    font-weight: bold;
-}
+  .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      font-size: 18px;
+  }
 
-.stock-list .search-bar {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-}
+  .modal-content {
+      background-color: #fff;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 800px;
+      max-height: 80vh;
+      overflow-y: auto;
+  }
 
-.stock-list .search-bar input {
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    width: 300px;
-}
+  .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+  }
 
-.stock-list .search-bar button {
-    margin-left: 10px;
-    padding: 10px 20px;
-    background-color: #448c74;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+  .close-button {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+  }
 
-.stock-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px;
-}
+  .modal-body {
+      padding: 20px;
+  }
 
-.stock-item p {
-    margin: 0;
-    font-size: 14px;
-    color: #333;
-}
+  .category-list {
+      display: flex;
+      flex-direction: column;
+  }
 
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
-}
+  .category-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+  }
 
-.pagination button {
-    padding: 10px 15px;
-    border: none;
-    background-color: #448c74;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-}
+  .category-rank {
+      width: 30px;
+      font-weight: bold;
+  }
 
-.pagination span {
-    font-size: 14px;
-    color: #333;
-}
+  .category-icon img {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+  }
+
+  .category-name {
+      flex: 1;
+  }
+
+  .category-change {
+      width: 80px;
+      text-align: right;
+      font-weight: bold;
+  }
+
+  .category-detail {
+      width: 150px;
+      text-align: right;
+      color: #666;
+  }
+
+  .positive {
+      color: #FF0008;
+  }
+
+  .negative {
+      color: #005CF6;
+  }
+
+  /* 주식 목록 hover 효과 */
+  .stock-row {
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+  }
+
+  .stock-row:hover {
+      background-color: #f0f8ff;
+      /* 배경색을 변경하여 hover 느낌을 줌 */
+  }
+
+  /* Top3 주식 카드 hover 효과 */
+  .top3-card {
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid #e0e0e0;
+      padding: 15px;
+      border-radius: 8px;
+  }
+
+  .top3-card:hover {
+      transform: translateY(-5px);
+      /* 마우스를 올리면 약간 위로 올라가는 효과 */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      /* 그림자 효과 */
+      background-color: #f0f8ff;
+      /* 배경색 변경 */
+  }
+
+  /* 주식 목록과 카테고리 카드에 hover 효과 적용 */
+
+  /* 주식 목록 hover 효과 */
+  tbody tr {
+      cursor: pointer;
+      /* 클릭 가능함을 나타내는 커서 */
+      transition: background-color 0.3s ease;
+      /* 배경색 변경이 부드럽게 전환되도록 */
+  }
+
+  tbody tr:hover {
+      background-color: #f0f8ff;
+      /* 마우스를 올리면 배경색 변경 */
+  }
+
+  /* Top3 주식 hover 효과 */
+  .top3-card {
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      /* 부드러운 전환 효과 */
+  }
+
+  .top3-card:hover {
+      background-color: #f0f8ff;
+      /* 배경색 변경 */
+      transform: translateY(-5px);
+      /* 마우스를 올리면 살짝 올라가는 효과 */
+  }
+
+  /* 카테고리 카드 hover 효과 */
+  .category-card {
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .category-card:hover {
+      background-color: #f0f8ff;
+      transform: translateY(-5px);
+  }
+
+  /* 모달 테이블의 주식 항목 hover 효과 */
+  .modal-body tbody tr {
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+  }
+
+  .modal-body tbody tr:hover {
+      background-color: #f0f8ff;
+  }
 </style>
-
-<style lang="scss">
-:root,
-[data-bs-theme="light"] {
-  --x-gray-200: #e2e8f0;
-  --x-light-border-subtle: #e2e8f0;
-  --x-border-color: #e2e8f0;
-  --x-purple: #8957ff;
-  --x-primary: #8957ff;
-  --x-link-color: #8957ff;
-}
-
-.btn-primary {
-  --x-btn-bg: #8957ff;
-  --x-btn-border-color: #8957ff;
-  --x-btn-hover-bg: #6e46cc;
-  --x-btn-hover-border-color: #6e46cc;
-  --x-btn-active-bg: #6e46cc;
-  --x-btn-active-border-color: #6741bf;
-  --x-btn-disabled-bg: #8957ff;
-  --x-btn-disabled-border-color: #8957ff;
-}
-.stock-dashboard {
-  background-color: white;
-}
-
-.title {
-
-  
-  font-weight: bold;
-  margin-bottom: 20px;
-  text-align: center;
-  font-size: 30px;
-}
-
-.container {
-
-}
-
-.stock-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.stock-table th, .stock-table td {
-  padding: 10px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
-
-.stock-table th {
-  cursor: pointer;
-  user-select: none;
-  position: relative;
-}
-
-.stock-table th.active {
-  background-color: #f0f0f0;
-}
-
-.sort-arrow {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  margin-left: 5px;
-  vertical-align: middle;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-bottom: 4px solid #000;
-}
-
-.sort-arrow.sort-reverse {
-  border-bottom: none;
-  border-top: 4px solid #000;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.pagination button {
-  padding: 10px 15px;
-  border: none;
-  background-color: #448c74;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.pagination span {
-  font-size: 14px;
-  color: #333;
-}
-
-/* 가격 변동 색상 */
-.positive {
-  color: red;
-}
-
-.negative {
-  color: blue;
-}
-</style> 
