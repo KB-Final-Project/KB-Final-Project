@@ -99,7 +99,7 @@
             AND ir.intr_rate_type = #{interestRateType}
         </if>
 
-        ORDER BY ir.intr_rate DESC
+        ORDER BY b.bank_type = 1 DESC, b.bank_type, ir.intr_rate DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
