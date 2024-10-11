@@ -39,7 +39,6 @@
 
 <style scoped>
 
-
 .review-section__title {
   font-size: 40px;
 }
