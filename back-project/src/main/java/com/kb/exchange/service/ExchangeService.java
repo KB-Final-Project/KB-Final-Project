@@ -13,6 +13,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.repository.query.Param;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -132,9 +133,8 @@ public class ExchangeService {
         mapper.insertExchangeRate(list);
     }
 
-    public List<ExchangeDailyDTO> getDailyExchange(Date date){
-        List<ExchangeDailyDTO> list = mapper.getDailyExchange(date);
-        return list;
+    public ExchangeDailyDTO getDailyExchange(int currencyId){
+        return mapper.getDailyExchange(currencyId);
     }
 
     public List<ExchangeListByTerm> getExchangeListByTerm(ExchangeParam exchangeParam){
