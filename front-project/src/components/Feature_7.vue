@@ -59,6 +59,7 @@
   bottom: 0;
   margin-right: -100px;
   margin-bottom: -50px;
+  width: 700px;
 }
 
 .image-container img {
