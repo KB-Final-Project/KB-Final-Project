@@ -62,6 +62,16 @@
         <result property="modifyDate" column="modify_date" />
     </resultMap>
 
+    <resultMap id="postResultMap" type="com.kb.board.dto.BoardPost">
+        <result property="postId" column="post_id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="modifiedDate" column="modified_date"/>
+        <result property="bno" column="bno"/>
+        <!-- 필요한 다른 필드 매핑 추가 -->
+    </resultMap>
+
 
     <select id="selectBoardCategory" resultMap="boardCategoryMap">
         SELECT * FROM board_category ORDER BY id;
@@ -97,6 +107,22 @@
             bp.status AS status
         FROM board_post bp
         WHERE bp.bno = #{bno} AND bp.status = 'y'
+    </select>
+
+
+    <select id="selectPostCount" resultType="int">
+        SELECT COUNT(*)
+        FROM board_post
+        WHERE bno = #{bno}
+        <!-- 추가적인 조건이 필요하다면 여기에 작성 -->
+    </select>
+
+    <select id="selectPostList" resultMap="postResultMap">
+        SELECT *
+        FROM board_post
+        WHERE bno = #{bno}
+        ORDER BY created_date DESC
+            LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <update id="updateBoard" parameterType="com.kb.board.dto.BoardPost">
