@@ -45,12 +45,35 @@ public class BoardService {
         PageInfo pageInfo = new PageInfo(boardParam.getPage(), totalSize, listLimit, PAGE_LIMIT);
         boardParam.setLimit(pageInfo.getListLimit());
         boardParam.setOffset(pageInfo.getStartList() - 1);
-        List<BoardPost> boardPostList = mapper.selectBoardList(boardParam);
-        if (boardPostList == null || boardPostList.isEmpty()) {
-            boardPostList = new ArrayList<>();
+        List<BoardPost> boardList = mapper.selectBoardList(boardParam);
+        if (boardList == null || boardList.isEmpty()) {
+            boardList = new ArrayList<>();
         }
-        return new BoardPageResult(boardPostList, boardParam, pageInfo, getCategoryList(),totalSize);
+        return new BoardPageResult(boardList, boardParam, pageInfo, getCategoryList(),totalSize);
     }
+
+    public BoardPostPageResult getPostList(PostParam postParam) {
+        // 총 게시글 수 조회
+        int totalSize = mapper.selectPostCount(postParam);
+
+        // 페이지당 게시글 수 설정
+        int listLimit = postParam.getLimit() == 0 ? LIST_LIMIT : postParam.getLimit();
+        PageInfo pageInfo = new PageInfo(postParam.getPage(), totalSize, listLimit, PAGE_LIMIT);
+
+        // SQL 쿼리를 위한 limit과 offset 설정
+        postParam.setLimit(pageInfo.getListLimit());
+        postParam.setOffset(pageInfo.getStartList() - 1);
+
+        // 게시글 리스트 조회
+        List<BoardPost> postList = mapper.selectPostList(postParam);
+        if (postList == null || postList.isEmpty()) {
+            postList = new ArrayList<>();
+        }
+
+        // 결과 반환
+        return new BoardPostPageResult(postList, pageInfo, totalSize);
+    }
+
 
     @Transactional
     public BoardPost getBoard(int postId) {
