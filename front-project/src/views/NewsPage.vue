@@ -2,12 +2,16 @@
     <div class="news-view text-center animate-on-load">
         <h1>뉴스 보기</h1>
         <div class="container">
-            
+
             <!-- 메인 뉴스 -->
             <div v-if="mainNews" class="main-news">
                 <div class="main-news-image-container">
-                    <img :src="require('@/assets/img/news/news-main.png')" alt="Main News Image" class="main-news-image"
-                        @click="goToNews(mainNews.link)" @error="onImageError" />
+                    <!-- 메인 뉴스 이미지가 없을 경우 'news-main.png' 사용 -->
+                    <img :src="mainNews.image || require('@/assets/img/news/news-main.png')" 
+                         alt="Main News Image" 
+                         class="main-news-image"
+                         @click="goToNews(mainNews.link)" 
+                         @error="onImageError('main')" />
                     <div class="main-news-title-overlay">
                         <b class="main-news-title" v-html="mainNews.title"></b>
                     </div>
@@ -29,7 +33,11 @@
             <div v-if="selectedCategoryNews.length" class="news-grid">
                 <div v-for="news in selectedCategoryNews" :key="news.link" class="news-card"
                     @click="goToNews(news.link)">
-                    <img :src="require('@/assets/img/news/news2.jpg')" alt="News Image" class="news-image" @error="onImageError" />
+                    <!-- 다른 뉴스 이미지가 없을 경우 'news2.jpg' 사용 -->
+                    <img :src="news.image || require('@/assets/img/news/news2.jpg')" 
+                         alt="News Image" 
+                         class="news-image" 
+                         @error="onImageError()" />
                     <h3 class="news-title" v-html="news.title"></h3>
                     <p class="news-date">{{ news.date }}</p>
                 </div>
@@ -37,19 +45,18 @@
         </div>
     </div>
 </template>
-
-
 <script>
 import axios from 'axios';
 
 export default {
     data() {
         return {
-            categories: ['금융', '예금', '적금', '주식', '펀드', 'ISA', '금', 'ELS', 'ETF'],
+            categories: ['금융', '예금', '적금', '주식', '펀드', 'ISA', 'ELS', 'ETF', '금'],
             selectedCategory: '금융',
             mainNews: null,
             categoryNews: {},
-            fallbackImage: 'https://via.placeholder.com/150'
+            fallbackImage: require('@/assets/img/news/news-main.png'), // 기본이미지
+            
         };
     },
 
@@ -62,18 +69,41 @@ export default {
     methods: {
         getSearchQuery(category) {
             const queries = {
-                금융: '금융시장, 한국금융시장전망, 미국증시',
+                금융: '금융시장, 미국증시',
                 예금: '예금금리인상, 예금',
-                적금: '장기적금상품, 적금금리비교, 적금세금혜택, 적금',
-                주식: '주식시장전망, 고배당주식, 인기성장주',
+                적금: '장기적금상품, 적금',
+                주식: '주식시장전망, 인기성장주',
                 펀드: '펀드수익률, 주식형펀드 , 펀드동향, 펀드투자',
-                ISA: 'ISA세제, ISA계좌, ISA투자전략, ISA상품비교',
-                금: '금투자, 금시장',
+                ISA: 'ISA계좌, ISA상품비교',
+                금: '금시장',
                 ELS: 'ELS시장동향',
                 ETF: 'ETF투자전략, ETF시장트렌드, 주식형ETF분석'
             };
             return queries[category] || category;
         },
+
+        async fetchNewsImage(newsUrl) {
+    try {
+        console.log("Fetching image for URL:", newsUrl); // 로그 추가
+        const decodedUrl = decodeURIComponent(newsUrl);
+        const response = await axios.get('/api/news/image', {
+            params: { newsUrl: decodedUrl },
+            responseType: 'arraybuffer'  // 바이너리 데이터로 응답받기
+        });
+        
+        // 이미지 데이터를 base64로 변환하여 출력
+        const base64Image = btoa(
+            new Uint8Array(response.data)
+                .reduce((data, byte) => data + String.fromCharCode(byte), '')
+        );
+        console.log("Image fetched successfully:", base64Image); // base64로 변환된 이미지 출력
+        return `data:image/jpeg;base64,${base64Image}`; // 이미지를 base64 포맷으로 변환 후 반환
+    } catch (error) {
+        console.error('이미지 가져오기 실패:', error);
+        return this.fallbackImage; // 기본 이미지로 대체
+    }
+}
+,
 
         async fetchNews(category, count = 9, sort = 'sim') {
             try {
@@ -83,7 +113,7 @@ export default {
                 });
 
                 if (response.data && response.data.items) {
-                    const newsItems = response.data.items.map(this.processNewsItem);
+                    const newsItems = await Promise.all(response.data.items.map(this.processNewsItem));
                     return sort === 'sim' ? newsItems : this.sortByRelevance(newsItems);
                 } else {
                     console.error('Unexpected API response:', response.data);
@@ -95,12 +125,13 @@ export default {
             }
         },
 
-        processNewsItem(newsData) {
+        async processNewsItem(newsData) {
+            const newsImage = await this.fetchNewsImage(newsData.link); // 이미지 크롤링 API 호출
             return {
                 title: this.stripHtml(newsData.title),
                 description: this.stripHtml(newsData.description),
                 date: new Date(newsData.pubDate).toLocaleDateString(),
-                image: this.extractImageUrl(newsData.description) || this.fallbackImage,
+                image: newsImage,  // 크롤링한 이미지 사용
                 link: newsData.link
             };
         },
@@ -109,29 +140,12 @@ export default {
             return text.replace(/<[^>]+>/g, '');
         },
 
-        extractImageUrl(description) {
-            const imgRegex = /<img[^>]+src="?([^"\s]+)"?\s*\/?>/g;
-            const match = imgRegex.exec(description);
-            return match ? match[1] : this.fallbackImage;
-        },
-
-        sortByRelevance(newsItems) {
-            const relevantKeywords = ['금융', '은행', '금리', '증권', '자산', '채권'];
-
-            return newsItems.sort((a, b) => {
-                const aScore = this.calculateRelevanceScore(a, relevantKeywords);
-                const bScore = this.calculateRelevanceScore(b, relevantKeywords);
-                return bScore - aScore;
-            });
-        },
-
-        calculateRelevanceScore(newsItem, keywords) {
-            let score = 0;
-            keywords.forEach(keyword => {
-                if (newsItem.title.includes(keyword)) score += 2;
-                if (newsItem.description.includes(keyword)) score += 1;
-            });
-            return score;
+        onImageError(context = null) {
+            return (event) => {
+                event.target.src = context === 'main' 
+                    ? require('@/assets/img/news/news-main.png') 
+                    : require('@/assets/img/news/news2.jpg');
+            };
         },
 
         async selectCategory(category) {
@@ -144,14 +158,10 @@ export default {
         goToNews(link) {
             window.open(link, '_blank');
         },
-
-        onImageError(event) {
-            event.target.src = this.fallbackImage;
-        }
     },
 
     async mounted() {
-        const mainNewsData = await this.fetchNews('금융시장', 1, 'sim');
+        const mainNewsData = await this.fetchNews('증시', 1, 'sim');
         this.mainNews = mainNewsData[0];
         
         // 카테고리 뉴스는 기존 방식(관련도순)으로 가져옵니다.
@@ -159,8 +169,8 @@ export default {
     }
 };
 </script>
-
 <style scoped>
+
 .news-view {
     margin: 0 auto;
     background-color: #F9FAFC;
