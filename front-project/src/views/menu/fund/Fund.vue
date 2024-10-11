@@ -104,22 +104,33 @@ const sortFunds = (key, toggleOrder = true) => {
     }
   } else {
     sortKey.value = key;
-    sortOrder.value = 'desc'; // 새로운 키로 정렬 시 내림차순으로 초기화
+    sortOrder.value = 'desc';
   }
 
-  // 새로운 배열을 생성하여 할당
   allFunds.value = [...allFunds.value].sort((a, b) => {
-    const aVal = a[key] || 0;
-    const bVal = b[key] || 0;
-    if (sortOrder.value === 'desc') {
-      return bVal - aVal;
+    let aVal = a[key];
+    let bVal = b[key];
+
+    let comparison = 0;
+
+    if (key === 'fundFnm') {
+      aVal = aVal.startsWith('삼성') ? aVal.slice(2).trim() : aVal;
+      bVal = bVal.startsWith('삼성') ? bVal.slice(2).trim() : bVal;
+      comparison = aVal.localeCompare(bVal, 'ko');
+    } else if (typeof aVal === 'string' && typeof bVal === 'string') {
+      comparison = aVal.localeCompare(bVal, 'ko');
+    } else if (typeof aVal === 'number' && typeof bVal === 'number') {
+      comparison = aVal - bVal;
     } else {
-      return aVal - bVal;
+      comparison = String(aVal).localeCompare(String(bVal), 'ko');
     }
+
+    return sortOrder.value === 'asc' ? comparison : -comparison;
   });
 
   paginateFunds();
 };
+
 
 const sortIconClass = (key) => {
   if (sortKey.value === key) {
@@ -178,7 +189,13 @@ onMounted(() => {
     <br><br><br><br>
     <div class="container">
       <h1 class="text-center">펀드 찾기</h1>
-      <br><br><br><br>
+      <br><br><br>
+      <router-link class="fundThemeBox" to="/fundTheme">
+        <div style="display:flex;">
+          <h3 class="fundTheme">🎪테마별 펀드</h3>
+        </div>
+      </router-link>
+      <br>
       <div class="text-center">
         <h2 class="d-inline search">상품 검색</h2>
         <input
@@ -209,10 +226,19 @@ onMounted(() => {
           <table class="fundSearchResultTable text-center">
             <thead>
             <tr>
-              <th style="width: 40%;" rowspan="2">상품명</th>
+              <th
+                  :class="getSortButtonClass('fundFnm')"
+                  style="width: 40%; cursor: pointer;"
+                  rowspan="2"
+                  @click="sortFunds('fundFnm')"
+                  :title="getSortTooltip('fundFnm')"
+              >
+                상품명
+                <i v-if="sortKey === 'fundFnm'" :class="sortIconClass('fundFnm')" style="font-size: 2rem;"></i>
+              </th>
               <th style="width: 10%;">기준가</th>
               <th style="width: 35%;" colspan="4">수익률(%)</th>
-              <th style="width: 6%;" class="rate" rowspan="2">총 보수(연)</th>
+              <th style="width: 6%;" rowspan="2">총 보수(연)</th>
               <th style="width: 6%;" rowspan="2">기준일</th>
             </tr>
             <tr>
@@ -266,13 +292,20 @@ onMounted(() => {
           <table class="fundSearchResultTable text-center">
             <tbody v-for="fund in displayedFunds" :key="fund.id">
             <tr>
-              <td class="fundName" style="width: 40%;" rowspan="2"><h4>{{ fund.fundFnm }}</h4></td>
+              <td class="fundName" style="width: 40%;" rowspan="2">
+                <span v-for="(part, index) in fund.fundFnm.split('[')" :key="part.index">
+                  <h4 v-if="index === 0">{{ part }}</h4>
+                  <h5 style="color: grey;" v-else>
+                    <br/>[{{ part }}
+                  </h5>
+                </span>
+              </td>
               <td style="width: 10%;"><h4>{{ fund.gijunGa }}</h4></td>
               <td style="width: 35%;" colspan="4">
-                <div class="grade"><h5>{{ fund.investGrade }}등급</h5></div>
+                <div class="grade"><h4>{{ fund.investGrade }}등급</h4></div>
               </td>
               <td style="width: 6%;" class="rate" rowspan="2"><h4>{{ fund.feeTot }}</h4></td>
-              <td style="width: 6%;" rowspan="2"><h4>{{ formatDate(fund.gijunYmd) }}</h4></td>
+              <td style="width: 6%;" rowspan="2"><h5>{{ formatDate(fund.gijunYmd) }}</h5></td>
             </tr>
             <tr>
               <td><h4>{{ fund.navTot }}</h4></td>
@@ -331,47 +364,51 @@ onMounted(() => {
 
 
 <style scoped>
+.fundThemeBox {
+  text-decoration: none;
+}
+
+.fundTheme {
+  margin-left: auto;
+  color: black;
+  font-size: 30px;
+}
 
 .fundName{
   font-family: J3;
   color: rgba(68, 140, 116, 1);
+  border-radius: 50px;
+  background-color: #fffcfc;
+
 }
 
 .grade {
   border: 1px solid lightgrey;
   border-radius: 30px;
   color: rgb(121, 121, 121);
-  width: 50px;
+  background-color: white;
+  width: 60px;
   margin: 0 auto;
 }
 
 tbody td {
   padding: 10px;
-}
-
-tbody tr {
-  border-bottom: 1px solid lightgrey;
+  border-bottom: 5px solid #FFF0EF;
 }
 
 .fundSearchResultTable th {
-  font-size: 20px;
+  font-size: 17px;
 }
 
 .sortIconClass {
   font-size: 25px;
 }
 
-.hr {
-  display: inline-block;
-  width: 100%;
-  height: 5px;
-  color: #e5e4e4ff;
-  background-color: #e5e4e4;
-}
+
 
 thead tr th {
-  border-bottom: 1px solid lightgrey;
-  border-right: 1px solid lightgrey;
+  border-left: none;
+
 }
 
 thead tr:nth-child(2) th:last-child {
@@ -381,6 +418,7 @@ thead tr:nth-child(2) th:last-child {
 
 thead tr:last-child th {
   border-bottom: none;
+  border-right: none;
 }
 
 thead tr th:first-child {
@@ -393,32 +431,46 @@ thead tr:first-child th:last-child {
 }
 
 .rate {
-  border-bottom: none;
+  border-bottom: 5px solid #FFF0EF;
+
 }
 
 thead tr:last-child th:last-child {
   border: none;
-  border-right: 1px solid lightgrey;
 }
 
 .fundSearchResult {
-  border: 1px solid lightgrey;
   border-radius: 30px;
   padding: 10px;
-  background-color: white;
+  background-color: #FFF0EF;
 }
-
+.fundSearchResult table{
+  border-radius: 30px;
+}
 #sortBtn {
   height: 40px;
 }
 
 .fundSearchResultTable {
   width: 100%;
-  height: 120px;
+  height: 100px;
   table-layout: fixed;
   text-align: start;
-  background-color: white;
+  background-color: #FFF8F7;
+  border-collapse: separate;
+  border-spacing: 0 15px;
 }
+
+.fundSearchResultTable {
+  width: 100%;
+  height: 100px;
+  table-layout: fixed;
+  text-align: start;
+  background-color: #FFF8F7;
+  border-collapse: separate;
+  border-spacing: 0 15px;
+}
+
 
 .loading-box {
   display: flex;
@@ -432,7 +484,7 @@ thead tr:last-child th:last-child {
 
 .bc {
   padding: 50px;
-  background-color: rgba(248, 244, 244, 1);
+  background-color: #F6E4E3;
   border-radius: 30px;
   font-family: J3;
 }
@@ -445,16 +497,18 @@ thead tr:last-child th:last-child {
   border-radius: 30px;
   padding: 0 20px;
   margin: 10px 0;
+  font-size: 20px;
 }
 
 .fund {
   margin-top: 30px;
-  border-radius: 30px;
+  border-radius: 40px;
   padding: 20px;
 }
 
 .searchBtn {
-  width: 80px;
+  font-size: 20px;
+  width: 100px;
   height: 50px;
   color: white;
   border: none;
@@ -467,7 +521,7 @@ thead tr:last-child th:last-child {
 
 .searchBtn:active,
 .searchBtn:hover {
-  background-color: lightgrey;
+  background-color: #e5e4e4;
   color: black;
 }
 
@@ -480,18 +534,18 @@ thead tr:last-child th:last-child {
 }
 
 .active > .page-link {
-  background-color: rgba(68, 140, 116, 1);
+  background-color: #F0DEDE;
   border: none;
-  color: white;
+  color: black;
 }
 
 .page-link:hover {
   color: white;
-  background-color: rgba(68, 140, 116, 1);
+  background-color: #F0DEDE;
 }
 
 .pagination {
-  --bs-pagination-color: rgba(68, 140, 116, 1);
+  --bs-pagination-color: #F0DEDE;
   --bs-pagination-hover-color: rgb(255, 255, 255);
 }
 
@@ -520,19 +574,17 @@ thead tr:last-child th:last-child {
 }
 
 .sort-button-active {
-  background-color: rgba(68, 140, 116, 1);
-  color: white;
-  border-radius: 5px;
+  background-color: #F6E4E3;
+  color: black;
+  border-radius: 30px;
 }
 
-/* 정렬 비활성화일 때 연회색 버튼 */
 .sort-button-inactive {
-  background-color: #f3f3f3;
-  color: #3d3d3d;
-  border-radius: 5px;
+  background-color: #FFF0EF;
+  color: black;
+  border-radius: 30px;
 }
 
-/* 마우스 오버 효과 */
 .sort-button-active:hover,
 .sort-button-inactive:hover {
   opacity: 0.8;

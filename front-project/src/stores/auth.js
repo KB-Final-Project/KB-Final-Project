@@ -32,9 +32,17 @@ export const useAuthStore = defineStore('auth', () => {
     console.log();
     if (auth != null) {
       state.value = JSON.parse(auth);
+      if(!isTokenValid(state.value.token)){
+        logout();
+      }
     }
   };
 
+  const isTokenValid = (token) => {
+    const payload = JSON.parse(atob(state.value.token.split('.')[1]));
+    const expiry = payload.exp * 1000; // 만료 시간을 밀리초로 변환
+    return expiry > Date.now(); // 현재 시간보다 만료 시간이 큰지 확인
+};
 // localStorage에 저장된 사용자 인증 정보를 불러와서 state에 저장하는 역할
 // localStorage에서 auth라는 항목을 가져와, 그 값이 존재하면 이를 파싱하여 state.value에 저장하는 함수
 //  localStorage.getItem('auth'): localStorage에서 'auth'라는 키에 저장된 값을 가져온다.

@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthStore } from '@/stores/auth'
 import Home from '@/views/Home.vue';
 import Signin from '@/views/Signin.vue';
 import Signup from '@/views/Signup.vue';
@@ -90,13 +91,13 @@ const routes = [
     path: '/signin',
     name: 'Signin',
     component: Signin,
-    meta: { hideHeaderFooter: true, hidePadding: true  },
+    meta: { hideHeaderFooter: true, hidePadding: true, requiresGuest: true },
   },
   {
     path: '/signup',
     name: 'Signup',
     component: Signup,
-    meta: { hideHeaderFooter: true, hidePadding: true },
+    meta: { hideHeaderFooter: true, hidePadding: true, requiresGuest: true },
   },
   {
     path: '/news',
@@ -147,25 +148,25 @@ const routes = [
     path: '/auth/login',
     name: 'login',
     component: LoginPage,
-    meta: { hideHeaderFooter: true, hidePadding: true  },
+    meta: { hideHeaderFooter: true, hidePadding: true, requiresGuest: true },
   },
   {
     path: '/auth/kakaologin',
     name: 'kakaologin',
     component: LoginPageForKakao,
-    meta: { hideHeaderFooter: true, hidePadding: true  },
+    meta: { hideHeaderFooter: true, hidePadding: true, requiresGuest: true  },
   },
   {
     path: '/auth/join',
     name: 'join',
     component: JoinPage,
-    meta: { hideHeaderFooter: true, hidePadding: true  },
+    meta: { hideHeaderFooter: true, hidePadding: true, requiresGuest: true  },
   },
   {
     path: '/auth/kakaojoin',
     name: 'kakaojoin',
     component: JoinPageForKakao,
-    meta: { hideHeaderFooter: true, hidePadding: true  },
+    meta: { hideHeaderFooter: true, hidePadding: true, requiresGuest: true  },
   },
 
   {
@@ -217,36 +218,43 @@ const routes = [
     path: '/myPage',
     name: 'myPage',
     component: MyPage,
+    meta: { requiresAuth: true },
   },
   {
     path: '/myPageContent',
     name: 'myPageContent',
     component: MyPageContent,
+    meta: { requiresAuth: true },
   },
   {
     path: '/myPagePanel',
     name: 'myPagePanel',
     component: MyPagePanel,
+    meta: { requiresAuth: true },
   },
   {
     path: '/myPageSetting',
     name: 'myPageSetting',
     component: MyPageSetting,
+    meta: { requiresAuth: true },
   },
   {
     path: '/myPageWithdraw',
     name: 'myPageWithdraw',
     component: MyPageWithdraw,
+    meta: { requiresAuth: true },
   },
   {
     path: '/myPagePosts',
     name: 'myPagePosts',
     component: MyPagePosts,
+    meta: { requiresAuth: true },
   },
   {
     path: '/myPageWarning',
     name: 'myPageWarning',
     component: MyPageWarning,
+    meta: { requiresAuth: true },
   },
   {
     path: '/signCoverImage',
@@ -260,6 +268,7 @@ const routes = [
   {
     path: '/community',
     component: Community, // community.vue를 레이아웃 컴포넌트로 사용
+    meta: { requiresAuth: true },
     children: [
       {
         path: 'stability',
@@ -288,6 +297,19 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+  const isLogin = authStore.isLogin;
+
+  if (to.meta.requiresAuth && !isLogin) {
+    next({ name: 'login'});
+  } else if (to.meta.requiresGuest && isLogin) {
+    next({ name: 'Home' }); 
+  } else {
+    next(); 
+  }
 });
 
 export default router;

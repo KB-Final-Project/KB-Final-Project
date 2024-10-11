@@ -83,10 +83,12 @@ const goToStock = () => {
   z-index: 2;
 }
 
+
 .trendImage {
   margin-top: -35%;
   margin-left: 70%;
   z-index: -1;
+  width: 200px;
 }
 
 .trendGraph {
