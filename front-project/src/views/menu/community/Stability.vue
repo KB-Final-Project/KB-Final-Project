@@ -1,6 +1,6 @@
 <script setup>
 
-import {ref} from "vue";
+import {ref, onMounted} from "vue";
 import axios from "axios";
 
 const loading = ref(true);
@@ -9,7 +9,8 @@ const boards = ref([]);
   const fetchBoard = async ()=>{
     loading.value = true;
     try {
-      const response = await axios.get('/api/board');
+      const response = await axios.get('/api/board/1/posts');
+      console.log(response);
       if (response.data && response.data.length > 0) {
         boards.value = response.data;
         console.log(boards);
@@ -24,6 +25,11 @@ const boards = ref([]);
       loading.value = false;
     }
   };
+
+  onMounted(()=>{
+    fetchBoard();
+  })
+
 </script>
 
 <template>

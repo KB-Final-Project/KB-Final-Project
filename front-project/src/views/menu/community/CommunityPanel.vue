@@ -1,8 +1,9 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive  } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import WriterPopup from './WriterPopup.vue';
 import axios from 'axios';
+import { useAuthStore } from '@/stores/auth';
 
 const activePropensity = ref('');
 const showModal = ref(false);
@@ -11,11 +12,13 @@ const userPropensity = ref('');
 const router = useRouter();
 const route = useRoute();
 
-const dummyUser = {
+const myInfo = reactive({
   name: '이사벨라',
   email: 'abcd@gmail.com',
   propensity: 1, // 안정형
-};
+});
+
+const myInfoStore = useAuthStore();
 
 async function fetchTypes() {
   try {
@@ -27,6 +30,26 @@ async function fetchTypes() {
     console.error('Error fetching types:', error);
   }
 }
+
+async function getMyInfo() {
+            const authValue = localStorage.getItem('auth');
+            
+            if (authValue) {
+                try {
+                    const authData = JSON.parse(authValue);
+                    if (authData.email) {
+                        myInfo.name = authData.name;
+                        myInfo.email = authData.email; // email 값 추출
+                    } else {
+                        console.log('Email not found in auth data');
+                    }
+                } catch (error) {
+                    console.error('Error parsing auth data:', error);
+                }
+            } else {
+                console.log('Auth value not found');
+            }
+        }
 
 function setUserPropensity(typeValue) {
   switch (typeValue) {
@@ -99,9 +122,12 @@ function closePopup() {
 }
 
 onMounted(() => {
-  const { propensity } = dummyUser; // 이사벨라의 propensity를 가져옴
+  
+  getMyInfo();
+  const { propensity } = myInfo; // 이사벨라의 propensity를 가져옴
   setUserPropensity(propensity);
   setActivePropensityByType(propensity);
+
 });
 </script>
 
@@ -109,8 +135,8 @@ onMounted(() => {
   <div class="communityPanel d-inline-block text-start">
     <div class="profile">
       <img src="/img/imsi.png" /><br />
-      <h2 class="d-inline">이사벨라</h2><h2 style="font-weight: 100;" class="d-inline">님</h2>
-      <h2 style="font-weight: lighter;">abcd@gmail.com</h2>
+      <h2 class="d-inline">{{myInfo.name}}</h2><h2 style="font-weight: 100;" class="d-inline">님</h2>
+      <h2 style="font-weight: lighter;">{{myInfo.email}}</h2>
     </div>
     <br />
     <div
