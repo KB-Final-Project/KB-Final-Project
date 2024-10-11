@@ -9,7 +9,9 @@ public interface BoardMapper {
     List<BoardPost> selectBoardList(BoardParam param);
     int selectBoardCount(BoardParam param);
     BoardPost selectBoardByBno(int bno);
-    int insertBoard(BoardPost boardPost);
+    int selectPostCount(PostParam postParam); // 게시글 수 조회
+    List<BoardPost> selectPostList(PostParam postParam); // 게시글 목록 조회
+    int insertBoardPost(BoardPost boardPost);
     int updateBoard(BoardPost boardPost);
     int updateReadCount(BoardPost boardPost);
     int deleteBoard(long bno);

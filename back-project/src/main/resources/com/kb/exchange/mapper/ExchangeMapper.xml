@@ -126,7 +126,9 @@
                 FROM
                     EXCHANGE_RATES
                 WHERE
-                    exchange_date <= #{date}
+                    exchange_date <= NOW()
+
+
             ) AS current
                 LEFT JOIN
             (
@@ -141,12 +143,13 @@
                 FROM
                     EXCHANGE_RATES
                 WHERE
-                    exchange_date <= #{date}
+                    exchange_date <= NOW()
             ) AS previous
             ON current.currency_id = previous.currency_id
                 AND previous.rn = 2
                 JOIN currency c ON current.currency_id = c.currency_id
-        WHERE current.rn = 1;
+        WHERE current.rn = 1
+          AND current.currency_id = #{currencyId}
         ]]>
     </select>
 

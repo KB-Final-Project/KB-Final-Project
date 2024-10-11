@@ -33,12 +33,9 @@ public class ExchangeController {
     }
 
     @GetMapping("/daily")
-    public ResponseEntity<List<ExchangeDailyDTO>> getDailyExchangeList(
-            @RequestParam(value = "date", defaultValue = "") String dateString) {
-        if (dateString.isEmpty()) {
-            return ResponseEntity.ok(service.getDailyExchange(new Date(System.currentTimeMillis())));
-        }
-        return ResponseEntity.ok(service.getDailyExchange(Date.valueOf(dateString)));
+    public ResponseEntity<ExchangeDailyDTO> getDailyExchangeList(
+            @RequestParam(value="currencyId") int currencyId) {
+        return ResponseEntity.ok(service.getDailyExchange(currencyId));
     }
 
     @GetMapping("/detail/{currencyId}") // 1month, 3months, 6months, 1year 변수

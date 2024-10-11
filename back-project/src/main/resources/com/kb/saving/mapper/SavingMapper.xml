@@ -99,7 +99,7 @@
             AND ir.intr_rate_type = #{interestRateType}
         </if>
 
-        ORDER BY ir.intr_rate DESC
+        ORDER BY b.bank_type = 1 DESC, b.bank_type, ir.intr_rate DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
@@ -174,6 +174,9 @@
                s.mtrt_int,
                s.etc_note,
                s.max_prime_rate,
+               b.bank_id,
+               b.bank_logo_url,
+               b.bank_url,
                MIN(sir.intr_rate2) AS intr_rate2,
                b.bank_name,
                MIN(sir.intr_rate_type) AS intr_rate_type,
