@@ -60,10 +60,11 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:8080", "http://localhost:8081")
+                .allowedOrigins("http://localhost:8080", "http://localhost:8081")  // 허용할 도메인 명시
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
-                .allowCredentials(true);
+                .allowCredentials(true)  // 자격 증명을 허용할 경우 특정 출처만 허용 가능
+                .maxAge(3600);
     }
 
     @Override
