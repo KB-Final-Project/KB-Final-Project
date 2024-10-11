@@ -14,7 +14,6 @@
             <b>{{ mainNews.title }}</b>
             <img :src="mainNews.image" @click="goToNews(mainNews.link)">
           </div>
-
           <!-- 사이드 뉴스 목록 -->
           <div class="sideNews">
             <table class="newsTable">
@@ -122,6 +121,7 @@ onMounted(fetchNews);
 <style scoped>
 .newsMain {
   position: relative;
+  width: 1000px;
 }
 
 .newsMain b {
@@ -131,9 +131,8 @@ onMounted(fetchNews);
   font-weight: 700;
   color: white;
   margin-top: 300px;
+  max-width: 450px;
   margin-left: 15px;
-  max-width: 400px;
-  max-height: 150px;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -145,7 +144,6 @@ onMounted(fetchNews);
 .newsBox {
   width: 100%;
   position: relative;
-  padding: 20px 0;
   background-color: rgba(249, 250, 251, 1);
   font-family: J2;
 }
@@ -167,7 +165,7 @@ onMounted(fetchNews);
 
 .newsContent {
   display: flex;
-  padding: 0 90px;
+  padding: 0 20px;
 }
 
 .newsMain img {
@@ -196,9 +194,8 @@ button.seeMore_btn {
 }
 
 .sideNews {
-  width: 70%;
-  margin-left: 50px;
-  font-size: 20px;
+  width: 90%;
+  font-size: 30px;
   line-height: 2;
 }
 
@@ -207,10 +204,10 @@ button.seeMore_btn {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 520px;
+  max-width: 550px;
   line-height: 2;
   float: left;
-  padding-right: 50px;
+  padding-right: 10px;
   cursor: pointer;
 }
 
@@ -218,6 +215,6 @@ button.seeMore_btn {
   font-size: 18px;
   color: gray;
   text-align: right;
-  width: 100px;
+  width: 250px;
 }
 </style>

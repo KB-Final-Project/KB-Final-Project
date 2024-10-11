@@ -369,7 +369,7 @@ onMounted(() => {
 }
 
 .fundTheme {
-  margin-left: auto;
+  margin-right: auto;
   color: black;
   font-size: 30px;
 }
@@ -378,7 +378,7 @@ onMounted(() => {
   font-family: J3;
   color: rgba(68, 140, 116, 1);
   border-radius: 50px;
-  background-color: #fffcfc;
+  background-color: white;
 
 }
 
@@ -393,7 +393,7 @@ onMounted(() => {
 
 tbody td {
   padding: 10px;
-  border-bottom: 5px solid #FFF0EF;
+  border-bottom: 5px solid white;
 }
 
 .fundSearchResultTable th {
@@ -430,10 +430,6 @@ thead tr:first-child th:last-child {
   border-right: none;
 }
 
-.rate {
-  border-bottom: 5px solid #FFF0EF;
-
-}
 
 thead tr:last-child th:last-child {
   border: none;
@@ -442,7 +438,7 @@ thead tr:last-child th:last-child {
 .fundSearchResult {
   border-radius: 30px;
   padding: 10px;
-  background-color: #FFF0EF;
+  background-color: rgb(239, 239, 239);;
 }
 .fundSearchResult table{
   border-radius: 30px;
@@ -456,7 +452,7 @@ thead tr:last-child th:last-child {
   height: 100px;
   table-layout: fixed;
   text-align: start;
-  background-color: #FFF8F7;
+  background-color: white;
   border-collapse: separate;
   border-spacing: 0 15px;
 }
@@ -466,7 +462,7 @@ thead tr:last-child th:last-child {
   height: 100px;
   table-layout: fixed;
   text-align: start;
-  background-color: #FFF8F7;
+  background-color: white;
   border-collapse: separate;
   border-spacing: 0 15px;
 }
@@ -484,7 +480,7 @@ thead tr:last-child th:last-child {
 
 .bc {
   padding: 50px;
-  background-color: #F6E4E3;
+  background-color: #F9FAFB;
   border-radius: 30px;
   font-family: J3;
 }
@@ -530,22 +526,22 @@ thead tr:last-child th:last-child {
 }
 
 .page-link {
-  color: rgba(68, 140, 116, 1);
+  color: white;
 }
 
 .active > .page-link {
-  background-color: #F0DEDE;
+  background-color: rgba(68, 140, 116, 1);;
   border: none;
-  color: black;
+  color: white;
 }
 
 .page-link:hover {
   color: white;
-  background-color: #F0DEDE;
+  background-color: rgba(68, 140, 116, 1);;
 }
 
 .pagination {
-  --bs-pagination-color: #F0DEDE;
+  --bs-pagination-color: rgba(68, 140, 116, 1);;
   --bs-pagination-hover-color: rgb(255, 255, 255);
 }
 
@@ -574,13 +570,13 @@ thead tr:last-child th:last-child {
 }
 
 .sort-button-active {
-  background-color: #F6E4E3;
+  background-color: #F9FAFB;
   color: black;
   border-radius: 30px;
 }
 
 .sort-button-inactive {
-  background-color: #FFF0EF;
+  background-color: #F9FAFB;
   color: black;
   border-radius: 30px;
 }

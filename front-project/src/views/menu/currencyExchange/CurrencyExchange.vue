@@ -185,11 +185,11 @@ watch(selectedCurrencyId, (newVal) => {
         <h1 class="selected-country">{{ selectedCurrency.name }} ({{ selectedCurrency.code }}) </h1>
         <br>  <br>
         <div class="flex-between">
-          <div class="nationalFlag">
-            <img :src="selectedCurrency.largeFlagUrl" alt="Flag of {{ selectedCurrency.name }}">
-          </div>
           <div class="exchangeRate text-center" v-if="exchangeRateData && exchangeRateData.exchange">
             <h1 class="text-start"><b>환율 정보</b></h1>
+            <div class="nationalFlag">
+              <img :src="selectedCurrency.largeFlagUrl" alt="Flag of {{ selectedCurrency.name }}">
+            </div>
             <div class="erBox text-start">
               <h3>살 때 {{ exchangeRateData.exchange.receivingPrice }}원</h3>
               <h3>팔 때 {{ exchangeRateData.exchange.sendingPrice }}원</h3>
@@ -281,30 +281,31 @@ watch(selectedCurrencyId, (newVal) => {
 </template>
 
 <style scoped>
-.flex-between {
-  display: flex;
-  justify-content: space-between;
-}
 
-.nationalFlag img {
-  width: 500px;
-  height: 330px;
-  border-radius: 30px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.exchangeRate h1{
-  padding: 20px;
-}
 .exchangeRate {
+  position: relative; /* 추가 */
   border: 1px solid rgba(0, 0, 0, 0.1);
   background-color: white;
   width: 500px;
   height: 330px;
   border-radius: 30px;
   padding: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
+
+.nationalFlag img {
+  position: absolute; /* 추가 */
+  top: 50px; /* 상단 여백 설정 */
+  right: 50px; /* 오른쪽 여백 설정 */
+  width: 180px; /* 이미지 크기 조정 */
+  height: 120px;
+  border-radius: 20px;
+  border: 1px solid lightgrey;
+}
+
+.exchangeRate h1{
+  padding: 20px;
+}
+
 
 .erBox h4{
   color: rgba(68, 140, 116, 1);
@@ -360,6 +361,7 @@ watch(selectedCurrencyId, (newVal) => {
 .selected-country {
   color: rgba(68, 140, 116, 1);
   margin-top: 10px;
+  font-size: 50px;
 }
 
 .bankName {

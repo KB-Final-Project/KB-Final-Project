@@ -4,7 +4,7 @@
     <div class="todayBox text-center">
       <br><br>
       <h2 class="review-section__title mb-4">TODAY</h2>
-      <div class="d-flex mt-4 justify-content-center text-start gap-4">
+      <div class="d-flex justify-content-center text-start gap-4">
         <div class="todayStock">
           <h3>현재 증시</h3>
           <div class="todayCo">
@@ -12,18 +12,19 @@
           </div>
         </div>
         <div class="todayExchange">
-          <h3 class="d-inline-block">환율 정보</h3>
-          <a class="d-inline-block mx-xl-20" href="#">더보기<i class="ai-chevron-right"></i></a>
+          <div class="subjectBetween">
+            <h3 class="d-inline">환율 정보</h3>
+            <a class="d-inline" href="/currencyExchange">더보기<i class="ai-chevron-right"></i></a>
+          </div>
           <div class="exchangeBox">
             <div class="content">
               <div class="line-c">
                 <Line :data="chartData" :options="chartOptions" v-if="chartData" />
               </div>
               <div class="new-section" v-if="exchangeData">
-                <h4 class="d-inline-block mx-xl-20">{{ exchangeData.currencyName }}({{ exchangeData.currencyCode }})</h4>
+                <h4 class="d-inline-block">{{ exchangeData.currencyName }}({{ exchangeData.currencyCode }})</h4>
                 <h4 class="d-inline-block">{{ exchangeData.basePrice.toLocaleString() }}원 ({{ exchangeData.baseRateDifference.toLocaleString() }})</h4>
-                {{ exchangeData.dailyChangeRate.toFixed(2) }}%
-                환율 날짜: {{ exchangeData.exchangeRateDate }}
+                <h4>날짜 {{ exchangeData.exchangeRateDate }}</h4>
               </div>
             </div>
             <div class="currency-buttons">
@@ -185,9 +186,17 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.subjectBetween{
+  display: flex;
+  justify-content: space-between;
+}
+
 .todayExchange a {
   text-decoration: none;
   color: black;
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 20px;
 }
 .review-section__title {
   font-size: 40px;
@@ -205,7 +214,6 @@ onMounted(async () => {
 .todayBox {
   width: 100%;
   background-color: rgba(249, 250, 251, 1);
-  padding: 20px 0;
 }
 
 .todayBox h3 {
@@ -213,7 +221,7 @@ onMounted(async () => {
 }
 
 .todayCo {
-  width: 700px;
+  width: 600px;
   height: 400px;
   border: 1px solid lightgrey;
   border-radius: 30px;
@@ -240,10 +248,11 @@ onMounted(async () => {
 }
 
 .line-c {
-  width: 380px; /* 원하는 너비 */
-  height: 250px; /* 원하는 높이 */
+  width: 300px; /* 원하는 너비 */
+  height: 220px; /* 원하는 높이 */
   margin: 0 auto; /* 가운데 정렬 */
 }
+
 .new-section {
   flex: 1; 
   min-height: 250px;
@@ -276,11 +285,6 @@ onMounted(async () => {
 h3 {
   font-family: J4;
   margin: 20px;
-}
-
-.exchangeTitle {
-  width: 100%;
-  text-align: center;
 }
 
 button {
