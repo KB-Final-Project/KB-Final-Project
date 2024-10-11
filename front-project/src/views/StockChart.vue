@@ -3,7 +3,7 @@
     <!-- 상단 정보 -->
     <div class="stock-header">
       <div class="stock-title">
-        <h1>{{ stockName }}</h1>
+        <h1>{{ stockName }}</h1> 
         <p class="stock-code">{{ stockCode }}</p>
       </div>
       <div class="stock-price">
@@ -49,9 +49,10 @@
       <!-- 뉴스 탭 -->
       <div v-else-if="currentTab === '뉴스'" class="news-container">
         <div v-for="news in newsItems" :key="news.link" class="news-item" @click="openNewsModal(news)">
-          <h3>{{ news.title }}</h3>
-          <p>{{ news.description }}</p>
-        </div>
+  <h3 v-html="news.title"></h3>
+  <p v-html="news.description"></p>
+  <p class="news-date">{{ news.pubDate }}</p> <!-- 날짜와 시간을 표시 -->
+</div>
         <div class="pagination">
           <button @click="loadMoreNews" :disabled="isLoadingNews">더 보기</button>
         </div>
@@ -60,15 +61,23 @@
 
     <!-- 뉴스 모달 -->
     <div v-if="showNewsModal" class="modal-overlay" @click="closeNewsModal">
-      <div class="modal-content" @click.stop>
-        <button class="close-button" @click="closeNewsModal">×</button>
-        <h2>{{ selectedNews.title }}</h2>
-        <p class="news-date">{{ selectedNews.pubDate }}</p>
-        <img v-if="selectedNews.image" :src="selectedNews.image" :alt="selectedNews.title" class="news-image">
-        <div class="news-content" v-html="selectedNews.content"></div>
-        <a :href="selectedNews.link" target="_blank" class="read-more">원문 보기</a>
-      </div>
+  <div class="modal-content" @click.stop>
+    <button class="close-button" @click="closeNewsModal">×</button>
+    <h2 v-html="selectedNews.title"></h2> <!-- 제목 표시 -->
+    <p class="news-date">{{ selectedNews.pubDate }}</p> <!-- 날짜 표시 -->
+    
+    <div v-if="selectedNews.image">
+      <img :src="selectedNews.image" :alt="selectedNews.title" class="news-image">
     </div>
+
+    <p v-html="selectedNews.description"></p> <!-- 소제목 표시 -->
+    
+    <!-- 본문 내용 추가 -->
+    <div class="news-content" v-html="selectedNews.content"></div>
+    <p v-html="selectedNews.content"></p> 
+    <a :href="selectedNews.link" target="_blank" class="read-more">원문 보기</a>
+  </div>
+</div>
   </div>
 </template>
 
@@ -170,40 +179,41 @@ export default {
       }
     },
     async fetchNews() {
-      if (this.isLoadingNews) return;
-      
-      this.isLoadingNews = true;
-      try {
-        const response = await axios.get('/api/news', {
-          params: {
-            query: this.stockName,
-            display: 10,
-            start: (this.newsPage - 1) * 10 + 1,
-            sort: 'sim'
-          }
-        });
-  
-        if (response.data && response.data.items) {
-          const newItems = response.data.items.map(this.processNewsItem);
-          this.newsItems = [...this.newsItems, ...newItems];
-          this.newsPage++;
-        }
-      } catch (error) {
-        console.error('뉴스 데이터를 가져오는 데 실패했습니다:', error);
-      } finally {
-        this.isLoadingNews = false;
+  if (this.isLoadingNews) return;
+
+  this.isLoadingNews = true;
+  try {
+    const query = `${this.stockName} 경제`;
+    const response = await axios.get('/api/news', {
+      params: {
+        query: query,                  // 검색어 (UTF-8로 인코딩된 상태로 요청됨)
+        display: 10,                    // 한 번에 표시할 검색 결과 개수 (기본값 10)
+        start: (this.newsPage - 1) * 10 + 1,  // 검색 시작 위치
+        sort: 'sim'                     // 정확도순으로 정렬 (기본값)
       }
-    },
-    processNewsItem(item) {
-      return {
-        title: item.title.replace(/&quot;/g, '"').replace(/</g, "&lt;").replace(/>/g, "&gt;"),
-        description: item.description.replace(/&quot;/g, '"').replace(/</g, "&lt;").replace(/>/g, "&gt;"),
-        link: item.link,
-        pubDate: new Date(item.pubDate).toLocaleString(),
-        content: item.content,
-        image: item.image
-      };
-    },
+    });
+
+    if (response.data && response.data.items) {
+      const newItems = response.data.items.map(this.processNewsItem);
+      this.newsItems = [...this.newsItems, ...newItems];
+      this.newsPage++;  // 페이지 증가
+    }
+  } catch (error) {
+    console.error('뉴스 데이터를 가져오는 데 실패했습니다:', error);
+  } finally {
+    this.isLoadingNews = false;
+  }
+},
+processNewsItem(item) {
+  return {
+    title: item.title.replace(/<\/?[^>]+(>|$)/g, ""), // HTML 태그 제거
+    description: item.description.replace(/<\/?[^>]+(>|$)/g, ""), // HTML 태그 제거
+    link: item.link,
+    pubDate: new Date(item.pubDate).toLocaleString(), // 날짜와 시간 포맷
+
+    image: item.image
+  };
+},
     loadMoreNews() {
       this.fetchNews();
     },
@@ -258,6 +268,7 @@ p {
     background-color: #F9FAFB;
     color: black;
     border-radius: 8px;
+    font-size: 18px;
 }
 
 .stock-header {
@@ -315,6 +326,12 @@ p {
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 20px;
+}
+.news-content {
+  margin-top: 20px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
 }
 
 .time-range {
@@ -428,6 +445,7 @@ p {
     color: #888;
     font-size: 0.9em;
     margin-bottom: 10px;
+    margin-top: 5px;
 }
 
 .news-image {
