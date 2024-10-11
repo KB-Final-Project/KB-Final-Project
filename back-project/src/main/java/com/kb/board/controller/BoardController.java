@@ -51,6 +51,15 @@ public class BoardController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/{bno}/posts")
+    public ResponseEntity<BoardPostPageResult> getPosts(@PathVariable Long bno, PostParam postParam) {
+        postParam.setBoardId(bno);  // 게시판 ID 설정
+        BoardPostPageResult postResult = service.getPostList(postParam);
+
+        return ResponseEntity.ok(postResult);
+    }
+
+
     @GetMapping("/{bno}")
     public ResponseEntity<BoardPost> getById(@PathVariable int bno) {
         return ResponseEntity.ok(service.getBoard(bno));
