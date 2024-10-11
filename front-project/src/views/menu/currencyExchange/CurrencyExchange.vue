@@ -4,7 +4,9 @@ import axios from 'axios';
 
 // 리액티브 변수 선언
 const exchangeFees = ref([]);
-const loading = ref(false); // 초기값을 false로 설정
+const exchangeRateData = ref(null); // 환율 데이터를 저장할 변수 추가
+const loadingFees = ref(false); // 환전 수수료 로딩 상태
+const loadingRate = ref(false); // 환율 데이터 로딩 상태
 const errorMessage = ref('');
 
 // 선택된 통화 ID
@@ -12,24 +14,24 @@ const selectedCurrencyId = ref(null);
 
 // 국가 목록 업데이트
 const nationalMoney = ref([
-  { currencyId: 2, code: 'AUD', name: '호주 달러', countryCode: 'AU', flagUrl: 'https://flagcdn.com/24x18/au.png' },
-  { currencyId: 5, code: 'CAD', name: '캐나다 달러', countryCode: 'CA', flagUrl: 'https://flagcdn.com/24x18/ca.png' },
-  { currencyId: 6, code: 'CHF', name: '스위스 프랑', countryCode: 'CH', flagUrl: 'https://flagcdn.com/24x18/ch.png' },
-  { currencyId: 9, code: 'EUR', name: 'EU 유로', countryCode: 'EU', flagUrl: 'https://flagcdn.com/24x18/eu.png' }, // EU는 별도의 이미지 필요
-  { currencyId: 10, code: 'GBP', name: '영국 파운드', countryCode: 'GB', flagUrl: 'https://flagcdn.com/24x18/gb.png' },
-  { currencyId: 11, code: 'HKD', name: '홍콩 달러', countryCode: 'HK', flagUrl: 'https://flagcdn.com/24x18/hk.png' },
-  { currencyId: 13, code: 'JPY', name: '일본 옌', countryCode: 'JP', flagUrl: 'https://flagcdn.com/24x18/jp.png' },
-  { currencyId: 18, code: 'NZD', name: '뉴질랜드 달러', countryCode: 'NZ', flagUrl: 'https://flagcdn.com/24x18/nz.png' },
-  { currencyId: 21, code: 'SGD', name: '싱가포르 달러', countryCode: 'SG', flagUrl: 'https://flagcdn.com/24x18/sg.png' },
-  { currencyId: 22, code: 'THB', name: '태국 바트', countryCode: 'TH', flagUrl: 'https://flagcdn.com/24x18/th.png' },
-  { currencyId: 23, code: 'USD', name: '미국 달러', countryCode: 'US', flagUrl: 'https://flagcdn.com/24x18/us.png' }
+  { currencyId: 2, code: 'AUD', name: '호주 달러', countryCode: 'AU', flagUrl: 'https://flagcdn.com/24x18/au.png', largeFlagUrl: 'https://flagcdn.com/w640/au.png' },
+  { currencyId: 5, code: 'CAD', name: '캐나다 달러', countryCode: 'CA', flagUrl: 'https://flagcdn.com/24x18/ca.png', largeFlagUrl: 'https://flagcdn.com/w640/ca.png' },
+  { currencyId: 6, code: 'CHF', name: '스위스 프랑', countryCode: 'CH', flagUrl: 'https://flagcdn.com/24x18/ch.png', largeFlagUrl: 'https://flagcdn.com/w640/ch.png' },
+  { currencyId: 9, code: 'EUR', name: 'EU 유로', countryCode: 'EU', flagUrl: 'https://flagcdn.com/24x18/eu.png', largeFlagUrl: 'https://flagcdn.com/w640/eu.png' }, // EU는 별도의 이미지 필요
+  { currencyId: 10, code: 'GBP', name: '영국 파운드', countryCode: 'GB', flagUrl: 'https://flagcdn.com/24x18/gb.png', largeFlagUrl: 'https://flagcdn.com/w640/gb.png' },
+  { currencyId: 11, code: 'HKD', name: '홍콩 달러', countryCode: 'HK', flagUrl: 'https://flagcdn.com/24x18/hk.png', largeFlagUrl: 'https://flagcdn.com/w640/hk.png' },
+  { currencyId: 13, code: 'JPY', name: '일본 엔', countryCode: 'JP', flagUrl: 'https://flagcdn.com/24x18/jp.png', largeFlagUrl: 'https://flagcdn.com/w640/jp.png' },
+  { currencyId: 18, code: 'NZD', name: '뉴질랜드 달러', countryCode: 'NZ', flagUrl: 'https://flagcdn.com/24x18/nz.png', largeFlagUrl: 'https://flagcdn.com/w640/nz.png' },
+  { currencyId: 21, code: 'SGD', name: '싱가포르 달러', countryCode: 'SG', flagUrl: 'https://flagcdn.com/24x18/sg.png', largeFlagUrl: 'https://flagcdn.com/w640/sg.png' },
+  { currencyId: 22, code: 'THB', name: '태국 바트', countryCode: 'TH', flagUrl: 'https://flagcdn.com/24x18/th.png', largeFlagUrl: 'https://flagcdn.com/w640/th.png' },
+  { currencyId: 23, code: 'USD', name: '미국 달러', countryCode: 'US', flagUrl: 'https://flagcdn.com/24x18/us.png', largeFlagUrl: 'https://flagcdn.com/w640/us.png' }
 ]);
 
 // 통화 목록을 두 개의 행으로 분할
 const firstRowCurrencies = computed(() => nationalMoney.value.slice(0, 6));
 const secondRowCurrencies = computed(() => nationalMoney.value.slice(6, 11));
 
-// 선택된 통화의 이름과 코드를 가져오는 컴퓨티드 프로퍼티
+// 선택된 통화의 정보를 가져오는 컴퓨티드 프로퍼티
 const selectedCurrency = computed(() => {
   return nationalMoney.value.find(nat => nat.currencyId === selectedCurrencyId.value) || {};
 });
@@ -42,28 +44,50 @@ const truncate = (text, length) => {
   return text;
 };
 
+const fetchExchangeRate = async () => {
+  loadingRate.value = true;
+  errorMessage.value = '';
+  exchangeRateData.value = null;
+
+  try {
+    const params = {
+      currencyId: selectedCurrencyId.value,
+      date: new Date().toISOString().split('T')[0]
+    };
+
+    const response = await axios.get('/api/exchange/daily', { params });
+
+    if (response.data) {
+      exchangeRateData.value = response.data;
+    } else {
+      exchangeRateData.value = null;
+      console.warn('환율 데이터를 찾을 수 없습니다.');
+    }
+
+  } catch (error) {
+    console.error('환율 정보를 가져오는 중 오류 발생:', error);
+    errorMessage.value = '환율 정보를 가져오는 중 오류가 발생했습니다.';
+    exchangeRateData.value = null;
+  } finally {
+    loadingRate.value = false;
+  }
+};
+
+
 // 환전 수수료 정보 가져오기 함수
 const fetchExchangeFees = async () => {
-  loading.value = true;
+  loadingFees.value = true;
   errorMessage.value = '';
   try {
     const limit = 16; // 일관된 limit 값 사용
     const params = {
       limit: limit
     };
-
-    // 선택된 통화가 있을 경우 추가 파라미터로 포함
     if (selectedCurrencyId.value) {
       params.currencyId = selectedCurrencyId.value;
     }
-
-    console.log('Request params:', params); // 디버깅용 로그
-
     const response = await axios.get('/api/exchange/fee', { params });
 
-    console.log('API response:', response.data);
-
-    // API 응답 구조에 따라 데이터 설정
     if (Array.isArray(response.data) && response.data.length > 0) {
       exchangeFees.value = response.data;
     } else {
@@ -75,7 +99,7 @@ const fetchExchangeFees = async () => {
     errorMessage.value = '환전 수수료 정보를 가져오는 중 오류가 발생했습니다.';
     exchangeFees.value = [];
   } finally {
-    loading.value = false;
+    loadingFees.value = false;
   }
 };
 
@@ -84,12 +108,13 @@ const formatDate = (timestamp) => {
   return new Date(timestamp).toLocaleDateString();
 };
 
-// 통화 선택 시 환전 수수료 정보 새로고침 (조건 추가)
 watch(selectedCurrencyId, (newVal) => {
   if (newVal !== null) { // 선택된 통화가 있을 때만 호출
-    fetchExchangeFees();
+    fetchExchangeRate();  // 환율 정보 가져오기
+    fetchExchangeFees();  // 수수료 정보 가져오기
   }
 });
+
 </script>
 
 <template>
@@ -154,14 +179,33 @@ watch(selectedCurrencyId, (newVal) => {
       </form>
     </div>
     <br /><br />
+    <!-- 환율 정보 표시 -->
     <div class="exchangeContent text-start">
-      <div v-if="selectedCurrencyId" class="text-start d-inline">
-        <h2 class="d-inline"><b>환전수수료율 검색 결과</b></h2>
-        <h2 class="selected-country d-inline">{{ selectedCurrency.name }} ({{ selectedCurrency.code }}) </h2>
+      <div v-if="selectedCurrencyId">
+        <h1 class="selected-country">{{ selectedCurrency.name }} ({{ selectedCurrency.code }}) </h1>
+        <br>  <br>
+        <div class="flex-between">
+          <div class="nationalFlag">
+            <img :src="selectedCurrency.largeFlagUrl" alt="Flag of {{ selectedCurrency.name }}">
+          </div>
+          <div class="exchangeRate text-center" v-if="exchangeRateData && exchangeRateData.exchange">
+            <h1 class="text-start"><b>환율 정보</b></h1>
+            <div class="erBox text-start">
+              <h3>살 때 {{ exchangeRateData.exchange.receivingPrice }}원</h3>
+              <h3>팔 때 {{ exchangeRateData.exchange.sendingPrice }}원</h3>
+              <h3>기준 {{ exchangeRateData.exchange.basePrice }}원</h3>
+              <h4>전일 대비 변동률 {{ exchangeRateData.dailyChangeRate }}%</h4>
+              <h4>전일 대비 차이 {{ exchangeRateData.baseRateDifference }}원</h4>
+              <h4 class="text-end">기준일 {{ formatDate(exchangeRateData.exchange.exchangeRateDate) }}</h4>
+            </div>
+          </div>
+        </div>
+        <br><br><br>
+        <h1><b>환전수수료율</b></h1>
       </div>
       <br /><br /><br />
       <!-- 로딩 메시지 -->
-      <div v-if="loading" class="loading-box">
+      <div v-if="loadingFees || loadingRate" class="loading-box">
         <div class="spinner-border text-primary" role="status">
           <span class="visually-hidden">데이터를 불러오는 중...</span>
         </div>
@@ -237,26 +281,78 @@ watch(selectedCurrencyId, (newVal) => {
 </template>
 
 <style scoped>
-.ai-bulb-alt{
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.nationalFlag img {
+  width: 500px;
+  height: 330px;
+  border-radius: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.exchangeRate h1{
+  padding: 20px;
+}
+.exchangeRate {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: white;
+  width: 500px;
+  height: 330px;
+  border-radius: 30px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.erBox h4{
+  color: rgba(68, 140, 116, 1);
+}
+.erBox {
+  width: 100%;
+  padding: 10px;
+  color: rgb(42, 42, 42);
+}
+
+.exchangeRate h2 {
+  font-size: 30px;
+  padding: 20px;
+}
+
+
+@media (max-width: 768px) {
+  .currency-info {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .nationalFlag img, .exchangeRate {
+    width: 100%;
+  }
+}
+
+.ai-bulb-alt {
   font-size: 40px;
   vertical-align: text-bottom;
 }
-.noSearch{
+
+.noSearch {
   border-radius: 30px;
   border: 1px solid lightgrey;
-  padding:20px;
+  padding: 40px;
 }
 
-.container{
+.container {
   font-family: J3;
 }
 
-.exchangeContent{
+.exchangeContent {
   width: 80%;
   margin: 0 auto;
 }
 
-.bankName:hover{
+.bankName:hover {
   background-color: rgba(231, 236, 243, 1);
   color: rgba(68, 140, 116, 1);
 }
@@ -264,7 +360,6 @@ watch(selectedCurrencyId, (newVal) => {
 .selected-country {
   color: rgba(68, 140, 116, 1);
   margin-top: 10px;
-  margin-left: 10px;
 }
 
 .bankName {
@@ -274,8 +369,7 @@ watch(selectedCurrencyId, (newVal) => {
   text-align: center;
 }
 
-
-.divExchange{
+.divExchange {
   border-radius: 20px;
   background-color: white;
   color: rgba(68, 140, 116, 1);
@@ -393,7 +487,7 @@ li {
   background-color: rgba(68, 140, 116, 1);
   text-decoration: none;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
-  color : white;
+  color: white;
 }
 
 .itemBoxLink:hover {
@@ -478,4 +572,5 @@ input[type="radio"] {
     grid-template-columns: 1fr;
   }
 }
+
 </style>

@@ -272,9 +272,12 @@ const truncateText = (text, maxLength) => {
                 <br>
                 <div class="bankLogo d-inline">
                   <a :href="topSaving.bank?.bankUrl">
-                    <img style="height: 25px;"
-                         :src="topSaving.bank?.bankLogoUrl || '/img/emoji/bank.png'"
-                         alt="Bank Logo"/>
+                    <img
+                        style="height: 30px;"
+                        :src="`/img/bank/${topSaving.bankId}.png`"
+                        alt="Bank Logo"
+                        @error="handleImageError"
+                    />
                   </a>
                   <h3 class="d-inline">{{ topSaving.bank.bankName }}</h3>
                 </div>
@@ -484,11 +487,13 @@ const truncateText = (text, maxLength) => {
                 <div class="savingDepositMethod">
                   <div class="depositMethod text-center">{{ saving.joinWay }}</div>
                   <br>
-                  <div class="bankLog  d-inlineo">
+                  <div class="bankLogo  d-inline">
                     <a :href="saving.bank?.bankUrl">
-                      <img style="height: 25px;"
-                           :src="saving.bank?.bankLogoUrl || '/img/emoji/bank.png'"
-                           alt="Bank Logo"
+                      <img
+                          style="height: 30px;"
+                          :src="`/img/bank/00${saving.bank.bankId}.png`"
+                          alt="Bank Logo"
+                          @error="handleImageError"
                       />
                     </a>
                     <h3 class=" d-inline">{{ saving.bank.bankName }}</h3>
@@ -542,6 +547,11 @@ const truncateText = (text, maxLength) => {
 </template>
 
 <style scoped>
+.bankLogo h3{
+  margin: 10px;
+  vertical-align: middle;
+}
+
 .loading-box {
   display: flex;
   justify-content: center;

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ExchangeMapper {
     void insertExchangeRate(List<Exchange> list);
-    List<ExchangeDailyDTO> getDailyExchange(Date date);
+    ExchangeDailyDTO getDailyExchange(int currencyId);
     List<ExchangeListByTerm> getExchangeDetailByTerm(ExchangeParam exchangeParam);
     List<ExchangeFee> getExchangeFeeByCurrency(int currencyId);
     void batchUpdateExchangeFees(List<ExchangeFee> updateList);
