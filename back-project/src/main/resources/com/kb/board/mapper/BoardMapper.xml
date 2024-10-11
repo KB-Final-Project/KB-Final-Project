@@ -125,7 +125,6 @@
             LIMIT #{limit} OFFSET #{offset}
     </select>
 
-
     <update id="updateBoard" parameterType="com.kb.board.dto.BoardPost">
         <![CDATA[
         UPDATE board
