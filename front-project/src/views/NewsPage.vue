@@ -62,29 +62,29 @@ export default {
     methods: {
         getSearchQuery(category) {
             const queries = {
-                금융: '금융 정책 변화, 금융 시장 동향, 금융 리스크 관리, 한국 금융시장 전망, 미국증시',
-                예금: '예금 금리 인상, 고금리 예금 상품, 예금 보험, 예금 세금 혜택',
-                적금: '장기 적금 상품, 적금 금리 비교, 적금 세금 혜택, 적금 활용 전략',
-                주식: '2023 주식 시장 전망, 주식 투자 팁, 고배당 주식, 인기 성장주',
-                펀드: '펀드 수익률 비교, 주식형 펀드 추천, 채권형 펀드 동향, 펀드 투자 전략',
-                ISA: 'ISA 세제 혜택, ISA 계좌 추천, ISA 투자 전략, ISA 상품 비교',
-                금: '금 투자, 금 시장 전망',
-                ELS: 'ELS 시장 동향',
-                ETF: 'ETF 투자 전략, ETF 시장 트렌드, 주식형 ETF 분석'
+                금융: '금융시장, 한국금융시장전망, 미국증시',
+                예금: '예금금리인상, 예금',
+                적금: '장기적금상품, 적금금리비교, 적금세금혜택, 적금',
+                주식: '주식시장전망, 고배당주식, 인기성장주',
+                펀드: '펀드수익률, 주식형펀드 , 펀드동향, 펀드투자',
+                ISA: 'ISA세제, ISA계좌, ISA투자전략, ISA상품비교',
+                금: '금투자, 금시장',
+                ELS: 'ELS시장동향',
+                ETF: 'ETF투자전략, ETF시장트렌드, 주식형ETF분석'
             };
             return queries[category] || category;
         },
 
-        async fetchNews(category, count = 9) {
+        async fetchNews(category, count = 9, sort = 'sim') {
             try {
                 const query = this.getSearchQuery(category);
                 const response = await axios.get('/api/news', {
-                    params: { query: query, display: count }
+                    params: { query: query, display: count, sort: sort }
                 });
 
                 if (response.data && response.data.items) {
                     const newsItems = response.data.items.map(this.processNewsItem);
-                    return this.sortByRelevance(newsItems);
+                    return sort === 'sim' ? newsItems : this.sortByRelevance(newsItems);
                 } else {
                     console.error('Unexpected API response:', response.data);
                     return [];
@@ -151,8 +151,10 @@ export default {
     },
 
     async mounted() {
-        const mainNewsData = await this.fetchNews('투자', 1);
+        const mainNewsData = await this.fetchNews('금융시장', 1, 'sim');
         this.mainNews = mainNewsData[0];
+        
+        // 카테고리 뉴스는 기존 방식(관련도순)으로 가져옵니다.
         await this.selectCategory(this.selectedCategory);
     }
 };

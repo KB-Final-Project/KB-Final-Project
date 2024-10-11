@@ -32,5 +32,10 @@ app.config.globalProperties.$lightGallery = lightGallery;
 app.use(createPinia());
 app.use(Vue3Lottie);
 
+app.config.globalProperties.$formatNumber = (value) => {
+    if (!value) return '0'
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  }
+
 createApp(App).use(router).mount('#app')
 

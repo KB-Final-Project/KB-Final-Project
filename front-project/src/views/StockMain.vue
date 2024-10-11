@@ -32,28 +32,27 @@
 </div>
 
         </div>
-
       </section>
-
-      <p class="middle-title">현재 상위권 TOP2 🏆</p>
+      <p class="middle-title">현재 상위권 TOP3 🏆</p>
       <section class="top3-stocks">
         <div class="top3-cards">
-          <div v-for="(stock, index) in top3Stocks" :key="index" class="top3-card">
+          <div v-for="(stock, index) in top3Stocks" :key="index" class="top3-card" @click="goToStockChart(stock)">
             <h3>{{ stock.stockName }}</h3>
             <p>{{ stock.currentPrice }}</p>
             <!-- 상승/하락에 따른 아이콘 표시 -->
             <p :class="{ 'positive': stock.priceChangePct > 0, 'negative': stock.priceChangePct < 0 }">
               {{ stock.priceChange }} ({{ stock.priceChangePct }}%)
             </p>
-            <router-link :to="'/stock/' + stock.stockCode">자세히 보기</router-link>
           </div>
         </div>
-      </section>
+      </section>      
 
       <!-- 주식 목록 섹션 -->
       <section class="stock-list">
-        <p class="title">실시간 주식 목록</p>
-        <router-link to="/stockdetail" class="more-link">더보기</router-link>
+        <div class="stock-list-subject">
+          <p class="title">실시간 주식 목록</p>
+          <router-link to="/stockdetail" class="more-link">더보기</router-link>
+        </div>
         <!-- 주식 목록 데이터 -->
         <table class="stock-table">
           <thead>
@@ -67,11 +66,11 @@
                   :class="{ 'sort-arrow': true, 'sort-reverse': sortOrder === -1 }"></span>
               </th>
               <th @click="sortBy('priceChange')" :class="{ active: sortKey === 'priceChange' }">
-                대비 <span v-if="sortKey === 'priceChange'"
+                등락률 <span v-if="sortKey === 'priceChange'"
                   :class="{ 'sort-arrow': true, 'sort-reverse': sortOrder === -1 }"></span>
               </th>
               <th @click="sortBy('priceChangePct')" :class="{ active: sortKey === 'priceChangePct' }">
-                등락률 <span v-if="sortKey === 'priceChangePct'"
+                거래대금 <span v-if="sortKey === 'priceChangePct'"
                   :class="{ 'sort-arrow': true, 'sort-reverse': sortOrder === -1 }"></span>
               </th>
             </tr>
@@ -82,6 +81,7 @@
               <td>{{ stock.currentPrice }}</td>
               <td :class="{ 'positive': stock.priceChange > 0, 'negative': stock.priceChange < 0 }">
                 {{ stock.priceChange }}
+                ({{ stock.priceChangePct }})%
               </td>
               <td :class="{ 'positive': stock.priceChangePct > 0, 'negative': stock.priceChangePct < 0 }">
                 {{ stock.priceChangePct }}%
@@ -146,8 +146,8 @@
               <tr>
                 <th>종목명</th>
                 <th>현재가</th>
-                <th>대비</th>
                 <th>등락률</th>
+                <th>거래량</th>
               </tr>
             </thead>
             <tbody>
@@ -158,7 +158,7 @@
       {{ stock.priceChange }}
     </td>
     <td :class="{ 'positive': stock.priceChangePct > 0, 'negative': stock.priceChangePct < 0 }">
-      {{ stock.priceChangePct }}%
+      {{ stock.priceChangePct}}%
     </td>
   </tr>
 </tbody>
@@ -276,6 +276,27 @@ export default {
   },
 
   methods: {
+    startWebSocket() {
+    const ws = new WebSocket('ws://localhost:8080/websocket/stocks'); // WebSocket 서버 주소로 변경 필요
+
+    ws.onopen = () => {
+      console.log('WebSocket 연결 성공');
+    };
+
+    ws.onmessage = (event) => {
+      const stockData = JSON.parse(event.data);
+      this.updateStockData(stockData);
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket 오류:', error);
+      this.error = 'WebSocket 연결 중 오류가 발생했습니다.';
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket 연결이 닫혔습니다.');
+    };
+  },
     createGradient(ctx, chartArea) {
       const { top, bottom } = chartArea;
       const gradient = ctx.createLinearGradient(0, top, 0, bottom);
@@ -371,29 +392,16 @@ export default {
       }
     },
 
-    // WebSocket 연결 시작
-    startWebSocket() {
-      const ws = new WebSocket('ws://localhost:8080/ws'); // WebSocket 서버 주소로 변경해야 함
-
-      ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        this.updateStockData(data);
-      };
-
-      ws.onerror = (error) => {
-        console.error('WebSocket 오류:', error);
-      };
-    },
     // 웹소켓에서 받은 데이터로 주식 정보 업데이트
     updateStockData(data) {
-      const index = this.stocks.findIndex(stock => stock.stockCode === data.stockCode);
-      if (index !== -1) {
-        this.stocks[index] = { ...this.stocks[index], ...data };
-      } else if (this.stocks.length < 10) {
-        this.stocks.push(data);
-      }
-      this.updateTop3Stocks();
-    },
+    const index = this.stocks.findIndex(stock => stock.stockCode === data.stockCode);
+    if (index !== -1) {
+      this.stocks[index] = { ...this.stocks[index], ...data };
+    } else if (this.stocks.length < 10) {
+      this.stocks.push(data);
+    }
+    this.updateTop3Stocks();
+  },
 
     // Top3 주식 업데이트 메서드
     updateTop3Stocks() {
@@ -503,17 +511,20 @@ export default {
   padding: 20px;
 
 }
-
+a.more-link {
+  display: flex;
+  flex-direction: column-reverse;
+}
 .title {
   font-size: 30px;
-  margin-left: 20px;
-  margin-top: 30px;
+
 }
 
 .more-link {
   color: #448c74;
   text-decoration: none;
   font-weight: bold;
+  
 }
 
 .current-stocks,
@@ -526,6 +537,7 @@ export default {
   padding: 20px;
   justify-content: space-between;
   gap: 20px;
+  font-size : 16px;
 }
 
 .stock-card,
@@ -620,7 +632,11 @@ export default {
 }
 
 
-
+.stock-list-subject{
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+}
 
 
 
@@ -822,4 +838,74 @@ h1 {
 .negative {
   color: #005CF6;
 }
+/* 주식 목록 hover 효과 */
+.stock-row {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.stock-row:hover {
+  background-color: #f0f8ff; /* 배경색을 변경하여 hover 느낌을 줌 */
+}
+
+/* Top3 주식 카드 hover 효과 */
+.top3-card {
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #e0e0e0;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.top3-card:hover {
+  transform: translateY(-5px); /* 마우스를 올리면 약간 위로 올라가는 효과 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  background-color: #f0f8ff; /* 배경색 변경 */
+}
+/* 주식 목록과 카테고리 카드에 hover 효과 적용 */
+
+/* 주식 목록 hover 효과 */
+tbody tr {
+  cursor: pointer; /* 클릭 가능함을 나타내는 커서 */
+  transition: background-color 0.3s ease; /* 배경색 변경이 부드럽게 전환되도록 */
+}
+
+tbody tr:hover {
+  background-color: #f0f8ff; /* 마우스를 올리면 배경색 변경 */
+}
+
+/* Top3 주식 hover 효과 */
+.top3-card {
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease; /* 부드러운 전환 효과 */
+}
+
+.top3-card:hover {
+  background-color: #f0f8ff; /* 배경색 변경 */
+  transform: translateY(-5px); /* 마우스를 올리면 살짝 올라가는 효과 */
+}
+
+/* 카테고리 카드 hover 효과 */
+.category-card {
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.category-card:hover {
+  background-color: #f0f8ff;
+  transform: translateY(-5px);
+}
+
+/* 모달 테이블의 주식 항목 hover 효과 */
+.modal-body tbody tr {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal-body tbody tr:hover {
+  background-color: #f0f8ff;
+}
+
+
+
 </style>
