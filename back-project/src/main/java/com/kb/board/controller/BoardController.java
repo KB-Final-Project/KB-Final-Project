@@ -6,6 +6,7 @@ import com.kb.member.dto.Member;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.Resource;
@@ -29,6 +30,9 @@ import java.util.List;
 @Api(value = "BoardController", tags = "게시판 정보")
 @PropertySource({"classpath:/application.properties"})
 public class BoardController {
+
+    @Autowired
+    private BoardService boardService;
 
     @Value("#{'${os_type}' == 'win' ? '${file_save_location_win}/board':'${file_save_location_other}/board'}")
     public String BASE_DIR;
@@ -62,9 +66,13 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
-        BoardPost boardPost = boardDTO.toBoardPost(); // 수정된 메소드 호출
+        BoardPost boardPost = boardDTO.toBoardPost(); // DTO를 게시글 객체로 변환
         boardPost.setMemberId(principal.getMno());
-        return ResponseEntity.ok(service.createBoard(boardPost, files));
+
+        log.info("Creating boardPost with bno: " + boardPost.getBno());
+
+        BoardPost createdPost = boardService.createBoardPost(boardPost, files);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
 
     @PutMapping("/{bno}")
