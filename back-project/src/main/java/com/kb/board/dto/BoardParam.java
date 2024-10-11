@@ -28,5 +28,4 @@ public class BoardParam {
 	// mybatis에서 사용 할 limit, offset
 	private int limit;
 	private int offset;
-
 }
