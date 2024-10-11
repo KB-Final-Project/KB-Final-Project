@@ -13,9 +13,17 @@
 
         <ul class="text-start">
           <li>
-            <img class="d-inline" :src="deposit.bank?.bankLogoUrl || '/img/emoji/bank.png'" alt="Bank Logo" />
-            <h2 class="d-inline">{{ deposit.bank.bankName }}</h2>
+            <div class="bankLogo d-inline">
+              <img
+                  :src="`/img/bank/${deposit.bankId}.png`"
+                  alt="Bank Logo"
+                  @error="handleImageError"
+              />
+            </div>
+              &nbsp;
+            <p class="bankName d-inline">{{ deposit.bank.bankName }}</p>
           </li>
+          <li><br /><br /></li>
           <li><h1>{{ deposit.savingName }}</h1></li>
           <li><br /><br /></li>
         </ul>
@@ -403,6 +411,17 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+.bankLogo img{
+  width: 90px;
+  height: 90px;
+}
+.bankName{
+  font-size: 50px;
+  margin: 20px;
+  vertical-align: middle;
+}
+
 @keyframes slideIn {
   from {
     transform: translateY(20px);
@@ -422,9 +441,9 @@ onMounted(() => {
 .rate-container {
   width: 150%;
   display: flex;
-  flex-direction: column;
-  align-items: start;
-  margin-left: 30px;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 10px;
 }
 
 
@@ -438,10 +457,9 @@ onMounted(() => {
 }
 
 .rate-row {
-  width: 50%;
+  width: 65%;
   display: flex;
   justify-content: space-between;
-  margin: 10px 0;
 }
 
 .subject2 {
@@ -508,7 +526,7 @@ onMounted(() => {
 }
 
 .moreInfo{
-  width: 85%;
+  width: 90%;
   margin: 0 auto;
   gap: 10px;
 }
@@ -540,9 +558,9 @@ onMounted(() => {
 }
 
 .calTable {
-  margin: 20px;
+  margin: 0 auto;
   table-layout: fixed;
-  width: 95%;
+  width: 85%;
   border-bottom: 1px solid rgba(180, 178, 178, 0.47);
 }
 
@@ -809,4 +827,3 @@ a {
 
 
 </style>
-

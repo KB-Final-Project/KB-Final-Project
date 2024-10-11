@@ -77,7 +77,7 @@
         <h1 class="d-inline">트렌드<br></h1>
         <h1 class="d-inline m-l">한눈에 보기</h1><br>
         <br><h3>전체 운용상품 보러가기 ></h3>
-        <img src="/img/emoji/fund4.PNG" class="trendImage">
+        <img src="/img/emoji/fund4.png" class="trendImage">
       </div>
     </div>
     <br><br><br><br>

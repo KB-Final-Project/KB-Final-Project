@@ -1,16 +1,16 @@
 <script setup>
-import {ref, onMounted, watch, computed} from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
-import { Swiper, SwiperSlide } from 'swiper/vue'; // Swiper와 SwiperSlide import
+import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/swiper-bundle.css';
 
 const savings = ref([]);
 const topSavings = ref([]);
 const loading = ref(true);
 const currentPage = ref(1);
-const totalPages = ref(1); // 총 페이지 수
-const totalCount = ref(0); // 총 페이지 수
+const totalPages = ref(1);
+const totalCount = ref(0);
 const expanded = ref(false);
 const primaryBankExpanded = ref(false);
 const otherBankExpanded = ref(false);
@@ -26,10 +26,8 @@ const primaryBankList = ref([]);
 const otherBankList = ref([]);
 const termList = ref([]);
 const interestTypeList = ref([]);
-// 모든 은행 목록을 저장하는 반응형 변수
 const allBanks = ref([]);
 
-// 은행을 "1금융"과 "기타"로 그룹화하는 계산된 속성
 const groupedBanks = computed(() => {
   if (!Array.isArray(allBanks.value)) {
     return {};
@@ -62,7 +60,7 @@ const fetchdepositCategory = async () => {
       console.log(otherBankList);
       termList.value = response.data.saveTerm;
       interestTypeList.value = response.data.interestType;
-      allBanks.value = response.data.map(bank => ({
+      allBanks.value = response.data.bankList.map(bank => ({
         ...bank,
         bankId: Number(bank.bankId)
       }));
@@ -84,7 +82,6 @@ const getPaginationPages = () => {
   return pages;
 };
 
-
 const goToDetail = (savingId) => {
   if (savingId) {
     router.push({ name: 'depositDetail', params: { savingId } });
@@ -99,7 +96,6 @@ const removeFilter = (arrayRef, value) => {
     arrayRef.splice(index, 1);
   }
 };
-
 
 function toggleSelection(arrayRef, value) {
   const index = arrayRef.value.indexOf(value);
@@ -189,19 +185,19 @@ const fetchSavings = async () => {
     console.log(response.data);
     if (response.data && response.data.savings) {
       savings.value = response.data.savings;
-      totalCount.value = response.data.totalCount; // 총 상품 개수 업데이트
-      totalPages.value = Math.ceil(totalCount.value / LIST_LIMIT); // 페이지 수 계산
+      totalCount.value = response.data.totalCount;
+      totalPages.value = Math.ceil(totalCount.value / LIST_LIMIT);
     } else {
       savings.value = [];
-      totalCount.value = 0; // 검색 결과가 없을 경우 0으로 설정
-      totalPages.value = 1; // 페이지 수 1로 설정
+      totalCount.value = 0;
+      totalPages.value = 1;
       console.warn('검색 결과가 없습니다.');
     }
   } catch (error) {
     console.error('예금 상품 목록을 가져오는 중 오류 발생:', error);
     savings.value = [];
-    totalCount.value = 0; // 오류 발생 시 총 개수를 0으로 설정
-    totalPages.value = 1; // 오류 발생 시 페이지 수 1로 설정
+    totalCount.value = 0;
+    totalPages.value = 1;
   } finally {
     loading.value = false;
   }
@@ -215,31 +211,30 @@ onMounted(() => {
 
 watch(searchTerm, () => {
   currentPage.value = 1;
-  fetchSavings(); // 검색어가 변경될 때마다 데이터를 가져옴
+  fetchSavings();
 });
 
-// 필터링 배열이 변경될 때도 페이지를 1로 설정하고 데이터 다시 가져오기
 watch([selectedBanks, selectedDuration, selectedInterestType], () => {
   currentPage.value = 1;
-  fetchSavings(); // 필터가 변경될 때마다 데이터를 가져옴
+  fetchSavings();
 });
 
 const toggleText = () => {
-  expanded.value = !expanded.value; // 상태 반전
+  expanded.value = !expanded.value;
   if (expanded.value) {
     fetchSavings();
   }
 };
 
 const togglePrimaryBankList = () => {
-  primaryBankExpanded.value = !primaryBankExpanded.value; // 상태 반전
+  primaryBankExpanded.value = !primaryBankExpanded.value;
   if (primaryBankExpanded.value) {
     fetchSavings();
   }
 };
 
 const toggleOtherBankList = () => {
-  otherBankExpanded.value = !otherBankExpanded.value; // 상태 반전
+  otherBankExpanded.value = !otherBankExpanded.value;
   if (otherBankExpanded.value) {
     fetchSavings();
   }
@@ -247,15 +242,18 @@ const toggleOtherBankList = () => {
 
 const changePage = (newPage) => {
   if (newPage >= 1 && newPage <= totalPages.value) {
-    currentPage.value = newPage; // 현재 페이지 업데이트
-    fetchSavings(); // 새 페이지에 맞는 데이터 가져오기
+    currentPage.value = newPage;
+    fetchSavings();
   }
 };
 
-// 텍스트 자르기 함수
 const truncateText = (text, maxLength) => {
   if (typeof text !== 'string') return '';
   return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+};
+
+const handleImageError = (event) => {
+  event.target.src = '/img/emoji/bank.png';
 };
 </script>
 
@@ -293,9 +291,12 @@ const truncateText = (text, maxLength) => {
                 <br>
                 <div class="bankLogo d-inline">
                   <a :href="topSaving.bank?.bankUrl">
-                    <img style="height: 25px;"
-                         :src="topSaving.bank?.bankLogoUrl || '/img/emoji/bank.png'"
-                         alt="Bank Logo" />
+                    <img
+                        style="height: 30px;"
+                        :src="`/img/bank/${topSaving.bankId}.png`"
+                        alt="Bank Logo"
+                        @error="handleImageError"
+                    />
                   </a>
                   <h3 class="d-inline">{{ topSaving.bank.bankName }}</h3>
                 </div>
@@ -351,51 +352,51 @@ const truncateText = (text, maxLength) => {
           <ul class="filterBar">
             <li>
               <h4 style="font-weight: 700;">은행</h4>
-                <br>
-                <div>
-                  <h4 style="font-weight: 700;" @click="togglePrimaryBankList">
-                    1금융권 은행
-                    <i :class="primaryBankExpanded ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
-                  </h4>
-                  <div class="filter d-inline">
-                    <input type="button" id="primary-all" @click="() => {selectAllBanksInPrimaryBankList(); fetchSavings();}" />
-                    <label for="primary-all">전체</label>
-                  </div>
-                  <div v-show="primaryBankExpanded">
-                    <div class="filter d-inline" v-for="(bank, index) in primaryBankList" :key="'primary' + index">
-                      <input
+              <br>
+              <div>
+                <h5 style="font-weight: 700; color: gray;" @click="togglePrimaryBankList">
+                  1금융권 은행
+                  <i :class="primaryBankExpanded ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
+                </h5>
+                <div class="filter d-inline">
+                  <input type="button" id="primary-all" @click="() => {selectAllBanksInPrimaryBankList(); fetchSavings();}" />
+                  <label for="primary-all">전체</label>
+                </div>
+                <div v-show="primaryBankExpanded">
+                  <div class="filter d-inline" v-for="(bank, index) in primaryBankList" :key="'primary' + index">
+                    <input
                         type="checkbox"
                         :id="'primary-bank' + index"
                         @change="() => { selectBank(bank); fetchSavings(); }"
                         :checked="selectedBanks.includes(bank)"
-                      />
-                      <label :for="'primary-bank' + index" :class="{ 'selected': selectedBanks.includes(bank) }">{{ bank }}</label>
-                    </div>
+                    />
+                    <label :for="'primary-bank' + index" :class="{ 'selected': selectedBanks.includes(bank) }">{{ bank }}</label>
                   </div>
                 </div>
-                <div>
-                  <h4 style="font-weight: 700;" @click="toggleOtherBankList">
-                    기타 은행
-                    <i :class="otherBankExpanded ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
-                  </h4>
-                  <div class="filter d-inline">
-                    <input type="button" id="other-all" @click="() => {selectAllBanksInOtherBankList(); fetchSavings();}" />
-                    <label for="other-all">전체</label>
-                  </div>
-                  <div v-show="otherBankExpanded">
-                    <div class="filter d-inline" v-for="(bank, index) in otherBankList" :key="'other' + index">
-                      <input
+              </div>
+              <div>
+                <h5 style="font-weight: 700; color: gray;"  @click="toggleOtherBankList">
+                  기타 은행
+                  <i :class="otherBankExpanded ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
+                </h5>
+                <div class="filter d-inline">
+                  <input type="button" id="other-all" @click="() => {selectAllBanksInOtherBankList(); fetchSavings();}" />
+                  <label for="other-all">전체</label>
+                </div>
+                <div v-show="otherBankExpanded">
+                  <div class="filter d-inline" v-for="(bank, index) in otherBankList" :key="'other' + index">
+                    <input
                         type="checkbox"
                         :id="'other-bank' + index"
                         @change="() => { selectBank(bank); fetchSavings(); }"
                         :checked="selectedBanks.includes(bank)"
-                      />
-                      <label :for="'other-bank' + index" :class="{ 'selected': selectedBanks.includes(bank) }">{{ bank }}</label>
-                    </div>
+                    />
+                    <label :for="'other-bank' + index" :class="{ 'selected': selectedBanks.includes(bank) }">{{ bank }}</label>
                   </div>
                 </div>
+              </div>
             </li>
-            
+
             <!-- 저축 기간 필터 -->
             <li>
               <h4 style="font-weight: 700;">저축 기간</h4>
@@ -504,18 +505,23 @@ const truncateText = (text, maxLength) => {
                 <div class="savingDepositMethod">
                   <div class="depositMethod text-center">{{ saving.joinWay }}</div>
                   <br>
-                  <div class="bankLog  d-inlineo">
+                  <div class="bankLogo d-inline">
                     <a :href="saving.bank?.bankUrl">
-                      <img style="height: 25px;"
-                           :src="saving.bank?.bankLogoUrl || '/img/emoji/bank.png'"
-                           alt="Bank Logo"
+                      <img
+                          style="height: 30px;"
+                          :src="`/img/bank/00${saving.bank.bankId}.png`"
+                          alt="Bank Logo"
+                          @error="handleImageError"
                       />
                     </a>
-                    <h3 class=" d-inline">{{ saving.bank.bankName }}</h3>
+                    <h3 class="d-inline">{{ saving.bank.bankName }}</h3>
                   </div>
                 </div>
                 <br/>
-                <div style="width: 300px;"><h4 class="savingName">{{ saving.savingName }}</h4><br/></div>
+                <div style="width: 300px;">
+                  <h4 class="savingName">{{ saving.savingName }}</h4>
+                  <br/>
+                </div>
                 <div>
                   <h3 style="font-weight: 600">{{ saving.interestRateList.interestRateType }}</h3>
                   <h3 class="d-inline" style="color: rgba(68, 140, 116, 1);">
@@ -560,7 +566,6 @@ const truncateText = (text, maxLength) => {
     <br><br>
   </div>
 </template>
-
 <style scoped>
 .loading-box {
   display: flex;
@@ -597,6 +602,10 @@ li {
     opacity: 1;
     transform: translateY(0);
   }
+}
+.bankLogo h3{
+  margin: 10px;
+  vertical-align: middle;
 }
 
 .animate-on-load > * {
@@ -904,7 +913,7 @@ input[type="button"] {
 }
 
 .page-link:hover {
-  color: rgba(68, 140, 116, 1);
+  color: rgb(255, 255, 255);
 }
 
 .pagination {
