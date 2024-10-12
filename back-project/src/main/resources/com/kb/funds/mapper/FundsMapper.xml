@@ -8,7 +8,7 @@
         <selectKey keyProperty="id" resultType="long" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        INSERT INTO funds (fundFnm, gijunGa, gijunYmd, suikRt1, suikRt3, suikRt6, suikRt12, investGrade, feeTot, bmNm, navTot)
+        INSERT IGNORE INTO funds (fundFnm, gijunGa, gijunYmd, suikRt1, suikRt3, suikRt6, suikRt12, investGrade, feeTot, bmNm, navTot)
         VALUES (#{fundFnm}, #{gijunGa}, #{gijunYmd}, #{suikRt1}, #{suikRt3}, #{suikRt6}, #{suikRt12}, #{investGrade}, #{feeTot}, #{bmNm}, #{navTot})
     </insert>
     <!-- 펀드 업데이트 -->
