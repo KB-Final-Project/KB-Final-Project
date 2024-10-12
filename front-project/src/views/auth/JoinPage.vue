@@ -5,7 +5,7 @@
       <router-link class="text-nav btn btn-icon bg-light border rounded-circle position-absolute top-0 end-0 p-0 mt-3 me-3 mt-sm-4 me-sm-4" to="/" data-bs-toggle="tooltip" data-bs-placement="left" title="Back to home">
         <i class="ai-home"></i>
       </router-link>
-      
+
       <!-- Sign up form -->
       <div class="signUpPage d-flex flex-column align-items-center justify-content-center w-lg-50 px-3 h-100 px-lg-5 pt-5">
         <div class="w-100" style="max-width: 526px;">
@@ -17,13 +17,13 @@
           <form class="needs-validation" @submit.prevent="join" novalidate>
             <div class="row row-cols-1 row-cols-sm-2">
               <div class="col mb-4">
-                <input 
-                  v-model="member.id" 
-                  class="form-control form-control-lg ps-5" 
-                  type="text" 
-                  placeholder="아이디를 입력하세요" 
-                  required 
-                  @blur="checkId" 
+                <input
+                    v-model="member.id"
+                    class="form-control form-control-lg ps-5"
+                    type="text"
+                    placeholder="아이디를 입력하세요"
+                    required
+                    @blur="checkId"
                 >
                 <span :class="disableSubmit ? 'text-primary' : 'text-danger'">{{ checkError }}</span>
               </div>
@@ -59,10 +59,10 @@
             </div>
             <button class="signUpBtn w-100 mb-4" type="submit">회원가입</button>
             <h2 style="font-size: 15px;font-weight: 700;" class="h6 text-center pt-3 pt-lg-4 mb-4">간편 로그인</h2>
-              <div class="text-center">
-                <a style="cursor: pointer;" @click.prevent="kakaoJoin">
-                  <img src="/img/kakao_join.png">
-                </a>
+            <div class="text-center">
+              <a style="cursor: pointer;" @click.prevent="kakaoJoin">
+                <img src="/img/kakao_join.png">
+              </a>
             </div>
           </form>
         </div>
@@ -71,13 +71,31 @@
       <signCoverImage></signCoverImage>
     </div>
   </div>
+
+  <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="successModalLabel">축하합니다!</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+        </div>
+        <div class="modal-body">
+          회원가입이 성공적으로 완료되었습니다.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn" @click="goToLogin">확인</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import signCoverImage from "@/views/SignCoverImage.vue";
 import authApi from '@/api/authApi';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // Bootstrap JS 가져오기
 
 const router = useRouter();
 const route = useRoute();
@@ -98,9 +116,20 @@ const disableSubmit = ref(false);
 const emailValid = ref(false);
 const passwordValid = ref(false);
 const passwordMatch = ref(false);
+const agreeTerms = ref(false); // 이용약관 동의 상태 추가
+
+const successModal = ref(null);
+
+onMounted(() => {
+  const modalElement = document.getElementById('successModal');
+  if (modalElement) {
+    const bootstrap = require('bootstrap');
+    successModal.value = new bootstrap.Modal(modalElement);
+  }
+});
 
 const checkId = async () => {
-  const idPattern = /^[a-zA-Z0-9]{5,20}$/; 
+  const idPattern = /^[a-zA-Z0-9]{5,20}$/;
 
   if (!member.id) {
     disableSubmit.value = false;
@@ -148,23 +177,36 @@ const checkPasswordMatch = () => {
 };
 
 const join = async () => {
-  if (!disableSubmit.value || !passwordValid.value || !passwordMatch.value || !emailValid.value) {
+  if (!disableSubmit.value || !passwordValid.value || !passwordMatch.value || !emailValid.value || !agreeTerms.value) {
     return alert('모든 필드를 올바르게 입력하세요.');
   }
 
   try {
     await authApi.create(member);
-    router.push({name:'login', replace: true});
+    if (successModal.value) {
+      successModal.value.show();
+    } else {
+      // 모달이 초기화되지 않은 경우 기본 알림 사용
+      alert('회원가입이 성공적으로 완료되었습니다.');
+      router.push({name:'login', replace: true});
+    }
   } catch (e) {
     console.error(e);
+    alert('회원가입에 실패했습니다.');
   }
+};
+
+const goToLogin = () => {
+  if (successModal.value) {
+    successModal.value.hide();
+  }
+  router.push({ name: 'login', replace: true });
 };
 
 const kakaoJoin = () => {
   const kakaoUrl = 'https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=f5c0ffbadcd4586df232b26623c1f227&redirect_uri=http://localhost:8081/auth/kakaojoin';
-  window.location.href = kakaoUrl; 
+  window.location.href = kakaoUrl;
 };
-
 </script>
 
 <style scoped>
@@ -179,9 +221,9 @@ const kakaoJoin = () => {
 }
 
 .signUpBtn:hover {
-   border: 1px solid lightgrey;
-   background-color: lightgrey;
-   color: black;
+  border: 1px solid lightgrey;
+  background-color: lightgrey;
+  color: black;
 }
 
 .col.mb-4 input {
@@ -226,4 +268,27 @@ const kakaoJoin = () => {
   background-color: rgba(68, 140, 116, 1);
   border-color: rgba(68, 140, 116, 1);
 }
+
+/* 모달 너비 조정 (선택 사항) */
+.modal-content {
+  max-width: 600px;
+  max-height: 400px;
+  border-radius: 30px;
+}
+
+.modal{
+  color: black;
+  font-size: 20px;
+}
+
+.modal-body{
+  padding: 20px;
+}
+
+.btn{
+  background-color: rgba(68, 140, 116, 1);
+  color: white;
+}
+
 </style>
+
