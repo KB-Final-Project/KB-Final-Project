@@ -121,7 +121,8 @@ onMounted(fetchNews);
 <style scoped>
 .newsMain {
   position: relative;
-  width: 1000px;
+  width: 900px;
+  font-family: J5;
 }
 
 .newsMain b {
@@ -141,6 +142,9 @@ onMounted(fetchNews);
   white-space: normal;
 }
 
+.container{
+  width: 1300px;
+}
 .newsBox {
   width: 100%;
   position: relative;
@@ -149,7 +153,7 @@ onMounted(fetchNews);
 }
 
 .newsBox h1 {
-  padding: 0 90px;
+  padding: 0 80px;
   font-family: J5;
   font-size: 40px
 }
@@ -160,7 +164,7 @@ onMounted(fetchNews);
 }
 
 .headline button {
-  margin-left: 50%
+  margin-left: 40%
 }
 
 .newsContent {
@@ -179,11 +183,6 @@ onMounted(fetchNews);
   transform: scale(1.05);
 }
 
-.newsMain {
-  font-family: J5;
-}
-
-
 button.seeMore_btn {
   background: none;
   border: none;
@@ -191,6 +190,7 @@ button.seeMore_btn {
   font-weight: bold;
   color: black;
   cursor: pointer;
+  margin-left: 700px;
 }
 
 .sideNews {
@@ -206,7 +206,6 @@ button.seeMore_btn {
   text-overflow: ellipsis;
   max-width: 550px;
   line-height: 2;
-  float: left;
   padding-right: 10px;
   cursor: pointer;
 }
@@ -215,6 +214,5 @@ button.seeMore_btn {
   font-size: 18px;
   color: gray;
   text-align: right;
-  width: 250px;
 }
 </style>

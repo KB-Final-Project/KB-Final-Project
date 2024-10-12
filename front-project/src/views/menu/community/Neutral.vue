@@ -82,7 +82,7 @@ const loadPosts = async () => {
 
 const fetchBoardPosts = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/api/board/2/posts');
+    const response = await axios.get('/api/board/2/posts');
     posts.value = response.data.postList; // postList를 저장
     console.log(posts.value); // 확인용 출력
   } catch (error) {
