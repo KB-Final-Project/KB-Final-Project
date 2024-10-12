@@ -127,6 +127,7 @@ async function createBoardPost() {
     console.log('Post created:', postResponse.data);
   } catch (error) {
     console.error('Error creating post:', error);
+    console.error('Error creating post:', error.response ? error.response.data : error.message);
   }
 }
 
