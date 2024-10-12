@@ -3,7 +3,6 @@ import { ref, onMounted, reactive } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import WriterPopup from './WriterPopup.vue';
 import axios from 'axios';
-import { useAuthStore } from '@/stores/auth';
 
 const activePropensity = ref('');
 const showModal = ref(false);
@@ -17,8 +16,6 @@ const myInfo = reactive({
   email: 'abcd@gmail.com',
   propensity: 1, // 안정형
 });
-
-const myInfoStore = useAuthStore();
 
 async function fetchTypes() {
   try {
@@ -130,153 +127,91 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="communityPanel">
+  <div class="communityPanel d-inline-block text-start">
     <div class="profile">
-      <img src="/img/imsi.png" alt="Profile Picture" />
-      <h2 class="name">{{ myInfo.name }}님</h2>
-      <h3 class="email">{{ myInfo.email }}</h3>
+      <img src="/img/imsi.png" /><br />
+      <h2 class="d-inline">{{ myInfo.name }}</h2><h2 style="font-weight: 100;" class="d-inline">님</h2>
+      <h2 style="font-weight: lighter;">{{ myInfo.email }}</h2>
     </div>
-    <div class="propensities">
-      <div
+    <br />
+    <div
         class="propensity"
         @click="setActive('안정형')"
         :class="{ active: activePropensity === '안정형' }"
-      >
-        <h3>안정형</h3>
-      </div>
-      <div
+    >
+      <h2>안정형</h2>
+    </div>
+    <div
         class="propensity"
         @click="setActive('중립형')"
         :class="{ active: activePropensity === '중립형' }"
-      >
-        <h3>중립형</h3>
-      </div>
-      <div
+    >
+      <h2>중립형</h2>
+    </div>
+    <div
         class="propensity"
         @click="setActive('적극투자형')"
         :class="{ active: activePropensity === '적극투자형' }"
-      >
-        <h3>적극투자형</h3>
-      </div>
-      <div
+    >
+      <h2>적극투자형</h2>
+    </div>
+    <div
         class="propensity"
         @click="setActive('공격투자형')"
         :class="{ active: activePropensity === '공격투자형' }"
-      >
-        <h3>공격투자형</h3>
-      </div>
-    </div>
-    <div class="myPage" @click="router.push('/mypage')">
-      <hr>
-      <h3>마이페이지</h3>
-    </div>
-    <button
-      class="writerBtn"
-      @click="openPopup"
-      :disabled="userPropensity !== activePropensity"
     >
-      새 글 작성하기
-    </button>
-    <div class="warnSign">
-      <h5>
-        커뮤니티는 게시판 제공만 하고 있습니다<br>
-        서비스는
-        <a href="/communityPrivacy" class="d-inline"> 커뮤니티정책</a>에 따라 운영됩니다
-      </h5>
+      <h2>공격투자형</h2>
     </div>
-    <WriterPopup v-if="showModal" @close="closePopup" />
-    <div v-if="showModal" class="overlay" @click="closePopup"></div>
+    <div
+        class="myPage"
+        @click="router.push('/mypage')"
+    >
+      <hr><br>
+      <h2>마이페이지</h2>
+    </div>
+    <br />
+    <div>
+      <button
+          class="writerBtn"
+          @click="openPopup"
+          :disabled="userPropensity !== activePropensity"
+      >새 글 작성하기
+      </button>
+    </div>
+    <br />
   </div>
+  <br> <br> <br> <br>
+  <div class="warnSign">
+    <h5>커뮤니티는 게시판 제공만 하고 있습니다<br>
+      서비스는
+      <a href="/communityPrivacy" class="d-inline"> 커뮤니티정책</a>에 따라 운영됩니다</h5>
+  </div>
+
+
+  <!-- WriterPopup 컴포넌트 (모달) -->
+  <WriterPopup v-if="showModal" @close="closePopup" />
+
+  <!-- 흐림 배경 -->
+  <div v-if="showModal" class="overlay" @click="closePopup"></div>
 </template>
 
 <style scoped>
-.communityPanel {
-  position: relative;
-  width: 350px;
-  background-color: #ffffff;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+.warnSign p{
+  color: #0f9d58;
 }
 
-.profile {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.profile img {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 2px solid rgba(67, 140, 116, 1);
-}
-
-.name {
-  font-size: 1.5rem;
-  margin: 10px 0;
-}
-
-.email {
-  font-size: 0.9rem;
-  color: #777;
-}
-
-.propensities {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.propensity {
-  padding: 15px;
-  cursor: pointer;
-  border-radius: 10px;
-  transition: background-color 0.3s;
-}
-
-.propensity:hover {
-  background-color: rgba(67, 140, 116, 0.1);
-}
-
-.propensity.active {
-  background-color: rgba(67, 140, 116, 0.3);
-  font-weight: bold;
-}
-
-.myPage {
-  padding: 15px;
-  cursor: pointer;
-  text-align: center;
-  border-top: 1px solid #ccc;
-  margin-top: 10px;
+a{
+  color:#0f9d58;
 }
 
 .writerBtn {
-  width: 100%;
+  width: 300px;
   height: 50px;
   border: none;
   border-radius: 10px;
   font-size: 20px;
   color: white;
   background-color: rgba(67, 140, 116, 1);
-  margin-top: 20px;
-  transition: background-color 0.3s;
-}
-
-.writerBtn:disabled {
-  background-color: rgba(225, 225, 225, 0.5);
-  color: #8f8f8f;
-}
-
-.warnSign {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 0.9rem;
-  color: #0f9d58;
-}
-
-a {
-  color: #0f9d58;
 }
 
 .overlay {
@@ -285,7 +220,50 @@ a {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.5); /* 흐린 배경 */
+  z-index: 10; /* 팝업 뒤에 위치하도록 */
+}
+
+.writerBtn:disabled{
+  background-color: rgba(225, 225, 225, 0.5); /* 흐린 배경 */
+  color: #8f8f8f;
+}
+
+.propensity {
+  width: 300px;
+  height: 80px;
+  padding: 25px;
+  cursor: pointer;
+}
+
+.myPage{
+  padding: 25px;
+  cursor: pointer;
+}
+.propensity:hover {
+  border: 1px solid rgba(67, 140, 116, 1);
+  border-radius: 20px;
+}
+.propensity.active {
+  border: 1px solid rgba(67, 140, 116, 1);
+  border-radius: 20px;
+  color: rgba(67, 140, 116, 1);
+}
+.myPage:hover{
+  border-radius: 20px
+}
+.communityPanel {
+  position: fixed;
+  width: 350px;
+  background-color: white;
+  border-radius: 30px;
+  padding: 15px;
+}
+.profile {
+  padding: 25px;
+}
+.profile img {
+  width: 150px;
+  border-radius: 50%;
 }
 </style>

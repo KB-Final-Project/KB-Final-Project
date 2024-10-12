@@ -370,6 +370,7 @@ onMounted(() => {
 
 .fundTheme {
   margin-right: auto;
+  padding: 20px;
   color: black;
   font-size: 30px;
 }
@@ -377,8 +378,6 @@ onMounted(() => {
 .fundName{
   font-family: J3;
   color: rgba(68, 140, 116, 1);
-  border-radius: 50px;
-  background-color: white;
 
 }
 
@@ -391,10 +390,7 @@ onMounted(() => {
   margin: 0 auto;
 }
 
-tbody td {
-  padding: 10px;
-  border-bottom: 5px solid white;
-}
+
 
 .fundSearchResultTable th {
   font-size: 17px;
@@ -438,7 +434,7 @@ thead tr:last-child th:last-child {
 .fundSearchResult {
   border-radius: 30px;
   padding: 10px;
-  background-color: rgb(239, 239, 239);;
+  background-color: white;
 }
 .fundSearchResult table{
   border-radius: 30px;
@@ -454,17 +450,7 @@ thead tr:last-child th:last-child {
   text-align: start;
   background-color: white;
   border-collapse: separate;
-  border-spacing: 0 15px;
-}
-
-.fundSearchResultTable {
-  width: 100%;
-  height: 100px;
-  table-layout: fixed;
-  text-align: start;
-  background-color: white;
-  border-collapse: separate;
-  border-spacing: 0 15px;
+  border-spacing: 0;
 }
 
 
@@ -526,13 +512,28 @@ thead tr:last-child th:last-child {
 }
 
 .page-link {
-  color: white;
+  color: black;
 }
 
 .active > .page-link {
   background-color: rgba(68, 140, 116, 1);;
   border: none;
   color: white;
+}
+
+tbody:hover {
+  background-color: rgba(68, 140, 116, 0.2);
+  transition: background-color 0.3s;
+
+}
+tbody{
+
+}
+
+tbody td {
+  padding: 10px;
+  transition: all 0.3s;
+
 }
 
 .page-link:hover {
