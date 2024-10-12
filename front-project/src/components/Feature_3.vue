@@ -12,12 +12,12 @@
               :class="{ 'positive-card': stock.change && stock.change.includes('+'), 'negative-card': stock.change && stock.change.includes('-') }"
               class="stock-card">
               <p class="stock-title">{{ stock.name }}</p>
-
+              <p class="amount-txt">{{ stock.amount }}</p>
               <p>
-                <span v-if="stock.change && stock.change.includes('+')" class="positive">
+                <span v-if="stock.change && stock.change.includes('+')" class="positive upDown">
                   {{ stock.change }}
                 </span>
-                <span v-else-if="stock.change && stock.change.includes('-')" class="negative">
+                <span v-else-if="stock.change && stock.change.includes('-')" class="negative upDown">
                   {{ stock.change }}
                 </span>
                 <span v-else>
@@ -41,19 +41,40 @@
                 <Line :data="chartData" :options="chartOptions" v-if="chartData" />
               </div>
               <div class="new-section" v-if="exchangeData">
-                <h4 class="d-inline-block">{{ exchangeData.currencyName }}({{ exchangeData.currencyCode }})</h4>
-                <h4 class="d-inline-block">{{ exchangeData.basePrice.toLocaleString() }}원 ({{
-                  exchangeData.baseRateDifference.toLocaleString() }})</h4>
-                <h4>날짜 {{ exchangeData.exchangeRateDate }}</h4>
+                <h4 class="d-inline-block title"><img
+                    :src="nationalMoney.find(currency => currency.code === exchangeData.currencyCode)?.flagUrl" alt="국기"
+                    class="flag-img" /> {{ exchangeData.currencyName }}({{ exchangeData.currencyCode }})</h4>
+                    <br>
+                <h4 class="d-inline-block">{{ exchangeData.basePrice.toLocaleString() }}원</h4>
+                <h4 class="d-inline-block">
+                  <span v-if="exchangeData.baseRateDifference > 0" class="positive upDown">
+                    {{ exchangeData.baseRateDifference.toLocaleString() }}
+                  </span>
+                  <span v-else-if="exchangeData.baseRateDifference < 0" class="negative upDown">
+                    {{ exchangeData.baseRateDifference.toLocaleString() }}
+                  </span>
+                  <span v-else>
+                    {{ exchangeData.baseRateDifference.toLocaleString() }}
+                  </span>
+                </h4>
+                <br>
+                <h4 class="date">{{ exchangeData.exchangeRateDate }}</h4>
               </div>
+
             </div>
             <div class="currency-buttons">
-              <button @click="fetchExchangeRates(23)" class="exchangeCountry1">미국</button>
-              <button @click="fetchExchangeRates(13)" class="exchangeCountry2">일본</button>
-              <button @click="fetchExchangeRates(9)" class="exchangeCountry1">EU</button>
-              <button @click="fetchExchangeRates(2)" class="exchangeCountry2">호주</button>
-              <button @click="fetchExchangeRates(10)" class="exchangeCountry1">영국</button>
+              <button @click="selectCurrency(23)" :class="{ 'active': selectedCurrency === 23 }"
+                class="exchangeCountry1 btn_country">미국</button>
+              <button @click="selectCurrency(13)" :class="{ 'active': selectedCurrency === 13 }"
+                class="exchangeCountry2 btn_country">일본</button>
+              <button @click="selectCurrency(9)" :class="{ 'active': selectedCurrency === 9 }"
+                class="exchangeCountry1 btn_country">EU</button>
+              <button @click="selectCurrency(2)" :class="{ 'active': selectedCurrency === 2 }"
+                class="exchangeCountry2 btn_country">호주</button>
+              <button @click="selectCurrency(10)" :class="{ 'active': selectedCurrency === 10 }"
+                class="exchangeCountry1 btn_country">영국</button>
             </div>
+
           </div>
         </div>
       </div>
@@ -227,6 +248,14 @@ const fetchExchangeRates = async (currencyId) => {
   }
 };
 
+const selectedCurrency = ref(null); // 선택된 통화를 추적하는 상태
+
+const selectCurrency = (currencyId) => {
+  selectedCurrency.value = currencyId; // 선택된 통화 업데이트
+  fetchExchangeRates(currencyId); // 선택한 통화의 환율 정보 가져오기
+};
+
+
 const fetchDailyExchangeData = async (currencyId) => {
   loading.value = true;
   try {
@@ -304,7 +333,7 @@ onMounted(async () => {
 
 .exchangeBox {
   width: 600px;
-  height: 400px;
+  height: 450px;
   border: 1px solid lightgrey;
   border-radius: 30px;
   padding: 20px;
@@ -364,15 +393,87 @@ h3 {
   margin: 20px;
 }
 
-button {
-  font-family: J3;
-}
-
 .stock-card {
+  flex: 1;
   padding: 15px;
   display: flex;
-  display: inline;
-  justify-content: space-around;
-  gap: 20px;
+  flex-direction: column;
+  font-family: J3;
+  align-items: center;
+  gap: 10px;
 }
+
+.todayCo {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 100%;
+  height: auto;
+  padding: 20px;
+  border: 1px solid lightgrey;
+  border-radius: 30px;
+  font-family: J4;
+  background-color: white;
+}
+
+.btn_country {
+  font-family: J3;
+  font-weight: bold;
+}
+
+.upDown {
+  font-size: 18px;
+}
+
+.positive {
+  color: #ff0008;
+}
+
+.negative {
+  color: #005cf6;
+}
+
+.positive::before {
+  content: "▲";
+  /* 상승 화살표 */
+  color: #ff0008;
+  margin-right: 5px;
+}
+
+.negative::before {
+  content: "▼";
+  /* 하락 화살표 */
+  color: #005cf6;
+  margin-right: 5px;
+}
+
+.amount-txt {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.stock-title {
+  font-family: J4;
+  font-size: 20px;
+}
+
+.d-inline-block {
+  font-family: J4;
+}
+
+.active {
+  background-color: #ffcc00; /* 선택된 버튼의 배경색 */
+  color: white; /* 선택된 버튼의 텍스트 색상 */
+  border: 2px solid #ffcc00; /* 선택된 버튼의 테두리 */
+}
+
+.date {
+  font-family: J3;
+  font-weight: bold;
+}
+
+.title {
+  font-size: 25px
+}
+
 </style>
