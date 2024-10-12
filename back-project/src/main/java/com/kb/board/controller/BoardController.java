@@ -45,13 +45,13 @@ public class BoardController {
         return ResponseEntity.ok(types);
     }
 
-    @GetMapping("")
+    @GetMapping("") // 게시판 목록 내용 조회
     public ResponseEntity<BoardPageResult> getList(BoardParam boardParam) {
         BoardPageResult result = service.getBoardList(boardParam);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/{bno}/posts")
+    @GetMapping("/{bno}/posts") // 게시글 bno 별 리스트 조회
     public ResponseEntity<BoardPostPageResult> getPosts(@PathVariable Long bno, PostParam postParam) {
         postParam.setBoardId(bno);  // 게시판 ID 설정
         BoardPostPageResult postResult = service.getPostList(postParam);
@@ -65,8 +65,9 @@ public class BoardController {
         return ResponseEntity.ok(service.getBoard(bno));
     }
 
-    @PostMapping("")
+    @PostMapping("/{type}") // 게시판 글 작성
     public ResponseEntity<BoardPost> create(
+            @PathVariable String type, // URL의 마지막 부분에서 type 받기
             @ModelAttribute @Valid BoardDTO boardDTO,
             @RequestParam(name = "files", required = false) List<MultipartFile> files,
             @AuthenticationPrincipal Member principal) {
@@ -74,6 +75,30 @@ public class BoardController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
+
+        int bno;
+
+        // type에 따라 bno 값 설정
+        switch (type) {
+            case "stability":
+                bno = 1;
+                break;
+            case "neutral":
+                bno = 2;
+                break;
+            case "activeInvestment":
+                bno = 3;
+                break;
+            case "aggressiveInvestment":
+                bno = 4;
+                break;
+            default:
+                return ResponseEntity.badRequest().body(null); // 잘못된 type인 경우
+        }
+
+        // BoardDTO에 bno와 type 설정
+        boardDTO.setBno(bno);
+        boardDTO.setType(type);
 
         BoardPost boardPost = boardDTO.toBoardPost(); // DTO를 게시글 객체로 변환
         boardPost.setMemberId(principal.getMno());
