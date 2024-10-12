@@ -73,21 +73,22 @@ TRUNCATE TABLE stock;
 
 drop tables stock;
 
-CREATE TABLE funds (
-                       id BIGINT AUTO_INCREMENT PRIMARY KEY,               -- ID 필드
-                       fundFnm VARCHAR(255),               -- 기준가
-                       gijunGa DECIMAL(19, 4),            -- 기준일 (기준가는 일반적으로 소수점을 가질 수 있음)
-                       gijunYmd DATE,                      -- 기준일 (LocalDate에 해당)
-                       suikRt1 DECIMAL(19, 4),            -- 1개월 수익률
-                       suikRt3 DECIMAL(19, 4),            -- 3개월 수익률
-                       suikRt6 DECIMAL(19, 4),            -- 6개월 수익률
-                       suikRt12 DECIMAL(19, 4),           -- 1년 수익률
-                       investGrade INT,                -- 투자 위험 등급
-                       feeTot DECIMAL(19, 4),              -- 총 유동
-                       bmNm VARCHAR(255),                   -- 벤치마크
-                       navTot DECIMAL(19, 4)                           -- 순 자산
-);
-
+CREATE TABLE `funds` (
+                         `id` bigint NOT NULL AUTO_INCREMENT,
+                         `fundFnm` varchar(255) DEFAULT NULL,
+                         `gijunGa` decimal(19,4) DEFAULT NULL,
+                         `gijunYmd` date DEFAULT NULL,
+                         `suikRt1` decimal(19,4) DEFAULT NULL,
+                         `suikRt3` decimal(19,4) DEFAULT NULL,
+                         `suikRt6` decimal(19,4) DEFAULT NULL,
+                         `suikRt12` decimal(19,4) DEFAULT NULL,
+                         `investGrade` int DEFAULT NULL,
+                         `feeTot` decimal(19,4) DEFAULT NULL,
+                         `bmNm` varchar(255) DEFAULT NULL,
+                         `navTot` decimal(19,4) DEFAULT NULL,
+                         UNIQUE (fundFnm),
+                         PRIMARY KEY (`id`)
+)
 
 CREATE TABLE SuikChart (
                            id BIGINT AUTO_INCREMENT PRIMARY KEY, -- 수익 차트 ID (기본 키)
