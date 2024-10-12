@@ -8,7 +8,26 @@
         <div class="todayStock">
           <h3>현재 증시</h3>
           <div class="todayCo">
-            코스피 코스닥
+            <div v-for="(stock, index) in currentStocks" :key="index"
+              :class="{ 'positive-card': stock.change && stock.change.includes('+'), 'negative-card': stock.change && stock.change.includes('-') }"
+              class="stock-card">
+              <p class="stock-title">{{ stock.name }}</p>
+
+              <p>
+                <span v-if="stock.change && stock.change.includes('+')" class="positive">
+                  {{ stock.change }}
+                </span>
+                <span v-else-if="stock.change && stock.change.includes('-')" class="negative">
+                  {{ stock.change }}
+                </span>
+                <span v-else>
+                  {{ stock.change ? stock.change : 'N/A' }}
+                </span>
+              </p>
+              <div class="line-c">
+                <Line :data="stock.chartData" :options="chartOptions" />
+              </div>
+            </div>
           </div>
         </div>
         <div class="todayExchange">
@@ -23,7 +42,8 @@
               </div>
               <div class="new-section" v-if="exchangeData">
                 <h4 class="d-inline-block">{{ exchangeData.currencyName }}({{ exchangeData.currencyCode }})</h4>
-                <h4 class="d-inline-block">{{ exchangeData.basePrice.toLocaleString() }}원 ({{ exchangeData.baseRateDifference.toLocaleString() }})</h4>
+                <h4 class="d-inline-block">{{ exchangeData.basePrice.toLocaleString() }}원 ({{
+                  exchangeData.baseRateDifference.toLocaleString() }})</h4>
                 <h4>날짜 {{ exchangeData.exchangeRateDate }}</h4>
               </div>
             </div>
@@ -60,8 +80,9 @@ import {
 // Chart.js 구성 요소 등록
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
+const currentStocks = ref([]);
 const loading = ref(false);
-const exchangeData = ref(null); 
+const exchangeData = ref(null);
 
 const nationalMoney = ref([
   { currencyId: 2, code: 'AUD', name: '호주 달러', countryCode: 'AU', flagUrl: 'https://flagcdn.com/24x18/au.png' },
@@ -131,13 +152,63 @@ const chartOptions = ref({
   },
 });
 
+const fetchStockData = async () => {
+  try {
+    const kospiResponse = await axios.get('/api/index/kospi');
+    const kosdaqResponse = await axios.get('/api/index/kosdaq');
+
+    // 차트 데이터 설정
+    currentStocks.value = [
+      {
+        name: 'KOSPI',
+        amount: kospiResponse.data.코스피,
+        change: kospiResponse.data.변동,
+        chartData: {
+          labels: ['2023-10-01', '2023-10-02', '2023-10-03', '2023-10-04', '2023-10-05'],
+          datasets: [
+            {
+              label: 'KOSPI',
+              data: [2570, 2580, 2560, 2575, 2585], // 실제 데이터를 설정
+              borderColor: 'rgba(75, 192, 192, 1)',
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              fill: true, // 영역을 채움
+              pointRadius: 2, // 각 데이터 포인트 표시
+            },
+          ],
+        },
+      },
+      {
+        name: 'KOSDAQ',
+        amount: kosdaqResponse.data.코스닥,
+        change: kosdaqResponse.data.변동,
+        chartData: {
+          labels: ['2023-10-01', '2023-10-02', '2023-10-03', '2023-10-04', '2023-10-05'],
+          datasets: [
+            {
+              label: 'KOSDAQ',
+              data: [1000, 1010, 990, 1005, 1015], // 실제 데이터를 설정
+              borderColor: 'rgba(153, 102, 255, 1)',
+              backgroundColor: 'rgba(153, 102, 255, 0.2)',
+              fill: true,
+              pointRadius: 2,
+            },
+          ],
+        }
+      },
+    ];
+  } catch (error) {
+    console.error('주식 데이터를 가져오는 중 오류 발생:', error);
+  }
+};
+
+
 const fetchExchangeRates = async (currencyId) => {
   loading.value = true;
   fetchDailyExchangeData(currencyId);
   try {
     const response = await axios.get(`/api/exchange/detail/${currencyId}`);
     const exchangeList = response.data[0]?.exchangeList || [];
-    
+
     chartData.value = {
       labels: exchangeList.map(item => new Date(item.exchangeRateDate).toLocaleDateString()),
       datasets: [
@@ -179,14 +250,15 @@ const fetchDailyExchangeData = async (currencyId) => {
   } finally {
     loading.value = false;
   }
-};  
+};
 onMounted(async () => {
   fetchExchangeRates(23);
+  fetchStockData();
 });
 </script>
 
 <style scoped>
-.subjectBetween{
+.subjectBetween {
   display: flex;
   justify-content: space-between;
 }
@@ -198,6 +270,7 @@ onMounted(async () => {
   font-weight: 600;
   margin-top: 20px;
 }
+
 .review-section__title {
   font-size: 40px;
   font-family: J6;
@@ -208,7 +281,7 @@ onMounted(async () => {
   flex-direction: row;
   justify-content: center;
   gap: 10px;
-  margin-top: 10px; 
+  margin-top: 10px;
 }
 
 .todayBox {
@@ -231,7 +304,7 @@ onMounted(async () => {
 
 .exchangeBox {
   width: 600px;
-  height: 400px; 
+  height: 400px;
   border: 1px solid lightgrey;
   border-radius: 30px;
   padding: 20px;
@@ -248,13 +321,16 @@ onMounted(async () => {
 }
 
 .line-c {
-  width: 300px; /* 원하는 너비 */
-  height: 220px; /* 원하는 높이 */
-  margin: 0 auto; /* 가운데 정렬 */
+  width: 300px;
+  /* 원하는 너비 */
+  height: 220px;
+  /* 원하는 높이 */
+  margin: 0 auto;
+  /* 가운데 정렬 */
 }
 
 .new-section {
-  flex: 1; 
+  flex: 1;
   min-height: 250px;
   border-radius: 15px;
   background-color: white;
@@ -265,7 +341,8 @@ onMounted(async () => {
   height: 250px;
 }
 
-.exchangeCountry1, .exchangeCountry2 {
+.exchangeCountry1,
+.exchangeCountry2 {
   width: 80px;
   height: 40px;
   border-radius: 20px;
@@ -289,5 +366,13 @@ h3 {
 
 button {
   font-family: J3;
+}
+
+.stock-card {
+  padding: 15px;
+  display: flex;
+  display: inline;
+  justify-content: space-around;
+  gap: 20px;
 }
 </style>
