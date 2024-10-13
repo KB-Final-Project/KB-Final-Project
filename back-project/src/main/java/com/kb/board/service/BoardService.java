@@ -95,6 +95,10 @@ public class BoardService {
 
     @Transactional(rollbackFor = Exception.class)
     public BoardPost createBoardPost(BoardPost boardPost, List<MultipartFile> files) {
+        // 먼저 authorId 가져오기
+        String authorId = mapper.getAuthorIdByMno(boardPost.getMemberId());
+        boardPost.setAuthorId(authorId);
+
         // createdDate를 현재 시간으로 설정
         boardPost.setCreatedDate(new Timestamp(System.currentTimeMillis()));
 
@@ -197,17 +201,21 @@ public class BoardService {
         return mapper.deleteAttachFile(fno) == 1;
     }
 
+    @Transactional
     public BoardReply createReply(BoardReply reply) {
         int result = mapper.insertReply(reply);
+        if (result != 1) {
+            throw new RuntimeException("Failed to insert reply");
+        }
         reply = mapper.selectReplyByRno(reply.getRno());
         return reply;
     }
 
-    public BoardReply getReply(long rno) {
+    public BoardReply getReply(int rno) {
         return mapper.selectReplyByRno(rno);
     }
 
-    public int delteReply(long rno) {
+    public int deleteReply(int rno) {
         return mapper.deleteReply(rno);
     }
 }
