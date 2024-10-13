@@ -14,23 +14,23 @@
       <!-- trendGraph -->
       <div class="trendGraph">
         <div class="btn1 ">
-          <img src="/img/imsi.png">
+          <img src="/img/samsung.png">
           <span>삼성전자</span>
           <img src="/img/graph.png">
         </div>
         <div class="btn2 ">
-          <img src="/img/imsi.png">
-          <span>유한양행</span>
+          <img src="/img/hanhwa.png">
+          <span>한화에어로스페이스</span>
           <img src="/img/graph.png">
         </div>
         <div class="btn1 ">
-          <img src="/img/imsi.png">
-          <span>SK 하이닉스</span>
+          <img src="/img/hana.png">
+          <span>하나금융지주</span>
           <img src="/img/graph.png">
         </div>
         <div class="btn2 ">
-          <img src="/img/imsi.png">
-          <span>LG 전자</span>
+          <img src="/img/LGE.png">
+          <span>LG에너지솔루션</span>
           <img src="/img/graph.png">
         </div>
       </div>
