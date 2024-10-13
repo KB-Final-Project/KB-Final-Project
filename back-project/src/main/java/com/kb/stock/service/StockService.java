@@ -10,9 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -51,6 +48,7 @@ public class StockService {
 
     private StockWebSocketHandler webSocketHandler;
     private final Set<String> subscribedStocks = ConcurrentHashMap.newKeySet();
+
     @Autowired
     private WebSocketService webSocketService;
 
@@ -87,9 +85,9 @@ public class StockService {
 
         logger.info("Retrieved {} stock codes from database", stockCodes.size());
 
-        for (int i = 0; i < stockCodes.size(); i += 20) {
-            List<String> batch = stockCodes.subList(i, Math.min(i + 20, stockCodes.size()));
-            processStockBatch(batch, i / 20 + 1);
+        for (int i = 0; i < stockCodes.size(); i += 10) {
+            List<String> batch = stockCodes.subList(i, Math.min(i + 10, stockCodes.size()));
+            processStockBatch(batch, i / 10 + 1);
 
             try {
                 Thread.sleep(REQUEST_INTERVAL_MS * 20);
@@ -209,6 +207,7 @@ public class StockService {
             stockDTO.setHtsAvls(stockData.get("hts_avls") != null ? new BigDecimal(stockData.get("hts_avls").toString()) : BigDecimal.ZERO); // HTS 시가총액 추가
             stockDTO.setW52Hgpr(stockData.get("w52_hgpr") != null ? new BigDecimal(stockData.get("w52_hgpr").toString()) : BigDecimal.ZERO); // 52주일 최고가 추가
             stockDTO.setW52Lwpr(stockData.get("w52_lwpr") != null ? new BigDecimal(stockData.get("w52_lwpr").toString()) : BigDecimal.ZERO); // 52주일 최저가 추가
+            stockDTO.setAcmlTrPbmn(stockData.get("acml_tr_pbmn") != null ? new BigDecimal(stockData.get("acml_tr_pbmn").toString()) : BigDecimal.ZERO); // acml_tr_pbmn 시가총액 추가
 
             logger.info("Stock data received: {}", stockData);
             logger.info("Mapped StockDTO: {}", stockDTO);
@@ -264,6 +263,37 @@ public class StockService {
             }
         }).start();
     }
+
+    // 안정성 중심 주식 조회
+    public List<StockDTO> getStableStocks() {
+        logger.info("Fetching stable stocks");
+        return stockMapper.selectStableStocks();
+    }
+
+    // 성장성 중심 주식 조회
+    public List<StockDTO> getGrowthStocks() {
+        logger.info("Fetching growth stocks");
+        return stockMapper.selectGrowthStocks();
+    }
+
+    // 배당성 중심 주식 조회
+    public List<StockDTO> getDividendStocks() {
+        logger.info("Fetching dividend stocks");
+        return stockMapper.selectDividendStocks();
+    }
+
+    // 변동성 중심 주식 조회
+    public List<StockDTO> getVolatileStocks() {
+        logger.info("Fetching volatile stocks");
+        return stockMapper.selectVolatileStocks();
+    }
+
+    // 공격성 중심 주식 조회
+    public List<StockDTO> getAggressiveStocks() {
+        logger.info("Fetching aggressive stocks");
+        return stockMapper.selectAggressiveStocks();
+    }
+
     public List<Map<String, Object>> getCategoryRankings() {
         List<StockDTO> allStocks = getAllStocks();
         Map<String, List<StockDTO>> categoryStocks = new HashMap<>();
@@ -310,4 +340,5 @@ public class StockService {
 
         return categoryRankings;
     }
+
 }
