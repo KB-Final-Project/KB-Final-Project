@@ -101,7 +101,7 @@ public class BoardService {
         log.info("Creating post: " + boardPost);
 
         // 게시글 삽입 전 로그 추가
-        log.info("Inserting into board_post with bno: " + boardPost.getBno());
+        log.info("Inserting into board_post with postId: " + boardPost.getPostId());
 
         // 게시글 작성
         int result = mapper.insertBoardPost(boardPost);
@@ -120,12 +120,12 @@ public class BoardService {
     }
 
 
-    private void upload(long bno, List<MultipartFile> files) {
+    private void upload(long postId, List<MultipartFile> files) {
         for (MultipartFile part : files) {
             if (part.isEmpty()) continue;
             try {
                 String renameFileName = UploadFiles.upload(BASE_DIR, part);
-                BoardAttachFile attach = new BoardAttachFile(0, bno, part.getOriginalFilename(), renameFileName, part.getContentType(), part.getSize(), null);
+                BoardAttachFile attach = new BoardAttachFile(0, postId, part.getOriginalFilename(), renameFileName, part.getContentType(), part.getSize(), null);
                 mapper.insertAttachFile(attach);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -144,7 +144,6 @@ public class BoardService {
     @Transactional // 게시글 수정
     public BoardPost updateBoard(BoardPost boardPost, List<MultipartFile> files) {
         log.info("update...... " + boardPost);
-//        Board oldBoard = getBoard(board.getBno());
         log.info("Updating board post with postId: " + boardPost.getPostId());
 
         // 게시글 존재 여부 확인
@@ -155,14 +154,14 @@ public class BoardService {
             throw new NoSuchElementException("No post found with id: " + boardPost.getPostId());
         }
 
-        int result = mapper.updateBoard(boardPost);
+        int result = mapper.updateBoardPost(boardPost);
         if (result != 1) {
             throw new RuntimeException("Failed to update post with id: " + boardPost.getPostId());
         }
 
         // 파일 업로드 처리
         if (files != null && !files.isEmpty()) {
-            upload(boardPost.getBno(), files);
+            upload(boardPost.getPostId(), files);
         }
 
         return getBoard(boardPost.getPostId());
@@ -175,8 +174,10 @@ public class BoardService {
         BoardPost boardPost = getBoard(postId);
 
         List<BoardAttachFile> oldFiles = boardPost.getBoardAttachFileList();
-        for (BoardAttachFile old : oldFiles) {
-            deleteFile(BASE_DIR, old);
+        if (oldFiles != null) { // null 체크 추가
+            for (BoardAttachFile old : oldFiles) {
+                deleteFile(BASE_DIR, old);
+            }
         }
 
         int result = mapper.deleteBoard(postId);
