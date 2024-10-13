@@ -13,6 +13,7 @@ const route = useRoute();
 
 const myInfo = reactive({
   name: '이사벨라',
+  id: "",
   email: 'abcd@gmail.com',
   propensity: 1, // 안정형
 });
@@ -34,8 +35,8 @@ async function getMyInfo() {
   if (authValue) {
     try {
       const authData = JSON.parse(authValue);
-      if (authData.email) {
-        myInfo.name = authData.name;
+      if (authData.id) {
+        myInfo.id = authData.id;
         myInfo.email = authData.email; // email 값 추출
       } else {
         console.log('Email not found in auth data');
@@ -130,7 +131,7 @@ onMounted(() => {
   <div class="communityPanel d-inline-block text-start">
     <div class="profile">
       <img src="/img/imsi.png" /><br />
-      <h2 class="d-inline">{{ myInfo.name }}</h2><h2 style="font-weight: 100;" class="d-inline">님</h2>
+      <h2 class="d-inline">{{ myInfo.id }}</h2><h2 style="font-weight: 100;" class="d-inline">님</h2>
       <h2 style="font-weight: lighter;">{{ myInfo.email }}</h2>
     </div>
     <br />
@@ -253,7 +254,7 @@ a{
   border-radius: 20px
 }
 .communityPanel {
-  position: fixed;
+  position: relative;
   width: 350px;
   background-color: white;
   border-radius: 30px;

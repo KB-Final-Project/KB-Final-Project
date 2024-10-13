@@ -5,6 +5,7 @@ import axios from "axios";
 
 const loading = ref(true);
 const boards = ref([]);
+const posts = ref([]); // 포스트 목록을 저장할 ref
 
   const fetchBoard = async ()=>{
     loading.value = true;
@@ -27,7 +28,6 @@ const boards = ref([]);
   };
 
 
-  const posts = ref([]); // 포스트 목록을 저장할 ref
 
   const fetchBoardPosts = async () => {
   try {
@@ -37,6 +37,19 @@ const boards = ref([]);
   } catch (error) {
     console.error('Error fetching posts:', error); // 오류 처리
   }
+};
+
+// 타임스탬프를 형식화하는 함수
+const formatDate = (timestamp) => {
+  const date = new Date(timestamp);
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true
+  });
 };
 
 
@@ -56,8 +69,8 @@ const boards = ref([]);
             <img :src="require('@/assets/media/avatars/300-25.jpg')" alt="" />
           </div>
           <div class="d-flex flex-column">
-            <a href="#" class="name text-gray-800 mb-1 fw-bolder">Brad Dennis</a>
-            <span class="text-gray-500 fw-semibold">Yesterday at 5:06 PM</span>
+            <a href="#" class="name text-gray-800 mb-1 fw-bolder">{{ post.authorId }}</a>
+            <span class="text-gray-500 fw-semibold">{{ formatDate(post.createdDate) }} </span>
           </div>
         </div>
         <div class="pt-5">

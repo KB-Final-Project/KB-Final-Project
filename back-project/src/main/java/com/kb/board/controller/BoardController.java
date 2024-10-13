@@ -3,6 +3,7 @@ package com.kb.board.controller;
 import com.kb.board.dto.*;
 import com.kb.board.service.BoardService;
 import com.kb.member.dto.Member;
+import com.kb.member.service.MemberService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/board")
@@ -34,6 +36,9 @@ public class BoardController {
     @Autowired
     private BoardService boardService;
 
+    @Autowired
+    private MemberService memberService;
+
     @Value("#{'${os_type}' == 'win' ? '${file_save_location_win}/board':'${file_save_location_other}/board'}")
     public String BASE_DIR;
 
@@ -45,19 +50,33 @@ public class BoardController {
         return ResponseEntity.ok(types);
     }
 
-    @GetMapping("")
+    @GetMapping("") // 게시판 목록 내용 조회
     public ResponseEntity<BoardPageResult> getList(BoardParam boardParam) {
         BoardPageResult result = service.getBoardList(boardParam);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/{bno}/posts")
+    @GetMapping("/{bno}/posts") // 게시글 bno 별 리스트 조회
     public ResponseEntity<BoardPostPageResult> getPosts(@PathVariable Long bno, PostParam postParam) {
         postParam.setBoardId(bno);  // 게시판 ID 설정
+        postParam.setBno(bno);      // 게시글 번호 추가
         BoardPostPageResult postResult = service.getPostList(postParam);
+
+        // 각 게시글에 작성자 ID 추가
+        List<BoardPost> postsWithAuthors = postResult.getPostList().stream()
+                .map(post -> {
+                    Member member = memberService.findByMno((int) post.getMemberId()); // memberId로 Member 조회
+                    post.setAuthorId(member.getId()); // 작성자 ID 설정
+                    return post; // 수정된 BoardPost 객체 반환
+                })
+                .collect(Collectors.toList());
+
+        postResult.setPostList(postsWithAuthors); // 수정된 리스트 업데이트
 
         return ResponseEntity.ok(postResult);
     }
+
+
 
 
     @GetMapping("/{bno}")
@@ -65,8 +84,9 @@ public class BoardController {
         return ResponseEntity.ok(service.getBoard(bno));
     }
 
-    @PostMapping("")
+    @PostMapping("/{type}") // 게시판 글 작성
     public ResponseEntity<BoardPost> create(
+            @PathVariable String type, // URL의 마지막 부분에서 type 받기
             @ModelAttribute @Valid BoardDTO boardDTO,
             @RequestParam(name = "files", required = false) List<MultipartFile> files,
             @AuthenticationPrincipal Member principal) {
@@ -75,8 +95,33 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
+        int bno;
+
+        // type에 따라 bno 값 설정
+        switch (type) {
+            case "stability":
+                bno = 1;
+                break;
+            case "neutral":
+                bno = 2;
+                break;
+            case "activeInvestment":
+                bno = 3;
+                break;
+            case "aggressiveInvestment":
+                bno = 4;
+                break;
+            default:
+                return ResponseEntity.badRequest().body(null); // 잘못된 type인 경우
+        }
+
+        // BoardDTO에 bno와 type 설정
+        boardDTO.setBno(bno);
+        boardDTO.setType(type);
+
         BoardPost boardPost = boardDTO.toBoardPost(); // DTO를 게시글 객체로 변환
         boardPost.setMemberId(principal.getMno());
+        boardPost.setAuthorId(String.format("%d", principal.getMno()));
 
         log.info("Creating boardPost with bno: " + boardPost.getBno());
 
