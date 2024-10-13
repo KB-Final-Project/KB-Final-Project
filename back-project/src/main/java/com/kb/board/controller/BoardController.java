@@ -76,12 +76,9 @@ public class BoardController {
         return ResponseEntity.ok(postResult);
     }
 
-
-
-
-    @GetMapping("/{bno}")
-    public ResponseEntity<BoardPost> getById(@PathVariable int bno) {
-        return ResponseEntity.ok(service.getBoard(bno));
+    @GetMapping("/{postId}") // 게시글 조회
+    public ResponseEntity<BoardPost> getById(@PathVariable long postId) {
+        return ResponseEntity.ok(service.getBoard(postId));
     }
 
     @PostMapping("/{type}") // 게시판 글 작성
@@ -129,15 +126,22 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
 
-    @PutMapping("/{bno}")
-    public ResponseEntity<BoardPost> update(@PathVariable int bno,
+    @PutMapping("/{postId}")
+    public ResponseEntity<BoardPost> update(@PathVariable int postId,
                                             BoardDTO boardDTO,
                                             @RequestParam(name = "files", required = false) List<MultipartFile> files) {
-        BoardPost boardPost = boardDTO.toBoardPost();
-        boardPost.setBno(bno);
-        System.out.println("files " + files);
-        return ResponseEntity.ok(service.updateBoard(boardPost, files));
+        try {
+            BoardPost boardPost = boardDTO.toBoardPost();
+            boardPost.setPostId(postId); // 게시글 번호를 postId로 설정
+            System.out.println("files " + files);
+            return ResponseEntity.ok(service.updateBoard(boardPost, files));
+        } catch (Exception e) {
+            log.error("Error updating board post: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
+
+
 
     @DeleteMapping("/{bno}")
     public ResponseEntity<BoardPost> delete(@PathVariable int bno) {
