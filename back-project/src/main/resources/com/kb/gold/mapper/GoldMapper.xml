@@ -5,6 +5,14 @@
 
 <mapper namespace="com.kb.gold.mapper.GoldMapper">
 
+    <resultMap id="GoldInfoResultMap" type="com.kb.gold.dto.GoldDto">
+        <result property="basDd" column="bas_dd"/>
+        <result property="isuCd" column="isu_cd"/>
+        <result property="cmpPrevDdPrc" column="cmp_prev_dd_prc"/>
+        <result property="flucRt" column="fluc_rt"/>
+        <result property="tddOpnPrc" column="tdd_opn_prc"/>
+    </resultMap>
+
     <insert id="insertGoldDataBatch" parameterType="list">
         INSERT INTO gold_data
         (bas_dd, isu_cd, isu_nm, tdd_cls_prc, cmp_prev_dd_prc, fluc_rt, tdd_opn_prc,
@@ -17,5 +25,24 @@
             #{goldData.accTrdVol}, #{goldData.accTrdVal})
         </foreach>
     </insert>
+
+    <select id="getTotalCount" resultType="int">
+        SELECT
+            count(*)
+        FROM
+            gold_data
+        WHERE
+            isu_cd = "04020000"
+    </select>
+
+    <select id="getGoldInfoList" resultMap="GoldInfoResultMap" parameterType="com.kb.gold.dto.GoldParam">
+        SELECT
+            bas_dd, isu_cd, cmp_prev_dd_prc, fluc_rt, tdd_opn_prc
+        FROM
+            gold_data
+        WHERE isu_cd = "04020000"
+        ORDER BY bas_dd desc
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
 
 </mapper>

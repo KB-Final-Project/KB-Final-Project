@@ -1,5 +1,8 @@
 package com.kb.gold.controller;
 
+import com.kb.gold.dto.GoldDto;
+import com.kb.gold.dto.GoldListResponseDTO;
+import com.kb.gold.dto.GoldParam;
 import com.kb.gold.service.GoldService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -28,5 +33,12 @@ public class GoldController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("데이터 저장 중 오류가 발생했습니다: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<GoldListResponseDTO> getGoldDataList(@RequestParam int page){
+        GoldParam goldParam = new GoldParam();
+        goldParam.setPage(page);
+        return ResponseEntity.ok(goldService.getGoldInfoList(goldParam));
     }
 }
