@@ -11,11 +11,12 @@ function closePopup() {
     <div class="popup-content">
       <!-- 이미지와 버튼을 좌우로 배치 -->
       <div class="header d-flex justify-content-between align-items-center">
-        <img src="/img/imsi.png" />
-        <button>작성</button>
+        <button class="cancel">취소</button>
+        <button class="submit">작성</button>
       </div>
-
-      <textarea placeholder="무슨 일이 일어나고 있나요?" rows="5"></textarea>
+      <input v-model="postTitle" id="title" class="subject" placeholder="제목을 입력하세요" />
+      <br>
+      <textarea  class="content" placeholder="무슨 일이 일어나고 있나요?" rows="5"></textarea>
       <div class="filebox">
         <label for="file">
           <i class="ai-image"></i>
@@ -76,24 +77,43 @@ function closePopup() {
   margin-bottom: 20px;
 }
 
-textarea {
+.content {
   width: 100%;
-  height: 180px;
+  height: 130px;
   padding: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   border-radius: 20px;
-  border: none;
-  margin-top: -30px;
+  border: 1px solid lightgrey;
   resize: none;
 }
 
-button {
+.subject{
+  width: 100%;
+  height: 40px;
+  margin-top: -50px;
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid lightgrey;
+}
+
+.submit {
   width: 100px;
   height: 40px;
   border-radius: 10px;
   margin-top: -30px;
   background-color: rgba(67, 140, 116, 1);
   color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.cancel {
+  width: 100px;
+  height: 40px;
+  border-radius: 10px;
+  margin-top: -30px;
+  background-color: rgb(192, 192, 192);
+  color: black;
   border: none;
   cursor: pointer;
 }

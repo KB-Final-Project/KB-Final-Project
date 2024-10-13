@@ -131,44 +131,43 @@ onMounted(() => {
   <div class="communityPanel d-inline-block text-start">
     <div class="profile">
       <img src="/img/imsi.png" /><br />
-      <h2 class="d-inline">{{ myInfo.id }}</h2><h2 style="font-weight: 100;" class="d-inline">님</h2>
-      <h2 style="font-weight: lighter;">{{ myInfo.email }}</h2>
+      <h4 class="d-inline">{{ myInfo.id }}</h4><h2 style="font-weight: 100;" class="d-inline">님</h2>
+      <h4 style="font-weight: lighter;">{{ myInfo.email }}</h4>
     </div>
-    <br />
     <div
         class="propensity"
         @click="setActive('안정형')"
         :class="{ active: activePropensity === '안정형' }"
     >
-      <h2>안정형</h2>
-    </div>
+      <h4>안정형</h4>
+    </div><br>
     <div
         class="propensity"
         @click="setActive('중립형')"
         :class="{ active: activePropensity === '중립형' }"
     >
-      <h2>중립형</h2>
-    </div>
+      <h4>중립형</h4>
+    </div><br>
     <div
         class="propensity"
         @click="setActive('적극투자형')"
         :class="{ active: activePropensity === '적극투자형' }"
     >
-      <h2>적극투자형</h2>
-    </div>
+      <h4>적극투자형</h4>
+    </div><br>
     <div
         class="propensity"
         @click="setActive('공격투자형')"
         :class="{ active: activePropensity === '공격투자형' }"
     >
-      <h2>공격투자형</h2>
-    </div>
+      <h4>공격투자형</h4>
+    </div><br>
     <div
         class="myPage"
         @click="router.push('/mypage')"
     >
       <hr><br>
-      <h2>마이페이지</h2>
+      <h4>마이페이지</h4>
     </div>
     <br />
     <div>
@@ -181,11 +180,11 @@ onMounted(() => {
     </div>
     <br />
   </div>
-  <br> <br> <br> <br>
+  <br> <br>
   <div class="warnSign">
-    <h5>커뮤니티는 게시판 제공만 하고 있습니다<br>
+    <h6>커뮤니티는 게시판 제공만 하고 있습니다<br>
       서비스는
-      <a href="/communityPrivacy" class="d-inline"> 커뮤니티정책</a>에 따라 운영됩니다</h5>
+      <a href="/communityPrivacy" class="d-inline"> 커뮤니티정책</a>에 따라 운영됩니다</h6>
   </div>
 
 
@@ -197,8 +196,13 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.warnSign p{
-  color: #0f9d58;
+.bc {
+  position: fixed;
+  padding-bottom: 375px;
+}
+
+.warnSign h6{
+  color: #4c4c4c;
 }
 
 a{
@@ -206,10 +210,10 @@ a{
 }
 
 .writerBtn {
-  width: 300px;
-  height: 50px;
+  width: 190px;
+  height: 40px;
   border: none;
-  border-radius: 10px;
+  border-radius: 20px;
   font-size: 20px;
   color: white;
   background-color: rgba(67, 140, 116, 1);
@@ -229,42 +233,58 @@ a{
   background-color: rgba(225, 225, 225, 0.5); /* 흐린 배경 */
   color: #8f8f8f;
 }
+.writerBtn:hover{
+  background-color: rgba(67, 140, 116, 0.31);
+  color: rgba(67, 140, 116, 1);
+}
 
 .propensity {
-  width: 300px;
-  height: 80px;
-  padding: 25px;
+  width: 180px;
+  padding: 10px;
   cursor: pointer;
 }
 
 .myPage{
-  padding: 25px;
+  padding: 10px;
   cursor: pointer;
 }
+
 .propensity:hover {
+  width: 180px;
+  height: 50px;
   border: 1px solid rgba(67, 140, 116, 1);
   border-radius: 20px;
+  padding: 10px;
 }
+
 .propensity.active {
+  padding: 10px;
+  width: 180px;
+  height: 50px;
   border: 1px solid rgba(67, 140, 116, 1);
   border-radius: 20px;
   color: rgba(67, 140, 116, 1);
 }
+
 .myPage:hover{
   border-radius: 20px
 }
+
 .communityPanel {
-  position: relative;
-  width: 350px;
-  background-color: white;
+  width: 250px;
+  height: 630px;
   border-radius: 30px;
-  padding: 15px;
+  padding: 25px;
+  background-color: white;
 }
+
 .profile {
   padding: 25px;
+  margin-top: -30px;
 }
+
 .profile img {
-  width: 150px;
+  width: 80px;
   border-radius: 50%;
 }
 </style>

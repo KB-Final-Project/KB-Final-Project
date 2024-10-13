@@ -5,18 +5,12 @@
         <div class="feeds card mb-5 mb-xxl-8">
           <div class="card-body pb-0">
             <div class="d-flex align-items-center">
-              <div class="symbol symbol-55pxpx me-5">
-                <img src="/img/imsi.png" alt="User Image" />
-              </div>
-              <div class="d-flex flex-column">
-                <h3 class="user-name">{{ myInfo.name }}</h3>
-              </div>
               <div class="button-group position-absolute top-0 end-0 mt-3 me-5">
                 <button type="button" class="cancel me-3" @click="cancelPost">취소</button>
                 <button type="submit" class="submit">작성</button>
               </div>
             </div>
-            <div class="pt-3">
+            <div>
               <input v-model="postTitle" id="title" class="subject" placeholder="제목을 입력하세요" />
               <textarea v-model="postContent" id="content" class="writer" placeholder="무슨 일이 일어나고 있나요?"></textarea>
               <div class="filebox">
@@ -43,63 +37,68 @@
 }
 
 .ai-image {
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
   color: rgba(67, 140, 116, 1);
+  margin-left: -10px;
 }
 
 .submit{
-  width: 100px;
-  height: 50px;
+  width: 80px;
+  height: 30px;
   border-radius: 20px;
   border: none;
   background-color: rgb(67, 140, 116);
   color: white;
-  font-size: 15px;
+  font-size: 12px;
 }
 .cancel{
-  width: 100px;
-  height: 50px;
+  width: 80px;
+  height: 30px;
   border-radius: 20px;
+  background-color: lightgrey;
+  color: white;
   border: none;
-  font-size: 15px;
+  font-size: 12px;
 }
 
-.card{
-  border: none;
-}
 
 .feeds{
+  width: 600px;
+  height: 250px;
   border-radius: 30px;
+  border: none;
+  background-color: white;
+  padding: 10px;
 }
 .writer{
   text-align: start;
-  margin-left: 15px;
-  width: 800px;
-  height: 180px;
+  width: 550px;
+  height: 100px;
   border-radius: 20px;
   padding: 20px;
   border: 1px solid lightgrey;
   resize: none;
-  font-size: 20px;
+  font-size: 15px;
   margin-top: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  margin-left: -10px;
 }
 
 .subject{
   text-align: start;
-  margin-left: 15px;
-  width: 800px;
-  height: 60px;
+  width: 550px;
+  height: 30px;
   border-radius: 20px;
+  margin-top: 20px;
   padding: 20px;
   border: 1px solid lightgrey;
   resize: none;
-  font-size: 20px;
+  font-size: 15px;
+  margin-left: -10px;
 }
 
 </style>
-
 <script setup>
 import axios from "axios";
 import { ref, onMounted, reactive } from 'vue';
