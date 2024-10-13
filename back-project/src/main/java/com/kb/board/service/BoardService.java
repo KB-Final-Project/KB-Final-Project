@@ -77,9 +77,9 @@ public class BoardService {
 
 
     @Transactional
-    public BoardPost getBoard(int postId) {
+    public BoardPost getBoard(Long postId) {
         log.info("Getting post with ID: " + postId);
-        BoardPost boardPost = mapper.selectBoardByBno(postId);
+        BoardPost boardPost = mapper.selectBoardPostByPostId(postId);
 
         // null 체크
         if (boardPost == null) {
@@ -141,14 +141,23 @@ public class BoardService {
     }
 
 
-    @Transactional
+    @Transactional // 게시글 수정
     public BoardPost updateBoard(BoardPost boardPost, List<MultipartFile> files) {
         log.info("update...... " + boardPost);
 //        Board oldBoard = getBoard(board.getBno());
+        log.info("Updating board post with postId: " + boardPost.getPostId());
+
+        // 게시글 존재 여부 확인
+        BoardPost existingPost = mapper.selectBoardPostByPostId(boardPost.getPostId());
+        log.info("Existing post found: " + existingPost);
+
+        if (existingPost == null) {
+            throw new NoSuchElementException("No post found with id: " + boardPost.getPostId());
+        }
 
         int result = mapper.updateBoard(boardPost);
         if (result != 1) {
-            throw new NoSuchElementException();
+            throw new RuntimeException("Failed to update post with id: " + boardPost.getPostId());
         }
 
         // 파일 업로드 처리
@@ -156,21 +165,21 @@ public class BoardService {
             upload(boardPost.getBno(), files);
         }
 
-        return getBoard(boardPost.getBno());
+        return getBoard(boardPost.getPostId());
     }
 
 
-    @Transactional
-    public BoardPost deleteBoard(long bno) {
-        log.info("delete...." + bno);
-        BoardPost boardPost = getBoard((int) bno);
+    @Transactional // 게시글 삭제
+    public BoardPost deleteBoard(long postId) {
+        log.info("delete...." + postId);
+        BoardPost boardPost = getBoard(postId);
 
         List<BoardAttachFile> oldFiles = boardPost.getBoardAttachFileList();
         for (BoardAttachFile old : oldFiles) {
             deleteFile(BASE_DIR, old);
         }
 
-        int result = mapper.deleteBoard(bno);
+        int result = mapper.deleteBoard(postId);
         if (result != 1) {
             throw new NoSuchElementException();
         }

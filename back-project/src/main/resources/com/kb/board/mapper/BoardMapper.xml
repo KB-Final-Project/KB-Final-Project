@@ -140,25 +140,24 @@
 
     <update id="updateBoard" parameterType="com.kb.board.dto.BoardPost">
         <![CDATA[
-        UPDATE board
+        UPDATE board_post
         SET type = #{type}, title = #{title}, content = #{content}, status = #{status}
-        WHERE bno = #{bno}
+        WHERE post_id = #{postId}
         ]]>
     </update>
-
 
     <!-- 게시글 조회시 readCount 갱신용 -->
     <update id="updateReadCount" parameterType="com.kb.board.dto.BoardPost">
         update board_post set
             read_count = #{readCount}
-        where bno = #{bno}
+        where post_id = #{postId}
     </update>
 
-    <update id="deleteBoard" parameterType="long">
+    <update id="deleteBoard" parameterType="java.lang.Long">
         <![CDATA[
-        UPDATE board
+        UPDATE board_post
         SET status = 'n'
-        WHERE bno = #{bno}
+        WHERE post_id = #{postId}
         ]]>
     </update>
 
@@ -236,7 +235,7 @@
         ]]>
     </select>
 
-    <select id="selectBoardPostById" parameterType="int" resultMap="boardPostResultMap">
+    <select id="selectBoardPostByPostId" parameterType="java.lang.Long" resultMap="boardPostResultMap">
         <![CDATA[
         SELECT
             bp.post_id AS postId,

@@ -8,7 +8,7 @@ public interface BoardMapper {
     List<BoardCategory> selectBoardCategory();
     List<BoardPost> selectBoardList(BoardParam param);
     int selectBoardCount(BoardParam param);
-    BoardPost selectBoardByBno(int bno);
+    BoardPost selectBoardPostByPostId(Long postId);
     int selectPostCount(PostParam postParam); // 게시글 수 조회
     List<BoardPost> selectPostList(PostParam postParam); // 게시글 목록 조회
     int insertBoardPost(BoardPost boardPost);
