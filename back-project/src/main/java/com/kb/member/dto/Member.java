@@ -16,7 +16,7 @@ import java.util.List;
 @Setter
 @Builder
 public class Member implements UserDetails {
-    private long mno;			// PK
+    private int mno;			// PK
     private String id; 			// id=username
     private String password;	// password
     private String name;        // 사용자이름

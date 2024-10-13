@@ -1123,6 +1123,7 @@ CREATE TABLE board_post (
                             comment_count INT DEFAULT 0,
                             likes_count INT DEFAULT 0,
                             member_id INT NOT NULL,
+                            author_id VARCHAR(50);
                             PRIMARY KEY (post_id),                   -- 게시글 ID를 기본 키로 설정
                             KEY member_id (member_id),
                             CONSTRAINT board_post_ibfk_1 FOREIGN KEY (member_id) REFERENCES MEMBER (mno),

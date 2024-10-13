@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -94,9 +95,10 @@ public class BoardService {
 
     @Transactional(rollbackFor = Exception.class)
     public BoardPost createBoardPost(BoardPost boardPost, List<MultipartFile> files) {
+        // createdDate를 현재 시간으로 설정
+        boardPost.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+
         log.info("Creating post: " + boardPost);
-
-
 
         // 게시글 삽입 전 로그 추가
         log.info("Inserting into board_post with bno: " + boardPost.getBno());
