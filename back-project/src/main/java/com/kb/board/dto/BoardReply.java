@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class BoardReply {
-	private long rno;
+	private Integer rno;
 	private long postId;
 	private long mno;
 	private String memberId;

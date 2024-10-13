@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -184,16 +185,29 @@ public class BoardController {
     }
 
     @DeleteMapping("/reply/{rno}")
-    public ResponseEntity<BoardReply> deleteReply(@PathVariable long rno,
-                    @AuthenticationPrincipal Member principal) throws Exception {
+    public ResponseEntity<BoardReply> deleteReply(
+            @PathVariable int rno,
+            @AuthenticationPrincipal Member principal) throws Exception {
+
+        if (principal == null) {
+            throw new IllegalAccessException("User is not authenticated");
+        }
+
         BoardReply reply = service.getReply(rno);
-        if(!reply.getMemberId().equals(principal.getId())) {
-            throw new IllegalAccessException();
+        if (reply == null) {
+            throw new NoSuchElementException("Reply not found for rno: " + rno);
         }
-        int result = service.delteReply(rno);
-        if(result != 1) {
-            throw new Exception("DB 에러");
+
+        if (!reply.getMemberId().equals(principal.getId())) {
+            throw new IllegalAccessException("User does not have permission to delete this reply");
         }
+
+        int result = service.deleteReply(rno);
+        if (result != 1) {
+            throw new Exception("DB error");
+        }
+
         return ResponseEntity.ok(reply);
     }
+
 }
