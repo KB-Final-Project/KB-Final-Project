@@ -41,7 +41,7 @@
 
     <resultMap type="com.kb.board.dto.BoardAttachFile" id="boardAttachFileResultMap">
         <id property="fno" column="fno"/>
-        <result property="bno" column="board_bno"/>
+        <result property="postId" column="post_id"/>
         <result property="originalFilename" column="original_filename"/>
         <result property="renamedFilename" column="renamed_filename"/>
         <result property="contentType" column="content_type"/>
@@ -52,7 +52,7 @@
 
     <resultMap type="com.kb.board.dto.BoardReply" id="boardReplyResultMap">
         <result property="rno" column="rno" />
-        <result property="bno" column="board_bno" />
+        <result property="postId" column="post_id" />
         <result property="mno" column="member_mno" />
         <result property="memberId" column="member_id" />
         <result property="memberName" column="name" />
@@ -187,7 +187,7 @@
             SELECT @@identity as rno
         </selectKey>
         insert into board_reply(
-        rno, post_id, member_mno, content, status,
+        rno, post_id, mno, content, status,
         create_date, modify_date)
         VALUES(
         default, #{postId}, #{mno}, #{content},
@@ -276,15 +276,19 @@
         ]]>
     </update>
 
-    <select id="selectReplyByRno" parameterType="long" resultType="com.kb.board.dto.BoardReply">
+    <select id="selectReplyByRno" parameterType="Long" resultMap="boardReplyResultMap">
         select
-            r.rno, r.bno, r.content, m.id as member_id, m.name, r.create_date, r.modify_date
+            r.rno, r.post_id, r.content, m.id as member_id, m.name, r.create_date, r.modify_date
         from board_reply r
                  join member m on(r.mno = m.mno)
         where r.status='y' and r.rno = #{rno}
     </select>
 
-    <delete id="deleteReply" parameterType="long">
+    <delete id="deleteReply" parameterType="Integer">
         delete from board_reply where rno = #{rno}
     </delete>
+
+    <select id="getAuthorIdByMno" parameterType="Integer" resultType="string">
+        select id from member where mno = #{mno}
+    </select>
 </mapper>
