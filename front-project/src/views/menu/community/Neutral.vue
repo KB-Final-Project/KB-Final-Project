@@ -84,7 +84,7 @@ const fetchBoardPosts = async () => {
   try {
     const response = await axios.get('/api/board/2/posts');
     posts.value = response.data.postList; // postList를 저장
-    console.log(posts.value); // 확인용 출력
+    console.log(posts.value);
   } catch (error) {
     console.error('Error fetching posts:', error); // 오류 처리
   }
