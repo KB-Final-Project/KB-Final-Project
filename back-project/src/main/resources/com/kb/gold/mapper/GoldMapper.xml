@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kb.gold.mapper.GoldMapper">
+
+    <insert id="insertGoldDataBatch" parameterType="list">
+        INSERT INTO gold_data
+        (bas_dd, isu_cd, isu_nm, tdd_cls_prc, cmp_prev_dd_prc, fluc_rt, tdd_opn_prc,
+        tdd_hg_prc, tdd_lw_prc, acc_trd_vol, acc_trd_val)
+        VALUES
+        <foreach collection="list" item="goldData" separator=",">
+            (#{goldData.basDd}, #{goldData.isuCd}, #{goldData.isuNm},
+            #{goldData.tddClsPrc}, #{goldData.cmpPrevDdPrc}, #{goldData.flucRt},
+            #{goldData.tddOpnPrc}, #{goldData.tddHgPrc}, #{goldData.tddLwPrc},
+            #{goldData.accTrdVol}, #{goldData.accTrdVal})
+        </foreach>
+    </insert>
+
+</mapper>
