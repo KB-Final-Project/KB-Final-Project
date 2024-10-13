@@ -53,7 +53,7 @@
 
     </div>
   </div>
-  <button class="moreBtn w-100 text-center" id="kt_widget_5_load_more_btn" >
+  <button class="moreBtn text-center" id="kt_widget_5_load_more_btn" >
         <span class="indicator-label">더보기</span>
         <span class="indicator-progress">Loading...
         <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
@@ -84,7 +84,7 @@ const fetchBoardPosts = async () => {
   try {
     const response = await axios.get('/api/board/2/posts');
     posts.value = response.data.postList; // postList를 저장
-    console.log(posts.value); // 확인용 출력
+    console.log(posts.value);
   } catch (error) {
     console.error('Error fetching posts:', error); // 오류 처리
   }
@@ -129,7 +129,8 @@ const confirmDelete = async () => {
   font-size: 20px;
 }
 .moreBtn {
-  width: 200px;
+  margin-left: 10px;
+  width: 600px;
   height: 50px;
   border: none;
   border-radius: 20px;
