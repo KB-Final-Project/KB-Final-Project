@@ -16,7 +16,7 @@
 
     <!-- 세부 정보 -->
     <div class="stock-details">
-      <div class="detail-item"><span>거래량</span><span>{{ formatNumber(volume) }}</span></div>
+      <div class="detail-item"><span>누적 거래량(주)</span><span>{{ formatNumber(volume) }}</span></div>
       <div class="detail-item"><span>시가총액</span><span>{{ formatNumber(htsAvls) }}</span></div>
       <div class="detail-item"><span>52주 최고</span><span>{{ formatNumber(w52Hgpr) }}</span></div>
       <div class="detail-item"><span>52주 최저</span><span>{{ formatNumber(w52Lwpr) }}</span></div>
