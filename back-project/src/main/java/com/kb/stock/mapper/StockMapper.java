@@ -21,8 +21,8 @@ public interface StockMapper {
     List<String> selectAllStockCodes();
 
     @Insert({
-            "INSERT INTO stock (stock_code, stock_name, current_price, price_change, price_change_pct, high_price, low_price, opening_price, volume, industry, hts_avls, w52_hgpr, w52_lwpr, last_updated)",
-            "VALUES (#{stockCode}, #{stockName}, #{currentPrice}, #{priceChange}, #{priceChangePct}, #{highPrice}, #{lowPrice}, #{openingPrice}, #{volume}, #{industry}, #{htsAvls}, #{w52Hgpr}, #{w52Lwpr}, NOW())",
+            "INSERT INTO stock (stock_code, stock_name, current_price, price_change, price_change_pct, high_price, low_price, opening_price, volume, industry, hts_avls, w52_hgpr, w52_lwpr, acml_tr_pbmn, last_updated)",
+            "VALUES (#{stockCode}, #{stockName}, #{currentPrice}, #{priceChange}, #{priceChangePct}, #{highPrice}, #{lowPrice}, #{openingPrice}, #{volume}, #{industry}, #{htsAvls}, #{w52Hgpr}, #{w52Lwpr}, #{acmlTrPbmn}, NOW())",
             "ON DUPLICATE KEY UPDATE",
             "stock_name = #{stockName},",
             "current_price = #{currentPrice},",
@@ -36,13 +36,35 @@ public interface StockMapper {
             "hts_avls = #{htsAvls},",
             "w52_hgpr = #{w52Hgpr},",
             "w52_lwpr = #{w52Lwpr},",
+            "acml_tr_pbmn = #{acmlTrPbmn},",
             "last_updated = NOW()"
     })
     void upsertStock(StockDTO stock);
+
 
     @Select("SELECT * FROM stock WHERE stock_code = #{stockCode}")
     StockDTO selectStockByCode(String stockCode);
 
     @Select("SELECT stock_code FROM stock WHERE last_updated < DATE_SUB(NOW(), INTERVAL 5 MINUTE)")
     List<String> selectStaleStockCodes();
+
+    // 안정성 중심 종목 조회
+    @Select("SELECT * FROM stock WHERE hts_avls > 1000000000000 AND (w52_hgpr - w52_lwpr) / w52_hgpr < 0.2 AND volume > 100000")
+    List<StockDTO> selectStableStocks();
+
+    // 성장성 중심 종목 조회
+    @Select("SELECT * FROM stock WHERE price_change_pct > 10 AND current_price > w52_lwpr * 1.2 AND volume > 500000")
+    List<StockDTO> selectGrowthStocks();
+
+    // 배당성 중심 종목 조회
+    @Select("SELECT * FROM stock WHERE hts_avls > 500000000000 AND (w52_hgpr - w52_lwpr) / w52_hgpr < 0.15")
+    List<StockDTO> selectDividendStocks();
+
+    // 변동성 중심 종목 조회
+    @Select("SELECT * FROM stock WHERE (w52_hgpr - w52_lwpr) / w52_hgpr > 0.3 AND volume > 500000")
+    List<StockDTO> selectVolatileStocks();
+
+    // 공격성 중심 종목 조회
+    @Select("SELECT * FROM stock WHERE price_change_pct > 15 AND current_price > w52_lwpr * 1.3 AND volume > 700000")
+    List<StockDTO> selectAggressiveStocks();
 }
