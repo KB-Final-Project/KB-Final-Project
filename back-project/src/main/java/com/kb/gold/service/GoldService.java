@@ -10,7 +10,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
@@ -69,6 +71,15 @@ public class GoldService {
             String formattedDate = date.format(formatter);
             fetchAndSaveGoldDataForDate(formattedDate);
         }
+    }
+
+    @Scheduled(cron = "0 0 12 * * *")  // 매일 자정에 실행
+    @Transactional
+    public void scheduleFetchForToday() {
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String formattedDate = today.format(formatter);
+        fetchAndSaveGoldDataForDate(formattedDate);
     }
 
     public GoldListResponseDTO getGoldInfoList(GoldParam goldParam){
