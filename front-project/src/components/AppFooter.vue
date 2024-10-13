@@ -1,6 +1,7 @@
 <template>
   <footer>
     <div class="footer">
+      <br><br>
       <div class="container">
         <ul class="top-row">
           <li class="invetiInfo">
@@ -34,18 +35,16 @@
 </template>
 <style>
 footer {
-  width: 100%;
   display: flex;
-  justify-content: center; /* 수평 가운데 정렬 */
-  align-items: flex-start; /* 상단 정렬 */
+  justify-content: center;
+  align-items: flex-start;
+  background-color: rgba(249, 250, 251, 1);
   font-family: J3;
 }
 
 .footer {
-  width: 100%;
   background-color: rgba(249, 250, 251, 1);
-  padding-top: 5%;
-  padding-left: 20%; /* 상하좌우 여백을 줘서 글씨가 1/4 위치에 오도록 설정 */
+  margin: 0 auto;
 }
 
 .top-row,
@@ -58,19 +57,19 @@ footer {
 }
 
 .footer h5 {
-  margin: 5px 0; /* h5 사이의 간격 조정 */
-  font-weight: 500;
+  margin: 5px 0;
+  font-weight: 300;
 }
 
 .footerLogo {
-  margin-left: auto; /* 왼쪽 공간을 자동으로 채워서 오른쪽으로 이동 */
-  margin-right: 100px; /* 오른쪽 여백 추가 */
+  margin-left: auto;
+  margin-right: 100px;
   width: 100px;
 }
 
 .footerInfo span {
   margin: 10px;
-  font-size: 20px;
+  font-size: 15px;
 }
 
 .footer a{
@@ -80,7 +79,7 @@ footer {
 }
 
 .footerKakaoLogo {
-  margin-left: 30%; /* 왼쪽 공간을 자동으로 채워서 오른쪽으로 이동 */
+  margin-left: 30%;
 }
 </style>
 
