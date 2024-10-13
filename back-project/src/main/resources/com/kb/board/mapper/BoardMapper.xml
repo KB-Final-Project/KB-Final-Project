@@ -66,12 +66,18 @@
         <result property="postId" column="post_id"/>
         <result property="title" column="title"/>
         <result property="content" column="content"/>
+        <result property="bno" column="bno"/>
+        <result property="status" column="status"/>
+        <result property="type" column="type"/>
+        <result property="memberId" column="member_id"/>
+        <result property="authorId" column="author_id"/>
+        <result property="readCount" column="read_count"/>
+        <result property="likesCount" column="likes_count"/>
+        <result property="commentCount" column="comment_count"/>
         <result property="createdDate" column="created_date"/>
         <result property="modifiedDate" column="modified_date"/>
-        <result property="bno" column="bno"/>
         <!-- 필요한 다른 필드 매핑 추가 -->
     </resultMap>
-
 
     <select id="selectBoardCategory" resultMap="boardCategoryMap">
         SELECT * FROM board_category ORDER BY id;
@@ -117,11 +123,18 @@
         <!-- 추가적인 조건이 필요하다면 여기에 작성 -->
     </select>
 
-    <select id="selectPostList" resultMap="postResultMap">
-        SELECT *
-        FROM board_post
-        WHERE bno = #{bno}
-        ORDER BY created_date DESC
+    <select id="selectPostList" resultMap="postResultMap" parameterType="com.kb.board.dto.PostParam">
+        SELECT
+            bp.*,
+            m.id AS author_id
+        FROM
+            board_post bp
+                LEFT JOIN
+            member m ON bp.member_id = m.mno
+        WHERE
+            bp.bno = #{boardId}
+        ORDER BY
+            bp.created_date DESC
             LIMIT #{limit} OFFSET #{offset}
     </select>
 
@@ -248,9 +261,9 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         <![CDATA[
-    INSERT INTO board_post (bno, title, content, member_id, type, status)
+    INSERT INTO board_post (bno, title, content, member_id, type, status, author_id, created_date)
     VALUES (#{bno}, #{title}, #{content}, #{memberId}, #{type},
-            COALESCE(#{status}, 'y'))
+            COALESCE(#{status}, 'y'), #{authorId}, #{createdDate})
     ]]>
     </insert>
 
