@@ -128,4 +128,10 @@ public class MemberService{
         changePassword.setNewPassword(passwordEncoder.encode(changePassword.getNewPassword()));
         mapper.updatePassword(changePassword);
     }
+
+    public Member findByMno(int mno) {
+        return Optional.ofNullable(mapper.selectByMno(mno))
+                .orElseThrow(NoSuchElementException::new);
+    }
+
 }

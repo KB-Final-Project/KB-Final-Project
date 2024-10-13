@@ -21,10 +21,11 @@ public class BoardPost {
     private String content;     // 내용
     private int readCount;      // 조회수
     private String type;        // 타입
-    private String status; // 상태 ('y' 또는 'n')
+    private String status;      // 상태 ('y' 또는 'n')
     private int commentCount;    // 댓글 수
     private int likesCount;     // 좋아요 수
-    private long memberId;      // 작성자 ID
+    private long memberId;      // member 테이블의 mno
+    private String authorId;     // 작성자 ID (MEMBER 테이블의 id)
     private Date createdDate;   // 생성 날짜
     private Date modifiedDate;  // 수정 날짜
 
@@ -59,6 +60,7 @@ public class BoardPost {
                 ", commentCount=" + commentCount +
                 ", likesCount=" + likesCount +
                 ", memberId=" + memberId +
+                ", authorId='" + authorId + '\'' + // 작성자 ID 추가
                 ", createdDate=" + createdDate +
                 ", modifiedDate=" + modifiedDate +
                 '}';

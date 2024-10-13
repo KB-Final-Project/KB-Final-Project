@@ -119,4 +119,13 @@
         DELETE FROM  member_auth
         WHERE id = #{id} AND authority = #{auth}
     </delete>
+
+    <select id="selectByMno" resultMap="memberResultMap" parameterType="int">
+        SELECT
+            mno, m.id, password, name, email, status, create_date, update_date, a.authority
+        FROM
+            member m
+                LEFT OUTER JOIN member_auth a ON m.id = a.id
+        WHERE m.status = 'y' AND m.mno = #{mno}
+    </select>
 </mapper>
