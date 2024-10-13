@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class BoardDTO {
-    private int bno;        // 게시물 번호
+    private int bno;        // 게시판 번호
     private String type;         // 타입
     private String title;        // 제목
     private String content;      // 내용

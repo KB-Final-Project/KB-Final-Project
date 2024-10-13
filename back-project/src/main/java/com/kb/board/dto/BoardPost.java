@@ -14,7 +14,7 @@ import java.util.Date;
 @Builder
 public class BoardPost {
     private long postId;
-    private int bno;       // 게시물 ID
+    private int bno;
     @NotNull(message = "Title cannot be null")
     private String title;       // 제목
     @NotNull(message = "Content cannot be null")
