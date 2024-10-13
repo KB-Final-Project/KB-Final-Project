@@ -11,6 +11,7 @@
         <result property="cmpPrevDdPrc" column="cmp_prev_dd_prc"/>
         <result property="flucRt" column="fluc_rt"/>
         <result property="tddOpnPrc" column="tdd_opn_prc"/>
+        <result property="price" column="price"/>
     </resultMap>
 
     <insert id="insertGoldDataBatch" parameterType="list">
@@ -37,7 +38,7 @@
 
     <select id="getGoldInfoList" resultMap="GoldInfoResultMap" parameterType="com.kb.gold.dto.GoldParam">
         SELECT
-            bas_dd, isu_cd, cmp_prev_dd_prc, fluc_rt, tdd_opn_prc
+            bas_dd, isu_cd, cmp_prev_dd_prc, fluc_rt, tdd_opn_prc, CAST(tdd_opn_prc AS DECIMAL(10, 2)) * 3.75 AS price
         FROM
             gold_data
         WHERE isu_cd = "04020000"
