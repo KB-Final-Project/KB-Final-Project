@@ -77,9 +77,9 @@ public class BoardService {
 
 
     @Transactional
-    public BoardPost getBoard(int postId) {
+    public BoardPost getBoard(Long postId) {
         log.info("Getting post with ID: " + postId);
-        BoardPost boardPost = mapper.selectBoardByBno(postId);
+        BoardPost boardPost = mapper.selectBoardPostByPostId(postId);
 
         // null 체크
         if (boardPost == null) {
@@ -101,7 +101,7 @@ public class BoardService {
         log.info("Creating post: " + boardPost);
 
         // 게시글 삽입 전 로그 추가
-        log.info("Inserting into board_post with bno: " + boardPost.getBno());
+        log.info("Inserting into board_post with postId: " + boardPost.getPostId());
 
         // 게시글 작성
         int result = mapper.insertBoardPost(boardPost);
@@ -120,12 +120,12 @@ public class BoardService {
     }
 
 
-    private void upload(long bno, List<MultipartFile> files) {
+    private void upload(long postId, List<MultipartFile> files) {
         for (MultipartFile part : files) {
             if (part.isEmpty()) continue;
             try {
                 String renameFileName = UploadFiles.upload(BASE_DIR, part);
-                BoardAttachFile attach = new BoardAttachFile(0, bno, part.getOriginalFilename(), renameFileName, part.getContentType(), part.getSize(), null);
+                BoardAttachFile attach = new BoardAttachFile(0, postId, part.getOriginalFilename(), renameFileName, part.getContentType(), part.getSize(), null);
                 mapper.insertAttachFile(attach);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -141,36 +141,46 @@ public class BoardService {
     }
 
 
-    @Transactional
+    @Transactional // 게시글 수정
     public BoardPost updateBoard(BoardPost boardPost, List<MultipartFile> files) {
         log.info("update...... " + boardPost);
-//        Board oldBoard = getBoard(board.getBno());
+        log.info("Updating board post with postId: " + boardPost.getPostId());
 
-        int result = mapper.updateBoard(boardPost);
+        // 게시글 존재 여부 확인
+        BoardPost existingPost = mapper.selectBoardPostByPostId(boardPost.getPostId());
+        log.info("Existing post found: " + existingPost);
+
+        if (existingPost == null) {
+            throw new NoSuchElementException("No post found with id: " + boardPost.getPostId());
+        }
+
+        int result = mapper.updateBoardPost(boardPost);
         if (result != 1) {
-            throw new NoSuchElementException();
+            throw new RuntimeException("Failed to update post with id: " + boardPost.getPostId());
         }
 
         // 파일 업로드 처리
         if (files != null && !files.isEmpty()) {
-            upload(boardPost.getBno(), files);
+            upload(boardPost.getPostId(), files);
         }
 
-        return getBoard(boardPost.getBno());
+        return getBoard(boardPost.getPostId());
     }
 
 
-    @Transactional
-    public BoardPost deleteBoard(long bno) {
-        log.info("delete...." + bno);
-        BoardPost boardPost = getBoard((int) bno);
+    @Transactional // 게시글 삭제
+    public BoardPost deleteBoard(long postId) {
+        log.info("delete...." + postId);
+        BoardPost boardPost = getBoard(postId);
 
         List<BoardAttachFile> oldFiles = boardPost.getBoardAttachFileList();
-        for (BoardAttachFile old : oldFiles) {
-            deleteFile(BASE_DIR, old);
+        if (oldFiles != null) { // null 체크 추가
+            for (BoardAttachFile old : oldFiles) {
+                deleteFile(BASE_DIR, old);
+            }
         }
 
-        int result = mapper.deleteBoard(bno);
+        int result = mapper.deleteBoard(postId);
         if (result != 1) {
             throw new NoSuchElementException();
         }

@@ -132,57 +132,48 @@
                 LEFT JOIN
             member m ON bp.member_id = m.mno
         WHERE
-            bp.bno = #{boardId}
+            bp.bno = #{boardId} and bp.status = 'y'
         ORDER BY
             bp.created_date DESC
             LIMIT #{limit} OFFSET #{offset}
     </select>
 
-    <update id="updateBoard" parameterType="com.kb.board.dto.BoardPost">
-        <![CDATA[
-        UPDATE board
-        SET type = #{type}, title = #{title}, content = #{content}, status = #{status}
-        WHERE bno = #{bno}
-        ]]>
-    </update>
-
-
     <!-- 게시글 조회시 readCount 갱신용 -->
     <update id="updateReadCount" parameterType="com.kb.board.dto.BoardPost">
         update board_post set
             read_count = #{readCount}
-        where bno = #{bno}
+        where post_id = #{postId}
     </update>
 
-    <update id="deleteBoard" parameterType="long">
+    <update id="deleteBoard" parameterType="java.lang.Long">
         <![CDATA[
-        UPDATE board
+        UPDATE board_post
         SET status = 'n'
-        WHERE bno = #{bno}
+        WHERE post_id = #{postId}
         ]]>
     </update>
 
     <!-- 파일 가져오기 -->
     <select id="selectAttachFileByFno" parameterType="long" resultMap="boardAttachFileResultMap">
         select
-            fno, bno, original_filename, renamed_filename, content_type, size, create_date
+            fno, post_id, original_filename, renamed_filename, content_type, size, create_date
         from board_attach_file
         where fno = #{fno}
     </select>
 
     <!-- 파일 리스트 -->
-    <select id="selectAttachFileByBno" resultMap="boardAttachFileResultMap">
+    <select id="selectAttachFileByPostId" resultMap="boardAttachFileResultMap">
         select
-            fno, bno, original_filename, renamed_filename, content_type, size, create_date
+            fno, post_id, original_filename, renamed_filename, content_type, size, create_date
         from board_attach_file
-        where bno = #{bno}
+        where post_id = #{postId}
     </select>
 
     <!-- 파일 첨부 -->
     <insert id="insertAttachFile" parameterType="com.kb.board.dto.BoardAttachFile">
         INSERT INTO BOARD_ATTACH_FILE
-        (fno, bno, original_filename, renamed_filename, content_type, size, create_date)
-        VALUES(default, #{bno}, #{originalFilename}, #{renamedFilename}, #{contentType}, ${size}, DEFAULT)
+        (fno, post_id, original_filename, renamed_filename, content_type, size, create_date)
+        VALUES(default, #{postId}, #{originalFilename}, #{renamedFilename}, #{contentType}, ${size}, DEFAULT)
     </insert>
 
     <!-- 파일 삭제 -->
@@ -196,10 +187,10 @@
             SELECT @@identity as rno
         </selectKey>
         insert into board_reply(
-        rno, bno, member_mno, content, status,
+        rno, post_id, member_mno, content, status,
         create_date, modify_date)
         VALUES(
-        default, #{bno}, #{mno}, #{content},
+        default, #{postId}, #{mno}, #{content},
         default, default, default
         )
     </insert>
@@ -208,7 +199,7 @@
     <!-- 댓글 리스트 -->
     <select id="selectReplyByBno" resultMap="boardReplyResultMap" >
         select
-            r.rno, r.bno, r.content, m.id as member_id, m.name, r.create_date, r.modify_date
+            r.rno, r.post_id, r.content, m.id as member_id, m.name, r.create_date, r.modify_date
         from board_reply r
                  join member m on(r.mno = m.mno)
         where r.status='y' and r.bno = #{bno}
@@ -236,7 +227,7 @@
         ]]>
     </select>
 
-    <select id="selectBoardPostById" parameterType="int" resultMap="boardPostResultMap">
+    <select id="selectBoardPostByPostId" parameterType="java.lang.Long" resultMap="boardPostResultMap">
         <![CDATA[
         SELECT
             bp.post_id AS postId,
@@ -274,7 +265,7 @@
             content = #{content},
             modified_date = CURRENT_TIMESTAMP,
             type = #{type},
-            status = #{status}
+            status = COALESCE(#{status}, 'y')
         WHERE post_id = #{postId}
         ]]>
     </update>

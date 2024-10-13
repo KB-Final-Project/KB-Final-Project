@@ -87,7 +87,7 @@
                     ELSE NOW()
                     END
         ORDER BY
-            er.exchange_date DESC;
+            er.exchange_date;
     </select>
 
     <select id="getDailyExchange" resultMap="ExchangeDailyResultMap">

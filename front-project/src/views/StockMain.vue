@@ -118,12 +118,12 @@
                 ></span>
               </th>
               <th
-                @click="sortBy('priceChangePct')"
-                :class="{ active: sortKey === 'priceChangePct' }"
+                @click="sortBy('volume')"
+                :class="{ active: sortKey === 'volume' }"
               >
-                거래대금
+                누적 거래량(주)
                 <span
-                  v-if="sortKey === 'priceChangePct'"
+                  v-if="sortKey === 'volume'"
                   :class="{
                     'sort-arrow': true,
                     'sort-reverse': sortOrder === -1,
@@ -139,7 +139,7 @@
               @click="goToStockChart(stock)"
             >
               <td>{{ stock.stockName }}</td>
-              <td>{{ stock.currentPrice }}</td>
+              <td>{{ stock.currentPrice.toLocaleString() }}원</td>
               <td
                 :class="{
                   positive: stock.priceChange > 0,
@@ -150,12 +150,9 @@
                 ({{ stock.priceChangePct }})%
               </td>
               <td
-                :class="{
-                  positive: stock.priceChangePct > 0,
-                  negative: stock.priceChangePct < 0,
-                }"
+                
               >
-                {{ stock.priceChangePct }}%
+              {{ stock.volume.toLocaleString() }}주
               </td>
             </tr>
           </tbody>
@@ -260,7 +257,7 @@
                   <th>종목명</th>
                   <th>현재가</th>
                   <th>등락률</th>
-                  <th>거래량</th>
+                  <th>누적 거래량(주)</th>
                 </tr>
               </thead>
               <tbody>
@@ -270,22 +267,20 @@
                   @click="goToStockChart(stock)"
                 >
                   <td>{{ stock.stockName }}</td>
-                  <td>{{ stock.currentPrice }}</td>
+                  <td>{{ stock.currentPrice.toLocaleString() }}원</td>
                   <td
                     :class="{
                       positive: stock.priceChange > 0,
                       negative: stock.priceChange < 0,
                     }"
                   >
-                    {{ stock.priceChange }}
+                  {{ stock.priceChange }}
+                  ({{ stock.priceChangePct }})%
                   </td>
                   <td
-                    :class="{
-                      positive: stock.priceChangePct > 0,
-                      negative: stock.priceChangePct < 0,
-                    }"
+                  
                   >
-                    {{ stock.priceChangePct }}%
+                  {{ stock.volume.toLocaleString() }}주
                   </td>
                 </tr>
               </tbody>
@@ -326,6 +321,8 @@ export default {
   },
   data() {
     return {
+      currentSort: 'currentPrice',  // 기본 정렬 필드
+      currentSortDir: 'desc',  // 기본 정렬 방향 (내림차순)
       categoryIcons: {},
       currentStocks: [], // KOSPI, KOSDAQ, KOSPI200 데이터
       stocks: [], // 웹소켓에서 받아온 10개 주식 데이터

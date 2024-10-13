@@ -131,7 +131,7 @@ onMounted(() => {
   <div class="communityPanel d-inline-block text-start">
     <div class="profile">
       <img src="/img/imsi.png" /><br />
-      <h4 class="d-inline">{{ myInfo.id }}</h4><h2 style="font-weight: 100;" class="d-inline">님</h2>
+      <h2 class="d-inline">{{ myInfo.id }}</h2><h2 style="font-weight: 100;" class="d-inline">님</h2>
       <h4 style="font-weight: lighter;">{{ myInfo.email }}</h4>
     </div>
     <div

@@ -11,7 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class BoardAttachFile {
 	private long fno;
-	private long bno;
+	private long postId;
 	private String originalFilename;
 	private String renamedFilename;
 	private String contentType;
