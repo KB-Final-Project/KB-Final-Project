@@ -10,11 +10,11 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardReplyDTO {
-	private int bno;
+	private long postId;
 	private String writer;
 	private String content;
 
 	public BoardReply toReply(){
-		return BoardReply.builder().bno(bno).memberId(writer).content(content).build();
+		return BoardReply.builder().postId(postId).memberId(writer).content(content).build();
 	}
 }
