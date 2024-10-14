@@ -191,8 +191,8 @@ public class BoardService {
         return boardPost;
     }
 
-    public BoardAttachFile getAttachment(long fno) {
-        return mapper.selectAttachFileByFno(fno);
+    public BoardAttachFile getAttachment(long postId) {
+        return mapper.selectAttachFileByFno(postId);
     }
 
     public boolean deleteAttachment(long fno) {
