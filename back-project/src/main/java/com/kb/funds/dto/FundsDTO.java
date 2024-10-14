@@ -41,4 +41,6 @@ public class FundsDTO {
     private LocalDate gijunYmd;
     // 순 자산
     private BigDecimal navTot;
+
+    private String fundCd;
 }

@@ -76,6 +76,10 @@ const searchFundsFunc = async () => {
   }
 };
 
+const goToFund  = (fundCd) => {
+  window.location.href = `https://www.samsungfund.com/fund/product/view.do?id=${fundCd}`;
+};
+
 
 const paginateFunds = () => {
   const start = (currentPage.value - 1) * pageSize.value;
@@ -308,7 +312,7 @@ onMounted(() => {
           <table class="fundSearchResultTable text-center">
             <tbody v-for="fund in displayedFunds" :key="fund.id">
             <tr>
-              <td class="fundName" style="width: 40%;" rowspan="2">
+              <td class="fundName" style="width: 40%;" rowspan="2" @click="goToFund(fund.fundCd)">
                 <span v-for="(part, index) in fund.fundFnm.split('[')" :key="part.index">
                   <h4 v-if="index === 0">{{ part }}</h4>
                   <h5 style="color: grey;" v-else>
@@ -394,7 +398,7 @@ onMounted(() => {
 .fundName{
   font-family: J3;
   color: rgba(68, 140, 116, 1);
-
+  cursor: pointer;
 }
 
 .grade {
