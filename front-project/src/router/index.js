@@ -263,8 +263,6 @@ const routes = [
     meta: { hideHeaderFooter: true },
 
   },
-
-  // 필요한 다른 라우트들을 여기에 추가할 수 있습니다.
   {
     path: '/community',
     component: Community,
@@ -272,23 +270,27 @@ const routes = [
     children: [
       {
         path: 'stability',
-        name: 'Stability',
+        name: 'stability',
         component: Stability,
+        props: true
       },
       {
         path: 'neutral',
-        name: 'Neutral',
+        name: 'neutral',
         component: Neutral,
+        props: true
       },
       {
         path: 'activeInvestment',
-        name: 'ActiveInvestment',
+        name: 'activeInvestment',
         component: ActiveInvestment,
+        props: true
       },
       {
         path: 'aggressiveInvestment',
-        name: 'AggressiveInvestment',
+        name: 'aggressiveInvestment',
         component: AggressiveInvestment,
+        props: true
       },
     ],
   },
@@ -306,9 +308,9 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isLogin) {
     next({ name: 'login'});
   } else if (to.meta.requiresGuest && isLogin) {
-    next({ name: 'Home' }); 
+    next({ name: 'Home' });
   } else {
-    next(); 
+    next();
   }
 });
 

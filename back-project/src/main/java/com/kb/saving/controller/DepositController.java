@@ -1,13 +1,18 @@
 package com.kb.saving.controller;
 
+import com.kb.member.dto.Member;
 import com.kb.saving.dto.*;
 import com.kb.saving.service.SavingService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,17 +45,20 @@ public class DepositController {
 
     @GetMapping("/detail/{savingId}")
     public ResponseEntity<Saving> getDepositProductById(@PathVariable int savingId,
-                                                        @RequestParam(required = false) Integer userId,
-                                                        @RequestParam(required = false) String wmtiType) {
-        if(userId == null || wmtiType == null || wmtiType.isEmpty()){
-            return ResponseEntity.ok(service.getProductDetail(1, savingId));
+                                                        @AuthenticationPrincipal Member member){
+
+        if (member != null) {
+            String wmtiType = member.getInvestType();
+
+            if (wmtiType != null && !wmtiType.isEmpty()) {
+                service.logProductViewAndUpdateViewCount(SavingProductViewLogDto
+                        .builder()
+                        .savingId(savingId)
+                        .userId(member.getMno())
+                        .wmtiType(wmtiType)
+                        .build());
+            }
         }
-        service.logProductViewAndUpdateViewCount(SavingProductViewLogDto
-                .builder()
-                .savingId(savingId)
-                .userId(userId)
-                .wmtiType(wmtiType)
-                .build());
         return ResponseEntity.ok(service.getProductDetail(1, savingId));
     }
 

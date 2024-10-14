@@ -4,9 +4,6 @@ import { useRouter, useRoute } from 'vue-router';
 import WriterPopup from './WriterPopup.vue';
 import axios from 'axios';
 
-// 환경 변수로부터 API 베이스 URL 가져오기
-
-// Propensity 타입 정의
 const propensityTypes = {
   '1': {
     label: '안정형',
@@ -137,7 +134,7 @@ onMounted(async () => {
         <h2 class="d-inline">{{ myInfo.id }}</h2>
         <h2 style="font-weight: 100;" class="d-inline">님</h2>
         <h4 style="font-weight: lighter;">{{ myInfo.email }}</h4>
-      </div>
+      </div><br/>
 
       <div
           v-for="(type, key) in propensityTypes"
@@ -148,7 +145,6 @@ onMounted(async () => {
       >
         <h4>{{ type.label }}</h4>
       </div>
-      <br/>
 
       <div
           class="myPage"
@@ -158,7 +154,6 @@ onMounted(async () => {
         <br>
         <h4>마이페이지</h4>
       </div>
-      <br/>
 
       <div>
         <button
@@ -169,7 +164,7 @@ onMounted(async () => {
           새 글 작성하기
         </button>
       </div>
-      <br/>
+      <br/><br/>
     </div>
   </div>
   <br><br>
@@ -235,11 +230,14 @@ a{
   width: 180px;
   padding: 10px;
   cursor: pointer;
+  margin: 10px;
 }
 
 .myPage{
   padding: 10px;
   cursor: pointer;
+  margin: 10px;
+
 }
 
 .propensity:hover {
@@ -248,6 +246,7 @@ a{
   border: 1px solid rgba(67, 140, 116, 1);
   border-radius: 20px;
   padding: 10px;
+  margin: 10px;
 }
 
 .propensity.active {
@@ -257,17 +256,19 @@ a{
   border: 1px solid rgba(67, 140, 116, 1);
   border-radius: 20px;
   color: rgba(67, 140, 116, 1);
+  margin: 10px;
 }
 
 .myPage:hover{
-  border-radius: 20px
+  border-radius: 20px;
+  margin: 10px;
 }
 
 .communityPanel {
   width: 250px;
   height: 630px;
   border-radius: 30px;
-  padding: 25px;
+  padding: 30px;
   background-color: white;
 }
 
