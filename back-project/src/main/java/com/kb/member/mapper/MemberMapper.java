@@ -20,5 +20,6 @@ public interface MemberMapper {
     int checkDuplicateById(String id);
     int checkDuplicateByKakaoId(String id);
     Integer getMemberAutoIncrement();
+    int updateInvestType(Member member);
 
 }

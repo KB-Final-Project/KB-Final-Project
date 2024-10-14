@@ -137,5 +137,25 @@ public class MemberService{
         return Optional.ofNullable(mapper.selectByMno(mno))
                 .orElseThrow(NoSuchElementException::new);
     }
+    public boolean saveInvestType(String userId, String investType) {
+        Member member = mapper.selectById(userId);
+        if (member == null) {
+            throw new NoSuchElementException("Member not found");
+        }
+        member.setInvestType(investType);
+        int result = mapper.updateInvestType(member);
+        return result == 1;
+    }
+
+    // 투자 성향 업데이트
+    public boolean updateInvestType(String userId, String investType) {
+        Member member = mapper.selectById(userId);
+        if (member == null) {
+            throw new NoSuchElementException("Member not found");
+        }
+        member.setInvestType(investType);
+        int result = mapper.updateInvestType(member);
+        return result == 1;
+    }
 
 }
