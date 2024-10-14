@@ -366,12 +366,11 @@ const fetchDeposit = async () => {
   loading.value = true;
   try {
     const savingId = route.params.savingId;
-    const params = {
-      userId: auth.mno,
-      wmtiType: auth.investType 
-    };
-    console.log(params);
-    const response = await axios.get(`/api/deposit/detail/${savingId}`, {params});
+    const response = await axios.get(`/api/deposit/detail/${savingId}`,{
+    headers: {
+      Authorization: `Bearer ${auth.getToken()}` 
+    }
+  });
     deposit.value = response.data;
 
     console.log('API 응답 데이터:', deposit.value);

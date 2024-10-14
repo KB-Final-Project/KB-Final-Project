@@ -1,11 +1,13 @@
 package com.kb.saving.controller;
 
+import com.kb.member.dto.Member;
 import com.kb.saving.dto.*;
 import com.kb.saving.service.SavingService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,19 +32,20 @@ public class SavingController {
 
     @GetMapping("/detail/{savingId}")
     public ResponseEntity<Saving> getSavingProductById(@PathVariable int savingId,
-                                                       @RequestParam(required = false) Integer userId,
-                                                       @RequestParam(required = false) String wmtiType){
-        log.info(String.valueOf(userId));
-        log.info(wmtiType);
-        if(userId == null || wmtiType == null || wmtiType.isEmpty()){
-            return ResponseEntity.ok(service.getProductDetail(2, savingId));
+                                                       @AuthenticationPrincipal Member member){
+
+        if (member != null) {
+            String wmtiType = member.getInvestType();
+
+            if (wmtiType != null && !wmtiType.isEmpty()) {
+                service.logProductViewAndUpdateViewCount(SavingProductViewLogDto
+                        .builder()
+                        .savingId(savingId)
+                        .userId(member.getMno())
+                        .wmtiType(wmtiType)
+                        .build());
+            }
         }
-        service.logProductViewAndUpdateViewCount(SavingProductViewLogDto
-                .builder()
-                .savingId(savingId)
-                .userId(userId)
-                .wmtiType(wmtiType)
-                .build());
         return ResponseEntity.ok(service.getProductDetail(2, savingId));
     }
 
