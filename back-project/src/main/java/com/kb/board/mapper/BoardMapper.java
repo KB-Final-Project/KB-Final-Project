@@ -1,6 +1,7 @@
 package com.kb.board.mapper;
 
 import com.kb.board.dto.*;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -24,5 +25,6 @@ public interface BoardMapper {
     BoardReply selectReplyByRno(long rno);
     List<BoardReply> selectReplyByBno(int bno);
     int deleteReply(int rno);
-    String getAuthorIdByMno(long mno);
+    String getAuthorIdByMno(Integer mno);
+    void incrementLikesCount(@Param("postId") long postId);
 }
