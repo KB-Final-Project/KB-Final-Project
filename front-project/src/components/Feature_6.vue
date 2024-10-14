@@ -143,11 +143,11 @@ h3 {
 }
 
 .fundImg {
-  width: 600px;
+  width: 900px;
 }
 
 .goToFund_btn {
-  margin-left: 50px;
+  margin-left: 20px;
   margin-top: 20px;
   font-size: 25px;
   border: none;
