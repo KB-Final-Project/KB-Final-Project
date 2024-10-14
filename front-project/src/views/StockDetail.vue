@@ -1,41 +1,9 @@
 <template>
   <div class="stock-dashboard">
-    <h1><b>국내주식</b></h1>
-    <div class="container">
-      <div v-if="error" class="error-message">{{ error }}</div>
-
-      <!-- 이 시각 증시 (KOSPI, KOSDAQ, KOSPI200) -->
-      <section class="current-stocks">
-        <div class="section-header">
-          <p class="title">이 시각 증시</p>
-        </div>
-        <div class="stock-cards">
-          <div v-for="(stock, index) in currentStocks" :key="index" :class="{
-            'positive-card': stock.change && stock.change.includes('+'),
-            'negative-card': stock.change && stock.change.includes('-'),
-          }" class="stock-card">
-            <p class="stock-title">{{ stock.name }}</p>
-            <p class="amount-txt">{{ stock.amount }}</p>
-            <p>
-              <span v-if="stock.change && stock.change.includes('+')" class="positive">
-                {{ stock.change }}
-              </span>
-              <span v-else-if="stock.change && stock.change.includes('-')" class="negative">
-                {{ stock.change }}
-              </span>
-              <span v-else>
-                {{ stock.change ? stock.change : "N/A" }}
-              </span>
-            </p>
-            <div class="line-c">
-              <Line :data="stock.chartData" :options="chartOptions" />
-            </div>
-          </div>
-        </div>
-      </section>
-
+    <h1><b>투자 성향별 주식</b></h1>
+    <div class="container animate-on-load">
       <!-- 현재 상위권 TOP3 -->
-      <p class="middle-title">현재 상위권 TOP3 🏆</p>
+      <p class="middle-title">오늘의 추천 종목 ⭐️</p>
       <section class="top3-stocks">
         <div class="top3-cards">
           <div v-for="(stock, index) in top3Stocks" :key="index" class="top3-card" @click="goToStockChart(stock)">
@@ -132,15 +100,7 @@
 
 <script>
 import axios from "axios";
-import { Line } from 'vue-chartjs';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
-
 export default {
-  components: {
-    Line
-  },
   data() {
     return {
       stocks: [], // 전체 주식 목록
@@ -760,12 +720,12 @@ h1 {
 /* 주식 목록 hover 효과 */
 .stock-row {
   cursor: pointer;
+  background-color: #90DAAA;
   transition: background-color 0.3s ease;
 }
 
 .stock-row:hover {
-  background-color: #f0f8ff;
-  /* 배경색을 변경하여 hover 느낌을 줌 */
+  background-color: #90DAAA;
 }
 
 /* Top3 주식 카드 hover 효과 */
@@ -782,23 +742,17 @@ h1 {
   /* 마우스를 올리면 약간 위로 올라가는 효과 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   /* 그림자 효과 */
-  background-color: #f0f8ff;
+  background-color: #F1FAF7;
   /* 배경색 변경 */
 }
 
-/* 주식 목록과 카테고리 카드에 hover 효과 적용 */
-
-/* 주식 목록 hover 효과 */
 tbody tr {
   cursor: pointer;
-  /* 클릭 가능함을 나타내는 커서 */
   transition: background-color 0.3s ease;
-  /* 배경색 변경이 부드럽게 전환되도록 */
 }
 
 tbody tr:hover {
-  background-color: #f0f8ff;
-  /* 마우스를 올리면 배경색 변경 */
+  background-color: #F1FAF7;
 }
 
 /* Top3 주식 hover 효과 */
@@ -809,10 +763,8 @@ tbody tr:hover {
 }
 
 .top3-card:hover {
-  background-color: #f0f8ff;
-  /* 배경색 변경 */
+  background-color: #F1FAF7;
   transform: translateY(-5px);
-  /* 마우스를 올리면 살짝 올라가는 효과 */
 }
 
 /* 카테고리 카드 hover 효과 */
@@ -853,4 +805,59 @@ tbody tr:hover {
   color: black;
   font-size: 20px;
 }
+
+@media (max-width: 900px) {
+  .main-news {
+      flex-direction: column;
+  }
+
+  .main-news-image,
+  .main-news-content {
+      width: 100%;
+  }
+
+  .news-grid {
+      grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .news-grid {
+      grid-template-columns: 1fr;
+  }
+}
+
+@keyframes riseUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-on-load > * {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: riseUp 1s ease-out forwards;
+}
+
+.animate-on-load > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.animate-on-load > *:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.animate-on-load > *:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.animate-on-load > *:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
 </style>
