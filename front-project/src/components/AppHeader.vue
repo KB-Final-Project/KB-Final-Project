@@ -148,24 +148,9 @@ const menuItems = ref([
     ],
   },
   {
-    text: '금융상품',
+    text: '투자상품',
     href: '#',
     subItems: [
-      {
-        text: 'ISA',
-        href: '/isa',
-      },
-      {
-        text: '예금',
-        href: '/deposit',
-      },
-      {
-        text: '적금',
-        href: '/savings',
-        subItems: [
-          { text: '적금 찾기', href: '/savings' },
-        ],
-      },
       {
         text: '주식',
         href: '#',
@@ -181,6 +166,18 @@ const menuItems = ref([
           { text: '펀드 찾기', href: '/fund' },
           { text: '테마별 펀드', href: '/fundTheme' },
         ],
+      },
+      {
+        text: '예금',
+        href: '/deposit',
+      },
+      {
+        text: '적금',
+        href: '/savings',
+      },
+      {
+        text: 'ISA',
+        href: '/isa',
       },
     ],
   },
