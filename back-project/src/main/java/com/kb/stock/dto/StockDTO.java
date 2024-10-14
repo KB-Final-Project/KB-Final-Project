@@ -21,5 +21,8 @@ public class StockDTO {
     private BigDecimal htsAvls; // HTS 시가총액 추가
     private BigDecimal w52Hgpr; // 52주일 최고가 추가
     private BigDecimal w52Lwpr; // 52주일 최저가 추가
+    private BigDecimal acmlTrPbmn;
 
+    // 투자 성향 필드 추가
+    private String investmentCategory; // 투자 성향 (안정성, 성장성, 배당성, 변동성, 공격성)
 }

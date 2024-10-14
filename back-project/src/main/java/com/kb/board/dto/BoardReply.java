@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class BoardReply {
-	private long rno;
-	private int bno;
+	private Integer rno;
+	private long postId;
 	private long mno;
 	private String memberId;
 	private String memberName;

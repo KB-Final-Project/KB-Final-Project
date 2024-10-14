@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -120,7 +121,7 @@ public class BoardController {
         boardPost.setMemberId(principal.getMno());
         boardPost.setAuthorId(String.format("%d", principal.getMno()));
 
-        log.info("Creating boardPost with bno: " + boardPost.getBno());
+        log.info("Creating boardPost with bno: " + boardPost.getPostId());
 
         BoardPost createdPost = boardService.createBoardPost(boardPost, files);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
@@ -143,9 +144,9 @@ public class BoardController {
 
 
 
-    @DeleteMapping("/{bno}")
-    public ResponseEntity<BoardPost> delete(@PathVariable int bno) {
-        return ResponseEntity.ok(service.deleteBoard(bno));
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<BoardPost> delete(@PathVariable long postId) {
+        return ResponseEntity.ok(service.deleteBoard(postId));
     }
 
     @GetMapping("/download/{fno}")
@@ -171,29 +172,42 @@ public class BoardController {
         return ResponseEntity.ok(service.deleteAttachment(fno));
     }
 
-    @PostMapping("/reply/{bno}")
+    @PostMapping("/reply/{postId}")
     public ResponseEntity<BoardReply> createReply(
-                        @PathVariable int bno,
+                        @PathVariable long postId,
                       @RequestBody BoardReplyDTO replyDTO,
                       @AuthenticationPrincipal Member principal) throws Exception {
         BoardReply reply = replyDTO.toReply();
-        reply.setBno(bno);
+        reply.setPostId(postId);
         reply.setMno(principal.getMno());
         BoardReply result = service.createReply(reply);
         return ResponseEntity.ok(result);
     }
 
     @DeleteMapping("/reply/{rno}")
-    public ResponseEntity<BoardReply> deleteReply(@PathVariable long rno,
-                    @AuthenticationPrincipal Member principal) throws Exception {
+    public ResponseEntity<BoardReply> deleteReply(
+            @PathVariable int rno,
+            @AuthenticationPrincipal Member principal) throws Exception {
+
+        if (principal == null) {
+            throw new IllegalAccessException("User is not authenticated");
+        }
+
         BoardReply reply = service.getReply(rno);
-        if(!reply.getMemberId().equals(principal.getId())) {
-            throw new IllegalAccessException();
+        if (reply == null) {
+            throw new NoSuchElementException("Reply not found for rno: " + rno);
         }
-        int result = service.delteReply(rno);
-        if(result != 1) {
-            throw new Exception("DB 에러");
+
+        if (!reply.getMemberId().equals(principal.getId())) {
+            throw new IllegalAccessException("User does not have permission to delete this reply");
         }
+
+        int result = service.deleteReply(rno);
+        if (result != 1) {
+            throw new Exception("DB error");
+        }
+
         return ResponseEntity.ok(reply);
     }
+
 }
