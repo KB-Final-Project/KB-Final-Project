@@ -1125,7 +1125,7 @@ CREATE TABLE board (
 INSERT INTO BOARD (bno, type, title, content) VALUES (1, 'stability', '안정형', '안정형투자자게시판');
 INSERT INTO BOARD (bno, type, title, content) VALUES (2, 'neutral', '중립형게시판', '중립형투자자게시판');
 INSERT INTO BOARD (bno, type, title, content) VALUES (3, 'activeInvestment', '적극투자형', '적극형투자자게시판');
-INSERT INTO BOARD (bno, type, title, content) VALUES (4, 'aggressiveInvestment', '공격투자
+INSERT INTO BOARD (bno, type, title, content) VALUES (4, 'aggressiveInvestment', '공격투자', '공격형투자자게시판');
 
 CREATE TABLE `board_post` (
                               `post_id` bigint NOT NULL AUTO_INCREMENT,
@@ -1138,7 +1138,6 @@ CREATE TABLE `board_post` (
                               `modified_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                               `type` varchar(50) NOT NULL,
                               `comment_count` int DEFAULT '0',
-                              `likes_count` int DEFAULT '0',
                               `member_id` int NOT NULL,
                               `author_id` varchar(50) DEFAULT NULL,
                               PRIMARY KEY (`post_id`),
@@ -1175,3 +1174,14 @@ CREATE TABLE `board_attach_file` (
                                      KEY `post_id` (`post_id`),
                                      CONSTRAINT `board_attach_file_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `board_post` (`post_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `likes` (
+                         `like_id` bigint NOT NULL AUTO_INCREMENT,
+                         `post_id` bigint NOT NULL,
+                         `member_id` int NOT NULL,
+                         `created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         PRIMARY KEY (`like_id`),
+                         UNIQUE KEY `unique_like` (`post_id`, `member_id`), -- 같은 게시물에 같은 사용자가 중복 좋아요를 누를 수 없도록 설정
+                         CONSTRAINT `likes_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `board_post` (`post_id`),
+                         CONSTRAINT `likes_ibfk_2` FOREIGN KEY (`member_id`) REFERENCES `member` (`mno`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -219,17 +219,18 @@ public class BoardService {
         return mapper.deleteReply(rno);
     }
 
-    public BoardPost incrementLikesCount(long postId) {
-        // 게시글 조회 (이 부분은 필요에 따라 추가)
-        BoardPost post = getBoard(postId);
-        if (post == null) {
-            throw new NoSuchElementException("Post not found for postId: " + postId);
-        }
+    public boolean checkLikeExists(long postId, long memberId) {
+        return mapper.checkLikeExists(postId, memberId);
+    }
 
-        // likesCount 증가 메서드 호출
-        mapper.incrementLikesCount(postId);
+    public void addLike(long postId, long memberId) {
+        mapper.insertLike(postId, memberId); // likes 테이블에 레코드 추가
+    }
 
-        // 업데이트된 게시글 반환 (필요에 따라 다시 조회)
-        return getBoard(postId);
+    public BoardPost getPostWithLikesCount(long postId) {
+        BoardPost post = mapper.getBoardPost(postId);
+        int likesCount = mapper.countLikes(postId); // likes 테이블에서 좋아요 수 계산
+        post.setLikesCount(likesCount);
+        return post;
     }
 }
