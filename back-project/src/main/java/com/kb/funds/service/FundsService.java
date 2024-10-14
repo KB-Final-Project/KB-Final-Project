@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class FundsService {
@@ -106,9 +108,50 @@ public class FundsService {
     public List<FundsDTO> searchFunds(String keyword) {
         return fundsMapper.searchFunds(keyword);
     }
-    public List<FundsDTO> findAllFunds() {
-        return fundsMapper.findAllFunds();
+
+    public List<FundsDTO> findAllFunds(String grade) {
+        List<FundsDTO> funds = fundsMapper.findAllFunds();
+
+        // 등급 필터링
+        if (grade != null && !grade.isEmpty()) {
+            String[] grades = grade.split("-");
+            int gradeStart = Integer.parseInt(grades[0]);
+            int gradeEnd = Integer.parseInt(grades[1]);
+
+            funds = funds.stream()
+                    .filter(fund -> fund.getInvestGrade() >= gradeStart && fund.getInvestGrade() <= gradeEnd)
+                    .collect(Collectors.toList());
+        }
+
+        // 등급에 따른 정렬
+        funds.sort((a, b) -> {
+            int gradeA = a.getInvestGrade();
+            int gradeB = b.getInvestGrade();
+
+            // 0등급이 가장 우선
+            if (gradeA == 0) return -1;
+            if (gradeB == 0) return 1;
+
+            // 1등급이 2등급보다 우선
+            if (gradeA == 1 && gradeB == 2) return -1;
+            if (gradeA == 2 && gradeB == 1) return 1;
+
+            // 3등급이 4등급보다 우선
+            if (gradeA == 3 && gradeB == 4) return -1;
+            if (gradeA == 4 && gradeB == 3) return 1;
+
+            // 5등급이 6등급보다 우선
+            if (gradeA == 5 && gradeB == 6) return -1;
+            if (gradeA == 6 && gradeB == 5) return 1;
+
+            // 기본 정렬 (숫자가 작은 것이 우선)
+            return Integer.compare(gradeA, gradeB);
+        });
+
+        return funds;
     }
+
+
 
 }
 
