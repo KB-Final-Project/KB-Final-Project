@@ -5,16 +5,16 @@
 
 <mapper namespace="com.kb.member.mapper.MemberMapper">
 
-    <resultMap id="memberResultMap"  type="com.kb.member.dto.Member">
-        <id property="mno" 				column="mno" />
-        <result property="id"		    column="id" />
-        <result property="password"		column="password" />
-        <result property="name" 		column="name" />
-        <result property="email" 		column="email" />
-        <result property="status" 		column="status" />
-        <result property="createDate"	column="create_date" />
-        <result property="updateDate"	column="update_date" />
-        <result property="investType"	column="invest_type" />
+    <resultMap id="memberResultMap" type="com.kb.member.dto.Member">
+        <id property="mno" column="mno" />
+        <result property="id" column="id" />
+        <result property="password" column="password" />
+        <result property="name" column="name" />
+        <result property="email" column="email" />
+        <result property="status" column="status" />
+        <result property="createDate" column="create_date" />
+        <result property="updateDate" column="update_date" />
+        <result property="investType" column="invest_type" />
         <collection property="authorities"
                     javaType="arraylist"
                     ofType="org.springframework.security.core.authority.SimpleGrantedAuthority"
@@ -29,17 +29,16 @@
 
     <select id="selectMemberAll" resultMap="memberResultMap">
         SELECT
-            mno, m.id, password, name, email, status, create_date, update_date, a.authority
+            mno, m.id, password, name, email, status, create_date, update_date, invest_type, a.authority
         FROM
             member m
                 LEFT OUTER JOIN member_auth a ON m.id = a.id
         WHERE m.status = 'y'
     </select>
 
-
     <select id="selectById" resultMap="memberResultMap" parameterType="string">
         SELECT
-            mno, m.id, password, name, email, status, create_date, update_date, a.authority, invest_type
+            mno, m.id, password, name, email, status, create_date, update_date, invest_type, a.authority
         FROM
             member m
                 LEFT OUTER JOIN member_auth a ON m.id = a.id
@@ -66,29 +65,27 @@
 
     <select id="selectBykakaoId" resultMap="memberResultMap" parameterType="string">
         SELECT
-            mno, m.id, password, name, email, status, create_date, update_date, a.authority
+            mno, m.id, password, name, email, status, create_date, update_date, invest_type, a.authority
         FROM
             member m
                 LEFT OUTER JOIN member_auth a ON m.id = a.id
         WHERE m.status = 'y' and m.kakao_id = #{id}
     </select>
 
-
     <insert id="insertMember" parameterType="com.kb.member.dto.Member">
-        INSERT INTO member(mno, id, password, name, email, status, kakao_id)
-        VALUES(default, #{id}, #{password}, #{name}, #{email}, default, #{kakaoId})
+        INSERT INTO member(mno, id, password, name, email, status, kakao_id, invest_type)
+        VALUES(default, #{id}, #{password}, #{name}, #{email}, default, #{kakaoId}, #{investType})
     </insert>
-
 
     <update id="updateMember" parameterType="com.kb.member.dto.Member">
         UPDATE member
         SET
             name = #{name},
             email = #{email},
+            invest_type = #{investType},
             update_date = now()
         WHERE mno = #{mno}
     </update>
-
 
     <update id="updatePassword" parameterType="com.kb.member.dto.Member">
         UPDATE member
@@ -98,11 +95,6 @@
         WHERE id = #{id}
     </update>
 
-    <!--    <delete id="deleteMember">-->
-    <!--        DELETE FROM member-->
-    <!--        WHERE mno = #{mno}-->
-    <!--    </delete> -->
-
     <update id="deleteMember" parameterType="long">
         UPDATE member
         SET
@@ -111,19 +103,19 @@
         WHERE mno = #{mno}
     </update>
 
-    <insert id="insertAuth"  parameterType="com.kb.member.dto.Auth">
+    <insert id="insertAuth" parameterType="com.kb.member.dto.Auth">
         INSERT INTO member_auth(id, authority)
         VALUES(#{id}, #{authority})
     </insert>
 
-    <delete id="deleteAuth"  parameterType="com.kb.member.dto.Auth">
-        DELETE FROM  member_auth
+    <delete id="deleteAuth" parameterType="com.kb.member.dto.Auth">
+        DELETE FROM member_auth
         WHERE id = #{id} AND authority = #{auth}
     </delete>
 
     <select id="selectByMno" resultMap="memberResultMap" parameterType="int">
         SELECT
-            mno, m.id, password, name, email, status, create_date, update_date, a.authority
+            mno, m.id, password, name, email, status, create_date, update_date, invest_type, a.authority
         FROM
             member m
                 LEFT OUTER JOIN member_auth a ON m.id = a.id
@@ -134,4 +126,12 @@
         SELECT MAX(mno)
         FROM member;
     </select>
+
+    <update id="updateInvestType" parameterType="com.kb.member.dto.Member">
+        UPDATE member
+        SET
+            invest_type = #{investType},
+            update_date = now()
+        WHERE id = #{id}
+    </update>
 </mapper>
