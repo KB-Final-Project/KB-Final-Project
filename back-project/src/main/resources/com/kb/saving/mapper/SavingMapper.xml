@@ -66,7 +66,7 @@
     <resultMap id="getProductViewLogResultMap" type="com.kb.saving.dto.SavingProductViewLogDto">
         <result property="savingId" column="saving_id"/>
         <result property="userId" column="user_id"/>
-        <result property="wmtiType" column="wmti_type"/>
+        <result property="wmtiType" column="invest_type"/>
         <result property="viewedAt" column="viewed_at"/>
     </resultMap>
 
@@ -228,7 +228,7 @@
     </select>
 
     <insert id="updateSavingProductViewByWmti" parameterType="com.kb.saving.dto.SavingProductViewUpdateDto">
-        INSERT INTO product_wmti_view_counts (saving_id, wmti_type, view_count)
+        INSERT INTO product_wmti_view_counts (saving_id, invest_type, view_count)
         VALUES (#{savingId}, #{wmtiType}, 1)
         ON DUPLICATE KEY UPDATE view_count = view_count + 1
     </insert>
@@ -242,7 +242,7 @@
     </select>
 
     <insert id="updateProductViewLog" parameterType="com.kb.saving.dto.SavingProductViewLogDto">
-        INSERT INTO product_view_logs (saving_id, mno, wmti_type, viewed_at)
+        INSERT INTO product_view_logs (saving_id, mno, invest_type, viewed_at)
         VALUES (#{savingId}, #{userId}, #{wmtiType}, NOW())
         ON DUPLICATE KEY UPDATE viewed_at = NOW()
     </insert>
