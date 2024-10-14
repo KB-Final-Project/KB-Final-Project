@@ -32,12 +32,14 @@ public class SavingController {
     public ResponseEntity<Saving> getSavingProductById(@PathVariable int savingId,
                                                        @RequestParam(required = false) int userId,
                                                        @RequestParam(required = false) String wmtiType) {
-        service.logProductViewAndUpdateViewCount(SavingProductViewLogDto
-                .builder()
-                .savingId(savingId)
-                .userId(userId)
-                .wmtiType(wmtiType)
-                .build());
+        if(wmtiType != null && !wmtiType.isEmpty()){
+            service.logProductViewAndUpdateViewCount(SavingProductViewLogDto
+                    .builder()
+                    .savingId(savingId)
+                    .userId(userId)
+                    .wmtiType(wmtiType)
+                    .build());
+        }
         return ResponseEntity.ok(service.getProductDetail(2, savingId));
     }
 
