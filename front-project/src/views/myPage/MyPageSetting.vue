@@ -1,10 +1,10 @@
 <template>
   <div>
     <br><br><br><br>
-    <h1>설정</h1><br><br>
+    <h2>설정</h2><br><br>
     <div class="profileBox">
       <i class="d-inline ai-user"></i>
-      <h2 class="d-inline"> 계정 정보</h2>
+      <h3 class="d-inline"> 계정 정보</h3>
       <br><br>
       <div class="formMyInfo d-flex flex-wrap">
         <div class="form-group">
@@ -23,7 +23,7 @@
     </div><br><br>
     <div class="passwordBox">
       <i class="ai-lock-closed"></i>
-      <h2 class="d-inline"> 비밀번호</h2>
+      <h3 class="d-inline"> 비밀번호</h3>
       <br><br>
       <div class="formMyInfo d-flex flex-wrap">
         <div class="mb-3">

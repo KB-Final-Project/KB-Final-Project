@@ -263,32 +263,34 @@ const routes = [
     meta: { hideHeaderFooter: true },
 
   },
-
-  // 필요한 다른 라우트들을 여기에 추가할 수 있습니다.
   {
     path: '/community',
-    component: Community, // community.vue를 레이아웃 컴포넌트로 사용
+    component: Community,
     meta: { requiresAuth: true },
     children: [
       {
         path: 'stability',
         name: 'stability',
         component: Stability,
-      },
-      {
-        path: 'aggressiveInvestment',
-        name: 'aggressiveInvestment',
-        component: AggressiveInvestment,
-      },
-      {
-        path: 'activeInvestment',
-        name: 'activeInvestment',
-        component: ActiveInvestment,
+        props: true
       },
       {
         path: 'neutral',
         name: 'neutral',
         component: Neutral,
+        props: true
+      },
+      {
+        path: 'activeInvestment',
+        name: 'activeInvestment',
+        component: ActiveInvestment,
+        props: true
+      },
+      {
+        path: 'aggressiveInvestment',
+        name: 'aggressiveInvestment',
+        component: AggressiveInvestment,
+        props: true
       },
     ],
   },
@@ -306,9 +308,9 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isLogin) {
     next({ name: 'login'});
   } else if (to.meta.requiresGuest && isLogin) {
-    next({ name: 'Home' }); 
+    next({ name: 'Home' });
   } else {
-    next(); 
+    next();
   }
 });
 

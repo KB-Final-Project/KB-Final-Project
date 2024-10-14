@@ -21,7 +21,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -58,7 +63,7 @@ public class BoardController {
     }
 
     @GetMapping("/{bno}/posts") // 게시글 bno 별 리스트 조회
-    public ResponseEntity<BoardPostPageResult> getPosts(@PathVariable Long bno, PostParam postParam) {
+    public ResponseEntity<BoardPostPageResult> getPosts(@PathVariable int bno, PostParam postParam) {
         postParam.setBoardId(bno);  // 게시판 ID 설정
         postParam.setBno(bno);      // 게시글 번호 추가
         BoardPostPageResult postResult = service.getPostList(postParam);
@@ -77,6 +82,7 @@ public class BoardController {
         return ResponseEntity.ok(postResult);
     }
 
+
     @GetMapping("/{postId}") // 게시글 조회
     public ResponseEntity<BoardPost> getById(@PathVariable long postId) {
         return ResponseEntity.ok(service.getBoard(postId));
@@ -92,10 +98,8 @@ public class BoardController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
-
         int bno;
-
-        // type에 따라 bno 값 설정
+        // type에 따라 bno 값 설정 (type이 문자열이므로 직접 매핑)
         switch (type) {
             case "stability":
                 bno = 1;
@@ -127,6 +131,7 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
 
+
     @PutMapping("/{postId}")
     public ResponseEntity<BoardPost> update(@PathVariable int postId,
                                             BoardDTO boardDTO,
@@ -148,16 +153,36 @@ public class BoardController {
     public ResponseEntity<BoardPost> delete(@PathVariable long postId) {
         return ResponseEntity.ok(service.deleteBoard(postId));
     }
+    @GetMapping("/file/{fileName}")
+    @ResponseBody
+    public ResponseEntity<Resource> downloadImage(@PathVariable("fileName") String fileName) {
+        try {
+            Path filePath = Paths.get(BASE_DIR).resolve(fileName).normalize();
+            log.info("Attempting to serve file from path: {}", filePath.toString());
 
-    @GetMapping("/download/{fno}")
-    public ResponseEntity<Resource> download(@PathVariable long fno) throws Exception {
-        BoardAttachFile attach = service.getAttachment(fno);
-        Resource resource = new UrlResource("file:" + BASE_DIR + "/" + attach.getRenamedFilename());
-        String fileName = new String(attach.getOriginalFilename().getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1); // 크롬
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"" + fileName + "\"")
-                .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(resource.contentLength()))
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM.toString()).body(resource);
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (!resource.exists() || !resource.isReadable()) {
+                log.warn("File not found or not readable: {}", filePath.toString());
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+
+            String contentType = "application/octet-stream";
+            try {
+                contentType = Files.probeContentType(filePath);
+            } catch (IOException e) {
+                log.warn("Could not determine file type for {}", filePath);
+            }
+
+            log.info("Serving file with content type: {}", contentType);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(resource);
+        } catch (MalformedURLException e) {
+            log.error("Malformed URL: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     // 좋아요 버튼
@@ -190,13 +215,13 @@ public class BoardController {
         }
     }
 
-
-    // 이미지 출력
-    @GetMapping("/file/{fileName}")
-    @ResponseBody
-    public Resource downloadImage(@PathVariable("fileName") String fileName) throws Exception {
-        return new UrlResource("file:" + BASE_DIR + fileName);
-    }
+//
+//    // 이미지 출력
+//    @GetMapping("/file/{fileName}")
+//    @ResponseBody
+//    public Resource downloadImage(@PathVariable("fileName") String fileName) throws Exception {
+//        return new UrlResource("file:" + BASE_DIR + fileName);
+//    }
 
     @DeleteMapping("/attachment/{fno}")
     public ResponseEntity<Boolean> deleteAttachment(@PathVariable long fno) throws Exception {
@@ -240,4 +265,5 @@ public class BoardController {
 
         return ResponseEntity.ok(reply);
     }
+
 }

@@ -1,14 +1,65 @@
+<script setup>
+import { ref, onMounted, computed } from "vue";
+import axios from "axios";
+const postType = ref(2);
+const posts = ref([]); // 포스트 목록을 저장할 ref
+const visibleCount = ref(5); // Number of posts to display initially
+
+
+const fetchBoardPosts = async () => {
+  try {
+    const response = await axios.get('/api/board/${postType.value}/posts');
+    posts.value = response.data.postList; // postList를 저장
+    console.log(posts.value); // 확인용 출력
+  } catch (error) {
+    console.error('Error fetching posts:', error); // 오류 처리
+  }
+};
+
+// Computed property to get the visible posts
+const visiblePosts = computed(() => {
+  return posts.value.slice(0, visibleCount.value);
+});
+
+// Check if all posts are loaded
+const allPostsLoaded = computed(() => {
+  return visibleCount.value >= posts.value.length;
+});
+
+// 타임스탬프를 형식화하는 함수
+const formatDate = (timestamp) => {
+  const date = new Date(timestamp);
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true
+  });
+};
+
+// Function to load more posts
+const loadMore = () => {
+  visibleCount.value += 5;
+};
+
+onMounted(() => {
+  fetchBoardPosts();
+});
+</script>
+
 <template>
   <div>
-    <div v-for="post in posts" :key="post.title" class="feeds card mb-5 mb-xxl-8">
+    <div v-for="post in visiblePosts" :key="post.postId" class="feeds card mb-5 mb-xxl-8">
       <div class="card-body pb-0">
         <div class="d-flex align-items-center">
           <div class="symbol symbol-45px me-5">
             <img :src="require('@/assets/media/avatars/300-25.jpg')" alt="" />
           </div>
           <div class="d-flex flex-column">
-            <a href="#" class="name text-gray-800 mb-1 fw-bolder">Brad Dennis</a>
-            <span class="text-gray-500 fw-semibold">Yesterday at 5:06 PM</span>
+            <p class="name text-gray-800 mb-1 fw-bolder">{{ post.authorId }}</p>
+            <span class="text-gray-500 fw-semibold">{{ formatDate(post.createdDate) }}</span>
           </div>
         </div>
         <div class="pt-5">
@@ -18,6 +69,15 @@
           <p class="text-gray-800 fw-normal mb-3">
             {{ post.content }} <!-- 게시글 내용 -->
           </p>
+          <div v-if="post.boardAttachFileList && post.boardAttachFileList.length > 0">
+            <div v-for="attachment in post.boardAttachFileList" :key="attachment.postId" class="mb-3">
+              <img
+                  :src="`/api/board/file/${encodeURIComponent(attachment.renamedFilename)}`"
+                  alt="Post Image"
+                  class="post-image"
+              />
+            </div>
+          </div>
           <div class="d-flex align-items-center">
             <a href="#" class="btn btn-sm btn-color-muted btn-active-light-primary fw-bolder fs-6 py-1 px-2 me-4">
               <i class="ai-message fs-2">
@@ -50,117 +110,58 @@
           </div>
         </form>
       </div>
-
     </div>
   </div>
-  <button class="moreBtn text-center" id="kt_widget_5_load_more_btn" >
-        <span class="indicator-label">더보기</span>
-        <span class="indicator-progress">Loading...
-        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-      </button>
+  <button
+      v-if="!allPostsLoaded"
+      class="moreBtn text-center"
+      @click="loadMore"
+  >
+    <span class="indicator-label">더보기</span>
+    <span class="indicator-progress">Loading...
+      <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+    </span>
+  </button>
+  <input type="hidden" :value="postType">
 </template>
 
-
-
-<script setup>
-import { ref, onMounted } from 'vue';
-import { fetchPosts, deletePost } from '@/api';
-import axios from 'axios';
-
-const posts = ref([]);
-const showPopup = ref(false);
-const postToDelete = ref(null);
-
-const loadPosts = async () => {
-  try {
-    const response = await fetchPosts();
-    posts.value = response.data;
-  } catch (error) {
-    console.error('Error fetching posts:', error);
-  }
-};
-
-const fetchBoardPosts = async () => {
-  try {
-    const response = await axios.get('/api/board/2/posts');
-    posts.value = response.data.postList; // postList를 저장
-    console.log(posts.value);
-  } catch (error) {
-    console.error('Error fetching posts:', error); // 오류 처리
-  }
-};
-
-onMounted(()=>{
-  // loadPosts();
-  fetchBoardPosts();
-})
-
-const openPopup = (index) => {
-  postToDelete.value = index;
-  showPopup.value = true;
-};
-
-const cancelDelete = () => {
-  showPopup.value = false;
-  postToDelete.value = null;
-};
-
-const confirmDelete = async () => {
-  if (postToDelete.value !== null) {
-    await deletePost(posts.value[postToDelete.value].id);
-    posts.value.splice(postToDelete.value, 1);
-    showPopup.value = false;
-    postToDelete.value = null;
-  }
-};
-</script>
-
 <style scoped>
-.reply {
+.reply{
   font-size: 20px;
 }
-.reply textarea {
+.reply textarea{
   font-size: 20px;
 }
-.pt-5 p {
+
+.pt-5 p{
   font-size: 25px;
 }
-.name {
+.name{
   font-size: 20px;
 }
-.moreBtn {
+.moreBtn{
   margin-left: 10px;
-  width: 600px;
+  width: 700px;
   height: 50px;
   border: none;
   border-radius: 20px;
-}
-.moreBtn:hover {
-  background-color: #438c74;
-  color: white;
-}
-.feeds {
-  border-radius: 30px;
-  border: none;
+  cursor: pointer; /* Add cursor pointer for better UX */
 }
 
-.popup {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: white;
-  border: 1px solid #ccc;
-  padding: 20px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.moreBtn:hover{
+  background-color: #438c74;
+  color:white;
 }
-.popup h3 {
-  margin: 0;
+
+.feeds{
+  width: 700px;
+  border-radius: 30px;
+  border: none;
+  margin-left: 10px;
 }
-.popup .line {
-  border-top: 1px solid #ccc;
-  margin: 10px 0;
+
+.post-image{
+  max-width: 600px;
+  max-height: 600px;
 }
 </style>

@@ -76,6 +76,10 @@
         <result property="commentCount" column="comment_count"/>
         <result property="createdDate" column="created_date"/>
         <result property="modifiedDate" column="modified_date"/>
+
+        <!-- boardAttachFileList 매핑 추가 -->
+        <collection property="boardAttachFileList" ofType="com.kb.board.dto.BoardAttachFile" column="post_id"
+                    select="selectAttachFileByFno"/>
         <!-- 필요한 다른 필드 매핑 추가 -->
     </resultMap>
 
@@ -125,18 +129,35 @@
 
     <select id="selectPostList" resultMap="postResultMap" parameterType="com.kb.board.dto.PostParam">
         SELECT
-            bp.*,
-            m.id AS author_id
+            bp.post_id,
+            bp.bno,
+            bp.title,
+            bp.content,
+            bp.read_count,
+            bp.created_date,
+            bp.modified_date,
+            bp.type,
+            bp.status,
+            bp.comment_count,
+            bp.member_id,
+            m.id,
+            baf.fno,
+            baf.original_filename,
+            baf.renamed_filename,
+            baf.content_type,
+            baf.size,
+            baf.create_date
         FROM
             board_post bp
-                LEFT JOIN
-            member m ON bp.member_id = m.mno
+            LEFT JOIN member m ON bp.member_id = m.mno
+            LEFT JOIN board_attach_file baf ON bp.post_id = baf.post_id
         WHERE
-            bp.bno = #{boardId} and bp.status = 'y'
+            bp.bno = #{bno} AND bp.status = 'y'
         ORDER BY
             bp.created_date DESC
             LIMIT #{limit} OFFSET #{offset}
     </select>
+
 
     <!-- 게시글 조회시 readCount 갱신용 -->
     <update id="updateReadCount" parameterType="com.kb.board.dto.BoardPost">
@@ -158,7 +179,7 @@
         select
             fno, post_id, original_filename, renamed_filename, content_type, size, create_date
         from board_attach_file
-        where fno = #{fno}
+        where post_id = #{postId}
     </select>
 
     <!-- 파일 리스트 -->

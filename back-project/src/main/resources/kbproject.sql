@@ -1,42 +1,23 @@
-CREATE TABLE stock (
-                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                       stock_code VARCHAR(20) UNIQUE NOT NULL,
-                       stock_name VARCHAR(255) NOT NULL,
-                       industry VARCHAR(100),
-                       current_price DECIMAL(15, 2) NOT NULL,
-                       price_change DECIMAL(15, 2),
-                       price_change_pct DECIMAL(5, 2),
-                       high_price DECIMAL(15, 2),
-                       low_price DECIMAL(15, 2),
-                       opening_price DECIMAL(15, 2),
-                       volume BIGINT,
-                       w52_hgpr DECIMAL(15, 2),  -- 52주 최고가
-                       w52_lwpr DECIMAL(15, 2),  -- 52주 최저가
-                       hts_avls DECIMAL(15, 2),  -- HTS 시가총액
-                       last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    --   상품정보
-                       pdno VARCHAR(12),
-                       prdt_type_cd VARCHAR(3),
-                       prdt_name VARCHAR(60),
-                       prdt_name120 VARCHAR(120),
-                       prdt_abrv_name VARCHAR(60),
-                       prdt_eng_name VARCHAR(60),
-                       prdt_eng_name120 VARCHAR(120),
-                       prdt_eng_abrv_name VARCHAR(60),
-                       std_pdno VARCHAR(12),
-                       shtn_pdno VARCHAR(12),
-                       prdt_sale_stat_cd VARCHAR(2),
-                       prdt_risk_grad_cd VARCHAR(2),
-                       prdt_clsf_cd VARCHAR(6),
-                       prdt_clsf_name VARCHAR(60),
-                       sale_strt_dt VARCHAR(8),
-                       sale_end_dt VARCHAR(8),
-                       wrap_asst_type_cd VARCHAR(2),
-                       ivst_prdt_type_cd VARCHAR(4),
-                       ivst_prdt_type_cd_name VARCHAR(60),
-                       frst_erlm_dt VARCHAR(8)
-);
+CREATE TABLE `stock` (
+                         `id` bigint NOT NULL AUTO_INCREMENT,
+                         `stock_code` varchar(20) NOT NULL,
+                         `stock_name` varchar(255) NOT NULL,
+                         `industry` varchar(100) DEFAULT NULL,
+                         `current_price` decimal(15,2) NOT NULL,
+                         `price_change` decimal(15,2) DEFAULT NULL,
+                         `price_change_pct` decimal(5,2) DEFAULT NULL,
+                         `high_price` decimal(15,2) DEFAULT NULL,
+                         `low_price` decimal(15,2) DEFAULT NULL,
+                         `opening_price` decimal(15,2) DEFAULT NULL,
+                         `volume` bigint DEFAULT NULL, -- 누적거래량(주)
+                         `hts_avls` decimal(18,2) DEFAULT NULL,  -- HTS 시가총액 추가
+                         `w52_hgpr` decimal(10,2) DEFAULT NULL,  -- 52주일 최고가 추가
+                         `w52_lwpr` decimal(10,2) DEFAULT NULL,  -- 52주일 최저가 추가
+                         `acml_tr_pbmn` decimal(18,2) DEFAULT NULL,  -- 누적 거래대금
+                         `last_updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                         PRIMARY KEY (`id`),
+                         UNIQUE KEY `stock_code` (`stock_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE stock_prices (
                               id INT AUTO_INCREMENT PRIMARY KEY,
@@ -48,8 +29,6 @@ CREATE TABLE stock_prices (
                               close_price FLOAT,
                               volume INT
 );
-
-
 
 
 CREATE TABLE IF NOT EXISTS stock_codes (
@@ -86,9 +65,11 @@ CREATE TABLE `funds` (
                          `feeTot` decimal(19,4) DEFAULT NULL,
                          `bmNm` varchar(255) DEFAULT NULL,
                          `navTot` decimal(19,4) DEFAULT NULL,
-                         UNIQUE (fundFnm),
-                         PRIMARY KEY (`id`)
-)
+                         `fundCd` varchar(100) DEFAULT NULL,
+                         PRIMARY KEY (`id`),
+                         UNIQUE KEY `fundFnm` (`fundFnm`)
+) ENGINE=InnoDB AUTO_INCREMENT=114302 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 CREATE TABLE SuikChart (
                            id BIGINT AUTO_INCREMENT PRIMARY KEY, -- 수익 차트 ID (기본 키)
@@ -1110,7 +1091,6 @@ CREATE TABLE `member_auth` (
                                PRIMARY KEY (`id`,`authority`),
                                CONSTRAINT `fk_authorities_users` FOREIGN KEY (`id`) REFERENCES `member` (`id`)
 )
-
 
 CREATE TABLE board (
                        bno INT NOT NULL AUTO_INCREMENT,

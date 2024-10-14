@@ -8,6 +8,7 @@ const displayedFunds = ref([]); // 현재 페이지에 표시할 펀드 데이�
 const currentPage = ref(1);
 const totalPages = ref(1);
 const pageSize = ref(20); // 페이지당 항목 수
+const selectedGrade = ref(null); // 선택된 등급
 
 const isLoading = ref(false);
 const error = ref(null);
@@ -29,7 +30,11 @@ const fetchAllFunds = async () => {
   isLoading.value = true;
   error.value = null;
   try {
-    const response = await axios.get('/api/funds/all');
+    const response = await axios.get('/api/funds/all', {
+      params: {
+        grade: selectedGrade.value, // 선택된 등급을 쿼리 파라미터로 전달
+      },
+    });
     allFunds.value = response.data; // 전체 데이터 저장
 
     // 데이터를 받은 후 초기 정렬 적용
@@ -45,6 +50,7 @@ const fetchAllFunds = async () => {
     isLoading.value = false;
   }
 };
+
 
 const searchFundsFunc = async () => {
   isLoading.value = true;
@@ -69,6 +75,11 @@ const searchFundsFunc = async () => {
     isLoading.value = false;
   }
 };
+
+const goToFund  = (fundCd) => {
+  window.location.href = `https://www.samsungfund.com/fund/product/view.do?id=${fundCd}`;
+};
+
 
 const paginateFunds = () => {
   const start = (currentPage.value - 1) * pageSize.value;
@@ -209,6 +220,15 @@ onMounted(() => {
         <button class="searchBtn" type="button" @click="fetchAllFunds">전체보기</button>
       </div>
 
+      <div class="text-right">
+      <h2 class="d-inline search">등급 필터</h2>
+        <button class="filterBtn" @click="selectedGrade = '1-2'; fetchAllFunds()">고위험</button>
+        <button class="filterBtn" @click="selectedGrade = '3-4'; fetchAllFunds()">중위험</button>
+        <button class="filterBtn" @click="selectedGrade = '5-6'; fetchAllFunds()">저위험</button>
+        <button class="filterBtn" @click="selectedGrade = null; fetchAllFunds()">전체보기</button>
+      </div>
+
+
       <!-- 로딩 메시지 -->
       <div v-if="isLoading" class="loading-box">
         <div class="spinner-border text-primary" role="status">
@@ -292,7 +312,7 @@ onMounted(() => {
           <table class="fundSearchResultTable text-center">
             <tbody v-for="fund in displayedFunds" :key="fund.id">
             <tr>
-              <td class="fundName" style="width: 40%;" rowspan="2">
+              <td class="fundName" style="width: 40%;" rowspan="2" @click="goToFund(fund.fundCd)">
                 <span v-for="(part, index) in fund.fundFnm.split('[')" :key="part.index">
                   <h4 v-if="index === 0">{{ part }}</h4>
                   <h5 style="color: grey;" v-else>
@@ -378,7 +398,7 @@ onMounted(() => {
 .fundName{
   font-family: J3;
   color: rgba(68, 140, 116, 1);
-
+  cursor: pointer;
 }
 
 .grade {
@@ -586,4 +606,26 @@ tbody td {
 .sort-button-inactive:hover {
   opacity: 0.8;
 }
+.filterBtn {
+  font-size: 20px; /* 버튼 글꼴 크기 */
+  height: 50px; /* 버튼 높이 */
+  color: white;
+  border: none;
+  border-radius: 30px;
+  background-color: rgba(68, 140, 116, 1); /* 기존 버튼 색상 */
+  margin: 5px; /* 버튼 간 간격 조정 */
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.filterBtn:active,
+.filterBtn:hover {
+  background-color: #e5e4e4; /* 호버 색상 */
+  color: black;
+}
+
+.text-right {
+  text-align: right;
+}
+
 </style>

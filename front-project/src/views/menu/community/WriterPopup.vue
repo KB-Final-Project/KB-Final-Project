@@ -1,33 +1,203 @@
 <script setup>
 const emit = defineEmits(['close']); // 부모 컴포넌트로 닫기 이벤트 전달
+import axios from "axios";
+import { ref, reactive, computed, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import { useRoute, useRouter } from 'vue-router';
+
+const authStore = useAuthStore();
+const form = reactive({
+  title: '',
+  content: '',
+});
+const files = ref(null); // Ref for the file input
+const selectedFiles = ref([]); // For handling multiple file uploads
+const isSubmitting = ref(false);
+const isError = ref(false);
+const errorMessage = ref('');
+const userInvestType = ref(); // Store user's invest type
+
+const route = useRoute();
+const router = useRouter();
+const investTypeMapping = {
+  1: 'stability',
+  2: 'neutral',
+  3: 'activeInvestment',
+  4: 'aggressiveInvestment',
+};
+
+
+async function fetchUserInvestType() {
+  const authValue = localStorage.getItem('auth');
+  if (authValue) {
+    try {
+      const authData = JSON.parse(authValue);
+      if (authData && authData.id && authData.token) {
+        const response = await axios.get(`/api/member/${authData.id}`, {
+          headers: {
+            'Authorization': `Bearer ${authData.token}`,
+          },
+        });
+        userInvestType.value = response.data.investType; // Fetch and set user's invest type
+      } else {
+        console.error('Invalid auth data');
+      }
+    } catch (error) {
+      console.error('Error fetching user invest type:', error);
+      isError.value = true;
+      errorMessage.value = '사용자 정보를 불러오는 중 오류가 발생했습니다.';
+    }
+  } else {
+    isError.value = true;
+    errorMessage.value = '로그인이 필요합니다.';
+  }
+}
+
+// Computed property to ensure userInvestType is available before using investTypeMapping
+const mappedPostType = computed(() => {
+  return investTypeMapping[userInvestType.value] || null;
+});
+
+async function createBoardPost() {
+  const formData = new FormData();
+  formData.append('title', form.title);
+  formData.append('content', form.content);
+
+  // Append files if there are any
+  selectedFiles.value.forEach(file => {
+    formData.append('files', file);
+  });
+
+  let bno;
+  switch (mappedPostType.value) {
+    case 'stability':
+      bno = 1;
+      break;
+    case 'neutral':
+      bno = 2;
+      break;
+    case 'activeInvestment':
+      bno = 3;
+      break;
+    case 'aggressiveInvestment':
+      bno = 4;
+      break;
+    default:
+      console.error('Invalid postType');
+  }
+
+  // Append bno and type to formData
+  formData.append('bno', bno);
+  formData.append('type', route.params.postType);
+
+  // Get auth token
+  const token = authStore.getToken();
+
+  // Axios POST request
+  try {
+    const postResponse = await axios.post(`/api/board/${mappedPostType.value}`, formData, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    console.log('Post created:', postResponse.data);
+  } catch (error) {
+    console.error('Error creating post:', error);
+    console.error('Error details:', error.response ? error.response.data : error.message);
+    throw error;
+  }
+}
+
+// Form submission function
+const submit = async () => {
+  if (!confirm('등록할까요?')) return;
+  isError.value = false;
+
+  try {
+    await createBoardPost();
+    router.push(`/community/${mappedPostType.value}`);
+  } catch (error) {
+    console.error('Error creating board post:', error);
+    errorMessage.value = '게시물을 작성하는 중 오류가 발생했습니다. 다시 시도해주세요.';
+    isError.value = true;
+  } finally {
+    isSubmitting.value = false;
+  }
+};
+
+
+// Cancel post function
+function cancelPost() {
+  form.title = '';
+  form.content = '';
+  selectedFiles.value = [];
+  if (files.value) {
+    files.value.value = ''; // Reset file input
+  }
+}
+
+// File change handler
+function handleFileChange(event) {
+  selectedFiles.value = Array.from(event.target.files); // Handle file selection
+}
 
 function closePopup() {
   emit('close');
 }
+
+onMounted(() => {
+  fetchUserInvestType();
+});
 </script>
 
 <template>
   <div class="writer popup">
-    <div class="popup-content">
+    <div class="card popup-content">
       <!-- 이미지와 버튼을 좌우로 배치 -->
-      <div class="header d-flex justify-content-between align-items-center">
-        <button class="cancel">취소</button>
-        <button class="submit">작성</button>
-      </div>
-      <input v-model="postTitle" id="title" class="subject" placeholder="제목을 입력하세요" />
-      <br>
-      <textarea  class="content" placeholder="무슨 일이 일어나고 있나요?" rows="5"></textarea>
-      <div class="filebox">
-        <label for="file">
-          <i class="ai-image"></i>
-        </label>
-        <input type="file" id="file" style="display: none;" />
-      </div>
+      <form @submit.prevent="submit">
+          <div class="card-body pb-0">
+            <div class="d-flex align-items-center">
+              <div class="button-group position-absolute top-0 end-0 mt-3 me-5">
+                <button type="button" class="cancel me-3">취소</button>
+                <button type="submit" class="submit" >작성</button>
+              </div>
+            </div>
+            <br><br>
+            <div>
+              <!-- Hidden input for the page value -->
+              <input type="hidden" :value="route.params.postType" />
+              <input
+                  v-model="form.title"
+                  id="title"
+                  class="subject"
+                  placeholder="제목을 입력하세요"
+                  required
+              />
+              <textarea
+                  v-model="form.content"
+                  id="content"
+                  class="writer"
+                  placeholder="무슨 일이 일어나고 있나요?"
+                  required
+              ></textarea>
+              <div class="filebox">
+                <label for="files" class="file-label">
+                  <i class="ai-image"></i>
+                </label>
+                <input type="file" id="files" ref="files" @change="handleFileChange" style="display: none;" />
+              </div>
+            </div>
+          </div>
+      </form>
     </div>
   </div>
 </template>
 
 <style scoped>
+.card{
+  border:none;
+}
 .filebox {
   display: inline-block;
   cursor: pointer;
@@ -40,28 +210,37 @@ function closePopup() {
 }
 
 .popup-content img {
-  width: 70px;
-  border-radius: 50%;
-
-}
-
-.writer {
-  width: 449px;
-  height: 330px;
-  border: 1px solid lightgrey;
+  width: 300px;
+  height: 300px;
   border-radius: 30px;
 }
 
+.writer {
+  width: 500px;
+  height: 250px;
+  border: 1px solid lightgrey;
+  border-radius: 30px;
+  margin-top: 30px;
+  padding: 20px;
+}
+.subject{
+  width: 550px;
+  height: 40px;
+  border: 1px solid lightgrey;
+  border-radius: 30px;
+  margin-bottom: -20px;
+  padding: 20px;
+}
 .popup {
   position: fixed;
   top: 50%;
+  height: 450px;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 500px;
+  width: 600px;
   background-color: white;
   padding: 20px;
   border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 100; /* 흐린 배경 위에 위치 */
 }
 
@@ -70,22 +249,6 @@ function closePopup() {
   flex-direction: column;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.content {
-  width: 100%;
-  height: 130px;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 20px;
-  border: 1px solid lightgrey;
-  resize: none;
-}
 
 .subject{
   width: 100%;
