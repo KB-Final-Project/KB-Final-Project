@@ -229,6 +229,7 @@
 <script setup>
 import { ref, reactive, onMounted, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
 import axios from 'axios';
 
 const route = useRoute(); // 현재 경로 정보 가져오기
@@ -241,6 +242,7 @@ const activePrimeRates = reactive({});
 const selectedBaseRate = ref(null);
 const showKeypad = ref(false);
 const keypadInput = ref('');
+const auth = useAuthStore();
 
 const maxInterestMaxRate = computed(() => {
   if (!deposit.value.interestRateList || deposit.value.interestRateList.length === 0) return 0;
@@ -363,7 +365,11 @@ const fetchDeposit = async () => {
   loading.value = true;
   try {
     const savingId = route.params.savingId;
-    const response = await axios.get(`/api/saving/detail/${savingId}`);
+    const params = {
+      userId: auth.mno,          
+      wmtiType: auth.investType 
+    };
+    const response = await axios.get(`/api/saving/detail/${savingId}`, {params});
     deposit.value = response.data;
 
     console.log('API 응답 데이터:', deposit.value);
