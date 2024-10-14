@@ -2,8 +2,6 @@
   <div class="stock-dashboard">
     <h1><b>국내주식</b></h1>
     <div class="container">
-      <div v-if="error" class="error-message">{{ error }}</div>
-
       <!-- 이 시각 증시 (KOSPI, KOSDAQ, KOSPI200) -->
       <section class="current-stocks">
         <div class="section-header">
@@ -41,9 +39,9 @@
             <p>{{ stock.currentPrice }}</p>
             <!-- 상승/하락에 따른 아이콘 표시 -->
             <p :class="{
-                positive: stock.priceChangePct > 0,
-                negative: stock.priceChangePct < 0,
-              }">
+              positive: stock.priceChangePct > 0,
+              negative: stock.priceChangePct < 0,
+            }">
               {{ stock.priceChange }} ({{ stock.priceChangePct }}%)
             </p>
           </div>
@@ -63,35 +61,30 @@
               <th @click="sortBy('stockName')" :class="{ active: sortKey === 'stockName' }">
                 종목명
                 <span v-if="sortKey === 'stockName'" :class="{
-                    'sort-arrow': true,
-                    'sort-reverse': sortOrder === -1,
-                  }"></span>
+                  'sort-arrow': true,
+                  'sort-reverse': sortOrder === -1,
+                }"></span>
               </th>
               <th @click="sortBy('currentPrice')" :class="{ active: sortKey === 'currentPrice' }">
                 현재가
                 <span v-if="sortKey === 'currentPrice'" :class="{
-                    'sort-arrow': true,
-                    'sort-reverse': sortOrder === -1,
-                  }"></span>
+                  'sort-arrow': true,
+                  'sort-reverse': sortOrder === -1,
+                }"></span>
               </th>
               <th @click="sortBy('priceChange')" :class="{ active: sortKey === 'priceChange' }">
                 등락률
                 <span v-if="sortKey === 'priceChange'" :class="{
-                    'sort-arrow': true,
-                    'sort-reverse': sortOrder === -1,
-                  }"></span>
+                  'sort-arrow': true,
+                  'sort-reverse': sortOrder === -1,
+                }"></span>
               </th>
-              <th
-                @click="sortBy('volume')"
-                :class="{ active: sortKey === 'volume' }"
-              >
+              <th @click="sortBy('volume')" :class="{ active: sortKey === 'volume' }">
                 누적 거래량(주)
-                <span
-                  v-if="sortKey === 'volume'"
-                  :class="{
-                    'sort-arrow': true,
-                    'sort-reverse': sortOrder === -1,
-                  }"></span>
+                <span v-if="sortKey === 'volume'" :class="{
+                  'sort-arrow': true,
+                  'sort-reverse': sortOrder === -1,
+                }"></span>
               </th>
             </tr>
           </thead>
@@ -99,18 +92,15 @@
             <tr v-for="(stock, index) in sortedStocks" :key="index" @click="goToStockChart(stock)">
               <td>{{ stock.stockName }}</td>
               <td>{{ stock.currentPrice.toLocaleString() }}원</td>
-              <td
-                :class="{
-                  positive: stock.priceChange > 0,
-                  negative: stock.priceChange < 0,
-                }">
+              <td :class="{
+                positive: stock.priceChange > 0,
+                negative: stock.priceChange < 0,
+              }">
                 {{ stock.priceChange }}
                 ({{ stock.priceChangePct }})%
               </td>
-              <td
-                
-              >
-              {{ stock.volume.toLocaleString() }}주
+              <td>
+                {{ stock.volume.toLocaleString() }}주
               </td>
             </tr>
           </tbody>
@@ -130,9 +120,9 @@
             <img :src="getCategoryIcon(category.name)" :alt="category.name">
             <h3>{{ category.name }}</h3>
             <p :class="{
-                positive: category.avgChange >= 0,
-                negative: category.avgChange < 0,
-              }">
+              positive: category.avgChange >= 0,
+              negative: category.avgChange < 0,
+            }">
               {{ category.avgChange.toFixed(2) }}%
             </p>
           </div>
@@ -192,19 +182,15 @@
                 <tr v-for="stock in categoryStocks" :key="stock.stockCode" @click="goToStockChart(stock)">
                   <td>{{ stock.stockName }}</td>
                   <td>{{ stock.currentPrice.toLocaleString() }}원</td>
-                  <td
-                    :class="{
-                      positive: stock.priceChange > 0,
-                      negative: stock.priceChange < 0,
-                    }"
-                  >
-                  {{ stock.priceChange }}
-                  ({{ stock.priceChangePct }})%
+                  <td :class="{
+                    positive: stock.priceChange > 0,
+                    negative: stock.priceChange < 0,
+                  }">
+                    {{ stock.priceChange }}
+                    ({{ stock.priceChangePct }})%
                   </td>
-                  <td
-                  
-                  >
-                  {{ stock.volume.toLocaleString() }}주
+                  <td>
+                    {{ stock.volume.toLocaleString() }}주
                   </td>
                 </tr>
               </tbody>
@@ -362,7 +348,8 @@ export default {
     async fetchAllStocksData() {
       try {
         const response = await axios.get('http://localhost:8080/api/stocks/all');
-
+        this.stocks = Object.values(response.data);
+        this.updateTop3Stocks();
         // 카테고리가 null이 아닌 항목들만 필터링
         this.allStocks = response.data.filter(stock => stock.industry !== null);
 
@@ -375,36 +362,50 @@ export default {
     // 초기 주식 데이터를 가져오는 메서드
     async fetchStockData() {
       try {
-        const response = await axios.get(
-          "http://localhost:8080/api/websocket/prices"
-        );
-        this.stocks = Object.values(response.data);
-        this.updateTop3Stocks();
+        const kospiResponse = await axios.get("http://localhost:8080/api/index/kospi");
+        const kosdaqResponse = await axios.get("http://localhost:8080/api/index/kosdaq");
+        const kospi200Response = await axios.get("http://localhost:8080/api/index/kospi200");
 
-        const kospiResponse = await axios.get(
-          "http://localhost:8080/api/index/kospi"
-        );
-        const kosdaqResponse = await axios.get(
-          "http://localhost:8080/api/index/kosdaq"
-        );
-        const kospi200Response = await axios.get(
-          "http://localhost:8080/api/index/kospi200"
-        );
+        // 더미 데이터 생성 함수
+        const generateStockData = (startValue, numPoints, volatility) => {
+          let labels = [];
+          let data = [];
+          let currentValue = startValue;
+
+          for (let i = 0; i < numPoints; i++) {
+            const date = new Date();
+            date.setDate(date.getDate() - (numPoints - i));
+            labels.push(date.toISOString().slice(0, 10));
+
+            const change = (Math.random() * 2 - 1) * volatility;
+            currentValue += currentValue * change;
+            data.push(Math.round(currentValue * 100) / 100);
+          }
+
+          return { labels, data };
+        };
+
+        // 각 주식 데이터 생성
+        const kospiStockData = generateStockData(2570, 100, 0.01);
+        const kosdaqStockData = generateStockData(1000, 100, 0.015);
+        const kospi200StockData = generateStockData(330, 100, 0.008);
+
+        // currentStocks에 데이터 추가
         this.currentStocks = [
           {
             name: 'KOSPI',
             amount: kospiResponse.data.코스피,
             change: kospiResponse.data.변동,
             chartData: {
-              labels: ['2023-10-01', '2023-10-02', '2023-10-03', '2023-10-04', '2023-10-05'],
+              labels: kospiStockData.labels,
               datasets: [
                 {
                   label: 'KOSPI',
-                  data: [20, 10, 10, 5, 7],
+                  data: kospiStockData.data,
                   borderColor: 'rgba(75, 192, 192, 1)',
                   backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                  fill: false,
-                  pointRadius: 0,
+                  fill: true,
+                  pointRadius: 2,
                 },
               ],
             },
@@ -414,39 +415,38 @@ export default {
             amount: kosdaqResponse.data.코스닥,
             change: kosdaqResponse.data.변동,
             chartData: {
-              labels: ['2023-10-01', '2023-10-02', '2023-10-03', '2023-10-04', '2023-10-05'],
+              labels: kosdaqStockData.labels,
               datasets: [
                 {
                   label: 'KOSDAQ',
-                  data: [12, 3, 4, 15, 4],
+                  data: kosdaqStockData.data,
                   borderColor: 'rgba(153, 102, 255, 1)',
                   backgroundColor: 'rgba(153, 102, 255, 0.2)',
                   fill: true,
-                  pointRadius: 0,
+                  pointRadius: 2,
                 },
               ],
-            }
+            },
           },
           {
             name: 'KOSPI200',
             amount: kospi200Response.data.코스피200,
-            change: `${kospi200Response.data.전일대비} (${kospi200Response.data.등락률})`, // 전일대비 및 등락률 조합
+            change: kospi200Response.data.변동,
             chartData: {
-              labels: ['2023-10-01', '2023-10-02', '2023-10-03', '2023-10-04', '2023-10-05'],
+              labels: kospi200StockData.labels,
               datasets: [
                 {
                   label: 'KOSPI200',
-                  data: [23, 1, 3, 5, 10],
+                  data: kospi200StockData.data,
                   borderColor: 'rgba(255, 159, 64, 1)',
                   backgroundColor: 'rgba(255, 159, 64, 0.2)',
                   fill: true,
-                  pointRadius: 0,
+                  pointRadius: 2,
                 },
               ],
             },
           }
         ];
-
       } catch (error) {
         console.error("주식 데이터를 가져오는 중 오류 발생:", error);
       }
@@ -884,11 +884,15 @@ h1 {
   align-items: center;
   padding: 10px 0;
   border-bottom: 1px solid #eee;
-  cursor: pointer; /* 클릭 가능함을 나타내는 커서 추가 */
-  transition: background-color 0.3s ease; /* 부드러운 전환 효과 추가 */
+  cursor: pointer;
+  /* 클릭 가능함을 나타내는 커서 추가 */
+  transition: background-color 0.3s ease;
+  /* 부드러운 전환 효과 추가 */
 }
+
 .category-item:hover {
-  background-color: #f0f8ff; /* 마우스를 올리면 배경색 변경 */
+  background-color: #f0f8ff;
+  /* 마우스를 올리면 배경색 변경 */
 }
 
 .category-rank {
@@ -908,7 +912,7 @@ h1 {
 
 .category-change {
   width: 80px;
-  text-align: center; 
+  text-align: center;
   font-weight: bold;
 }
 

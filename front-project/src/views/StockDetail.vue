@@ -10,28 +10,17 @@
           <p class="title">이 시각 증시</p>
         </div>
         <div class="stock-cards">
-          <div
-            v-for="(stock, index) in currentStocks"
-            :key="index"
-            :class="{
-              'positive-card': stock.change && stock.change.includes('+'),
-              'negative-card': stock.change && stock.change.includes('-'),
-            }"
-            class="stock-card"
-          >
+          <div v-for="(stock, index) in currentStocks" :key="index" :class="{
+            'positive-card': stock.change && stock.change.includes('+'),
+            'negative-card': stock.change && stock.change.includes('-'),
+          }" class="stock-card">
             <p class="stock-title">{{ stock.name }}</p>
             <p class="amount-txt">{{ stock.amount }}</p>
             <p>
-              <span
-                v-if="stock.change && stock.change.includes('+')"
-                class="positive"
-              >
+              <span v-if="stock.change && stock.change.includes('+')" class="positive">
                 {{ stock.change }}
               </span>
-              <span
-                v-else-if="stock.change && stock.change.includes('-')"
-                class="negative"
-              >
+              <span v-else-if="stock.change && stock.change.includes('-')" class="negative">
                 {{ stock.change }}
               </span>
               <span v-else>
@@ -49,20 +38,13 @@
       <p class="middle-title">현재 상위권 TOP3 🏆</p>
       <section class="top3-stocks">
         <div class="top3-cards">
-          <div
-            v-for="(stock, index) in top3Stocks"
-            :key="index"
-            class="top3-card"
-            @click="goToStockChart(stock)"
-          >
+          <div v-for="(stock, index) in top3Stocks" :key="index" class="top3-card" @click="goToStockChart(stock)">
             <h3>{{ stock.stockName }}</h3>
             <p>{{ stock.currentPrice }}원</p>
-            <p
-              :class="{
-                positive: stock.priceChangePct > 0,
-                negative: stock.priceChangePct < 0,
-              }"
-            >
+            <p :class="{
+              positive: stock.priceChangePct > 0,
+              negative: stock.priceChangePct < 0,
+            }">
               {{ stock.priceChange }} ({{ stock.priceChangePct }}%)
             </p>
           </div>
@@ -71,13 +53,9 @@
 
       <!-- 주식 목록 섹션 -->
       <section class="stock-list">
-        <p class="title">주식 목록</p>
+        <p class="title">투자 성향별 추천 주식 목록</p>
         <div class="search-bar">
-          <input
-            v-model="searchKeyword"
-            placeholder="키워드를 입력해주세요"
-            @keyup.enter="searchStocks"
-          />
+          <input v-model="searchKeyword" placeholder="키워드를 입력해주세요" @keyup.enter="searchStocks" />
           <button @click="fetchStocksByType('ALL')">전체</button>
           <button @click="fetchStocksByType('IPWC')">IPWC</button>
           <button @click="fetchStocksByType('IBMC')">IBMC</button>
@@ -92,74 +70,44 @@
         <table class="stock-table">
           <thead>
             <tr>
-              <th
-                @click="sortBy('stockName')"
-                :class="{ active: sortKey === 'stockName' }"
-              >
+              <th @click="sortBy('stockName')" :class="{ active: sortKey === 'stockName' }">
                 종목명
-                <span
-                  v-if="sortKey === 'stockName'"
-                  :class="{
-                    'sort-arrow': true,
-                    'sort-reverse': sortOrder === -1,
-                  }"
-                ></span>
+                <span v-if="sortKey === 'stockName'" :class="{
+                  'sort-arrow': true,
+                  'sort-reverse': sortOrder === -1,
+                }"></span>
               </th>
-              <th
-                @click="sortBy('currentPrice')"
-                :class="{ active: sortKey === 'currentPrice' }"
-              >
+              <th @click="sortBy('currentPrice')" :class="{ active: sortKey === 'currentPrice' }">
                 현재가
-                <span
-                  v-if="sortKey === 'currentPrice'"
-                  :class="{
-                    'sort-arrow': true,
-                    'sort-reverse': sortOrder === -1,
-                  }"
-                ></span>
+                <span v-if="sortKey === 'currentPrice'" :class="{
+                  'sort-arrow': true,
+                  'sort-reverse': sortOrder === -1,
+                }"></span>
               </th>
-              <th
-                @click="sortBy('priceChange')"
-                :class="{ active: sortKey === 'priceChange' }"
-              >
+              <th @click="sortBy('priceChange')" :class="{ active: sortKey === 'priceChange' }">
                 등락률
-                <span
-                  v-if="sortKey === 'priceChangePct'"
-                  :class="{
-                    'sort-arrow': true,
-                    'sort-reverse': sortOrder === -1,
-                  }"
-                ></span>
+                <span v-if="sortKey === 'priceChangePct'" :class="{
+                  'sort-arrow': true,
+                  'sort-reverse': sortOrder === -1,
+                }"></span>
               </th>
-              <th
-                @click="sortBy('volume')"
-                :class="{ active: sortKey === 'volume' }"
-              >
+              <th @click="sortBy('volume')" :class="{ active: sortKey === 'volume' }">
                 누적 거래량(주)
-                <span
-                  v-if="sortKey === 'volume'"
-                  :class="{
-                    'sort-arrow': true,
-                    'sort-reverse': sortOrder === -1,
-                  }"
-                ></span>
+                <span v-if="sortKey === 'volume'" :class="{
+                  'sort-arrow': true,
+                  'sort-reverse': sortOrder === -1,
+                }"></span>
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="(stock, index) in paginatedStocks"
-              :key="index"
-              @click="goToStockChart(stock)"
-            >
+            <tr v-for="(stock, index) in paginatedStocks" :key="index" @click="goToStockChart(stock)">
               <td>{{ stock.stockName }}</td>
               <td>{{ stock.currentPrice.toLocaleString() }}원</td>
-              <td
-                :class="{
-                  positive: stock.priceChange > 0,
-                  negative: stock.priceChange < 0,
-                }"
-              >
+              <td :class="{
+                positive: stock.priceChange > 0,
+                negative: stock.priceChange < 0,
+              }">
                 {{ stock.priceChange }} ({{ stock.priceChangePct }}%)
               </td>
               <td>{{ stock.volume.toLocaleString() }}주</td>
@@ -169,11 +117,11 @@
 
         <!-- 페이지네이션 -->
         <div class="pagination">
-          <button @click="changePage(-1)" :disabled="currentPage === 1">
+          <button @click="changePage(-1)" :disabled="currentPage === 1" class="navi">
             이전
           </button>
-          <span>{{ currentPage }} / {{ totalPages }}</span>
-          <button @click="changePage(1)" :disabled="currentPage === totalPages">
+          <span class="pageNum">{{ currentPage }} / {{ totalPages }}</span>
+          <button @click="changePage(1)" :disabled="currentPage === totalPages" class="navi">
             다음
           </button>
         </div>
@@ -346,62 +294,93 @@ export default {
         const kospiResponse = await axios.get("http://localhost:8080/api/index/kospi");
         const kosdaqResponse = await axios.get("http://localhost:8080/api/index/kosdaq");
         const kospi200Response = await axios.get("http://localhost:8080/api/index/kospi200");
-        
+
+        // 더미 데이터 생성 함수
+        const generateStockData = (startValue, numPoints, volatility) => {
+          let labels = [];
+          let data = [];
+          let currentValue = startValue;
+
+          for (let i = 0; i < numPoints; i++) {
+            const date = new Date();
+            date.setDate(date.getDate() - (numPoints - i));
+            labels.push(date.toISOString().slice(0, 10));
+
+            const change = (Math.random() * 2 - 1) * volatility;
+            currentValue += currentValue * change;
+            data.push(Math.round(currentValue * 100) / 100);
+          }
+
+          return { labels, data };
+        };
+
+        // 각 주식 데이터 생성
+        const kospiStockData = generateStockData(2570, 100, 0.01);
+        const kosdaqStockData = generateStockData(1000, 100, 0.015);
+        const kospi200StockData = generateStockData(330, 100, 0.008);
+
+        // currentStocks에 데이터 추가
         this.currentStocks = [
           {
-            name: "KOSPI",
+            name: 'KOSPI',
             amount: kospiResponse.data.코스피,
             change: kospiResponse.data.변동,
             chartData: {
-              labels: ["2023-10-01", "2023-10-02", "2023-10-03", "2023-10-04", "2023-10-05"],
-              datasets: [{
-                label: "KOSPI",
-                data: [20, 10, 10, 5, 7],
-                borderColor: "rgba(75, 192, 192, 1)",
-                backgroundColor: "rgba(75, 192, 192, 0.2)",
-                fill: false,
-                pointRadius: 0,
-              }]
-            }
+              labels: kospiStockData.labels,
+              datasets: [
+                {
+                  label: 'KOSPI',
+                  data: kospiStockData.data,
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                  fill: true,
+                  pointRadius: 2,
+                },
+              ],
+            },
           },
           {
-            name: "KOSDAQ",
+            name: 'KOSDAQ',
             amount: kosdaqResponse.data.코스닥,
             change: kosdaqResponse.data.변동,
             chartData: {
-              labels: ["2023-10-01", "2023-10-02", "2023-10-03", "2023-10-04", "2023-10-05"],
-              datasets: [{
-                label: "KOSDAQ",
-                data: [12, 3, 4, 15, 4],
-                borderColor: "rgba(153, 102, 255, 1)",
-                backgroundColor: "rgba(153, 102, 255, 0.2)",
-                fill: true,
-                pointRadius: 0,
-              }]
-            }
+              labels: kosdaqStockData.labels,
+              datasets: [
+                {
+                  label: 'KOSDAQ',
+                  data: kosdaqStockData.data,
+                  borderColor: 'rgba(153, 102, 255, 1)',
+                  backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                  fill: true,
+                  pointRadius: 2,
+                },
+              ],
+            },
           },
           {
-            name: "KOSPI200",
+            name: 'KOSPI200',
             amount: kospi200Response.data.코스피200,
-            change: `${kospi200Response.data.전일대비} (${kospi200Response.data.등락률})`,
+            change: kospi200Response.data.변동,
             chartData: {
-              labels: ["2023-10-01", "2023-10-02", "2023-10-03", "2023-10-04", "2023-10-05"],
-              datasets: [{
-                label: "KOSPI200",
-                data: [23, 1, 3, 5, 10],
-                borderColor: "rgba(255, 159, 64, 1)",
-                backgroundColor: "rgba(255, 159, 64, 0.2)",
-                fill: true,
-                pointRadius: 0,
-              }]
-            }
+              labels: kospi200StockData.labels,
+              datasets: [
+                {
+                  label: 'KOSPI200',
+                  data: kospi200StockData.data,
+                  borderColor: 'rgba(255, 159, 64, 1)',
+                  backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                  fill: true,
+                  pointRadius: 2,
+                },
+              ],
+            },
           }
         ];
-      }catch (error) {
-        console.error("증시 데이터를 가져오는 중 오류 발생:", error);
-        this.error = "증시 데이터를 불러오는 중 오류가 발생했습니다.";
+      } catch (error) {
+        console.error("주식 데이터를 가져오는 중 오류 발생:", error);
       }
     },
+
   },
 
   async mounted() {
@@ -846,5 +825,23 @@ tbody tr:hover {
 
 .modal-body tbody tr:hover {
   background-color: #f0f8ff;
+}
+
+.navi {
+  padding: 10px 20px;
+  margin: 35px;
+  border-radius: 10px;
+  border: none;
+  background-color: #448c74;
+  color: white;
+}
+
+.pageNum {
+  padding: 10px 20px;
+  margin: 35px 0px;
+  border-radius: 10px;
+  border: none;
+  color: black;
+  font-size: 20px;
 }
 </style>
