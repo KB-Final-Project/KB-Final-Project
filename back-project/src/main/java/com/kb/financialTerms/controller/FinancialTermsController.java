@@ -3,6 +3,7 @@ package com.kb.financialTerms.controller;
 import com.kb.financialTerms.dto.TermsDTO;
 import com.kb.financialTerms.service.FinancialTermsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +17,14 @@ import java.util.List;
 public class FinancialTermsController {
     private final FinancialTermsService financialTermsService;
 
-    @GetMapping("/getTerms")
-    public List<TermsDTO> getTerms() {
-        return financialTermsService.crawlAndGetTerms();
+    @GetMapping("/save-terms")
+    public String saveTerms() {
+        financialTermsService.crawlAndSaveTerms();
+        return "저장 완료";
+    }
+
+    @GetMapping("")
+    public ResponseEntity<List<TermsDTO>> getTerms() {
+        return ResponseEntity.ok(financialTermsService.getTermList());
     }
 }

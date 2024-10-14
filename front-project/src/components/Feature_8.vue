@@ -23,10 +23,12 @@
             <p class="text-end">💖</p>
           </div>
         </router-link>
-        <div class="suggest">
-          <p>챗봇 상담</p><br>
-          <p class="text-end">👨‍🎓</p>
-        </div>
+        <router-link class="link" to="/StockMain">
+          <div class="suggest">
+            <p>주식목록</p><br>
+            <p class="text-end">📈</p>
+          </div>
+        </router-link>
         <br><br>
       </div>
     </div>
@@ -34,22 +36,23 @@
 </template>
 
 <style scoped>
-.link{
+.link {
   text-decoration: none;
   color: black;
 }
+
 .suggest {
   transition: transform 0.6s ease;
   cursor: pointer;
 }
 
-.suggest:hover{
+.suggest:hover {
   transform: scale(0.9);
   z-index: 11111;
 }
 
 
-.suggest{
+.suggest {
   display: inline-block;
   border: 1px solid rgba(153, 153, 153, 0.6);
   border-radius: 20px;
@@ -62,14 +65,14 @@
   font-family: J4;
 }
 
-.suggestion{
+.suggestion {
   width: 100%;
   position: relative;
   padding: 20px 0;
   background-color: rgba(249, 250, 251, 1);
 }
 
-.text-start{
+.text-start {
   margin-left: 40px;
   font-family: J6;
 }

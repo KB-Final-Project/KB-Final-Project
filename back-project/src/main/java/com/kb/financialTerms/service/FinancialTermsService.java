@@ -1,12 +1,14 @@
 package com.kb.financialTerms.service;
 
 import com.kb.financialTerms.dto.TermsDTO;
+import com.kb.financialTerms.mapper.TermsMapper;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +17,11 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @RequiredArgsConstructor
 public class FinancialTermsService {
-    public List<TermsDTO> crawlAndGetTerms() {
+
+    private final TermsMapper termsMapper;
+
+    @Transactional
+    public void crawlAndSaveTerms() {
         List<TermsDTO> termsList = new ArrayList<>();
         String baseUrl = "https://www.fsc.go.kr/in090301?curPage=";
         List<CompletableFuture<List<TermsDTO>>> futures = new ArrayList<>();
@@ -34,7 +40,7 @@ public class FinancialTermsService {
                     Elements termElements = doc.select("div.cont > div.subject");
 
                     if (termElements.isEmpty()) {
-                        return pageTermsList; // 빈 리스트 반환
+                        return pageTermsList;
                     }
 
                     for (Element termElement : termElements) {
@@ -43,14 +49,14 @@ public class FinancialTermsService {
                         String termName = linkElement != null ? linkElement.text() : null;
 
                         // 형제 요소에서 내용 가져오기
-                        Element descriptionElement = termElement.nextElementSibling(); // 다음 형제 요소
+                        Element descriptionElement = termElement.nextElementSibling();
                         String termDescription = descriptionElement != null && "info2".equals(descriptionElement.className()) ?
                                 descriptionElement.text() : null;
 
                         // TermsDTO 객체 생성
                         TermsDTO termsDTO = new TermsDTO();
                         termsDTO.setTermName(termName);
-                        termsDTO.setTermDescription(termDescription); // 설명 추가
+                        termsDTO.setTermDescription(termDescription);
 
                         // 리스트에 추가
                         pageTermsList.add(termsDTO);
@@ -59,15 +65,14 @@ public class FinancialTermsService {
                     return pageTermsList;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return pageTermsList; // 빈 리스트를 반환
+                    return pageTermsList;
                 }
             });
 
             futures.add(future);
 
-            // 최대 페이지 수 설정
             if (page >= 30) {
-                break; // 최대 30페이지 크롤링
+                break;
             }
         }
 
@@ -75,8 +80,11 @@ public class FinancialTermsService {
             List<TermsDTO> pageTermsList = future.join();
             termsList.addAll(pageTermsList);
         }
+        // DB에 저장
+        termsMapper.insertTermsBatch(termsList);
+    }
 
-        System.out.println("Terms List: " + termsList);
-        return termsList;
+    public List<TermsDTO> getTermList(){
+        return termsMapper.getTermsBatch();
     }
 }

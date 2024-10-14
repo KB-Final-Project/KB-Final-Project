@@ -73,7 +73,6 @@
               <button @click="selectCurrency(10)" :class="{ 'active': selectedCurrency === 10 }"
                 class="exchangeCountry1 btn_country">영국</button>
             </div>
-
           </div>
         </div>
       </div>
@@ -177,6 +176,30 @@ const fetchStockData = async () => {
     const kospiResponse = await axios.get('/api/index/kospi');
     const kosdaqResponse = await axios.get('/api/index/kosdaq');
 
+    // 최근 주가 변동을 고려한 더미 데이터 생성
+    const generateStockData = (startValue, numPoints, volatility) => {
+      let labels = [];
+      let data = [];
+      let currentValue = startValue;
+
+      for (let i = 0; i < numPoints; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() - (numPoints - i)); // 날짜 계산
+        labels.push(date.toISOString().slice(0, 10)); // 'YYYY-MM-DD' 형식의 날짜 생성
+
+        // 최근 변동성을 반영한 주가 변동 (예: -1% ~ +1% 변동)
+        const change = (Math.random() * 2 - 1) * volatility;
+        currentValue += currentValue * change;
+        data.push(Math.round(currentValue * 100) / 100); // 소수점 2자리까지
+      }
+
+      return { labels, data };
+    };
+
+    // KOSPI, KOSDAQ의 최근 주가 변동을 반영한 100개의 데이터 생성
+    const kospiStockData = generateStockData(2570, 100, 0.01); // KOSPI 시작값 2570, 변동성 1%
+    const kosdaqStockData = generateStockData(1000, 100, 0.015); // KOSDAQ 시작값 1000, 변동성 1.5%
+
     // 차트 데이터 설정
     currentStocks.value = [
       {
@@ -184,15 +207,15 @@ const fetchStockData = async () => {
         amount: kospiResponse.data.코스피,
         change: kospiResponse.data.변동,
         chartData: {
-          labels: ['2023-10-01', '2023-10-02', '2023-10-03', '2023-10-04', '2023-10-05'],
+          labels: kospiStockData.labels,
           datasets: [
             {
               label: 'KOSPI',
-              data: [2570, 2580, 2560, 2575, 2585], // 실제 데이터를 설정
+              data: kospiStockData.data, // 최근 변동을 반영한 데이터 적용
               borderColor: 'rgba(75, 192, 192, 1)',
               backgroundColor: 'rgba(75, 192, 192, 0.2)',
-              fill: true, // 영역을 채움
-              pointRadius: 2, // 각 데이터 포인트 표시
+              fill: true,
+              pointRadius: 2,
             },
           ],
         },
@@ -202,24 +225,25 @@ const fetchStockData = async () => {
         amount: kosdaqResponse.data.코스닥,
         change: kosdaqResponse.data.변동,
         chartData: {
-          labels: ['2023-10-01', '2023-10-02', '2023-10-03', '2023-10-04', '2023-10-05'],
+          labels: kosdaqStockData.labels,
           datasets: [
             {
               label: 'KOSDAQ',
-              data: [1000, 1010, 990, 1005, 1015], // 실제 데이터를 설정
+              data: kosdaqStockData.data, // 최근 변동을 반영한 데이터 적용
               borderColor: 'rgba(153, 102, 255, 1)',
               backgroundColor: 'rgba(153, 102, 255, 0.2)',
               fill: true,
               pointRadius: 2,
             },
           ],
-        }
+        },
       },
     ];
   } catch (error) {
     console.error('주식 데이터를 가져오는 중 오류 발생:', error);
   }
 };
+
 
 
 const fetchExchangeRates = async (currencyId) => {

@@ -8,50 +8,50 @@
           <br>
           <table class="text-start">
             <tbody>
-            <tr class="firstFilter text-slide-up">
-              <td>
-                <h4>금융용어</h4>
-              </td>
-              <td>
-                <div class="searchBar">
-                  <input
+              <tr class="firstFilter text-slide-up">
+                <td>
+                  <h4>금융용어</h4>
+                </td>
+                <td>
+                  <div class="searchBar">
+                    <input
                       class="search"
                       placeholder="키워드를 입력해주세요"
                       v-model="searchTerm"
                       @input="filterTerms"
-                  />
-                  <button type="button" class="searchBtn" @click="filterTerms">검색</button>
-                </div>
-              </td>
-            </tr>
-            <tr class="firstFilter text-slide-up">
-              <td style="width: 15%;">
-                <h4>한글 순</h4>
-              </td>
-              <td>
-                <button
+                    />
+                    <button type="button" class="searchBtn" @click="filterTerms">검색</button>
+                  </div>
+                </td>
+              </tr>
+              <tr class="firstFilter text-slide-up">
+                <td style="width: 15%;">
+                  <h4>한글 순</h4>
+                </td>
+                <td>
+                  <button
                     v-for="hangul in hangulList"
                     :key="hangul"
                     :class="{ 'activeBtn': selectedHangul === hangul }"
                     class="hangul text-slide-up"
                     @click="filterTermsByHangul(hangul)"
-                >{{ hangul }}</button>
-              </td>
-            </tr>
-            <tr class="firstFilter text-slide-up">
-              <td>
-                <h4>알파벳 순</h4>
-              </td>
-              <td>
-                <button
+                  >{{ hangul }}</button>
+                </td>
+              </tr>
+              <tr class="firstFilter text-slide-up">
+                <td>
+                  <h4>알파벳 순</h4>
+                </td>
+                <td>
+                  <button
                     v-for="alphabet in alphabetList"
                     :key="alphabet"
                     :class="{ 'activeBtn': selectedAlphabet === alphabet }"
                     class="hangul text-slide-up"
                     @click="filterTermsByAlphabet(alphabet)"
-                >{{ alphabet }}</button>
-              </td>
-            </tr>
+                  >{{ alphabet }}</button>
+                </td>
+              </tr>
             </tbody>
           </table>
           <br>
@@ -91,12 +91,18 @@
 import axios from 'axios';
 
 export default {
+  props: {
+    searchQuery: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       terms: [],
       filteredTerms: [],
       selectedTerm: null,
-      searchTerm: '',
+      searchTerm: this.searchQuery,  // URL 쿼리에서 전달된 검색어로 초기값 설정
       selectedHangul: null,
       selectedAlphabet: null,
       error: null,
@@ -106,13 +112,20 @@ export default {
     };
   },
   mounted() {
-    this.fetchTerms();
-  },
+    this.fetchTerms().then(() => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const search = urlParams.get('search');
+      if (search) {
+        this.searchTerm = search;  
+        this.filterTerms();       
+      }
+    });
+},
   methods: {
     async fetchTerms() {
       this.loading = true;
       try {
-        const response = await axios.get('/api/terms/getTerms');
+        const response = await axios.get('/api/terms');
         this.terms = response.data;
         this.filteredTerms = response.data;
 
@@ -128,19 +141,6 @@ export default {
     },
     selectTerm(term) {
       this.selectedTerm = term; // 선택된 용어 설정
-    },
-    getInitialConsonant(char) {
-      const initialConsonants = [
-        'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ',
-        'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'
-      ];
-
-      const code = char.charCodeAt(0) - 44032; // 한글 유니코드 시작점
-      if (code >= 0 && code <= 11171) {
-        const initialIndex = Math.floor(code / 588); // 초성 추출
-        return initialConsonants[initialIndex];
-      }
-      return char; // 한글이 아니면 그대로 반환
     },
     filterTerms() {
       this.selectedHangul = null;
