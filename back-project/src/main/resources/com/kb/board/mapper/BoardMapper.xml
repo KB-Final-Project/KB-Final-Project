@@ -295,4 +295,32 @@
     <select id="getAuthorIdByMno" parameterType="Integer" resultType="string">
         select id from member where mno = #{mno}
     </select>
+
+
+    <!-- 게시글 조회 -->
+    <select id="getBoardPost" parameterType="long" resultType="com.kb.board.dto.BoardPost">
+        SELECT *
+        FROM board_post
+        WHERE post_id = #{postId}
+    </select>
+
+    <!-- 특정 게시물에 대한 사용자의 좋아요 여부 확인 -->
+    <select id="checkLikeExists" parameterType="map" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM likes
+        WHERE post_id = #{postId} AND member_id = #{memberId}
+    </select>
+
+    <!-- 좋아요 추가 -->
+    <insert id="insertLike" parameterType="map">
+        INSERT INTO likes (post_id, member_id)
+        VALUES (#{postId}, #{memberId})
+    </insert>
+
+    <!-- 특정 게시물의 좋아요 수 계산 -->
+    <select id="countLikes" parameterType="long" resultType="int">
+        SELECT COUNT(*)
+        FROM likes
+        WHERE post_id = #{postId}
+    </select>
 </mapper>
