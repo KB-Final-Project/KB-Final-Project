@@ -218,4 +218,19 @@ public class BoardService {
     public int deleteReply(int rno) {
         return mapper.deleteReply(rno);
     }
+
+    public boolean checkLikeExists(long postId, long memberId) {
+        return mapper.checkLikeExists(postId, memberId);
+    }
+
+    public void addLike(long postId, long memberId) {
+        mapper.insertLike(postId, memberId); // likes 테이블에 레코드 추가
+    }
+
+    public BoardPost getPostWithLikesCount(long postId) {
+        BoardPost post = mapper.getBoardPost(postId);
+        int likesCount = mapper.countLikes(postId); // likes 테이블에서 좋아요 수 계산
+        post.setLikesCount(likesCount);
+        return post;
+    }
 }

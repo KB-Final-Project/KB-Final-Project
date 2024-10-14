@@ -1,6 +1,7 @@
 package com.kb.board.mapper;
 
 import com.kb.board.dto.*;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -24,5 +25,13 @@ public interface BoardMapper {
     BoardReply selectReplyByRno(long rno);
     List<BoardReply> selectReplyByBno(int bno);
     int deleteReply(int rno);
-    String getAuthorIdByMno(long mno);
+    String getAuthorIdByMno(Integer mno);
+    // 게시글 조회
+    BoardPost getBoardPost(long postId);
+    // 특정 게시물에 대한 사용자의 좋아요 여부 확인
+    boolean checkLikeExists(@Param("postId") long postId, @Param("memberId") long memberId);
+    // 좋아요 추가
+    void insertLike(@Param("postId") long postId, @Param("memberId") long memberId);
+    // 특정 게시물의 좋아요 수 계산
+    int countLikes(long postId);
 }

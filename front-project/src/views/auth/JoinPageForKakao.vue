@@ -142,7 +142,9 @@
 import { onMounted, reactive, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import signCoverImage from "@/views/SignCoverImage.vue";
+import axios from "axios";
 import authApi from '@/api/authApi';
+import { v4 as uuidv4 } from 'uuid';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // Bootstrap JS 가져오기
 
 const router = useRouter();
@@ -158,7 +160,6 @@ const member = reactive({
   name: '',
   email: '',
   password: '',
-  password2: '',
   kakaoId: '',
 });
 
@@ -189,14 +190,22 @@ const handleKakaoLogin = async (code) => {
     member.email = data.email;
     member.name = data.nickname;
     member.kakaoId = data.id;
-
     const isAlreadyMember = await authApi.checkKakaoMember(member.kakaoId);
-    if (isAlreadyMember) {
+
+    if (!isAlreadyMember) {
       alert('이미 가입된 회원입니다. 로그인 페이지로 이동합니다.');
       router.push({ name: 'login', replace: true });
     } else {
-      // 카카오로 신규 회원가입 처리 (필요 시 추가 구현)
+      const no = await axios.get('/api/member/mno' );
+      console.log(no.data);
+      member.id = "inveti" + (no.data + 1); 
+      member.password = generatePassword(12);
+      console.log(member.userId);
+      console.log(member.password);
+      console.log(member);
+
       await authApi.create(member);
+
       if (successModal.value) {
         successModal.value.show();
       } else {
@@ -209,6 +218,17 @@ const handleKakaoLogin = async (code) => {
     alert('카카오 정보 조회 중 문제가 발생했습니다.');
   }
 };
+function generatePassword(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+  let password = '';
+  const charactersLength = characters.length;
+  
+  for (let i = 0; i < length; i++) {
+    password += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+
+  return password;
+}
 
 const checkId = async () => {
   const idPattern = /^[a-zA-Z0-9]{5,20}$/;
