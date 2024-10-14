@@ -39,7 +39,7 @@
 
     <select id="selectById" resultMap="memberResultMap" parameterType="string">
         SELECT
-            mno, m.id, password, name, email, status, create_date, update_date, invest_type, a.authority
+            mno, m.id, password, name, email, status, create_date, update_date, a.authority, invest_type
         FROM
             member m
                 LEFT OUTER JOIN member_auth a ON m.id = a.id
@@ -75,8 +75,8 @@
 
 
     <insert id="insertMember" parameterType="com.kb.member.dto.Member">
-        INSERT INTO member(id, password, name, email, status, kakao_id)
-        VALUES(#{id}, #{password}, #{name}, #{email}, default, #{kakaoId})
+        INSERT INTO member(mno, id, password, name, email, status, kakao_id)
+        VALUES(default, #{id}, #{password}, #{name}, #{email}, default, #{kakaoId})
     </insert>
 
 

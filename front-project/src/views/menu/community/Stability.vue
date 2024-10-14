@@ -1,43 +1,30 @@
 <script setup>
-
-import {ref, onMounted} from "vue";
+import { ref, onMounted, computed } from "vue";
 import axios from "axios";
-
-const loading = ref(true);
-const boards = ref([]);
+const postType = ref(1);
 const posts = ref([]); // 포스트 목록을 저장할 ref
-
-  const fetchBoard = async ()=>{
-    loading.value = true;
-    try {
-      const response = await axios.get('/api/board/1/posts');
-      console.log(response);
-      if (response.data && response.data.length > 0) {
-        boards.value = response.data;
-        console.log(boards);
-      } else {
-        boards.value = [];
-        console.warn('데이터가 없습니다.');
-      }
-    } catch (error) {
-      console.error('목록을 가져오는 중 오류 발생:', error);
-      boards.value = [];
-    } finally {
-      loading.value = false;
-    }
-  };
+const visibleCount = ref(5); // Number of posts to display initially
 
 
-
-  const fetchBoardPosts = async () => {
+const fetchBoardPosts = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/api/board/1/posts');
+    const response = await axios.get('/api/board/1/posts');
     posts.value = response.data.postList; // postList를 저장
     console.log(posts.value); // 확인용 출력
   } catch (error) {
     console.error('Error fetching posts:', error); // 오류 처리
   }
 };
+
+// Computed property to get the visible posts
+const visiblePosts = computed(() => {
+  return posts.value.slice(0, visibleCount.value);
+});
+
+// Check if all posts are loaded
+const allPostsLoaded = computed(() => {
+  return visibleCount.value >= posts.value.length;
+});
 
 // 타임스탬프를 형식화하는 함수
 const formatDate = (timestamp) => {
@@ -52,25 +39,27 @@ const formatDate = (timestamp) => {
   });
 };
 
+// Function to load more posts
+const loadMore = () => {
+  visibleCount.value += 5;
+};
 
-  onMounted(()=>{
-    fetchBoard();
-    fetchBoardPosts();
-  })
-
+onMounted(() => {
+  fetchBoardPosts();
+});
 </script>
 
 <template>
   <div>
-    <div v-for="post in posts" :key="post.title" class="feeds card mb-5 mb-xxl-8">
+    <div v-for="post in visiblePosts" :key="post.id" class="feeds card mb-5 mb-xxl-8">
       <div class="card-body pb-0">
         <div class="d-flex align-items-center">
           <div class="symbol symbol-45px me-5">
             <img :src="require('@/assets/media/avatars/300-25.jpg')" alt="" />
           </div>
           <div class="d-flex flex-column">
-            <a href="#" class="name text-gray-800 mb-1 fw-bolder">{{ post.authorId }}</a>
-            <span class="text-gray-500 fw-semibold">{{ formatDate(post.createdDate) }} </span>
+            <p class="name text-gray-800 mb-1 fw-bolder">{{ post.authorId }}</p>
+            <span class="text-gray-500 fw-semibold">{{ formatDate(post.createdDate) }}</span>
           </div>
         </div>
         <div class="pt-5">
@@ -80,6 +69,15 @@ const formatDate = (timestamp) => {
           <p class="text-gray-800 fw-normal mb-3">
             {{ post.content }} <!-- 게시글 내용 -->
           </p>
+          <div v-if="post.boardAttachFileList && post.boardAttachFileList.length > 0">
+            <div v-for="attachment in post.boardAttachFileList" :key="attachment.postId" class="mb-3">
+              <img
+                  :src="`/api/board/file/${encodeURIComponent(attachment.renamedFilename)}`"
+                  alt="Post Image"
+                  class="post-image"
+              />
+            </div>
+          </div>
           <div class="d-flex align-items-center">
             <a href="#" class="btn btn-sm btn-color-muted btn-active-light-primary fw-bolder fs-6 py-1 px-2 me-4">
               <i class="ai-message fs-2">
@@ -112,14 +110,19 @@ const formatDate = (timestamp) => {
           </div>
         </form>
       </div>
-     
     </div>
   </div>
-  <button class="moreBtn text-center" id="kt_widget_5_load_more_btn" >
-        <span class="indicator-label">더보기</span>
-        <span class="indicator-progress">Loading...
-        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-      </button>
+  <button
+      v-if="!allPostsLoaded"
+      class="moreBtn text-center"
+      @click="loadMore"
+  >
+    <span class="indicator-label">더보기</span>
+    <span class="indicator-progress">Loading...
+      <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+    </span>
+  </button>
+  <input type="hidden" :value="postType">
 </template>
 
 <style scoped>
@@ -138,10 +141,11 @@ const formatDate = (timestamp) => {
 }
 .moreBtn{
   margin-left: 10px;
-  width: 600px;
+  width: 700px;
   height: 50px;
   border: none;
   border-radius: 20px;
+  cursor: pointer; /* Add cursor pointer for better UX */
 }
 
 .moreBtn:hover{
@@ -150,9 +154,14 @@ const formatDate = (timestamp) => {
 }
 
 .feeds{
+  width: 700px;
   border-radius: 30px;
   border: none;
+  margin-left: 10px;
 }
 
-
+.post-image{
+  max-width: 600px;
+  max-height: 600px;
+}
 </style>

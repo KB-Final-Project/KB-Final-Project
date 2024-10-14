@@ -60,7 +60,6 @@
                 <br>
                 <h4 class="date">{{ exchangeData.exchangeRateDate }}</h4>
               </div>
-
             </div>
             <div class="currency-buttons">
               <button @click="selectCurrency(23)" :class="{ 'active': selectedCurrency === 23 }"
