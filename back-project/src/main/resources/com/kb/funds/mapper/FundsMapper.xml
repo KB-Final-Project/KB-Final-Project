@@ -8,8 +8,8 @@
         <selectKey keyProperty="id" resultType="long" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        INSERT IGNORE INTO funds (fundFnm, gijunGa, gijunYmd, suikRt1, suikRt3, suikRt6, suikRt12, investGrade, feeTot, bmNm, navTot)
-        VALUES (#{fundFnm}, #{gijunGa}, #{gijunYmd}, #{suikRt1}, #{suikRt3}, #{suikRt6}, #{suikRt12}, #{investGrade}, #{feeTot}, #{bmNm}, #{navTot})
+        INSERT IGNORE INTO funds (fundFnm, gijunGa, gijunYmd, suikRt1, suikRt3, suikRt6, suikRt12, investGrade, feeTot, bmNm, navTot, fundCd)
+        VALUES (#{fundFnm}, #{gijunGa}, #{gijunYmd}, #{suikRt1}, #{suikRt3}, #{suikRt6}, #{suikRt12}, #{investGrade}, #{feeTot}, #{bmNm}, #{navTot}, #{fundCd})
     </insert>
     <!-- 펀드 업데이트 -->
     <update id="updateFund" parameterType="com.kb.funds.dto.FundsDTO">
@@ -25,7 +25,8 @@
             investGrade = #{investGrade},
             feeTot = #{feeTot},
             bmNm = #{bmNm},
-            navTot = #{navTot}
+            navTot = #{navTot},
+            fundCd = #{fundCd}
         WHERE id = #{id}
     </update>
     <!--    &lt;!&ndash; ID로 펀드 존재 여부 확인 &ndash;&gt;-->
@@ -47,6 +48,7 @@
         <result property="feeTot" column="feeTot"/>
         <result property="bmNm" column="bmNm"/>
         <result property="navTot" column="navTot"/>
+        <result property="fundCd" column="fundCd"/>
     </resultMap>
     <!-- 키워드로 펀드 검색 -->
     <select id="searchFunds" resultMap="FundsResultMap">
