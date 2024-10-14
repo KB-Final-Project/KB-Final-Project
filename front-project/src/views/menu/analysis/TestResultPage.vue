@@ -321,10 +321,35 @@ export default {
             icon: require("@/assets/img/analysis/3.png"),
             link: "/isa",
           },
-          
+          {
+            title: "외화예금 상품 ",
+            description: "환율 변동을 활용한 수익과 함께 안정적인 이자 수익을 얻을 수 있습니다.",
+            icon: require("@/assets/img/analysis/15.png"),
+            link: "/dictionary", 
+            // 대호님추가 해당 상품에 맞는 id값 넘겨주면 될듯요?
+          },
           
         ];
-      } else if (this.userType === "IBWC") {
+      } 
+      else if (this.userType === "IBML") {
+        // 보수적 투자 성향
+        this.recommendedContent = [
+        {
+            title: "외화예금 상품 ",
+            description: "환율 변동을 활용한 수익과 함께 안정적인 이자 수익을 얻을 수 있습니다.",
+            icon: require("@/assets/img/analysis/12.png"),
+            link: "/dictionary", 
+            // 대호님추가
+          },
+          {
+            title: "ISA 상품",
+            description:
+              "ISA를 통한 세금 혜택을 받고, 안정적인 투자를 유지하세요.",
+            icon: require("@/assets/img/analysis/3.png"),
+            link: "/isa",
+          },
+        ];
+      }else if (this.userType === "IBWC") {
         // 보수적인 성장형 투자 성향
         this.recommendedContent = [
         {
@@ -453,9 +478,9 @@ export default {
         // 적극적인 투자 성향
         this.recommendedContent = [
         {
-            title: "ISA 상품",
-            description:
-              "ISA를 통한 세금 혜택을 받고, 안정적인 투자를 유지하세요.",
+          title: "옵션 결합 선물 전략",
+    description: "옵션과 선물을 결합한 고도의 투자 전략으로 큰 수익을 추구합니다.",
+
             icon: require("@/assets/img/analysis/3.png"),
             link: "/isa",
           },
@@ -471,11 +496,11 @@ export default {
         // 분산투자 능력자
         this.recommendedContent = [
         {
-            title: "ISA 상품",
-            description:
-              "ISA를 통한 세금 혜택을 받고, 안정적인 투자를 유지하세요.",
+          title: "REIT 투자",
+          description: "부동산 시장에 간접 투자하여 안정적인 배당 수익을 노려보세요.",
             icon: require("@/assets/img/analysis/3.png"),
-            link: "/isa",
+            link: "/dictionary",
+            // 대호님추가
           },
           {
             title: "펀드",
@@ -496,12 +521,12 @@ export default {
         // 리더형 투자자
         this.recommendedContent = [
         {
-            title: "ISA 상품",
-            description:
-              "ISA를 통한 세금 혜택을 받고, 안정적인 투자를 유지하세요.",
+          title: "테마 ETF",
+          description: "특정 산업이나 트렌드에 집중 투자하여 높은 수익을 추구합니다.",
             icon: require("@/assets/img/analysis/3.png"),
             link: "/isa",
           },
+          // 대호님추가
           {
             title: "펀드",
             description:
@@ -520,11 +545,11 @@ export default {
         // 공격적인 투자 성향
         this.recommendedContent = [
         {
-            title: "ISA 상품",
-            description:
-              "ISA를 통한 세금 혜택을 받고, 안정적인 투자를 유지하세요.",
+          title: "장외 주식 투자",
+    description: "비상장 기업에 투자하여 IPO 전 높은 수익을 기대할 수 있습니다.",
             icon: require("@/assets/img/analysis/3.png"),
-            link: "/isa",
+            link: "/dictionary",
+            // 대호님추가 
           },
           {
             title: "펀드",
@@ -538,11 +563,12 @@ export default {
         // 트렌드세터 투자자
         this.recommendedContent = [
         {
-            title: "ISA 상품",
-            description:
-              "ISA를 통한 세금 혜택을 받고, 안정적인 투자를 유지하세요.",
+          title: "합성 ETF",
+    description: "파생상품을 활용하여 만든 초고위험 ETF로, 극단적인 수익을 노릴 수 있습니다.",
+
             icon: require("@/assets/img/analysis/3.png"),
-            link: "/isa",
+            link: "/dictionary",
+            // 대호님추가 
           },
           {
             title: "펀드",
@@ -556,11 +582,11 @@ export default {
         // 도전형 투자자
         this.recommendedContent = [
         {
-            title: "ISA 상품",
-            description:
-              "ISA를 통한 세금 혜택을 받고, 안정적인 투자를 유지하세요.",
+          title: "복잡한 구조의 고수익 ELS",
+    description: "높은 수익을 노릴 수 있는 복잡한 구조의 ELS 상품에 투자해보세요.",
             icon: require("@/assets/img/analysis/3.png"),
-            link: "/isa",
+            link: "/dictionary",
+            // 대호님추가 
           },
           {
             title: "펀드",
@@ -580,11 +606,12 @@ export default {
         // 투자 달인
         this.recommendedContent = [
         {
-            title: "ISA 상품",
-            description:
-              "ISA를 통한 세금 혜택을 받고, 안정적인 투자를 유지하세요.",
+          title: "암호화폐 펀드",
+    description: "빠르게 성장하는 암호화폐 시장에 전문가가 운용하는 펀드로 투자해보세요.",
+
             icon: require("@/assets/img/analysis/3.png"),
-            link: "/isa",
+            link: "/dictionary",
+            // 대호님추가 
           },
           {
             title: "펀드",
@@ -604,11 +631,12 @@ export default {
         // 시대를 앞서가는 투자 명장
         this.recommendedContent = [
         {
-            title: "ISA 상품",
-            description:
-              "ISA를 통한 세금 혜택을 받고, 안정적인 투자를 유지하세요.",
+          title: "메자닌 투자",
+    description: "주식과 채권의 특성을 결합한 복잡한 구조의 투자로 높은 수익을 추구합니다.",
+
             icon: require("@/assets/img/analysis/3.png"),
-            link: "/isa",
+            link: "/dictionary",
+            // 대호님추가 
           },
           {
             title: "펀드",
