@@ -63,7 +63,7 @@ public class BoardController {
     }
 
     @GetMapping("/{bno}/posts") // 게시글 bno 별 리스트 조회
-    public ResponseEntity<BoardPostPageResult> getPosts(@PathVariable Long bno, PostParam postParam) {
+    public ResponseEntity<BoardPostPageResult> getPosts(@PathVariable int bno, PostParam postParam) {
         postParam.setBoardId(bno);  // 게시판 ID 설정
         postParam.setBno(bno);      // 게시글 번호 추가
         BoardPostPageResult postResult = service.getPostList(postParam);
@@ -82,6 +82,7 @@ public class BoardController {
         return ResponseEntity.ok(postResult);
     }
 
+
     @GetMapping("/{postId}") // 게시글 조회
     public ResponseEntity<BoardPost> getById(@PathVariable long postId) {
         return ResponseEntity.ok(service.getBoard(postId));
@@ -97,10 +98,8 @@ public class BoardController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
-
         int bno;
-
-        // type에 따라 bno 값 설정
+        // type에 따라 bno 값 설정 (type이 문자열이므로 직접 매핑)
         switch (type) {
             case "stability":
                 bno = 1;
@@ -128,10 +127,10 @@ public class BoardController {
 
         log.info("Creating boardPost with bno: " + boardPost.getPostId());
 
-
         BoardPost createdPost = boardService.createBoardPost(boardPost, files);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
+
 
     @PutMapping("/{postId}")
     public ResponseEntity<BoardPost> update(@PathVariable int postId,

@@ -1,13 +1,13 @@
 <template>
   <div class="container">
     <div class="col">
-      <form @submit.prevent="submit">
+      <form @submit.prevent="submit" v-if="canPost">
         <div class="feeds card mb-5 mb-xxl-8">
           <div class="card-body pb-0">
             <div class="d-flex align-items-center">
               <div class="button-group position-absolute top-0 end-0 mt-3 me-5">
-                <button type="button" class="cancel me-3" @click="cancelPost">취소</button>
-                <button type="submit" class="submit" :disabled="!canPost || isSubmitting">작성</button>
+                <button type="button" class="cancel me-3">취소</button>
+                <button type="submit" class="submit">작성</button>
               </div>
             </div>
             <div>
@@ -19,7 +19,6 @@
                   class="subject"
                   placeholder="제목을 입력하세요"
                   required
-                  :disabled="!canPost || isSubmitting"
               />
               <textarea
                   v-model="form.content"
@@ -27,7 +26,6 @@
                   class="writer"
                   placeholder="무슨 일이 일어나고 있나요?"
                   required
-                  :disabled="!canPost || isSubmitting"
               ></textarea>
               <!-- File input and error message here -->
             </div>
@@ -50,16 +48,27 @@ const form = reactive({
   content: '',
 });
 const files = ref(null); // Ref for the file input
-const selectedFiles = ref([]);
+const selectedFiles = ref([]); // For handling multiple file uploads
 const isSubmitting = ref(false);
 const isError = ref(false);
 const errorMessage = ref('');
-const userInvestType = ref();
+const userInvestType = ref(); // Store user's invest type
 
 const route = useRoute();
 const router = useRouter();
+const investTypeMapping = {
+  'stability' : 1,
+  'neutral' : 2,
+  'activeInvestment': 3,
+  'aggressiveInvestment': 4
+};
 
-// Fetch user's investment type
+// Call fetchUserInvestType when component is mounted
+onMounted(() => {
+  fetchUserInvestType();
+});
+
+
 async function fetchUserInvestType() {
   const authValue = localStorage.getItem('auth');
   if (authValue) {
@@ -71,7 +80,7 @@ async function fetchUserInvestType() {
             'Authorization': `Bearer ${authData.token}`,
           },
         });
-        userInvestType.value = response.data.investType;
+        userInvestType.value = response.data.investType; // Fetch and set user's invest type
       } else {
         console.error('Invalid auth data');
       }
@@ -85,17 +94,6 @@ async function fetchUserInvestType() {
     errorMessage.value = '로그인이 필요합니다.';
   }
 }
-
-// Call fetchUserInvestType when component is mounted
-onMounted(() => {
-  fetchUserInvestType();
-});
-
-// Computed property to enable or disable the submit button based on user invest type
-const canPost = computed(() => {
-  const pageValue = route.params.postType; // Assuming postType is the page value
-  return pageValue === userInvestType.value;
-});
 
 // Function to create a board post
 async function createBoardPost() {
@@ -153,14 +151,7 @@ async function createBoardPost() {
 
 // Form submission function
 const submit = async () => {
-  if (!canPost.value) {
-    alert('현재 게시판에 글을 작성할 수 없습니다.');
-    return;
-  }
-
   if (!confirm('등록할까요?')) return;
-
-  isSubmitting.value = true;
   isError.value = false;
 
   try {
@@ -187,13 +178,12 @@ function cancelPost() {
 
 // File change handler
 function handleFileChange(event) {
-  selectedFiles.value = Array.from(event.target.files);
+  selectedFiles.value = Array.from(event.target.files); // Handle file selection
 }
 </script>
 
-
-
 <style scoped>
+/* Style updates based on your requirements */
 .filebox {
   display: inline-block;
   cursor: pointer;
@@ -237,21 +227,21 @@ function handleFileChange(event) {
 
 .feeds {
   width: 700px;
-  height: auto; /* Changed to auto to accommodate dynamic content */
+  height: auto;
   border-radius: 30px;
   border: none;
   background-color: white;
-  padding: 20px; /* Increased padding for better spacing */
+  padding: 20px;
 }
 
 .writer {
   text-align: start;
-  width: 100%; /* Changed to 100% for responsiveness */
-  min-height: 100px; /* Ensures minimum height */
+  width: 100%;
+  min-height: 100px;
   border-radius: 20px;
   padding: 20px;
   border: 1px solid lightgrey;
-  resize: vertical; /* Allows vertical resizing */
+  resize: vertical;
   font-size: 15px;
   margin-top: 10px;
   margin-bottom: 10px;
@@ -259,11 +249,11 @@ function handleFileChange(event) {
 
 .subject {
   text-align: start;
-  width: 100%; /* Changed to 100% for responsiveness */
-  height: 40px; /* Increased height for better input space */
+  width: 100%;
+  height: 40px;
   border-radius: 20px;
   margin-top: 20px;
-  padding: 10px; /* Adjusted padding */
+  padding: 10px;
   border: 1px solid lightgrey;
   font-size: 15px;
 }
