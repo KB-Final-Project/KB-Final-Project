@@ -22,6 +22,8 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -54,6 +56,11 @@ public class WebSocketService extends TextWebSocketHandler {
     @Value("${kis.websocket.url}")
     private String webSocketUrl;
 
+
+    private String approvalKey;    // 접속키 캐싱
+    private LocalDateTime approvalKeyIssuedTime; // 접속키 발급 시간
+    private static final long APPROVAL_KEY_EXPIRATION = 24 * 60 * 60 * 1000L; // 접속키 유효기간 (24시간)
+    private final RestTemplate restTemplate = new RestTemplate();
     @Autowired
     public WebSocketService(StockService stockService) {
         this.stockService = stockService;
@@ -62,12 +69,11 @@ public class WebSocketService extends TextWebSocketHandler {
     public void init() {
         updateAllPrices();
     }
-    @Scheduled(fixedRate = 60000) // 1분마다 실행
+    @Scheduled(fixedRate = 60000)
     public void scheduledPriceUpdate() {
         updateAllPrices();
     }
 
-    private final RestTemplate restTemplate = new RestTemplate();
     private final List<String> stockCodes = Arrays.asList("035720", "068270", "035420", "000660", "373220", "005380", "005930", "055550", "000270", "105560");
 
     private void updateAllStockData() {
@@ -84,20 +90,20 @@ public class WebSocketService extends TextWebSocketHandler {
         return new HashMap<>(lastStockData);
     }
 
-    @Scheduled(fixedRate = 60000) // 1분마다 실행
+    @Scheduled(fixedRate = 5000) // 1분마다 실행
     public void scheduledStockDataUpdate() {
         updateAllStockData();
     }
     public String getWebSocketApprovalKey() {
         logger.info("WebSocket Approval Key 발급 요청 중...");
 
-//        String accessToken = tokenService.getAccessToken();
+        String accessToken = tokenService.getAccessToken();
         String url = baseUrl + "/oauth2/Approval";
         logger.info("WebSocket Approval Key 요청 URL: {}", url);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-//        headers.setBearerAuth(accessToken);
+        headers.setBearerAuth(accessToken);
 
         Map<String, String> body = new HashMap<>();
         body.put("grant_type", "client_credentials");
@@ -107,18 +113,12 @@ public class WebSocketService extends TextWebSocketHandler {
         HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
 
         try {
-            ResponseEntity<Map> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.POST,
-                    request,
-                    Map.class
-            );
-
-            logger.info("WebSocket Approval Key 요청 응답: {}", response);
+            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, request, Map.class);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                String approvalKey = (String) response.getBody().get("approval_key");
-                logger.info("WebSocket Approval Key 발급 성공: {}", approvalKey);
+                approvalKey = (String) response.getBody().get("approval_key");
+                approvalKeyIssuedTime = LocalDateTime.now();
+                logger.info("새로운 WebSocket Approval Key 발급 성공: {}", approvalKey);
                 return approvalKey;
             } else {
                 logger.error("WebSocket Approval Key 발급 실패: {}", response.getStatusCode());
@@ -141,7 +141,14 @@ public class WebSocketService extends TextWebSocketHandler {
         try {
             webSocketSession = client.doHandshake(this, webSocketUrl).get();
             logger.info("WebSocket 연결 성공");
-            subscribeToStocks();
+            // 웹소켓 연결 상태 확인 로그 추가
+            if (webSocketSession != null && webSocketSession.isOpen()) {
+                logger.info("WebSocket session이 정상적으로 열려있습니다.");
+            } else {
+                logger.error("WebSocket session이 열리지 않았습니다.");
+            }
+            subscribeToStocks();  // 기존 주식 구독 로직
+            sendTestStockData();  // 테스트 데이터 전송
         } catch (Exception e) {
             logger.error("WebSocket 연결 중 오류 발생", e);
         }
@@ -153,7 +160,10 @@ public class WebSocketService extends TextWebSocketHandler {
                 String message = String.format("{\"header\":{\"approval_key\":\"%s\",\"tr_type\":\"1\",\"content-type\":\"utf-8\"},\"body\":{\"input\":{\"tr_id\":\"H0STCNT0\",\"tr_key\":\"%s\"}}}", getWebSocketApprovalKey(), stockCode);
                 try {
                     webSocketSession.sendMessage(new TextMessage(message));
-                    logger.info("종목 구독 요청 전송: {}", stockCode);
+
+                    // 주식 구독 요청 로그 추가
+                    logger.info("주식 구독 요청 전송 성공: {}", stockCode);
+
                 } catch (Exception e) {
                     logger.error("종목 구독 요청 전송 중 오류 발생: {}", stockCode, e);
                 }
@@ -163,11 +173,13 @@ public class WebSocketService extends TextWebSocketHandler {
         }
     }
 
+
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
+
+        // 수신된 메시지 확인 로그 추가
         logger.debug("받은 메시지: {}", payload);
-        logger.info("수신된 주식 데이터: {}", stockCodes);
 
         Map<String, Object> responseMap = objectMapper.readValue(payload, Map.class);
         if (responseMap.containsKey("body")) {
@@ -177,12 +189,14 @@ public class WebSocketService extends TextWebSocketHandler {
             double priceChange = Double.parseDouble((String) body.get("prdy_vrss"));
             double changeRate = Double.parseDouble((String) body.get("prdy_ctrt"));
 
-            lastPrices.put(stockCode, currentPrice);
-
+            // 수신한 주식 데이터 로그 추가
             logger.info("실시간 주가 정보 - 종목코드: {}, 현재가: {}, 변동: {}, 변동률: {}%",
                     stockCode, currentPrice, priceChange, changeRate);
+
+            lastPrices.put(stockCode, currentPrice);
         }
     }
+
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
@@ -225,6 +239,23 @@ public class WebSocketService extends TextWebSocketHandler {
     @Lazy
     public void setWebSocketHandler(StockWebSocketHandler webSocketHandler) {
         this.webSocketHandler = webSocketHandler;
+    }
+
+    public void sendTestStockData() {
+        String stockCode = "005930";  // 삼성전자 주식 코드 (예시)
+        String testMessage = "{\"header\":{\"approval_key\":\"테스트\",\"tr_type\":\"1\",\"content-type\":\"utf-8\"},"
+                + "\"body\":{\"input\":{\"tr_id\":\"H0STCNT0\",\"tr_key\":\"" + stockCode + "\"}}}";
+
+        if (webSocketSession != null && webSocketSession.isOpen()) {
+            try {
+                webSocketSession.sendMessage(new TextMessage(testMessage));
+                logger.info("테스트 주식 데이터 전송: {}", testMessage);
+            } catch (IOException e) {
+                logger.error("테스트 주식 데이터 전송 중 오류 발생", e);
+            }
+        } else {
+            logger.error("WebSocket 연결이 열려 있지 않음.");
+        }
     }
 
 }

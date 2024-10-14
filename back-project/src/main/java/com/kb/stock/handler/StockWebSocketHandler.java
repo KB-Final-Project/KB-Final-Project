@@ -3,6 +3,8 @@ package com.kb.stock.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kb.stock.dto.StockDTO;
 import com.kb.stock.service.StockService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -20,6 +22,7 @@ public class StockWebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final StockService stockService;
     private final Map<WebSocketSession, Set<String>> sessionSubscriptions = new ConcurrentHashMap<>();
+    private static final Logger logger = LoggerFactory.getLogger(StockWebSocketHandler.class);
 
     @Autowired
     public StockWebSocketHandler(StockService stockService) {
@@ -35,6 +38,7 @@ public class StockWebSocketHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
+        logger.debug("받은 메시지: {}", payload);
         Map<String, Object> stockData = objectMapper.readValue(payload, Map.class);
 
         String action = (String) stockData.get("action");
@@ -74,6 +78,7 @@ public class StockWebSocketHandler extends TextWebSocketHandler {
         String jsonStockData;
         try {
             jsonStockData = objectMapper.writeValueAsString(stockData);
+            logger.info("Sending stock data: {}", jsonStockData);  // 여기에 로그 추가
         } catch (IOException e) {
             e.printStackTrace();
             return;

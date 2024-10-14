@@ -15,6 +15,8 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +45,7 @@ public class StockService {
 
     private static final int MAX_RETRIES = 3;
     private static final long RETRY_DELAY_MS = 1500;
-    private static final int REQUESTS_PER_SECOND = 20;
+    private static final int REQUESTS_PER_SECOND = 10;
     private static final long REQUEST_INTERVAL_MS = 1500 / REQUESTS_PER_SECOND;
 
     private StockWebSocketHandler webSocketHandler;
@@ -74,7 +76,15 @@ public class StockService {
     }
 
     public void updateAllStocks() {
-        logger.info("Starting updateAllStocks method");
+        // 현재 시간을 확인하는 코드
+        LocalDateTime now = LocalDateTime.now();
+        if (now.getHour() >= 16 || now.getDayOfWeek() == DayOfWeek.SATURDAY || now.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            logger.info("현재 시간 {}: 주식 업데이트가 실행되지 않음 (장 마감 또는 주말).", now);
+            return; // 16시 이후이거나 주말이면 업데이트 하지 않음
+        }
+
+        logger.info("Starting updateAllStocks method at {}", now);
+
         List<String> stockCodes;
         try {
             stockCodes = stockMapper.selectAllStockCodes();
@@ -90,14 +100,16 @@ public class StockService {
             processStockBatch(batch, i / 10 + 1);
 
             try {
-                Thread.sleep(REQUEST_INTERVAL_MS * 20);
+                Thread.sleep(REQUEST_INTERVAL_MS * 10);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 logger.error("Thread interrupted while waiting for next batch", e);
             }
         }
-        logger.info("Finished updateAllStocks method");
+        logger.info("Finished updateAllStocks method at {}", now);
     }
+
+
 
     // 주식 배치 처리
     private void processStockBatch(List<String> stockCodes, int batchNumber) {
@@ -144,6 +156,7 @@ public class StockService {
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("Content-Type", "application/json; charset=utf-8");
                 headers.set("authorization", "Bearer " + accessToken);
+                logger.info("Using access token: {}", accessToken);
                 headers.set("appkey", appKey);
                 headers.set("appsecret", appSecret);
                 headers.set("tr_id", "FHKST01010100");
@@ -156,7 +169,6 @@ public class StockService {
                 if (response.getStatusCode() == HttpStatus.OK) {
                     logger.info("API response body: {}", response.getBody());
                     return (Map<String, Object>) response.getBody().get("output");
-
                 } else {
                     logger.error("Failed to retrieve stock data for {}. Status code: {}", stockCode, response.getStatusCode());
                 }

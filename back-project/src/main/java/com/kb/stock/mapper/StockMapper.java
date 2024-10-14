@@ -49,15 +49,15 @@ public interface StockMapper {
     List<String> selectStaleStockCodes();
 
     // 안정성 중심 종목 조회
-    @Select("SELECT * FROM stock WHERE hts_avls > 1000000000000 AND (w52_hgpr - w52_lwpr) / w52_hgpr < 0.2 AND volume > 100000")
+    @Select("SELECT * FROM stock WHERE hts_avls > 30000 AND (w52_hgpr - w52_lwpr) / w52_hgpr < 0.25 AND volume > 50000")
     List<StockDTO> selectStableStocks();
 
     // 성장성 중심 종목 조회
-    @Select("SELECT * FROM stock WHERE price_change_pct > 10 AND current_price > w52_lwpr * 1.2 AND volume > 500000")
+    @Select("SELECT * FROM stock WHERE price_change_pct < 10 AND current_price > w52_lwpr * 1.2 AND volume > 500000")
     List<StockDTO> selectGrowthStocks();
 
     // 배당성 중심 종목 조회
-    @Select("SELECT * FROM stock WHERE hts_avls > 500000000000 AND (w52_hgpr - w52_lwpr) / w52_hgpr < 0.15")
+    @Select("SELECT * FROM stock WHERE hts_avls > 10000 AND (w52_hgpr - w52_lwpr) / w52_hgpr < 0.2")
     List<StockDTO> selectDividendStocks();
 
     // 변동성 중심 종목 조회

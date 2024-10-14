@@ -38,7 +38,7 @@ public class WebSocketController {
             @ApiResponse(code = 200, message = "WebSocket 연결 성공"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    @PostMapping("/connect")
+    @PostMapping(value = "/connect",  produces = "text/plain; charset=UTF-8")
     public ResponseEntity<String> connectWebSocket() {
         logger.info("WebSocket 연결 시작");
         try {
@@ -49,7 +49,6 @@ public class WebSocketController {
             return ResponseEntity.status(500).body("WebSocket 연결 중 오류가 발생했습니다.");
         }
     }
-
     @ApiOperation(value = "현재 주식 가격을 조회합니다.", notes = "WebSocket을 통해 수신된 10개 종목의 최신 주식 가격 정보를 반환합니다.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "조회 성공"),
