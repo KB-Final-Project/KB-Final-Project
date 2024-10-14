@@ -160,6 +160,37 @@ public class BoardController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM.toString()).body(resource);
     }
 
+    // 좋아요 버튼
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<BoardPost> likePost(@PathVariable long postId, @AuthenticationPrincipal Member principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        try {
+            // 사용자가 이미 좋아요를 눌렀는지 확인
+            boolean alreadyLiked = boardService.checkLikeExists(postId, principal.getMno());
+
+            if (alreadyLiked) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(null); // 이미 좋아요를 눌렀으면 409 Conflict 반환
+            }
+
+            // 좋아요 추가
+            boardService.addLike(postId, principal.getMno());
+
+            // 좋아요 수 업데이트 (여기서 게시물 정보를 다시 조회)
+            BoardPost updatedPost = boardService.getPostWithLikesCount(postId);
+
+            return ResponseEntity.ok(updatedPost);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception e) {
+            log.error("Error liking post: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+
     // 이미지 출력
     @GetMapping("/file/{fileName}")
     @ResponseBody
@@ -209,5 +240,4 @@ public class BoardController {
 
         return ResponseEntity.ok(reply);
     }
-
 }

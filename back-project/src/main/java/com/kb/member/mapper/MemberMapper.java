@@ -14,7 +14,7 @@ public interface MemberMapper {
     int insertMember(Member member);
     int updateMember(Member member);
     int updatePassword(ChangePasswordDTO changePasswordDTO);
-    int deleteMember(long mno);
+    int deleteMember(Integer mno);
     int insertAuth(Auth auth);
     int deleteAuth(Auth auth);
     int checkDuplicateById(String id);

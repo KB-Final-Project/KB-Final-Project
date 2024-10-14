@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class BoardReply {
 	private Integer rno;
 	private long postId;
-	private long mno;
+	private Integer mno;
 	private String memberId;
 	private String memberName;
 	private String content;	

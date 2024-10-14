@@ -1075,6 +1075,18 @@ CREATE TABLE board_category (
                                 UNIQUE KEY (type)                     -- type 컬럼에 유니크 인덱스 추가
 );
 
+insert into board_category(type, name, level, order_no) VALUES('stability', '안정형', 0, 0);
+insert into board_category(type, name, level, order_no) VALUES('neutral', '중립형', 0, 1);
+insert into board_category(type, name, level, order_no) VALUES('activeInvestment', '적극투자형', 0, 2);
+insert into board_category(type, name, level, order_no) VALUES('aggressiveInvestment', '공격투자형', 0, 3);
+
+
+
+
+
+9:24
+이거 먼저 추가요
+
 
 CREATE TABLE MEMBER (
                         mno INT NOT NULL AUTO_INCREMENT COMMENT '자동 증가',
@@ -1110,25 +1122,30 @@ CREATE TABLE board (
                        FOREIGN KEY (type) REFERENCES board_category(type)
 );
 
-CREATE TABLE board_post (
-                            post_id BIGINT NOT NULL AUTO_INCREMENT, -- 고유한 게시글 ID
-                            bno INT NOT NULL,                     -- board 테이블의 bno를 참조
-                            title VARCHAR(255) NOT NULL,
-                            content TEXT NOT NULL,
-                            status varchar(1) DEFAULT 'y',
-                            read_count INT NOT NULL DEFAULT 0,
-                            created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                            modified_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                            type VARCHAR(50) NOT NULL,
-                            comment_count INT DEFAULT 0,
-                            likes_count INT DEFAULT 0,
-                            member_id INT NOT NULL,
-                            author_id VARCHAR(50);
-                            PRIMARY KEY (post_id),                   -- 게시글 ID를 기본 키로 설정
-                            KEY member_id (member_id),
-                            CONSTRAINT board_post_ibfk_1 FOREIGN KEY (member_id) REFERENCES MEMBER (mno),
-                            CONSTRAINT board_post_ibfk_2 FOREIGN KEY (bno) REFERENCES board(bno) -- 외래 키 추가
-);
+INSERT INTO BOARD (bno, type, title, content) VALUES (1, 'stability', '안정형', '안정형투자자게시판');
+INSERT INTO BOARD (bno, type, title, content) VALUES (2, 'neutral', '중립형게시판', '중립형투자자게시판');
+INSERT INTO BOARD (bno, type, title, content) VALUES (3, 'activeInvestment', '적극투자형', '적극형투자자게시판');
+INSERT INTO BOARD (bno, type, title, content) VALUES (4, 'aggressiveInvestment', '공격투자', '공격형투자자게시판');
+
+CREATE TABLE `board_post` (
+                              `post_id` bigint NOT NULL AUTO_INCREMENT,
+                              `bno` int NOT NULL,
+                              `title` varchar(255) NOT NULL,
+                              `content` text NOT NULL,
+                              `status` varchar(1) DEFAULT 'y',
+                              `read_count` int NOT NULL DEFAULT '0',
+                              `created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                              `modified_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                              `type` varchar(50) NOT NULL,
+                              `comment_count` int DEFAULT '0',
+                              `member_id` int NOT NULL,
+                              `author_id` varchar(50) DEFAULT NULL,
+                              PRIMARY KEY (`post_id`),
+                              KEY `member_id` (`member_id`),
+                              KEY `board_post_ibfk_2` (`bno`),
+                              CONSTRAINT `board_post_ibfk_1` FOREIGN KEY (`member_id`) REFERENCES `member` (`mno`),
+                              CONSTRAINT `board_post_ibfk_2` FOREIGN KEY (`bno`) REFERENCES `board` (`bno`)
+) ENGINE=InnoDB AUTO_INCREMENT=132 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `board_reply` (
                                `rno` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
@@ -1157,3 +1174,14 @@ CREATE TABLE `board_attach_file` (
                                      KEY `post_id` (`post_id`),
                                      CONSTRAINT `board_attach_file_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `board_post` (`post_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `likes` (
+                         `like_id` bigint NOT NULL AUTO_INCREMENT,
+                         `post_id` bigint NOT NULL,
+                         `member_id` int NOT NULL,
+                         `created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         PRIMARY KEY (`like_id`),
+                         UNIQUE KEY `unique_like` (`post_id`, `member_id`), -- 같은 게시물에 같은 사용자가 중복 좋아요를 누를 수 없도록 설정
+                         CONSTRAINT `likes_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `board_post` (`post_id`),
+                         CONSTRAINT `likes_ibfk_2` FOREIGN KEY (`member_id`) REFERENCES `member` (`mno`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

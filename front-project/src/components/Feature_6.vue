@@ -3,72 +3,7 @@
     <br><br><br><br><br><br>
     <div class="f6_trendMain">
       <div class="trendGraph">
-        <div class="btn1">
-          <ul>
-            <li>
-              <button class="fundBtn">FUND</button>
-            </li>
-            <li>
-              <h3>삼성전자삼성전자</h3>
-            </li>
-            <li>
-              기준가
-            </li>
-            <li>
-              <i style="color: blue;">▼</i>0.03(-0.00%)
-            </li>
-            <li>
-              <h4>1,322.07원</h4>
-            </li>
-            <li>
-              수익률 <h4>12%</h4>
-            </li>
-          </ul>
-        </div>
-        <div class="btn1">
-          <ul>
-            <li>
-              <button class="fundBtn">FUND</button>
-            </li>
-            <li>
-              <h3>삼성전자삼성전자</h3>
-            </li>
-            <li>
-              기준가
-            </li>
-            <li>
-              <i style="color: blue;">▼</i>0.03(-0.00%)
-            </li>
-            <li>
-              <h4>1,322.07원</h4>
-            </li>
-            <li>
-              수익률 <h4>12%</h4>
-            </li>
-          </ul>
-        </div>
-        <div class="btn1">
-          <ul>
-            <li>
-              <button class="fundBtn">FUND</button>
-            </li>
-            <li>
-              <h3>삼성전자삼성전자</h3>
-            </li>
-            <li>
-              기준가
-            </li>
-            <li>
-              <i style="color: blue;">▼</i>0.03(-0.00%)
-            </li>
-            <li>
-              <h4>1,322.07원</h4>
-            </li>
-            <li>
-              수익률 <h4>12%</h4>
-            </li>
-          </ul>
-        </div>
+        <img src="/img/fundMain.png" class="fundImg">
       </div>
 
       <!-- trendMenu -->
@@ -76,7 +11,7 @@
         <button class="trendBtn">국내펀드</button>
         <h1 class="d-inline">트렌드<br></h1>
         <h1 class="d-inline m-l">한눈에 보기</h1><br>
-        <br><h3>전체 운용상품 보러가기 ></h3>
+        <br><button class="goToFund_btn" @click="goToFund">전체 운용상품 보러가기 <i class="ai-chevron-right"></i></button>
         <img src="/img/emoji/fund4.png" class="trendImage">
       </div>
     </div>
@@ -84,6 +19,15 @@
     <br><br><br><br><br>
   </section>
 </template>
+
+<script setup>
+import router from '@/router';
+
+const goToFund = () => {
+  router.push('/fund'); // 지정된 경로로 페이지 이동
+};
+
+</script>
 
 <style scoped>
 
@@ -146,14 +90,6 @@
   z-index: -1;
 }
 
-.trendGraph {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 300px;
-  margin-left: 100px;
-}
-
 .trendGraph .btn1 {
   position: absolute;
   width: 250px;
@@ -165,13 +101,6 @@
   left: 50%;
   transform: translateX(0%);
 }
-
-.trendGraph .btn1:nth-child(2) {
-  top: 25px;
-  left: 50%;;
-  transform: translateX(0%);
-}
-
 .trendGraph .btn1:nth-child(3) {
   top: 50%;
   right: 60%;
@@ -209,8 +138,19 @@ h3 {
 
 .trendMenu {
   font-family: J5;
+  margin-left: 100px;
+
+}
+
+.fundImg {
+  width: 600px;
+}
+
+.goToFund_btn {
+  margin-left: 50px;
+  margin-top: 20px;
+  font-size: 25px;
+  border: none;
+  background: none;
 }
 </style>
-
-<script setup lang="ts">
-</script>

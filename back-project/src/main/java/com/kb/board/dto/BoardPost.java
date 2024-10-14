@@ -24,7 +24,7 @@ public class BoardPost {
     private String status;      // 상태 ('y' 또는 'n')
     private int commentCount;    // 댓글 수
     private int likesCount;     // 좋아요 수
-    private long memberId;      // member 테이블의 mno
+    private Integer memberId;      // member 테이블의 mno
     private String authorId;     // 작성자 ID (MEMBER 테이블의 id)
     private Date createdDate;   // 생성 날짜
     private Date modifiedDate;  // 수정 날짜
@@ -32,7 +32,7 @@ public class BoardPost {
     private ArrayList<BoardReply> replyList;
     private ArrayList<BoardAttachFile> boardAttachFileList;
 
-    public static BoardPost fromDTO(BoardDTO boardDTO, long memberId) {
+    public static BoardPost fromDTO(BoardDTO boardDTO, Integer memberId) {
         return BoardPost.builder()
                 .bno(boardDTO.getBno())
                 .title(boardDTO.getTitle())
