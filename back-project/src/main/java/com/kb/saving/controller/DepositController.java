@@ -40,16 +40,17 @@ public class DepositController {
 
     @GetMapping("/detail/{savingId}")
     public ResponseEntity<Saving> getDepositProductById(@PathVariable int savingId,
-                                                        @RequestParam(required = false) int userId,
+                                                        @RequestParam(required = false) Integer userId,
                                                         @RequestParam(required = false) String wmtiType) {
-        if(wmtiType != null && !wmtiType.isEmpty()){
-            service.logProductViewAndUpdateViewCount(SavingProductViewLogDto
-                    .builder()
-                    .savingId(savingId)
-                    .userId(userId)
-                    .wmtiType(wmtiType)
-                    .build());
+        if(userId == null || wmtiType == null || wmtiType.isEmpty()){
+            return ResponseEntity.ok(service.getProductDetail(1, savingId));
         }
+        service.logProductViewAndUpdateViewCount(SavingProductViewLogDto
+                .builder()
+                .savingId(savingId)
+                .userId(userId)
+                .wmtiType(wmtiType)
+                .build());
         return ResponseEntity.ok(service.getProductDetail(1, savingId));
     }
 
