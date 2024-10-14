@@ -210,6 +210,11 @@ button.seeMore_btn {
   cursor: pointer;
 }
 
+.sideNewsTitle:hover {
+  color: #438B73;
+  font-weight: bold;
+}
+
 .sideNewsDate {
   font-size: 18px;
   color: gray;
