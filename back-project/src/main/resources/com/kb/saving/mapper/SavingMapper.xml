@@ -63,6 +63,14 @@
         </association>
     </resultMap>
 
+    <resultMap id="getProductViewLogResultMap" type="com.kb.saving.dto.SavingProductViewLogDto">
+        <result property="savingId" column="saving_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="wmtiType" column="wmti_type"/>
+        <result property="viewedAt" column="viewed_at"/>
+    </resultMap>
+
+
     <select id="getProductList" resultMap="DepositListResultMap">
         SELECT
         s.saving_id,
@@ -99,7 +107,11 @@
             AND ir.intr_rate_type = #{interestRateType}
         </if>
 
-        ORDER BY b.bank_type = 1 DESC, b.bank_type, ir.intr_rate DESC
+        ORDER BY
+        b.bank_type = 1 DESC,
+        CASE WHEN b.bank_type = 1 THEN ir.intr_rate2 END DESC,
+        b.bank_type,
+        ir.intr_rate2 DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
@@ -214,5 +226,27 @@
         ORDER BY intr_rate2 DESC
             LIMIT 3;
     </select>
+
+    <insert id="updateSavingProductViewByWmti" parameterType="com.kb.saving.dto.SavingProductViewUpdateDto">
+        INSERT INTO product_wmti_view_counts (saving_id, wmti_type, view_count)
+        VALUES (#{savingId}, #{wmtiType}, 1)
+        ON DUPLICATE KEY UPDATE view_count = view_count + 1
+    </insert>
+
+    <select id="checkSavingProductViewByWmtiAndUserid" resultType="int">
+        SELECT COUNT(*)
+        FROM product_view_logs
+        WHERE mno = #{userId}
+          AND saving_id = #{savingId}
+          AND viewed_at > NOW() - INTERVAL 1 HOUR  -- 1시간 이내에 조회된 기록만 확인
+    </select>
+
+    <insert id="updateProductViewLog" parameterType="com.kb.saving.dto.SavingProductViewLogDto">
+        INSERT INTO product_view_logs (saving_id, mno, wmti_type, viewed_at)
+        VALUES (#{savingId}, #{userId}, #{wmtiType}, NOW())
+        ON DUPLICATE KEY UPDATE viewed_at = NOW()
+    </insert>
+
+
 
 </mapper>
