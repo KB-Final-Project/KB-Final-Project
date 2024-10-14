@@ -89,7 +89,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(stock, index) in sortedStocks" :key="index" @click="goToStockChart(stock)">
+            <tr v-for="(stock, index) in limitedStocks" :key="index" @click="goToStockChart(stock)">
               <td>{{ stock.stockName }}</td>
               <td>{{ stock.currentPrice.toLocaleString() }}원</td>
               <td :class="{
@@ -104,6 +104,7 @@
               </td>
             </tr>
           </tbody>
+
         </table>
       </section>
 
@@ -135,7 +136,6 @@
           <div class="modal-header">
             <h2>지금 뜨는 카테고리</h2>
             <button @click="showCategoryModal = false" class="close-button">
-              ×
             </button>
           </div>
           <div class="modal-body">
@@ -165,7 +165,7 @@
         <div class="modal-content" @click.stop>
           <div class="modal-header">
             <h2>{{ selectedCategory.name }} 주식 목록</h2>
-            <button @click="showStockListModal = false" class="close-button">×</button>
+            <button @click="showStockListModal = false" class="close-button"></button>
           </div>
           <div class="modal-body">
             <table class="stock-table">
@@ -296,6 +296,10 @@ export default {
         return 0;
       });
     },
+    // 정렬된 주식 목록에서 10개만 반환
+    limitedStocks() {
+      return this.sortedStocks.slice(0, 10);
+    }
   },
   created() {
     this.loadCategoryIcons();
