@@ -1,7 +1,7 @@
 <template>
   <div class="stock-dashboard">
     <h1><b>국내주식</b></h1>
-    <div class="container">
+    <div class="container animate-on-load">
       <!-- 이 시각 증시 (KOSPI, KOSDAQ, KOSPI200) -->
       <section class="current-stocks">
         <div class="section-header">
@@ -1012,4 +1012,59 @@ tbody tr:hover {
 .modal-body tbody tr:hover {
   background-color: #f0f8ff;
 }
+
+@media (max-width: 900px) {
+  .main-news {
+      flex-direction: column;
+  }
+
+  .main-news-image,
+  .main-news-content {
+      width: 100%;
+  }
+
+  .news-grid {
+      grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .news-grid {
+      grid-template-columns: 1fr;
+  }
+}
+
+@keyframes riseUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-on-load > * {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: riseUp 1s ease-out forwards;
+}
+
+.animate-on-load > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.animate-on-load > *:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.animate-on-load > *:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.animate-on-load > *:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
 </style>

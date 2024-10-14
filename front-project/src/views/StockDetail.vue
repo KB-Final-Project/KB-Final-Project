@@ -1,10 +1,7 @@
 <template>
   <div class="stock-dashboard">
     <h1><b>투자 성향별 주식</b></h1>
-    <div class="container">
-      <div v-if="error" class="error-message">{{ error }}</div>
-
-
+    <div class="container animate-on-load">
       <!-- 현재 상위권 TOP3 -->
       <p class="middle-title">오늘의 추천 종목 ⭐️</p>
       <section class="top3-stocks">
@@ -799,4 +796,59 @@ tbody tr:hover {
   color: black;
   font-size: 20px;
 }
+
+@media (max-width: 900px) {
+  .main-news {
+      flex-direction: column;
+  }
+
+  .main-news-image,
+  .main-news-content {
+      width: 100%;
+  }
+
+  .news-grid {
+      grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .news-grid {
+      grid-template-columns: 1fr;
+  }
+}
+
+@keyframes riseUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-on-load > * {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: riseUp 1s ease-out forwards;
+}
+
+.animate-on-load > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.animate-on-load > *:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.animate-on-load > *:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.animate-on-load > *:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
 </style>
