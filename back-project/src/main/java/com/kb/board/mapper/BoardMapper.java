@@ -1,6 +1,7 @@
 package com.kb.board.mapper;
 
 import com.kb.board.dto.*;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -22,5 +23,6 @@ public interface BoardMapper {
     int insertReply(BoardReply reply);
     BoardReply selectReplyByRno(long rno);
     List<BoardReply> selectReplyByBno(int bno);
-    int deleteReply(long rno);
+    int deleteReply(int rno);
+    String getAuthorIdByMno(long mno);
 }

@@ -1130,15 +1130,15 @@ CREATE TABLE board_post (
                             CONSTRAINT board_post_ibfk_2 FOREIGN KEY (bno) REFERENCES board(bno) -- 외래 키 추가
 );
 
-
 CREATE TABLE `board_reply` (
-                               `reply_id` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
-                               `reply_content` varchar(2000) NOT NULL,
-                               `reply_created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                               `reply_modified_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                               `rno` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
+                               `content` varchar(2000) NOT NULL,
+                               `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                               `modify_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                               `status` varchar(1) DEFAULT 'y',
                                `post_id` BIGINT NOT NULL,  -- 타입 변경
                                `mno` int NOT NULL,
-                               PRIMARY KEY (`reply_id`),
+                               PRIMARY KEY (`rno`),
                                KEY `post_id` (`post_id`),
                                KEY `mno` (`mno`),
                                CONSTRAINT `board_reply_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `board_post` (`post_id`),
