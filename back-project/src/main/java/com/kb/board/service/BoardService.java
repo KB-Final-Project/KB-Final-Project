@@ -218,4 +218,18 @@ public class BoardService {
     public int deleteReply(int rno) {
         return mapper.deleteReply(rno);
     }
+
+    public BoardPost incrementLikesCount(long postId) {
+        // 게시글 조회 (이 부분은 필요에 따라 추가)
+        BoardPost post = getBoard(postId);
+        if (post == null) {
+            throw new NoSuchElementException("Post not found for postId: " + postId);
+        }
+
+        // likesCount 증가 메서드 호출
+        mapper.incrementLikesCount(postId);
+
+        // 업데이트된 게시글 반환 (필요에 따라 다시 조회)
+        return getBoard(postId);
+    }
 }

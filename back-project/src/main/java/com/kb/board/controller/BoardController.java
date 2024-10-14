@@ -160,6 +160,21 @@ public class BoardController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM.toString()).body(resource);
     }
 
+    // 좋아요 버튼
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<BoardPost> likePost(@PathVariable long postId) {
+        try {
+            BoardPost updatedPost = boardService.incrementLikesCount(postId);
+            return ResponseEntity.ok(updatedPost);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception e) {
+            log.error("Error liking post: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+
     // 이미지 출력
     @GetMapping("/file/{fileName}")
     @ResponseBody
@@ -209,5 +224,4 @@ public class BoardController {
 
         return ResponseEntity.ok(reply);
     }
-
 }
