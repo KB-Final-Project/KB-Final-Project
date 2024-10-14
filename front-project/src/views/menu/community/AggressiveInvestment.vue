@@ -8,7 +8,7 @@ const postType = ref(4);
 
 const fetchBoardPosts = async () => {
   try {
-    const response = await axios.get('/api/board/4/posts');
+    const response = await axios.get('/api/board/${postType.value}/posts');
     posts.value = response.data.postList; // postList를 저장
     console.log(posts.value); // 확인용 출력
   } catch (error) {
@@ -51,7 +51,7 @@ onMounted(() => {
 
 <template>
   <div>
-    <div v-for="post in visiblePosts" :key="post.id" class="feeds card mb-5 mb-xxl-8">
+    <div v-for="post in visiblePosts" :key="post.postId" class="feeds card mb-5 mb-xxl-8">
       <div class="card-body pb-0">
         <div class="d-flex align-items-center">
           <div class="symbol symbol-45px me-5">

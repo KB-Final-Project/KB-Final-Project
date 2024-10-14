@@ -26,72 +26,16 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+
 import { useRouter, useRoute } from 'vue-router';
 import CommunityPanel from "@/views/menu/community/CommunityPanel.vue";
 import CommunityWriter from "@/views/menu/community/CommunityWriter.vue";
-import axios from "axios";
+
 
 // Router 인스턴스
 const router = useRouter();
 const route = useRoute();
 
-// 사용자의 investType을 저장할 ref
-const userInvestType = ref(null);
-
-// 현재 접근하려는 postType을 route 파라미터나 경로에서 가져옴
-const currentPostType = ref(route.path.split('/').pop());
-
-// 접근 권한 여부를 저장할 ref
-const isAuthorized = ref(false);
-
-// INVEST_TYPE에 따른 사용자 권한 확인 함수
-async function checkUserAuthorization() {
-  const authValue = localStorage.getItem('auth');
-  if (authValue) {
-    try {
-      const authData = JSON.parse(authValue);
-      if (authData && authData.id && authData.token) {
-        const response = await axios.get(`/api/member/${authData.id}`, {
-          headers: {
-            'Authorization': `Bearer ${authData.token}`,
-          },
-        });
-
-        const investType = response.data.investType;
-        userInvestType.value = investType;
-
-        // postType과 investType 매핑
-        const investTypeMap = {
-          'stability': 1,
-          'neutral': 2,
-          'activeInvestment': 3,
-          'aggressiveInvestment': 4,
-        };
-
-        if (investTypeMap[currentPostType.value] === investType) {
-          isAuthorized.value = true;
-        } else {
-          isAuthorized.value = false;
-        }
-      } else {
-        console.error('유효하지 않은 authData:', authData);
-        isAuthorized.value = false;
-      }
-    } catch (error) {
-      console.error('사용자 정보를 가져오는 중 오류 발생:', error);
-      isAuthorized.value = false;
-    }
-  } else {
-    console.log('Auth value not found');
-    isAuthorized.value = false;
-  }
-}
-
-// 컴포넌트 마운트 시 권한 확인 함수 호출
-onMounted(() => {
-  checkUserAuthorization();
-});
 </script>
 
 <style scoped>
