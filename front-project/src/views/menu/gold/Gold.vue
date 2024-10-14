@@ -1,14 +1,47 @@
 <script setup>
 import { onMounted, ref } from 'vue';
+import axios from 'axios';
 
 const tradingViewContainer = ref(null);
 
+const goldData = ref([]);
+const page = ref(1);  // 현재 페이지 상태
+const pageInfo = ref(null);  // 기본값을 null로 설정하여 초기 로딩 상태 반영
+const loading = ref(false); // 로딩 상태
+
+// API 호출하여 데이터 가져오기
+const fetchGoldData = async () => {
+  if (loading.value) return; // 이미 로딩 중이면 중복 요청 방지
+
+  loading.value = true; // 로딩 시작
+  try {
+    const response = await axios.get(`/api/gold/list?page=${page.value}`);
+    goldData.value = [...goldData.value, ...response.data.golds]; // 이전 데이터에 새 데이터 추가
+    pageInfo.value = response.data.pageInfo || { maxPage: 1 }; // 받아온 pageInfo가 없을 경우 기본값 설정
+  } catch (error) {
+    console.error('Failed to fetch gold data:', error);
+  } finally {
+    loading.value = false; // 로딩 완료
+  }
+};
+
+// "더보기" 버튼 클릭 시 페이지 증가 후 데이터 추가 요청
+const loadMore = () => {
+  if (page.value < pageInfo.value.maxPage) {
+    page.value += 1;  // 페이지 증가
+    fetchGoldData();  // 다음 페이지 데이터 불러오기
+  }
+}
+
+// 컴포넌트가 마운트되면 데이터 가져오기
 onMounted(() => {
+  fetchGoldData();
+
+  // TradingView 위젯 설정
   const script = document.createElement('script');
   script.type = 'text/javascript';
   script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
   script.async = true;
-
   script.innerHTML = JSON.stringify({
     width: 1200,
     height: 610,
@@ -21,91 +54,86 @@ onMounted(() => {
     locale: 'kr',
     allow_symbol_change: true,
     calendar: false,
-    support_host: 'https://www.tradingview.com'
+    support_host: 'https://www.tradingview.com',
   });
 
   tradingViewContainer.value.appendChild(script);
 });
 </script>
 
+
+
 <template>
-<div class="gold">
-  <div class="container text-center">
-    <h1>금</h1>
-    <br>
-    <div class="goldQuote">
-      <p class="fs-2 text-start">순금 시세</p>
-      <p class="text-end">현재 날짜</p>
+  <div class="gold">
+    <div class="container text-center">
+      <h1>금</h1>
       <br>
-      <div class="goldQuoteText">
-        <br><br>
-       <table class="quoteTable">
-         <thead>
-          <tr>
-            <td><h3>내가 살 때(VAT포함)</h3></td>
-            <td><h3>내가 팔 때(VAT포함)</h3></td>
-          </tr>
-         </thead>
-         <tbody>
-          <tr>
-            <td><h3>40000</h3></td>
-            <td><h3>40000</h3></td>
-          </tr>
-          <tr>
-            <td><h3>40</h3></td>
-            <td><h3>40</h3></td>
-          </tr>
-         </tbody>
-       </table>
-        <br><br>
+      <div class="goldQuote">
+        <p class="fs-2 text-start">순금 시세</p>
+        <p class="text-end">현재 날짜</p>
+        <br>
+        <div class="goldQuoteText">
+          <br><br>
+          <table class="quoteTable">
+            <thead>
+              <tr>
+                <td><h3>내가 살 때(VAT포함)</h3></td>
+                <td><h3>내가 팔 때(VAT포함)</h3></td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><h3>40000</h3></td>
+                <td><h3>40000</h3></td>
+              </tr>
+              <tr>
+                <td><h3>40</h3></td>
+                <td><h3>40</h3></td>
+              </tr>
+            </tbody>
+          </table>
+          <br><br>
+        </div>
       </div>
-    </div>
-  </div><br><br>
-  <div class="text-center container">
-    <h2 class="text-start"> 5일 동안의 금 시세</h2><br>
-    <div class="fiveThQuote">
-      <table>
-        <thead class="fiveThQuoteThead">
-          <tr>
-            <th rowspan="2">고시날짜</th>
-            <th>내가 살 때 (3.75kg)</th>
-            <th class="th3" colspan="3">내가 팔 때 (3.75kg)</th>
-          </tr>
-          <tr>
-            <th>순금</th>
-            <th>순금</th>
-            <th>순금</th>
-            <th>순금</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>2024-09-13</td>
-            <td>468,000</td>
-            <td>468,000</td>
-            <td>468,000</td>
-            <td>468,000</td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <br><br>
-    <div class="goldQuoteGraph">
-      <h2 class="d-inline">금 시세</h2><p class="d-inline" style="font-size: 27px; font-weight: 700;">그래프</p>
-      <div>그래프</div>
-    </div>
-    <br><br>
-    <div class="text-start">
-      <h2 class="d-inline">일별 국제 금시세</h2><h5 class="d-inline">By TrandingView</h5>
     </div><br><br>
-    <div class="trandingViewGoldQuote">
+    
+    <!-- 금 시세 테이블 -->
+    <div class="text-center container">
+      <h2 class="text-start">최근 금 시세</h2><br>
+      <div class="fiveThQuote">
+        <table>
+          <thead class="fiveThQuoteThead">
+            <tr>
+              <th>고시날짜</th>
+              <th>시가 (3.75kg)</th>
+              <th>변동률</th>
+              <th>한돈(3.75g) 가격</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(gold, index) in goldData" :key="index">
+              <td>{{ gold.basDd }}</td>
+              <td>{{ gold.tddOpnPrc.toLocaleString() }} 원</td>
+              <td>{{ gold.flucRt }} %</td>
+              <td>{{ gold.price.toLocaleString() }} 원</td>
+            </tr>
+          </tbody>
+        </table>
+        <button @click="loadMore" class="btn btn-primary mt-4" :disabled="loading">
+          {{ loading ? '로딩 중...' : '더보기' }}
+        </button>
+      </div>
+      <br><br>
+      
+      <!-- 금 시세 그래프 -->
+      <div class="goldQuoteGraph">
+        <h2 class="d-inline">금 시세</h2><p class="d-inline" style="font-size: 27px; font-weight: 700;">그래프</p>
+        <div>그래프</div>
+      </div>
+      <br><br>
+      <div class="text-start">
+        <h2 class="d-inline">일별 국제 금시세</h2><h5 class="d-inline">By TradingView</h5>
+      </div><br><br>
       <div class="tradingview-widget-container" ref="tradingViewContainer" style="height: 100%; width: 100%">
         <div class="tradingview-widget-container__widget" style="height: 100%; width: 100%"></div>
         <div class="tradingview-widget-copyright">
@@ -116,8 +144,8 @@ onMounted(() => {
       </div>
     </div>
   </div>
-</div>
-</template>
+  </template>
+  
 
 <style scoped>
 .goldQuote{

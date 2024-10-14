@@ -31,7 +31,7 @@ public class GoldService {
     private static final String KRX_API_URL = "http://data-dbg.krx.co.kr/svc/apis/gen/gold_bydd_trd";
     @Value("${GOLD_API_KEY}") String AUTH_KEY;
 
-    private final static int LIST_LIMIT = 20;
+    private final static int LIST_LIMIT = 10;
     private final static int PAGE_LIMIT = 5;
     private void fetchAndSaveGoldDataForDate(String basDd) {
         try {
