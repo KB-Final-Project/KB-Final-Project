@@ -39,7 +39,14 @@
 
           <img :src="content.icon" alt="Content Icon" />
 
-          <router-link :to="{ path: '/stocks', query: { type: userType } }" class="content-link">➔</router-link>
+          <router-link
+  :to="getLinkForContent(content)"
+  class="content-link"
+>
+  ➔
+</router-link>
+
+
 
         </div>
       </div>
@@ -86,6 +93,7 @@ export default {
   },
   data() {
     return {
+      userId: "",  // 사용자 ID 저장
       userType: "", // 사용자의 투자 성향 타입을 저장
       totalScore: 0, // 총 점수 저장
       investmentResults: [
@@ -202,10 +210,52 @@ export default {
     // 라우터 쿼리에서 totalScore 값 가져오기
     this.totalScore = parseInt(this.$route.query.totalScore, 10);
     this.classifyUserType();
+    this.fetchUserId();  // 로그인 후 사용자 ID를 받아옴
     this.fetchStockData(); // 사용자의 투자 성향에 맞는 주식 데이터를 요청
     this.setRecommendedContent();
   },
   methods: {
+      // 사용자 ID를 가져오는 함수
+      async fetchUserId() {
+      try {
+        const response = await axios.get('http://localhost:8080/api/member');  // 사용자 ID를 가져오는 API 호출
+        this.userId = response.data.id;  // 응답에서 사용자 ID를 가져와 설정
+      } catch (error) {
+        console.error("사용자 ID를 가져오는 중 오류 발생:", error);
+      }
+    },
+
+  // 투자 성향 저장/업데이트 함수
+  async saveInvestmentType() {
+      try {
+        const response = await axios.put('http://localhost:8080/api/member/updateInvestType', {
+          id: this.userId,          // 사용자 ID
+          investType: this.userType // 테스트 결과로 나온 투자 성향 (예: ABML)
+        });
+        console.log(response.data);
+        alert("투자 성향이 성공적으로 저장되었습니다.");
+      } catch (error) {
+        console.error("투자 성향을 저장하는 중 오류 발생:", error);
+      }
+    },
+
+  // 테스트 다시하기
+  async restartTest() {
+      this.userType = '';  // 투자 성향 초기화
+      await this.saveInvestmentType();  // 초기화된 성향을 DB에 저장
+      this.$router.push('/test-start');  // 테스트 시작 페이지로 이동
+    },
+
+
+
+    getLinkForContent(content) {
+    // 주식 관련 콘텐츠일 경우 StockDetail로 이동
+    if (content.title.includes('주식') || content.link === '/StockDetail') {
+      return { path: '/StockDetail', query: { userType: this.userType } };
+    }
+    // 주식이 아닌 경우 원래의 링크로 이동
+    return { path: content.link, query: { userType: this.userType } };
+  },
     classifyUserType() {
       // 성향 분류 로직 => totalScore에 따라 성향을 결정
       if (this.totalScore >= 44) {
@@ -294,7 +344,7 @@ export default {
             title: "펀드",
             description: "~~펀드",
             icon: require("@/assets/img/analysis/5.png"),
-            link: "/savings",
+            link: "/fund",
           },
           {
             title: "국채 투자",
@@ -664,9 +714,6 @@ export default {
           },
         ];
       }
-    },
-    restartTest() {
-      this.$router.push("/test-start");
     },
     shareResults() {
       alert("결과를 공유합니다.");
