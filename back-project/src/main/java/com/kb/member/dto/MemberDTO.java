@@ -21,8 +21,9 @@ public class MemberDTO {
     private String name;        // 사용자이름
     private String email;       // 이메일
     private String kakaoId;       // 카카오 아이디
+    private String investType;
 
     public Member toMember() {
-        return Member.builder().id(id).password(password).name(name).email(email).kakaoId(kakaoId).build();
+        return Member.builder().id(id).password(password).name(name).email(email).kakaoId(kakaoId).investType(investType).build();
     }
 }
