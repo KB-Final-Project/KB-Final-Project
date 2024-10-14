@@ -1,10 +1,10 @@
 <template>
   <div>
     <br><br><br><br>
-    <h1>프로필 정보</h1><br><br>
+    <h2>프로필 정보</h2><br><br>
     <div class="profileBox">
       <i class="d-inline ai-user"></i>
-      <h2 class="d-inline"> 계정 정보</h2>
+      <h3 class="d-inline"> 계정 정보</h3>
       <br> <br>
       <table>
         <tbody>
@@ -47,12 +47,12 @@ h1{
 }
 
 table tbody tr td{
-  font-size: 25px;
+  font-size: 20px;
   padding: 10px;
 }
 
 table tbody tr td:nth-child(2){
-  font-size: 25px;
+  font-size: 20px;
   padding: 10px;
   color: #6c6c6c;
   width: 10%;

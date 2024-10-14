@@ -93,9 +93,6 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-
-
-
     @PutMapping("/kakaoInfo/{code}")
     public ResponseEntity<Member> changeProfile(MemberDTO memberDTO,
                                                 @RequestParam(name = "avatar", required = false) MultipartFile avatar) throws IllegalAccessException {

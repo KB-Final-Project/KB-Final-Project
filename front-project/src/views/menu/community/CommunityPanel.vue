@@ -4,113 +4,108 @@ import { useRouter, useRoute } from 'vue-router';
 import WriterPopup from './WriterPopup.vue';
 import axios from 'axios';
 
+// 환경 변수로부터 API 베이스 URL 가져오기
+
+// Propensity 타입 정의
+const propensityTypes = {
+  '1': {
+    label: '안정형',
+    route: '/community/stability',
+  },
+  '2': {
+    label: '중립형',
+    route: '/community/neutral',
+  },
+  '3': {
+    label: '적극투자형',
+    route: '/community/activeInvestment',
+  },
+  '4': {
+    label: '공격투자형',
+    route: '/community/aggressiveInvestment',
+  },
+};
+
+// 상태 관리
 const activePropensity = ref('');
 const showModal = ref(false);
 const userPropensity = ref('');
+const loading = ref(false);
+const error = ref(null);
 
 const router = useRouter();
 const route = useRoute();
 
 const myInfo = reactive({
-  name: '이사벨라',
-  id: "",
-  email: 'abcd@gmail.com',
-  propensity: 1, // 안정형
+  name: '',
+  id: '',
+  email: '',
+  investType: '', // API 응답의 investType 사용
 });
 
-async function fetchTypes() {
-  try {
-    const response = await axios.get('/types');
-    const typeValue = response.data[0];
-    setUserPropensity(typeValue);
-    setActivePropensityByType(typeValue);
-  } catch (error) {
-    console.error('Error fetching types:', error);
-  }
-}
-
+// 사용자 정보 가져오기 (API 호출)
 async function getMyInfo() {
   const authValue = localStorage.getItem('auth');
-  
+  console.log(authValue);
+
   if (authValue) {
     try {
       const authData = JSON.parse(authValue);
       if (authData.id) {
         myInfo.id = authData.id;
         myInfo.email = authData.email; // email 값 추출
+
+        // 사용자 투자 유형 설정
+        if (authData.investType) {
+          myInfo.investType = authData.investType.toString();
+          userPropensity.value = authData.investType.toString();
+        } else {
+          console.warn('investType이 auth 데이터에 없습니다.');
+        }
+
+        // 동적으로 API 엔드포인트 구성
+        loading.value = true;
+        const response = await axios.get(`/api/member/${myInfo.id}`);
+        const data = response.data;
+
+        if (data) {
+          myInfo.name = data.name;
+          // 추가적인 사용자 정보가 필요하면 여기에 설정
+          // 예: myInfo.someField = data.someField;
+        } else {
+          console.error('API 응답이 비어 있습니다.');
+        }
       } else {
-        console.log('Email not found in auth data');
+        console.log('Auth 데이터에 id가 없습니다.');
       }
-    } catch (error) {
-      console.error('Error parsing auth data:', error);
+    } catch (err) {
+      error.value = '사용자 정보를 가져오는 중 오류가 발생했습니다.';
+      console.error('사용자 정보를 가져오는 중 오류 발생:', err);
+    } finally {
+      loading.value = false;
     }
   } else {
-    console.log('Auth value not found');
+    console.log('Auth 값이 로컬 스토리지에 없습니다.');
+    error.value = '로그인이 필요합니다.';
   }
 }
 
-function setUserPropensity(typeValue) {
-  switch (typeValue) {
-    case 1:
-      userPropensity.value = '안정형';
-      break;
-    case 2:
-      userPropensity.value = '중립형';
-      break;
-    case 3:
-      userPropensity.value = '적극투자형';
-      break;
-    case 4:
-      userPropensity.value = '공격투자형';
-      break;
-    default:
-      console.error('유효하지 않은 유형');
+// Propensity 설정 및 라우팅
+function setActivePropensity(propensity) {
+  if (!propensityTypes[propensity]) {
+    console.error('유효하지 않은 유형:', propensity);
+    return;
   }
-}
 
-function setActivePropensityByType(typeValue) {
-  switch (typeValue) {
-    case 1:
-      setActive('안정형');
-      break;
-    case 2:
-      setActive('중립형');
-      break;
-    case 3:
-      setActive('적극투자형');
-      break;
-    case 4:
-      setActive('공격투자형');
-      break;
-    default:
-      console.error('유효하지 않은 유형');
-  }
-}
-
-function setActive(propensity) {
   activePropensity.value = propensity;
-  let targetRoute = '';
-  switch (propensity) {
-    case '안정형':
-      targetRoute = '/community/stability';
-      break;
-    case '중립형':
-      targetRoute = '/community/neutral';
-      break;
-    case '적극투자형':
-      targetRoute = '/community/activeInvestment';
-      break;
-    case '공격투자형':
-      targetRoute = '/community/aggressiveInvestment';
-      break;
-    default:
-      return;
-  }
+
+  const targetRoute = propensityTypes[propensity].route;
   if (route.path !== targetRoute) {
     router.push(targetRoute);
   }
 }
 
+// 팝업 제어
 function openPopup() {
   showModal.value = true;
 }
@@ -119,77 +114,75 @@ function closePopup() {
   showModal.value = false;
 }
 
-onMounted(() => {
-  getMyInfo();
-  const { propensity } = myInfo; // 이사벨라의 propensity를 가져옴
-  setUserPropensity(propensity);
-  setActivePropensityByType(propensity);
+onMounted(async () => {
+  await getMyInfo();
+  if (myInfo.investType) {
+    setActivePropensity(myInfo.investType);
+  }
 });
 </script>
 
 <template>
   <div class="communityPanel d-inline-block text-start">
-    <div class="profile">
-      <img src="/img/imsi.png" /><br />
-      <h2 class="d-inline">{{ myInfo.id }}</h2><h2 style="font-weight: 100;" class="d-inline">님</h2>
-      <h4 style="font-weight: lighter;">{{ myInfo.email }}</h4>
-    </div>
-    <div
-        class="propensity"
-        @click="setActive('안정형')"
-        :class="{ active: activePropensity === '안정형' }"
-    >
-      <h4>안정형</h4>
-    </div><br>
-    <div
-        class="propensity"
-        @click="setActive('중립형')"
-        :class="{ active: activePropensity === '중립형' }"
-    >
-      <h4>중립형</h4>
-    </div><br>
-    <div
-        class="propensity"
-        @click="setActive('적극투자형')"
-        :class="{ active: activePropensity === '적극투자형' }"
-    >
-      <h4>적극투자형</h4>
-    </div><br>
-    <div
-        class="propensity"
-        @click="setActive('공격투자형')"
-        :class="{ active: activePropensity === '공격투자형' }"
-    >
-      <h4>공격투자형</h4>
-    </div><br>
-    <div
-        class="myPage"
-        @click="router.push('/mypage')"
-    >
-      <hr><br>
-      <h4>마이페이지</h4>
-    </div>
-    <br />
-    <div>
-      <button
-          class="writerBtn"
-          @click="openPopup"
-          :disabled="userPropensity !== activePropensity"
-      >새 글 작성하기
-      </button>
-    </div>
-    <br />
-  </div>
-  <br> <br>
-  <div class="warnSign">
-    <h6>커뮤니티는 게시판 제공만 하고 있습니다<br>
-      서비스는
-      <a href="/communityPrivacy" class="d-inline"> 커뮤니티정책</a>에 따라 운영됩니다</h6>
-  </div>
+    <!-- 로딩 상태 표시 -->
+    <div v-if="loading" class="loading">로딩 중...</div>
 
+    <!-- 에러 메시지 표시 -->
+    <div v-if="error" class="error-message">{{ error }}</div>
+
+    <!-- 로딩이 완료되고 에러가 없을 때 콘텐츠 표시 -->
+    <div v-else>
+      <div class="profile">
+        <img src="/img/imsi.png" alt="프로필 이미지"/><br/>
+        <h2 class="d-inline">{{ myInfo.id }}</h2>
+        <h2 style="font-weight: 100;" class="d-inline">님</h2>
+        <h4 style="font-weight: lighter;">{{ myInfo.email }}</h4>
+      </div>
+
+      <div
+          v-for="(type, key) in propensityTypes"
+          :key="key"
+          class="propensity"
+          @click="setActivePropensity(key)"
+          :class="{ active: activePropensity === key }"
+      >
+        <h4>{{ type.label }}</h4>
+      </div>
+      <br/>
+
+      <div
+          class="myPage"
+          @click="router.push('/mypage')"
+      >
+        <hr>
+        <br>
+        <h4>마이페이지</h4>
+      </div>
+      <br/>
+
+      <div>
+        <button
+            class="writerBtn"
+            @click="openPopup"
+            :disabled="activePropensity !== userPropensity"
+        >
+          새 글 작성하기
+        </button>
+      </div>
+      <br/>
+    </div>
+  </div>
+  <br><br>
+  <div class="warnSign">
+    <h6>
+      커뮤니티는 게시판 제공만 하고 있습니다<br>
+      서비스는
+      <a href="/communityPrivacy" class="d-inline"> 커뮤니티정책</a>에 따라 운영됩니다
+    </h6>
+  </div>
 
   <!-- WriterPopup 컴포넌트 (모달) -->
-  <WriterPopup v-if="showModal" @close="closePopup" />
+  <WriterPopup v-if="showModal" @close="closePopup"/>
 
   <!-- 흐림 배경 -->
   <div v-if="showModal" class="overlay" @click="closePopup"></div>

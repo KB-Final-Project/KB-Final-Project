@@ -17,7 +17,7 @@ public interface BoardMapper {
     int updateBoardPost(BoardPost boardPost);
     int updateReadCount(BoardPost boardPost);
     int deleteBoard(long bno);
-    BoardAttachFile selectAttachFileByFno(long fno);
+    BoardAttachFile selectAttachFileByFno(long postId);
     List<BoardAttachFile> selectAttachFileByPostId(long postId);
     int insertAttachFile(BoardAttachFile attachFile);
     int deleteAttachFile(long fno);
