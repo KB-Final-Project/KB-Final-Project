@@ -71,6 +71,11 @@ public class MemberController {
         UploadFiles.downloadImage(response, file);
     }
 
+    @GetMapping("/mno")
+    public ResponseEntity<Integer> getMemberAutoIncrement(){
+        return ResponseEntity.ok(service.getMemberAutoIncrement());
+    }
+
 
     @PostMapping("")
     public ResponseEntity<Member> join(MemberDTO memberDTO,

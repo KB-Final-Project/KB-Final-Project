@@ -19,5 +19,6 @@ public interface MemberMapper {
     int deleteAuth(Auth auth);
     int checkDuplicateById(String id);
     int checkDuplicateByKakaoId(String id);
+    Integer getMemberAutoIncrement();
 
 }

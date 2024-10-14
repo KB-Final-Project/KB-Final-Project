@@ -97,6 +97,10 @@ public class MemberService{
         return mapper.selectById(member.getId());
     }
 
+    public Integer getMemberAutoIncrement(){
+        return mapper.getMemberAutoIncrement();
+    }
+
     public Member update(Member updateMember, MultipartFile avatar) throws IllegalAccessException {
         Member oldMember = mapper.selectById(updateMember.getId());
         if(!passwordEncoder.matches(updateMember.getPassword(),oldMember.getPassword())) {
