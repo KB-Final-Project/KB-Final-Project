@@ -16,8 +16,9 @@ import java.util.List;
 public class FinancialTermsController {
     private final FinancialTermsService financialTermsService;
 
-    @GetMapping("/getTerms")
-    public List<TermsDTO> getTerms() {
-        return financialTermsService.crawlAndGetTerms();
+    @GetMapping("/save-terms")
+    public String getTerms() {
+        financialTermsService.crawlAndSaveTerms();
+        return "저장 완료";
     }
 }
