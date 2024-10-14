@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +27,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
+@CrossOrigin(origins = "http://localhost:8081", allowCredentials = "true")
 @Api(value = "MemberController", tags = "멤버 정보")
 @PropertySource({"classpath:/application.properties"})
 public class MemberController {
@@ -93,9 +95,6 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-
-
-
     @PutMapping("/kakaoInfo/{code}")
     public ResponseEntity<Member> changeProfile(MemberDTO memberDTO,
                                                 @RequestParam(name = "avatar", required = false) MultipartFile avatar) throws IllegalAccessException {
@@ -107,4 +106,40 @@ public class MemberController {
     public ResponseEntity<Member> delete(@PathVariable String id) {
         return ResponseEntity.ok(service.delete(id));
     }
+
+    @PostMapping(value = "/saveInvestType", produces = "application/json; charset=UTF-8")
+    public ResponseEntity<?> saveInvestType(@RequestBody MemberDTO memberDTO) {
+        log.info("Received request to save investType: {}", memberDTO);
+
+        if (memberDTO.getId() == null || memberDTO.getInvestType() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
+        }
+
+        boolean isSaved = service.saveInvestType(memberDTO.getId(), memberDTO.getInvestType());
+
+        if (isSaved) {
+            return ResponseEntity.ok("투자 성향이 성공적으로 저장되었습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("투자 성향 저장 실패");
+        }
+    }
+
+    @PutMapping(value = "/updateInvestType", produces = "application/json; charset=UTF-8")
+    public ResponseEntity<?> updateInvestType(@RequestBody MemberDTO memberDTO) {
+        log.info("Received request to update investType: {}", memberDTO);
+
+        if (memberDTO.getId() == null || memberDTO.getInvestType() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
+        }
+
+        boolean isUpdated = service.updateInvestType(memberDTO.getId(), memberDTO.getInvestType());
+
+        if (isUpdated) {
+            return ResponseEntity.ok("투자 성향이 성공적으로 업데이트되었습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("투자 성향 업데이트 실패");
+        }
+    }
+
+
 }

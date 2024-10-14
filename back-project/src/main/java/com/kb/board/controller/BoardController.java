@@ -21,7 +21,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -123,6 +128,7 @@ public class BoardController {
 
         log.info("Creating boardPost with bno: " + boardPost.getPostId());
 
+
         BoardPost createdPost = boardService.createBoardPost(boardPost, files);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
@@ -148,16 +154,36 @@ public class BoardController {
     public ResponseEntity<BoardPost> delete(@PathVariable long postId) {
         return ResponseEntity.ok(service.deleteBoard(postId));
     }
+    @GetMapping("/file/{fileName}")
+    @ResponseBody
+    public ResponseEntity<Resource> downloadImage(@PathVariable("fileName") String fileName) {
+        try {
+            Path filePath = Paths.get(BASE_DIR).resolve(fileName).normalize();
+            log.info("Attempting to serve file from path: {}", filePath.toString());
 
-    @GetMapping("/download/{fno}")
-    public ResponseEntity<Resource> download(@PathVariable long fno) throws Exception {
-        BoardAttachFile attach = service.getAttachment(fno);
-        Resource resource = new UrlResource("file:" + BASE_DIR + "/" + attach.getRenamedFilename());
-        String fileName = new String(attach.getOriginalFilename().getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1); // 크롬
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"" + fileName + "\"")
-                .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(resource.contentLength()))
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM.toString()).body(resource);
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (!resource.exists() || !resource.isReadable()) {
+                log.warn("File not found or not readable: {}", filePath.toString());
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+
+            String contentType = "application/octet-stream";
+            try {
+                contentType = Files.probeContentType(filePath);
+            } catch (IOException e) {
+                log.warn("Could not determine file type for {}", filePath);
+            }
+
+            log.info("Serving file with content type: {}", contentType);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(resource);
+        } catch (MalformedURLException e) {
+            log.error("Malformed URL: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     // 좋아요 버튼
@@ -190,13 +216,13 @@ public class BoardController {
         }
     }
 
-
-    // 이미지 출력
-    @GetMapping("/file/{fileName}")
-    @ResponseBody
-    public Resource downloadImage(@PathVariable("fileName") String fileName) throws Exception {
-        return new UrlResource("file:" + BASE_DIR + fileName);
-    }
+//
+//    // 이미지 출력
+//    @GetMapping("/file/{fileName}")
+//    @ResponseBody
+//    public Resource downloadImage(@PathVariable("fileName") String fileName) throws Exception {
+//        return new UrlResource("file:" + BASE_DIR + fileName);
+//    }
 
     @DeleteMapping("/attachment/{fno}")
     public ResponseEntity<Boolean> deleteAttachment(@PathVariable long fno) throws Exception {
@@ -240,4 +266,5 @@ public class BoardController {
 
         return ResponseEntity.ok(reply);
     }
+
 }

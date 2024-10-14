@@ -267,28 +267,28 @@ const routes = [
   // 필요한 다른 라우트들을 여기에 추가할 수 있습니다.
   {
     path: '/community',
-    component: Community, // community.vue를 레이아웃 컴포넌트로 사용
+    component: Community,
     meta: { requiresAuth: true },
     children: [
       {
         path: 'stability',
-        name: 'stability',
+        name: 'Stability',
         component: Stability,
       },
       {
-        path: 'aggressiveInvestment',
-        name: 'aggressiveInvestment',
-        component: AggressiveInvestment,
+        path: 'neutral',
+        name: 'Neutral',
+        component: Neutral,
       },
       {
         path: 'activeInvestment',
-        name: 'activeInvestment',
+        name: 'ActiveInvestment',
         component: ActiveInvestment,
       },
       {
-        path: 'neutral',
-        name: 'neutral',
-        component: Neutral,
+        path: 'aggressiveInvestment',
+        name: 'AggressiveInvestment',
+        component: AggressiveInvestment,
       },
     ],
   },

@@ -1,10 +1,10 @@
 <template>
   <div>
     <br><br><br><br>
-    <h1><i class="ai-octagon-alert"></i> 잠깐만요!</h1><br><br>
+    <h2><i class="ai-octagon-alert"></i> 잠깐만요!</h2><br><br>
     <div class="profileBox">
       <i class="d-inline ai-lock-open"></i>
-      <h2 class="d-inline"> 마이페이지 설정을 하기전에 비밀번호를 입력해주세요</h2>
+      <h3 class="d-inline"> 마이페이지 설정을 하기전에 비밀번호를 입력해주세요</h3>
       <br> <br>
       <div class="formMyInfo d-flex flex-wrap justify-content-center">
         <div class="mb-3">
@@ -56,13 +56,13 @@ h1{
   padding: 50px;
 }
 .ai-octagon-alert{
-  font-size:40px;
+  font-size:35px;
   font-weight: 700;
   vertical-align: text-bottom;
   color: rgba(68, 140, 116, 1);
 }
 .ai-lock-open{
-  font-size:30px;
+  font-size:25px;
   vertical-align: text-bottom;
   color: rgba(68, 140, 116, 1);
 }

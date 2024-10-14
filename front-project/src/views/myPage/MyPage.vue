@@ -34,7 +34,7 @@ const selectedPage = ref('warning');
 
 .container {
   display: flex;
-  width: 80%;
+  width: 60%;
 }
 
 .content {
