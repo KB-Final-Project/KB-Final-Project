@@ -941,7 +941,7 @@ h1 {
 }
 
 .stock-row:hover {
-  background-color: #f0f8ff;
+  background-color: #F1FAF7;
   /* 배경색을 변경하여 hover 느낌을 줌 */
 }
 
@@ -959,7 +959,7 @@ h1 {
   /* 마우스를 올리면 약간 위로 올라가는 효과 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   /* 그림자 효과 */
-  background-color: #f0f8ff;
+  background-color: #F1FAF7;
   /* 배경색 변경 */
 }
 
@@ -974,7 +974,7 @@ tbody tr {
 }
 
 tbody tr:hover {
-  background-color: #f0f8ff;
+  background-color: #F1FAF7;
   /* 마우스를 올리면 배경색 변경 */
 }
 
@@ -986,7 +986,7 @@ tbody tr:hover {
 }
 
 .top3-card:hover {
-  background-color: #f0f8ff;
+  background-color: #F1FAF7;
   /* 배경색 변경 */
   transform: translateY(-5px);
   /* 마우스를 올리면 살짝 올라가는 효과 */
@@ -999,7 +999,7 @@ tbody tr:hover {
 }
 
 .category-card:hover {
-  background-color: #f0f8ff;
+  background-color: #F1FAF7;
   transform: translateY(-5px);
 }
 
