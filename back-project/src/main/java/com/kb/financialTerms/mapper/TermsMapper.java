@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface TermsMapper {
     void insertTermsBatch(List<TermsDTO> termsList);
+    List<TermsDTO> getTermsBatch();
 }

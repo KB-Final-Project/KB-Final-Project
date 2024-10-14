@@ -5,6 +5,10 @@
 
 <mapper namespace="com.kb.financialTerms.mapper.TermsMapper">
 
+    <resultMap id="TermSListResultMap" type="com.kb.financialTerms.dto.TermsDTO">
+        <result property="termName" column="term_name"/>
+        <result property="termDescription" column="term_definition"/>
+    </resultMap>
     <insert id="insertTermsBatch" parameterType="list">
         INSERT INTO term_dictionary (term_name, term_definition)
         VALUES
@@ -13,4 +17,10 @@
         </foreach>
     </insert>
 
+    <select id="getTermsBatch" resultMap="TermSListResultMap">
+        SELECT
+            term_name, term_definition
+        FROM
+            term_dictionary
+    </select>
 </mapper>

@@ -83,4 +83,8 @@ public class FinancialTermsService {
         // DB에 저장
         termsMapper.insertTermsBatch(termsList);
     }
+
+    public List<TermsDTO> getTermList(){
+        return termsMapper.getTermsBatch();
+    }
 }
