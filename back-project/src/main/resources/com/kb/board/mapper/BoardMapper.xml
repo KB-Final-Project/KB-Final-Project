@@ -139,7 +139,6 @@
             bp.type,
             bp.status,
             bp.comment_count,
-            bp.likes_count,
             bp.member_id,
             m.id,
             baf.fno,
@@ -153,7 +152,7 @@
             LEFT JOIN member m ON bp.member_id = m.mno
             LEFT JOIN board_attach_file baf ON bp.post_id = baf.post_id
         WHERE
-            bp.bno = #{boardId} AND bp.status = 'y'
+            bp.bno = #{bno} AND bp.status = 'y'
         ORDER BY
             bp.created_date DESC
             LIMIT #{limit} OFFSET #{offset}
