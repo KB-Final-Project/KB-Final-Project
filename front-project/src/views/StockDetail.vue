@@ -360,7 +360,7 @@ export default {
           {
             name: 'KOSPI200',
             amount: kospi200Response.data.코스피200,
-            change: kospi200Response.data.변동,
+            change: `${kospi200Response.data.전일대비} (${kospi200Response.data.등락률})`,
             chartData: {
               labels: kospi200StockData.labels,
               datasets: [
