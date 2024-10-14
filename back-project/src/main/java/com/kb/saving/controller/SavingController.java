@@ -30,16 +30,19 @@ public class SavingController {
 
     @GetMapping("/detail/{savingId}")
     public ResponseEntity<Saving> getSavingProductById(@PathVariable int savingId,
-                                                       @RequestParam(required = false) int userId,
-                                                       @RequestParam(required = false) String wmtiType) {
-        if(wmtiType != null && !wmtiType.isEmpty()){
-            service.logProductViewAndUpdateViewCount(SavingProductViewLogDto
-                    .builder()
-                    .savingId(savingId)
-                    .userId(userId)
-                    .wmtiType(wmtiType)
-                    .build());
+                                                       @RequestParam(required = false) Integer userId,
+                                                       @RequestParam(required = false) String wmtiType){
+        log.info(String.valueOf(userId));
+        log.info(wmtiType);
+        if(userId == null || wmtiType == null || wmtiType.isEmpty()){
+            return ResponseEntity.ok(service.getProductDetail(2, savingId));
         }
+        service.logProductViewAndUpdateViewCount(SavingProductViewLogDto
+                .builder()
+                .savingId(savingId)
+                .userId(userId)
+                .wmtiType(wmtiType)
+                .build());
         return ResponseEntity.ok(service.getProductDetail(2, savingId));
     }
 
