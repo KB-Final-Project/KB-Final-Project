@@ -405,14 +405,23 @@ export default {
   },
 
   async mounted() {
-    try {
-      await this.fetchStocksByType("all");
-      await this.fetchCurrentStocks();
-      this.updateTop3Stocks();
-    } catch (error) {
-      this.error = "데이터를 불러오는 중 오류가 발생했습니다.";
-    }
-  },
+  try {
+    // URL 쿼리에서 userType을 가져옴, 없을 경우 기본값은 'ALL'
+    const userType = this.$route.query.userType || 'ALL'; 
+    console.log(userType); 
+    // userType에 맞는 주식 목록을 가져옴
+    await this.fetchStocksByType(userType);
+
+    // 현재 KOSPI, KOSDAQ, KOSPI200 데이터 불러오기
+    await this.fetchCurrentStocks();
+
+    // 상위 3개 주식 업데이트
+    this.updateTop3Stocks();
+  } catch (error) {
+    this.error = "데이터를 불러오는 중 오류가 발생했습니다.";
+  }
+}
+
 };
 
 
