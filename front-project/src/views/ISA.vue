@@ -9,6 +9,7 @@
       margin: auto;
       width: 100%;
       max-width: 1200px;
+      margin: 20;
     "
   >
     <div class="text-center" style="transform: scale(0.9)">
