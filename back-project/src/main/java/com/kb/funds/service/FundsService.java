@@ -112,6 +112,16 @@ public class FundsService {
     public List<FundsDTO> findAllFunds(String grade, String category) {
         List<FundsDTO> funds = fundsMapper.findAllFunds();
 
+        // 수익률 필터링: 모든 수익률 필드가 null인 펀드 제외
+        funds = funds.stream()
+                .filter(fund ->
+                        fund.getSuikRt1() != null ||
+                                fund.getSuikRt3() != null ||
+                                fund.getSuikRt6() != null ||
+                                fund.getSuikRt12() != null
+                )
+                .collect(Collectors.toList());
+
         // 등급 필터링
         if (grade != null && !grade.isEmpty()) {
             String[] grades = grade.split("-");
