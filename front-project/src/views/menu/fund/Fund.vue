@@ -82,6 +82,7 @@ const filterFunds = () => {
 const updateCategoryFilter = (category) => {
   selectedCategoryButton.value = category; // 선택된 카테고리 버튼 업데이트
   selectedCategory.value = category;
+  searchQuery.value = '';
   fetchAllFunds(); // 카테고리 업데이트 후 데이터 새로 불러오기
 };
 
@@ -152,6 +153,7 @@ const viewAll = () => {
 const updateGradeFilter = (grade) => {
     selectedGradeButton.value = grade; // 선택된 등급 버튼 업데이트
     selectedGrade.value = grade;
+    searchQuery.value = '';
     fetchAllFunds();
 };
 
@@ -785,6 +787,10 @@ tbody td {
 
 .text-right {
   text-align: right;
+}
+
+li.page-item {
+  cursor: pointer;
 }
 
 </style>
