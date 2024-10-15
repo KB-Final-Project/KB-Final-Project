@@ -86,6 +86,10 @@ import buddingInvestor from "@/assets/img/analyResult/14.json";
 import experiencedIcon from "@/assets/img/analyResult/15.json";
 import cautiousObserver from "@/assets/img/analyResult/16.json";
 import axios from "axios";
+import { useAuthStore } from '@/stores/auth';
+
+
+
 
 export default {
   components: {
@@ -208,32 +212,37 @@ export default {
   },
   created() {
     // 라우터 쿼리에서 totalScore 값 가져오기
+    this.auth = useAuthStore();
     this.totalScore = parseInt(this.$route.query.totalScore, 10);
     this.classifyUserType();
     this.fetchUserId();  // 로그인 후 사용자 ID를 받아옴
     this.fetchStockData(); // 사용자의 투자 성향에 맞는 주식 데이터를 요청
+    this.saveInvestmentType();
     this.setRecommendedContent();
   },
   methods: {
       // 사용자 ID를 가져오는 함수
       async fetchUserId() {
-      try {
-        const response = await axios.get('http://localhost:8080/api/member');  // 사용자 ID를 가져오는 API 호출
-        this.userId = response.data.id;  // 응답에서 사용자 ID를 가져와 설정
-      } catch (error) {
-        console.error("사용자 ID를 가져오는 중 오류 발생:", error);
-      }
+        this.userId = this.auth.id;  // 응답에서 사용자 ID를 가져와 설정
     },
 
   // 투자 성향 저장/업데이트 함수
   async saveInvestmentType() {
-      try {
-        const response = await axios.put('http://localhost:8080/api/member/updateInvestType', {
-          id: this.userId,          // 사용자 ID
-          investType: this.userType // 테스트 결과로 나온 투자 성향 (예: ABML)
-        });
+    try {
+    const response = await axios.put(
+      'http://localhost:8080/api/member/updateInvestType',
+      {
+        id: this.userId,          // 사용자 ID
+        investType: this.userType // 테스트 결과로 나온 투자 성향 (예: ABML)
+      },
+      { 
+        headers: {
+          Authorization: `Bearer ${this.auth.getToken()}` 
+        }
+      }
+    );
         console.log(response.data);
-        alert("투자 성향이 성공적으로 저장되었습니다.");
+        this.auth.changeInvestType(this.userType);
       } catch (error) {
         console.error("투자 성향을 저장하는 중 오류 발생:", error);
       }
