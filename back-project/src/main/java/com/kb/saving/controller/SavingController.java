@@ -51,9 +51,10 @@ public class SavingController {
 
 
     @GetMapping("/top")
-    public ResponseEntity<List<SavingListDTO>> getTopSavings() {
-        List<SavingListDTO> response = service.getTopSavingsProductList();
-        return ResponseEntity.ok(response);
+    public ResponseEntity<List< SavingListDTO>> getTopSavings(@AuthenticationPrincipal Member member){
+        if(member != null)
+            return ResponseEntity.ok(service.getTopProductList(new SavingTopRequestDTO(member.getInvestType(), 2)));
+        return ResponseEntity.ok(service.getTopSavingsProductList(2));
     }
 
     @GetMapping("/category")

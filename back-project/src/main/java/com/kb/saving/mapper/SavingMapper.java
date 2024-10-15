@@ -19,5 +19,7 @@ public interface SavingMapper {
     int updateSavingProductViewByWmti(SavingProductViewUpdateDto savingProductViewUpdateDto);
     int checkSavingProductViewByWmtiAndUserid(SavingProductViewLogDto savingProductViewLogDto);
     int updateProductViewLog(SavingProductViewLogDto savingProductViewLogDto);
+    List<SavingListDTO> getTopProductListByInvestType(SavingTopRequestDTO savingTopRequestDTO);
+    List<SavingListDTO> getTopProductListByViewCount(int finCategoryId);
 
 }
