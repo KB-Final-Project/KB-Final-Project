@@ -28,6 +28,7 @@ public class BoardPost {
     private String authorId;     // 작성자 ID (MEMBER 테이블의 id)
     private Date createdDate;   // 생성 날짜
     private Date modifiedDate;  // 수정 날짜
+    private String name;
 
     private ArrayList<BoardReply> replyList;
     private ArrayList<BoardAttachFile> boardAttachFileList;

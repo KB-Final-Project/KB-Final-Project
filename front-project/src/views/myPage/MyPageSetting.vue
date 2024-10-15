@@ -1,6 +1,6 @@
 <template>
   <div>
-    <br><br><br><br>
+    <br><br>
     <h2>설정</h2><br><br>
     <div class="profileBox">
       <i class="d-inline ai-user"></i>
@@ -18,9 +18,10 @@
       </div>
       <div class="btn d-flex justify-content-end align-items-end">
         <button class="cancelBtn" type="reset">취소</button>
-        <button class="submitBtn" type="submit">확인</button>
+        <button class="submitBtn" type="submit" @click="updateInfo">확인</button>
       </div>
     </div><br><br>
+
     <div class="passwordBox">
       <i class="ai-lock-closed"></i>
       <h3 class="d-inline"> 비밀번호</h3>
@@ -29,32 +30,29 @@
         <div class="mb-3">
           <label class="form-label" for="pass-visibility1">현재 비밀번호</label>
           <div class="password-toggle">
-            <input class="form-control" type="password" id="pass-visibility1" v-model="password.value.oldPassword">
+            <input class="form-control" type="password" id="pass-visibility1" v-model="password.oldPassword">
             <label class="password-toggle-btn" aria-label="Show/hide password">
-              <input class="password-toggle-check" type="checkbox">
+              <input class="password-toggle-check" type="checkbox" @click="togglePasswordVisibility('oldPassword')">
               <span class="password-toggle-indicator"></span>
             </label>
           </div>
-        </div>
-        <div class="form-group">
-
         </div>
         <div class="mb-3">
           <label class="form-label" for="pass-visibility2">새 비밀번호</label>
           <div class="password-toggle">
-            <input class="form-control" type="password" id="pass-visibility2" v-model="password.value.newPassword">
+            <input class="form-control" type="password" id="pass-visibility2" v-model="password.newPassword">
             <label class="password-toggle-btn" aria-label="Show/hide password">
-              <input class="password-toggle-check" type="checkbox">
+              <input class="password-toggle-check" type="checkbox" @click="togglePasswordVisibility('newPassword')">
               <span class="password-toggle-indicator"></span>
             </label>
           </div>
         </div>
-        <div >
+        <div>
           <label class="form-label" for="pass-visibility3">새 비밀번호 확인</label>
           <div class="password-toggle">
-            <input class="form-control" type="password" id="pass-visibility3" v-model="password.value.newPassword">
+            <input class="form-control" type="password" id="pass-visibility3" v-model="password.confirmPassword">
             <label class="password-toggle-btn" aria-label="Show/hide password">
-              <input class="password-toggle-check" type="checkbox">
+              <input class="password-toggle-check" type="checkbox" @click="togglePasswordVisibility('confirmPassword')">
               <span class="password-toggle-indicator"></span>
             </label>
           </div>
@@ -66,47 +64,139 @@
       </div>
       <div class="btn d-flex justify-content-end align-items-end">
         <button class="cancelBtn" type="reset">취소</button>
-        <button class="submitBtn" type="submit">확인</button>
+        <button class="submitBtn" type="submit" @click="changePassword">확인</button>
       </div>
     </div><br><br>
+
     <div class="profileBox">
       <i class="d-inline ai-image"></i>
       <h2 class="d-inline"> 프로필 사진</h2>
-
       <h4 class="m-5">PNG, JPG 500px로 등록</h4>
       <br><br>
       <div class="avatarBox d-flex justify-content-center">
         <div class="avatar">
           <label for="avatar" class="form-label">
-  <!--        <img :src="avatarPath" class="avatar avatar-lg me-4" />-->
-            <img src="/img/imsi.png" class="avatar"/><i class="ai-camera"></i>
-
-            <input type="file" class="form-control" ref="avatar" id="avatar" style="display:none" accept="image/png, image/jpeg" />
+            <img :src="avatarPath" class="avatar"/><i class="ai-camera"></i>
+            <input type="file" class="form-control" ref="avatar" id="avatar" style="display:none" accept="image/png, image/jpeg" @change="uploadAvatar" />
           </label>
         </div>
       </div>
       <div class="btn d-flex justify-content-end align-items-end">
         <button class="cancelBtn" type="reset">취소</button>
-        <button class="submitBtn" type="submit">확인</button>
+        <button class="submitBtn" type="submit" @click="updateAvatar">확인</button>
       </div>
     </div>
   </div>
 </template>
 
+<script setup>
+import { onMounted, ref } from "vue";
+import axios from "axios";
+
+const loading = ref(true);
+const password = ref({
+  oldPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+});
+const info = ref({
+  value: {
+    name: '',
+    email: '',
+  },
+});
+const avatarPath = ref('/img/imsi.png'); // Default avatar path
+
+const changeMyInfo = async () => {
+  loading.value = true;
+  try {
+    const response = await axios.get('/api/member/{id}'); // ID를 실제로 사용해야 합니다.
+    info.value.name = response.data.member.name;
+    info.value.email = response.data.member.email;
+  } catch (error) {
+    console.error('정보 가져오기 에러:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const updateInfo = async () => {
+  loading.value = true;
+  try {
+    await axios.put('/api/member/{id}', info.value); // ID를 실제로 사용해야 합니다.
+    alert('정보가 성공적으로 업데이트되었습니다.');
+  } catch (error) {
+    console.error('정보 업데이트 에러:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const changePassword = async () => {
+  if (password.value.newPassword !== password.value.confirmPassword) {
+    alert('새 비밀번호가 일치하지 않습니다.');
+    return;
+  }
+  loading.value = true;
+  try {
+    await axios.put('/api/member/{id}/changepassword', {
+      oldPassword: password.value.oldPassword,
+      newPassword: password.value.newPassword,
+    });
+    alert('비밀번호가 성공적으로 변경되었습니다.');
+  } catch (error) {
+    console.error('비밀번호 변경 에러:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const uploadAvatar = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      avatarPath.value = e.target.result; // Display the uploaded image
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+const updateAvatar = async () => {
+  const file = document.getElementById('avatar').files[0];
+  const formData = new FormData();
+  formData.append('avatar', file);
+
+  loading.value = true;
+  try {
+    await axios.post('/api/member/avatar', formData); // Upload avatar to the server
+    alert('프로필 사진이 성공적으로 변경되었습니다.');
+  } catch (error) {
+    console.error('아바타 업로드 에러:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(() => {
+  changeMyInfo();
+});
+</script>
+
 <style scoped>
-.ai-camera{
+.ai-camera {
   font-size: 40px;
   margin-top: -90px;
   color: white;
   font-weight: 700;
 }
 
-.avatar{
+.avatar {
   width: 150px;
   cursor: pointer;
   text-align: center;
 }
-.warning{
+.warning {
   width: 55%;
   height: 40px;
   margin: 20px;
@@ -114,12 +204,12 @@
   padding: 10px;
   background-color: rgba(211, 211, 211, 0.24);
 }
-.ai-circle-alert{
+.ai-circle-alert {
   font-size: 20px;
   vertical-align: text-bottom;
 }
 
-.btn{
+.btn {
   display: flex;
   gap: 20px;
   font-size: 15px;
@@ -132,12 +222,11 @@ h1 {
 .form-check-input {
   width: 20px;
   height: 20px;
-
 }
 
-.form-check-input:checked{
+.form-check-input:checked {
   background-color: rgba(68, 140, 116, 1);
-  border-color:rgba(68, 140, 116, 1);
+  border-color: rgba(68, 140, 116, 1);
 }
 
 .form-check-label {
@@ -168,7 +257,7 @@ h1 {
   margin: 20px;
 }
 
-label{
+label {
   font-size: 15px;
 }
 
@@ -188,14 +277,14 @@ label{
   padding: 30px;
 }
 .passwordBox .form-control {
-  border:none;
+  border: none;
   margin-top: -25px;
   width: 350px;
   height: 50px;
   margin-left: -10px;
 }
 
-.cancelBtn{
+.cancelBtn {
   width: 150px;
   height: 40px;
   border-radius: 10px;
@@ -203,17 +292,17 @@ label{
   border: 1px solid rgba(153, 153, 153, 0.6)
 }
 
-.cancelBtn:active{
-  background-color:  rgba(68, 140, 116, 1);
+.cancelBtn:active {
+  background-color: rgba(68, 140, 116, 1);
   color: white;
 }
 
-.submitBtn:active{
-  background-color:  lightgrey;
+.submitBtn:active {
+  background-color: lightgrey;
   color: black;
 }
 
-.submitBtn{
+.submitBtn {
   width: 150px;
   height: 40px;
   border-radius: 10px;
@@ -238,52 +327,3 @@ label{
   color: rgba(68, 140, 116, 1);
 }
 </style>
-
-<script setup>
-
-import {onMounted, ref} from "vue";
-import axios from "axios";
-
-const loading = ref(true);
-const password = ref({
-  oldPassword: '',
-  newPassword: '',
-});
-const info = ref({
-  name: '',
-  email: '',
-});
-
-const changeMyPassword = async() =>{
-  loading.value = true;
-  try{
-    const response = await axios.get('/api/member/{id}/changepassword');
-    console.log(response);
-    password.value.oldPassword = response.data.oldPassword;
-    password.value.newPassword = response.data.newPassword;
-  } catch (error){
-    console.error('비밀번호 가져오기 에러:', error);
-  } finally {
-    loading.value = false;
-  }
-}
-
-const changeMyInfo = async() =>{
-  loading.value = true;
-  try{
-    const response = await axios.get('/api/member/{id}');
-    console.log(response);
-    info.value.name = response.data.member.name;
-    info.value.email = response.data.member.email;
-  } catch (error){
-    console.error('info 가져오기 에러:', error);
-  } finally {
-    loading.value = false;
-  }
-}
-
-onMounted(() => {
-  changeMyPassword();
-  changeMyInfo();
-});
-</script>

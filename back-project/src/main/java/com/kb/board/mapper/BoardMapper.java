@@ -29,9 +29,9 @@ public interface BoardMapper {
     // 게시글 조회
     BoardPost getBoardPost(long postId);
     // 특정 게시물에 대한 사용자의 좋아요 여부 확인
-    boolean checkLikeExists(@Param("postId") long postId, @Param("memberId") long memberId);
+    boolean checkLikeExists(@Param("postId")int postId,@Param("mno") int mno);
     // 좋아요 추가
-    void insertLike(@Param("postId") long postId, @Param("memberId") long memberId);
+    void insertLike(@Param("postId") int postId,@Param("mno") int mno);
     // 특정 게시물의 좋아요 수 계산
-    int countLikes(long postId);
+    int countLikes(@Param("postId")int postId);
 }
