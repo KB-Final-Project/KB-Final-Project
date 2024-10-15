@@ -1047,6 +1047,132 @@ INSERT INTO stock_codes (stock_code, stock_name) VALUES
 
 
 
+CREATE TABLE `DAILY_STOCK_PRICE` (
+                                     `tno` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
+                                     `sno` int NOT NULL,
+                                     `open_price` int NOT NULL,
+                                     `low_price` int NOT NULL,
+                                     `high_price` int NOT NULL,
+                                     `close_price` int NOT NULL,
+                                     `price_change_rate` decimal(10,0) NOT NULL,
+                                     `volume` int NOT NULL,
+                                     `trade_value` int NOT NULL,
+                                     `trade_date` date NOT NULL,
+                                     PRIMARY KEY (`tno`),
+                                     KEY `sno` (`sno`),
+                                     CONSTRAINT `daily_stock_price_ibfk_1` FOREIGN KEY (`sno`) REFERENCES `STOCK_INFO` (`sno`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+CREATE TABLE `STOCK_INFO` (
+                              `sno` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
+                              `code` varchar(20) NOT NULL COMMENT 'UNIQUE',
+                              `stock_name` varchar(50) NOT NULL COMMENT 'UNIQUE',
+                              `market_captial` int NOT NULL,
+                              `nominal_value` int NOT NULL,
+                              `oustanding_shares` int NOT NULL,
+                              `fin_category_id` int NOT NULL DEFAULT '4',
+                              PRIMARY KEY (`sno`),
+                              UNIQUE KEY `code` (`code`),
+                              UNIQUE KEY `stock_name` (`stock_name`),
+                              KEY `fin_category_id` (`fin_category_id`),
+                              CONSTRAINT `stock_info_ibfk_1` FOREIGN KEY (`fin_category_id`) REFERENCES `FINANCIAL_PRODUCT_CATEGORY` (`fin_category_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+CREATE TABLE `stocks_candle` (
+                                 id INT AUTO_INCREMENT PRIMARY KEY,          -- 고유 ID, 자동 증가
+                                 stock_code VARCHAR(10) NOT NULL,            -- 주식 종목 코드 (stocks 테이블 없이 바로 사용)
+                                 stock_candle_day DATE NOT NULL,             -- 거래 날짜
+                                 stock_candle_open FLOAT NOT NULL,           -- 시가
+                                 stock_candle_close FLOAT NOT NULL,          -- 종가
+                                 stock_candle_high FLOAT NOT NULL,           -- 고가
+                                 stock_candle_low FLOAT NOT NULL,
+                                 stock_candle_volume BIGINT,
+                                 UNIQUE (stock_code, stock_candle_day)       -- 종목 코드와 날짜 중복 방지
+)
+
+
+
+/*    !pip install finance-datareader
+
+import pymysql
+import FinanceDataReader as fdr
+from tqdm import tqdm
+from datetime import datetime, timedelta
+
+connection = pymysql.connect(
+    host='127.0.0.1',  # Replace with your DB host
+    port=3306,         # Replace with your DB port
+    user='root',       # Replace with your DB username
+    password='root',   # Replace with your DB password
+    db='kbproject',    # Replace with your DB name
+    charset='utf8mb4',
+    cursorclass=pymysql.cursors.DictCursor
+)
+
+from datetime import datetime, timedelta
+# Cursor 생성
+cursor = connection.cursor()
+# KOSPI 전 종목 코드 가져오기
+stocks = fdr.StockListing('KOSPI')
+# 기간별 시작일 설정 함수
+def get_start_date(period):
+    today = datetime.today()
+    if period == '1day':
+        return today - timedelta(days=1)
+    elif period == '1week':
+        return today - timedelta(weeks=1)
+    elif period == '1month':
+        return today - timedelta(weeks=4)
+    elif period == '3months':
+        return today - timedelta(weeks=12)
+    elif period == '1year':
+        return today - timedelta(weeks=52)
+    elif period == '3years':
+        return today - timedelta(weeks=156)
+    elif period == '5years':
+        return today - timedelta(weeks=260)
+# 원하는 기간 리스트 (1일, 1주, 1개월, 3개월, 1년, 3년, 5년)
+periods = ['1day', '1week', '1month', '3months', '1year', '3years', '5years']
+# 데이터베이스에 데이터 저장
+for index, row in tqdm(stocks.iterrows()):
+    stock_code = row['Code']
+    print(stock_code)
+    for period in periods:
+        start_date = get_start_date(period).strftime('%Y-%m-%d')
+        end_date = datetime.today().strftime('%Y-%m-%d')
+        # FinanceDataReader를 사용하여 각 기간별 일봉 데이터 가져오기
+        stock_data = fdr.DataReader(stock_code, start=start_date, end=end_date)
+        for index, row in stock_data.iterrows():
+            stock_candle_day = index.strftime('%Y-%m-%d')
+            stock_candle_open = row['Open']
+            stock_candle_close = row['Close']
+            stock_candle_high = row['High']
+            stock_candle_low = row['Low']
+            stock_candle_volume = row['Volume']  # 거래량 추가
+            # JPA로 생성된 테이블에 맞게 insert 쿼리 작성
+            query = """
+            INSERT INTO stocks_candle (stock_code, stock_candle_day, stock_candle_open, stock_candle_close, stock_candle_high, stock_candle_low, stock_candle_volume)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE
+                stock_candle_open = VALUES(stock_candle_open),
+                stock_candle_close = VALUES(stock_candle_close),
+                stock_candle_high = VALUES(stock_candle_high),
+                stock_candle_low = VALUES(stock_candle_low),
+                stock_candle_volume = VALUES(stock_candle_volume)  # 거래량 업데이트
+            """
+            # 쿼리 실행
+            cursor.execute(query, (stock_code, stock_candle_day, stock_candle_open, stock_candle_close, stock_candle_high, stock_candle_low, stock_candle_volume))
+        # 하나의 종목 데이터 처리 후 커밋
+        connection.commit()
+# 커서와 연결 종료
+cursor.close()
+connection.close()
+*/
+
+
 CREATE TABLE board_category (
                                 id INT AUTO_INCREMENT PRIMARY KEY,  -- 기본 키
                                 type VARCHAR(50) NOT NULL,           -- type 필드
@@ -1063,10 +1189,23 @@ insert into board_category(type, name, level, order_no) VALUES('aggressiveInvest
 
 
 
+CREATE TABLE `REAL_TIME_STOCK_PRICE` (
+                                         `rtno` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
+                                         `sno` int NOT NULL,
+                                         `current_price` int NOT NULL,
+                                         `open_price` int NOT NULL,
+                                         `low_price` int NOT NULL,
+                                         `high_price` int NOT NULL,
+                                         `price_change_rate` decimal(10,0) NOT NULL,
+                                         `volume` int NOT NULL,
+                                         `trade_value` int NOT NULL,
+                                         `trade_time` timestamp NOT NULL,
+                                         PRIMARY KEY (`rtno`),
+                                         KEY `sno` (`sno`),
+                                         CONSTRAINT `real_time_stock_price_ibfk_1` FOREIGN KEY (`sno`) REFERENCES `STOCK_INFO` (`sno`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-
-9:24
-이거 먼저 추가요
 
 
 CREATE TABLE MEMBER (
@@ -1085,12 +1224,18 @@ CREATE TABLE MEMBER (
                         FOREIGN KEY (invest_type) REFERENCES board_category(type)  -- 외래 키 설정
 );
 
+INSERT INTO `MEMBER` VALUES (4,'test','$2a$10$5dEnNeA5mppboERWOWnku.c2a5PXpQB7DvT8JVZWrL6jlczaXLWjS','홍길동',NULL,'2024-10-06 13:20:51','2024-10-06 13:20:51','hong@gmail.com','y',NULL),(6,'test12','$2a$10$fknq5hxQMVEMKcykCekJ7ufxpqJ45udSJqJ73Gu0XWmECePpuEms.','고대',NULL,'2024-10-06 13:45:37','2024-10-06 13:45:37','sup@naver.com','y',NULL),(7,'test1','$2a$10$sv0I/fFCzdXZ.5OiheV50.qYLHVeQsjBDW5hligxpKS6xgHksALdq','소소',NULL,'2024-10-06 13:58:54','2024-10-06 13:58:54','s@n.com','y',NULL),(13,'supergd01','$2a$10$SzTauxOiR6rIm8rnN.2uoOoVdahdpvCHPnpwq1Fvj89ERA8daNMp2','고대호','3735687457','2024-10-06 20:25:57','2024-10-06 20:25:57','supergd01@naver.com','y',NULL),(14,'root','$2a$10$Ch5QS36Od9lRUVJLCFxQueyIsoswi15lP/DrZIVpxhMNyAU1PT1la','고대',NULL,'2024-10-06 20:29:36','2024-10-06 20:29:36','s@naver.com','y',NULL),(16,'root1234','$2a$10$kftX3Y4D7CztH/QK9rJAg.PDoqI65DbiP0zsubC02D9R8e82tAshy','aslkdj',NULL,'2024-10-06 20:33:47','2024-10-06 20:33:47','123@na.com','y',NULL),(18,'supergd4263','$2a$10$2H4TxqK0kocYjfwPr9gytuOjA91HV04p32YpPuzq/EpCphuebJMqO','고대호',NULL,'2024-10-06 20:37:58','2024-10-06 20:37:58','supe0@naver.com','y',NULL),(19,'test1234','$2a$10$nK8UdL9NoyaZTjXxhxo8P.9Jm2/VWe0n3YZ5ve0FkD9aoJieKChO.','고대호',NULL,'2024-10-06 20:47:15','2024-10-06 20:47:15','super@naver.com','y',NULL),(20,'test123451','$2a$10$wjjfzcTeDAKI6fYjmmQZzedhzW7V6cyaRzHe6uVVhzB0AtwzXJBBC','고대',NULL,'2024-10-06 21:31:41','2024-10-06 21:31:41','wl@na.com','y',NULL);
+
+
 CREATE TABLE `member_auth` (
                                `id` varchar(50) NOT NULL,
                                `authority` char(50) NOT NULL,
                                PRIMARY KEY (`id`,`authority`),
                                CONSTRAINT `fk_authorities_users` FOREIGN KEY (`id`) REFERENCES `member` (`id`)
 )
+
+INSERT INTO `member_auth` VALUES ('root','ROLE_MEMBER'),('root1234','ROLE_MEMBER'),('supergd01','ROLE_MEMBER'),('supergd4263','ROLE_MEMBER'),('test','ROLE_MEMBER'),('test1','ROLE_MEMBER'),('test12','ROLE_MEMBER'),('test1234','ROLE_MEMBER'),('test123451','ROLE_MEMBER');
+
 
 CREATE TABLE board (
                        bno INT NOT NULL AUTO_INCREMENT,
@@ -1165,3 +1310,161 @@ CREATE TABLE `likes` (
                          CONSTRAINT `likes_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `board_post` (`post_id`),
                          CONSTRAINT `likes_ibfk_2` FOREIGN KEY (`member_id`) REFERENCES `member` (`mno`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+CREATE TABLE `GOLD_INFO` (
+                             `gno` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
+                             `code` varchar(20) NOT NULL COMMENT 'UNIQUE',
+                             `gold_name` varchar(50) NOT NULL COMMENT 'UNIQUE',
+                             `fin_category_id` int NOT NULL DEFAULT '6',
+                             PRIMARY KEY (`gno`),
+                             UNIQUE KEY `code` (`code`),
+                             UNIQUE KEY `gold_name` (`gold_name`),
+                             KEY `fin_category_id` (`fin_category_id`),
+                             CONSTRAINT `gold_info_ibfk_1` FOREIGN KEY (`fin_category_id`) REFERENCES `FINANCIAL_PRODUCT_CATEGORY` (`fin_category_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+CREATE TABLE gold_data (
+                           bas_dd VARCHAR(8),
+                           isu_cd VARCHAR(8),
+                           isu_nm VARCHAR(100),
+                           tdd_cls_prc VARCHAR(10),
+                           cmp_prev_dd_prc VARCHAR(10),
+                           fluc_rt VARCHAR(10),
+                           tdd_opn_prc VARCHAR(10),
+                           tdd_hg_prc VARCHAR(10),
+                           tdd_lw_prc VARCHAR(10),
+                           acc_trd_vol VARCHAR(20),
+                           acc_trd_val VARCHAR(20),
+                           PRIMARY KEY (bas_dd, isu_cd)
+);
+
+-- GOLD_API_KEY=30112F1D473F46ED838B28BB9C80453055344466
+
+
+CREATE TABLE `exchange_rates` (
+                                  `rate_id` int NOT NULL AUTO_INCREMENT,
+                                  `currency_id` int NOT NULL,
+                                  `buy_rate` decimal(10,2) NOT NULL,
+                                  `sell_rate` decimal(10,2) NOT NULL,
+                                  `base_rate` decimal(10,2) NOT NULL COMMENT '이걸로 일별 월별 그래프',
+                                  `exchange_date` date NOT NULL,
+                                  PRIMARY KEY (`rate_id`),
+                                  KEY `FK_EXCHANGE_RATES_CURRENCY` (`currency_id`),
+                                  CONSTRAINT `FK_EXCHANGE_RATES_CURRENCY` FOREIGN KEY (`currency_id`) REFERENCES `CURRENCY` (`currency_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5635 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+CREATE TABLE product_view_logs (
+                                   log_id INT AUTO_INCREMENT PRIMARY KEY,
+                                   saving_id INT,
+                                   mno INT,
+                                   invest_type VARCHAR(4),
+                                   viewed_at TIMESTAMP,
+                                   UNIQUE(saving_id, mno),
+                                   FOREIGN KEY (saving_id) REFERENCES savings_products(saving_id) ON DELETE CASCADE,
+                                   FOREIGN KEY (mno) REFERENCES member(mno) ON DELETE CASCADE
+);
+CREATE TABLE product_wmti_view_counts (
+                                          saving_id INT,
+                                          invest_type VARCHAR(4),
+                                          view_count INT DEFAULT 0,
+                                          PRIMARY KEY (saving_id, invest_type),
+                                          FOREIGN KEY (saving_id) REFERENCES savings_products(saving_id) ON DELETE CASCADE
+);
+CREATE TABLE term_dictionary (
+                                 term_id INT AUTO_INCREMENT PRIMARY KEY,
+                                 term_name VARCHAR(255) NOT NULL,
+                                 term_definition TEXT NOT NULL
+);
+
+INSERT INTO term_dictionary (term_name, term_definition) VALUES
+                                                             ('예금', '돈을 한 번에 납입하는 방식의 저축방식으로 일정 계약기간 동안 원하는 금액을 한번에 은행에 맡기는 경우를 의미함'),
+                                                             ('적금', '일정금액을 매월 일정기간동안에 불입한 이후 약정계약 만료 이후에 금액+이자를 받는 예금형식'),
+                                                             ('주식', '주식회사의 수권 자본에 대한 출자를 나타내는 기명식 발행 증권으로, 장부 기입 형태로 무기한 발행되며 종류(보통주 또는 우선주), 종류(우선주의 경우)에 따라 소유자의 일정 권리를 증명하는 증권'),
+                                                             ('금투자', '금(Gold)을 투자 대상으로 하는 금융상품으로, 물리적 금을 매입하거나 금 관련 금융 상품을 통해 금의 가격 변동에 따른 수익을 추구하는 투자 방식'),
+                                                             ('ELS', '주식 또는 주가지수를 기초자산으로 하여, 투자자의 원금 손실 가능성을 일부 감수하는 대신 일정 조건을 충족하면 약정된 수익을 얻는 파생금융상품'),
+                                                             ('해외주식선물', '해외에 상장된 주식이나 주가지수를 대상으로 미래의 일정 시점에 주식 가격을 약정된 가격에 사고파는 계약을 맺는 파생상품으로, 가격 변동성에 따라 수익 또는 손실을 볼 수 있는 투자 방식'),
+                                                             ('외화예금', '외국 통화를 기준으로 한 은행 예금 상품으로, 환율 변동에 따라 이익이나 손실이 발생할 수 있으며, 외화 자산을 관리하기 위한 금융 상품'),
+                                                             ('REIT 투자', '부동산투자신탁(Real Estate Investment Trusts)으로, 여러 투자자들이 모은 자금을 부동산에 투자하여 발생하는 임대수익 및 매각수익을 배당 형식으로 분배받는 투자 방식'),
+                                                             ('테마 ETF', '특정 테마나 산업군(예: 신재생에너지, 헬스케어 등)에 집중적으로 투자하는 상장지수펀드(ETF)로, 해당 테마와 관련된 여러 주식에 분산 투자하는 금융 상품'),
+                                                             ('장외주식투자', '상장되지 않은 비상장기업의 주식을 거래하는 투자 방식으로, 상장 전 기업에 투자해 향후 상장이나 기업의 성장에 따른 수익을 기대할 수 있는 금융 상품'),
+                                                             ('합성 ETF', '기초자산을 직접 매입하지 않고, 파생상품 계약을 통해 기초자산의 수익률을 추종하는 상장지수펀드(ETF)로, 직접적인 자산 보유 없이 수익을 추구하는 투자 방식'),
+                                                             ('복잡한 구조의 고수익 ELS', '일반 ELS보다 더 복잡한 구조로 설계된 파생상품으로, 높은 수익률을 목표로 하지만, 기초자산의 조건이 충족되지 않으면 큰 손실을 볼 수 있는 고위험 고수익 상품'),
+                                                             ('암호화폐 펀드', '비트코인, 이더리움 등과 같은 암호화폐에 투자하는 펀드로, 암호화폐의 가격 변동에 따라 수익을 추구하는 고위험 금융 상품'),
+                                                             ('메자닌 투자', '채권과 주식의 중간 형태로, 전환사채(CB), 신주인수권부사채(BW) 등 주식으로 전환될 수 있는 채권에 투자하여 일정 수익을 확보하는 동시에 주식의 상승 가능성에도 투자하는 방식');
+
+CREATE TABLE `bank_exchange_fees` (
+                                      `bank_fee_id` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
+                                      `currency_id` int NOT NULL,
+                                      `bank_id` varchar(20) NOT NULL,
+                                      `buy_fee` decimal(5,2) NOT NULL,
+                                      `sell_fee` decimal(5,2) NOT NULL,
+                                      `base_date` date DEFAULT NULL,
+                                      PRIMARY KEY (`bank_fee_id`),
+                                      KEY `currency_id` (`currency_id`),
+                                      KEY `bank_id` (`bank_id`),
+                                      CONSTRAINT `bank_exchange_fees_ibfk_1` FOREIGN KEY (`currency_id`) REFERENCES `CURRENCY` (`currency_id`),
+                                      CONSTRAINT `bank_exchange_fees_ibfk_2` FOREIGN KEY (`bank_id`) REFERENCES `BANKS` (`bank_id`)
+);
+
+CREATE TABLE `BANKS` (
+                         `bank_id` varchar(20) NOT NULL,
+                         `bank_name` varchar(50) NOT NULL,
+                         `bank_logo_url` varchar(200) DEFAULT NULL,
+                         `bank_url` varchar(100) DEFAULT NULL,
+                         `bank_type` int DEFAULT NULL,
+                         PRIMARY KEY (`bank_id`)
+)
+
+CREATE TABLE `currency` (
+                            `currency_id` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
+                            `currency_code` varchar(10) NOT NULL,
+                            `currency_name` varchar(30) NOT NULL,
+                            `fin_category_id` int NOT NULL DEFAULT '7',
+                            PRIMARY KEY (`currency_id`),
+                            KEY `fin_category_id` (`fin_category_id`),
+                            CONSTRAINT `currency_ibfk_1` FOREIGN KEY (`fin_category_id`) REFERENCES `FINANCIAL_PRODUCT_CATEGORY` (`fin_category_id`)
+)
+
+CREATE TABLE `FINANCIAL_PRODUCT_CATEGORY` (
+                                              `fin_category_id` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
+                                              `fin_category_name` varchar(50) NOT NULL COMMENT 'UNIQUE',
+                                              PRIMARY KEY (`fin_category_id`)
+)
+
+CREATE TABLE `SAVING_PRIME_RATES` (
+                                      `prime_rate_id` bigint NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
+                                      `prime_rate_percent` decimal(5,2) NOT NULL,
+                                      `prime_rate_detail` varchar(200) NOT NULL,
+                                      `saving_id` int NOT NULL,
+                                      PRIMARY KEY (`prime_rate_id`),
+                                      KEY `saving_id` (`saving_id`),
+                                      CONSTRAINT `saving_prime_rates_ibfk_1` FOREIGN KEY (`saving_id`) REFERENCES `SAVINGS_PRODUCTS` (`saving_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=318 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+CREATE TABLE `saving_interest_rates` (
+                                         `intr_rate_id` bigint NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
+                                         `saving_id` int DEFAULT NULL,
+                                         `intr_rate_type` varchar(10) NOT NULL,
+                                         `save_term` int NOT NULL,
+                                         `intr_rate` decimal(5,2) NOT NULL,
+                                         `intr_rate2` decimal(5,2) NOT NULL,
+                                         `bank_id` varchar(20) NOT NULL,
+                                         `fin_prdt_cd` varchar(50) NOT NULL,
+                                         PRIMARY KEY (`intr_rate_id`),
+                                         KEY `saving_interest_rates_ibfk_1` (`saving_id`),
+                                         CONSTRAINT `saving_interest_rates_ibfk_1` FOREIGN KEY (`saving_id`) REFERENCES `SAVINGS_PRODUCTS` (`saving_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+CREATE TABLE `INVEST_TYPE` (
+                               `invest_type` varchar(50) NOT NULL COMMENT 'AUTO INCREMENT',
+                               `description` text,
+                               `characteristics` text,
+                               PRIMARY KEY (`invest_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
