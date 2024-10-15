@@ -41,11 +41,11 @@ public class SavingService {
         return saving;
     }
 
-    public List<SavingListDTO> getTopProductList() {
-        return mapper.getTopProductList();
+    public List<SavingListDTO> getTopProductList(SavingTopRequestDTO savingTopRequestDTO) {
+        return mapper.getTopProductListByInvestType(savingTopRequestDTO);
     }
-    public List<SavingListDTO> getTopSavingsProductList() {
-        return mapper.getTopSavingsProductList();
+    public List<SavingListDTO> getTopSavingsProductList(int finCategoryId) {
+        return mapper.getTopProductListByViewCount(finCategoryId);
     }
 
     public SavingCategory getCategoryList(){
