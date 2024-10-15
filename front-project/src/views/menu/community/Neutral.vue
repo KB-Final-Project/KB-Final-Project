@@ -132,7 +132,7 @@ onMounted(() => {
             <img :src="require('@/assets/media/avatars/300-25.jpg')" alt=""/>
           </div>
           <div class="d-flex flex-column">
-            <p class="name text-gray-800 mb-1 fw-bolder">{{ post.name }}</p>
+            <p class="name text-gray-800 mb-1 fw-bolder">{{ post.authorId }}</p>
             <span class="text-gray-500 fw-semibold">
               {{ formatDate(post.createdDate) }}
             </span>
