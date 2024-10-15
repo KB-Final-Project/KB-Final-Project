@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
 
 const searchQuery = ref('');
@@ -9,6 +10,15 @@ const currentPage = ref(1);
 const totalPages = ref(1);
 const pageSize = ref(20); // 페이지당 항목 수
 const selectedGrade = ref(null); // 선택된 등급
+
+const router = useRouter();
+
+const navigateToFund = (grade) => {
+    updateGradeFilter(grade); // 상태 업데이트
+      // 라우터로 이동
+      router.push({ path: '/funds', query: { grade } }); // this 대신 router 사용
+    };
+
 const selectedCategory = ref(null); // 선택된 카테고리
 const selectedGradeButton = ref(null); // 선택된 등급 버튼 상태
 const selectedCategoryButton = ref(null); // 선택된 카테고리 버튼 상태
@@ -80,7 +90,7 @@ const fetchAllFunds = async () => {
   isLoading.value = true;
   error.value = null;
   try {
-    const response = await axios.get('/api/funds/all', {
+    const response = await axios.get('/api/funds', {
       params: {
         grade: selectedGrade.value,
         category: selectedCategory.value,
@@ -260,7 +270,10 @@ const visiblePages = computed(() => {
   return pages;
 });
 
+const route = useRoute();
+
 onMounted(() => {
+  const grade = route.query.grade; // 쿼리 파라미터에서 grade 가져오기
   fetchAllFunds();
 });
 </script>
@@ -297,24 +310,25 @@ onMounted(() => {
       <button 
           class="filterBtn" 
           :class="{ 'active': selectedGradeButton === '1-2' }" 
-          @click="updateGradeFilter('1-2')"
+          @click="navigateToFund('1-2')"
       >
           고위험
       </button>
       <button 
           class="filterBtn" 
           :class="{ 'active': selectedGradeButton === '3-4' }" 
-          @click="updateGradeFilter('3-4')"
+          @click="navigateToFund('3-4')"
       >
           중위험
       </button>
       <button 
           class="filterBtn" 
           :class="{ 'active': selectedGradeButton === '5-6' }" 
-          @click="updateGradeFilter('5-6')"
+          @click="navigateToFund('5-6')"
       >
           저위험
       </button>
+      
     </div>
 
     <div style="display: flex; align-items: center; text-align: right;">

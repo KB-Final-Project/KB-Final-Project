@@ -350,9 +350,9 @@ export default {
           },
           {
             title: "펀드",
-            description: "~~펀드",
+            description: "채권 위주의 매우 안정적인 투자를 하세요.",
             icon: require("@/assets/img/analysis/5.png"),
-            link: "/fund",
+            link: "/funds?grade=5-6",
           },
           {
             title: "국채 투자",
@@ -547,9 +547,9 @@ export default {
           {
             title: "펀드",
             description:
-              "~~펀드",
+              "저위험 채권 혼합형 펀드. 안정적이면서도 수익을 추구합니다.",
             icon: require("@/assets/img/analysis/20.png"),
-            link: "/fund",
+            link: "/funds?grade=5-6",
           },
         ];
       } else if (this.userType === "APWL") {
@@ -566,9 +566,9 @@ export default {
           {
             title: "펀드",
             description:
-              "~~펀드",
+              "채권 위주에 주식을 조금 추가해서 위험성은 크지 않으면서 적당한 수익을 추구.",
             icon: require("@/assets/img/analysis/18.png"),
-            link: "/fund",
+            link: "/funds?grade=3-4",
           },
           {
             title: "변동성 높은 주식 상품",
@@ -591,9 +591,9 @@ export default {
           {
             title: "펀드",
             description:
-              "~~펀드",
+              "주식과 다른 상품을 혼합하여 수익을 추구하면서도 안정성을 놓치지 않고자 하는 투자 상품",
             icon: require("@/assets/img/analysis/20.png"),
-            link: "/fund",
+            link: "/funds?grade=3-4",
           },
           {
             title: "공격적인 주식 상품",
@@ -616,9 +616,9 @@ export default {
           {
             title: "펀드",
             description:
-              "~~펀드",
+              "주식형 펀드. 중간 위험성을 가지고 있으며 조금 더 적극적인 투자를 할 수 있습니다.",
             icon: require("@/assets/img/analysis/20.png"),
-            link: "/fund",
+            link: "/funds?grade=3-4",
           },
         ];
       } else if (this.userType === "ABML") {
@@ -636,9 +636,9 @@ export default {
           {
             title: "펀드",
             description:
-              "~~펀드",
+              "주식과 다른 상품들을 혼합하여 적당한 수익을 추구하면서도 큰 위험성이 없는 투자",
             icon: require("@/assets/img/analysis/20.png"),
-            link: "/fund",
+            link: "/funds?grade=3-4",
           },
         ];
       } else if (this.userType === "ABWC") {
@@ -655,9 +655,9 @@ export default {
           {
             title: "펀드",
             description:
-              "~~펀드",
+              "주식 위주의 적극적인 수익 추구형 투자.",
             icon: require("@/assets/img/analysis/20.png"),
-            link: "/fund",
+            link: "/funds?grade=3-4",
           },
           {
             title: "공격적인 주식 상품",
@@ -681,9 +681,9 @@ export default {
           {
             title: "펀드",
             description:
-              "~~펀드",
+              "주식 위주의 고수익 추구형 펀드. 대부분 주식을 포트폴리오에 담은 공격적인 성향의 펀드입니다.",
             icon: require("@/assets/img/analysis/20.png"),
-            link: "/fund",
+            link: "/funds?grade=1-2",
           },
           {
             title: "고수익 금융 상품",
@@ -707,9 +707,9 @@ export default {
           {
             title: "펀드",
             description:
-              "~~펀드",
+              "선물, 옵션, 스왑 등 상당히 공격적으로 투자하는 고수익 추구형 펀드",
             icon: require("@/assets/img/analysis/20.png"),
-            link: "/fund",
+            link: "/funds?grade=1-2",
           },
         ];
       } else {
