@@ -13,6 +13,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,10 +25,22 @@ public class StockWebSocketHandler extends TextWebSocketHandler {
     private final Map<WebSocketSession, Set<String>> sessionSubscriptions = new ConcurrentHashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(StockWebSocketHandler.class);
 
+    // 10개의 주식 코드 (구독 시 사용할 기본 주식 목록)
+    private final List<String> stockCodes = Arrays.asList("035720", "068270", "035420", "000660", "373220", "005380", "005930", "055550", "000270", "105560");
+
     @Autowired
     public StockWebSocketHandler(StockService stockService) {
         this.stockService = stockService;
         this.stockService.setWebSocketHandler(this);
+
+        // 주기적으로 테스트 데이터를 보내기 위한 타이머 설정 (5초마다 데이터 전송)
+        Timer timer = new Timer(true); // 데몬 쓰레드로 실행
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                sendTestStockData();  // 주기적으로 테스트 데이터 전송
+            }
+        }, 0, 5000);  // 즉시 실행 시작, 5초마다 반복
     }
 
     @Override
@@ -74,11 +87,57 @@ public class StockWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
+    // 테스트 데이터를 주기적으로 전송하는 메서드
+    // 테스트 데이터를 주기적으로 전송하는 메서드
+    public void sendTestStockData() {
+        for (String stockCode : stockCodes) {
+            double testCurrentPrice = 95000 + Math.random() * 1000;  // 임의의 주가 생성
+            double testPriceChange = testCurrentPrice - 94000;
+            double testChangeRate = (testPriceChange / 94000) * 100;
+
+            StockDTO stockData = new StockDTO();
+            stockData.setStockCode(stockCode);
+            stockData.setCurrentPrice(new BigDecimal(testCurrentPrice));
+            stockData.setPriceChange(new BigDecimal(testPriceChange));
+            stockData.setPriceChangePct(new BigDecimal(testChangeRate));
+
+            logger.info("Sending test stock data: {}", stockData);
+
+            // 구독된 모든 세션에 테스트 데이터 전송
+            for (Map.Entry<WebSocketSession, Set<String>> entry : sessionSubscriptions.entrySet()) {
+                WebSocketSession session = entry.getKey();
+                Set<String> subscriptions = entry.getValue();
+
+                if (session.isOpen() && subscriptions.contains(stockCode)) {
+                    try {
+                        String jsonStockData = objectMapper.writeValueAsString(stockData);
+                        session.sendMessage(new TextMessage(jsonStockData));
+                        logger.info("주식 데이터 전송 완료: {}", jsonStockData);
+                    } catch (IOException e) {
+                        logger.error("주식 데이터 전송 중 오류 발생", e);
+                    }
+                } else {
+                    logger.warn("WebSocket 세션이 열려 있지 않거나 주식 코드가 구독되지 않음: {}", stockCode);
+                }
+            }
+        }
+    }
+
+
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        Set<String> subscriptions = sessionSubscriptions.remove(session);
+        if (subscriptions != null) {
+            for (String stockCode : subscriptions) {
+                stockService.removeSubscription(stockCode);
+            }
+        }
+    }
     public void sendStockData(String stockCode, StockDTO stockData) {
         String jsonStockData;
         try {
             jsonStockData = objectMapper.writeValueAsString(stockData);
-            logger.info("Sending stock data: {}", jsonStockData);  // 여기에 로그 추가
+            logger.info("Sending stock data: {}", jsonStockData);
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -93,16 +152,6 @@ public class StockWebSocketHandler extends TextWebSocketHandler {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-        }
-    }
-
-    @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        Set<String> subscriptions = sessionSubscriptions.remove(session);
-        if (subscriptions != null) {
-            for (String stockCode : subscriptions) {
-                stockService.removeSubscription(stockCode);
             }
         }
     }
