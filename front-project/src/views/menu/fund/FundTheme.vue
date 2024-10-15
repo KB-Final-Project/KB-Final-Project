@@ -419,7 +419,7 @@
           </div>
 
           <a
-            href="http://localhost:8080/fundDetail"
+            href="http://localhost:8081/fundDetail"
             class="etf-theme-card-wrapper"
             motion-hover="padding"
             style="
