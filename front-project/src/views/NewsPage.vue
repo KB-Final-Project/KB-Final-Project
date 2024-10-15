@@ -153,11 +153,13 @@ export default {
     },
 
     async selectCategory(category) {
-      this.selectedCategory = category;
-      if (!this.categoryNews[category]) {
-        this.categoryNews[category] = await this.fetchNews(category);
-      }
-    },
+    this.selectedCategory = category;
+    this.loading = true; // 로딩 시작
+    if (!this.categoryNews[category]) {
+      this.categoryNews[category] = await this.fetchNews(category);
+    }
+    this.loading = false; // 로딩 종료
+  },
 
     goToNews(link) {
       window.open(link, '_blank');
