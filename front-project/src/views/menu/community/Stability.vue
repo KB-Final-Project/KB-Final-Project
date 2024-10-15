@@ -31,7 +31,7 @@ const fetchBoardPosts = async () => {
   try {
     const response = await axios.get(`/api/board/${postType.value}/posts`);
     posts.value = response.data.postList;
-
+    console.log("data--------------"+response.data);
     // 게시글 목록을 가져온 후 각 게시글의 postId에 대해 fetchReplies 호출
     for (const post of posts.value) {
       await fetchReplies(post.postId); // 각 ID에 대해 개별적으로 댓글 가져오기
@@ -132,7 +132,7 @@ onMounted(() => {
             <img :src="require('@/assets/media/avatars/300-25.jpg')" alt=""/>
           </div>
           <div class="d-flex flex-column">
-            <p class="name text-gray-800 mb-1 fw-bolder">{{ post.name }}</p>
+            <p class="name text-gray-800 mb-1 fw-bolder">{{ post.authorId }}</p>
             <span class="text-gray-500 fw-semibold">
               {{ formatDate(post.createdDate) }}
             </span>
