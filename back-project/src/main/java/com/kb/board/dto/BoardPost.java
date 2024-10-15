@@ -29,6 +29,7 @@ public class BoardPost {
     private Date createdDate;   // 생성 날짜
     private Date modifiedDate;  // 수정 날짜
     private String name;
+    private String replyContent;
 
     private ArrayList<BoardReply> replyList;
     private ArrayList<BoardAttachFile> boardAttachFileList;

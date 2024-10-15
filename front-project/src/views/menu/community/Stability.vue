@@ -10,26 +10,40 @@ const posts = ref([]); // 게시글 목록
 const visibleCount = ref(5); // 보여질 게시글 수
 const newReply = ref(""); // 댓글 입력을 위한 ref
 const postRefs = ref([]); // hidden input 참조 배열
+const replies = ref({}); // 각 게시글의 댓글을 저장할 객체
 const cr = useRoute();
 const router = useRouter();
 
 const auth = useAuthStore();
 
 // 게시글 목록을 가져오는 함수
+const fetchReplies = async (postId) => {
+  try {
+    const response = await api.getReplies(postId); // 각 ID에 대해 개별적으로 요청
+    replies.value[postId] = response; // 댓글 목록을 postId를 키로 하는 객체에 저장
+  } catch (error) {
+    console.error("Error fetching replies:", error);
+  }
+};
 
+// 게시글 목록을 가져오는 함수 수정
 const fetchBoardPosts = async () => {
   try {
     const response = await axios.get(`/api/board/${postType.value}/posts`);
-    posts.value = response.data.postList; // 게시글 목록 설정
+    posts.value = response.data.postList;
 
-    // 게시글 목록을 가져온 후 각 게시글의 postId를 postRefs에 저장
-    postRefs.value = posts.value.map(post => post.postId); // postRefs 초기화
+    // 게시글 목록을 가져온 후 각 게시글의 postId에 대해 fetchReplies 호출
+    for (const post of posts.value) {
+      await fetchReplies(post.postId); // 각 ID에 대해 개별적으로 댓글 가져오기
+    }
+
     console.log("Fetched posts:", posts.value);
-    console.log("Post Refs:", postRefs.value); // postRefs 상태 확인
   } catch (error) {
     console.error("Error fetching posts:", error);
   }
 };
+
+
 const getPostIdFromRef = (index) => {
   if (index < 0 || index >= postRefs.value.length) {
     console.error(`Index ${index} is out of bounds. Available postRefs:`, postRefs.value);
@@ -37,6 +51,7 @@ const getPostIdFromRef = (index) => {
   }
   return postRefs.value[index];
 };
+
 // 보여질 게시글 계산
 const visiblePosts = computed(() => {
   return posts.value.slice(0, visibleCount.value);
@@ -76,37 +91,27 @@ const handleLike = async (index) => {
   }
 };
 
+const handleReply = async (postId) => {
+  if (newReply.value.trim() === "") return; // 댓글 내용이 비어있으면 리턴
+  try {
+    const response = await api.createReply(postId, { content: newReply.value }); // API 호출
+    replies.value[postId].push(response); // 새 댓글을 해당 게시글의 댓글 목록에 추가
+    newReply.value = ""; // 입력 필드 초기화
+  } catch (error) {
+    console.error("Error adding reply:", error);
+  }
+};
 
 const handleDelete = async (index) => {
   if (!confirm('삭제할까요?')) return;
   await api.delete(getPostIdFromRef(index));
+  reloadPosts();  // 페이지 새로 고침 추가
 };
 
-// 댓글 추가 처리 함수
-const handleReply = async (index) => {
-  const postId = getPostIdFromRef(index); // hidden input에서 postId를 가져옴
-  if (postId) {
-    try {
-      const token = localStorage.getItem("auth"); // 로컬 스토리지에서 토큰을 가져옴
-      const response = await axios.post(`/api/board/reply/${postId}`, {
-        content: newReply.value,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
-        },
-      });
-      if (response.status === 200) {
-        newReply.value = ""; // 댓글 추가 후 입력란 초기화
-        alert("댓글이 달렸습니다.");
-        fetchBoardPosts(); // 댓글 추가 후 게시물 목록 새로고침
-      } else {
-        console.error("Failed to add a reply");
-      }
-    } catch (error) {
-      console.error("Error adding a reply:", error);
-    }
-  }
+const reloadPosts = async () => {
+  await fetchBoardPosts(); // 게시글을 다시 불러오는 함수 호출
 };
+
 
 // 컴포넌트가 마운트될 때 게시글 목록을 가져옴
 onMounted(() => {
@@ -180,7 +185,15 @@ onMounted(() => {
           </div>
         </div>
         <div class="separator pt-5 mb-3"></div>
-        <form class="reply position-relative pb-3">
+        <!-- 댓글 목록 표시 -->
+        <div class="replies">
+          <div v-for="reply in replies[post.postId] || []" :key="reply.rno" class="reply">
+            <h5>{{ reply.content }}</h5>
+            <h5>{{ formatDate(reply.createDate) }}</h5>
+          </div>
+        </div>
+        <!-- 댓글 입력란 -->
+        <form class="reply position-relative pb-3" @submit.prevent="handleReply(post.postId)">
           <textarea
               v-model="newReply"
               data-kt-autosize="true"
@@ -189,9 +202,9 @@ onMounted(() => {
               placeholder="댓글"
           ></textarea>
           <div class="position-absolute top-0 end-0 me-n5">
-            <span class="btn btn-icon btn-sm btn-active-color-primary ps-0">
-              <i class="ai-edit-alt" @click="handleReply(index)"></i>
-            </span>
+            <button class="btn btn-icon btn-sm btn-active-color-primary ps-0" type="submit">
+              <i class="ai-edit-alt"></i>
+            </button>
           </div>
         </form>
       </div>
@@ -264,5 +277,17 @@ onMounted(() => {
 
 .btn {
   background-color: white;
+}
+
+.replies {
+
+  margin-top: 20px; /* 댓글 목록 상단 여백 추가 */
+}
+
+.reply {
+  display:flex;
+  justify-content: space-between;
+  padding: 10px; /* 댓글 여백 추가 */
+  border-bottom: 1px solid lightgrey;
 }
 </style>

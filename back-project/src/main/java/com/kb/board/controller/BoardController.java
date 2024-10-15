@@ -16,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,6 +62,11 @@ public class BoardController {
         BoardPageResult result = service.getBoardList(boardParam);
         return ResponseEntity.ok(result);
     }
+    @GetMapping("/my/{memberId}") // 게시판 목록 내용 조회
+    public ResponseEntity<List<BoardPost>> mySelectPostList(@PathVariable String memberId) {
+        List<BoardPost> result = service.mySelectPostList(memberId);
+        return ResponseEntity.ok(result);
+    }
 
     @GetMapping("/{bno}/posts") // 게시글 bno 별 리스트 조회
     public ResponseEntity<BoardPostPageResult> getPosts(@PathVariable int bno, PostParam postParam) {
@@ -83,10 +89,10 @@ public class BoardController {
     }
 
 
-    @GetMapping("/{postId}") // 게시글 조회
-    public ResponseEntity<BoardPost> getById(@PathVariable long postId) {
-        return ResponseEntity.ok(service.getBoard(postId));
-    }
+//    @GetMapping("/{postId}") // 게시글 조회
+//    public ResponseEntity<BoardPost> getById(@PathVariable long postId) {
+//        return ResponseEntity.ok(service.getBoard(postId));
+//    }
 
     @PostMapping("/{type}") // 게시판 글 작성
     public ResponseEntity<BoardPost> create(
@@ -216,11 +222,10 @@ public class BoardController {
     public ResponseEntity<Boolean> deleteAttachment(@PathVariable long fno) throws Exception {
         return ResponseEntity.ok(service.deleteAttachment(fno));
     }
-
-    @PostMapping("/reply/{postId}")
+    @GetMapping("/replyPlus/{postId}")
     public ResponseEntity<BoardReply> createReply(
         @PathVariable long postId,
-        @RequestBody BoardReplyDTO replyDTO,
+             @RequestBody BoardReplyDTO replyDTO,
         @AuthenticationPrincipal Member principal) throws Exception {
         BoardReply reply = replyDTO.toReply();
         reply.setPostId(postId);
@@ -254,5 +259,14 @@ public class BoardController {
 
     return ResponseEntity.ok(reply);
     }
+
+    @GetMapping("/reply/{postId}")
+    public ResponseEntity<List<BoardReply>> getReply(@PathVariable long postId) {
+        return ResponseEntity.ok(service.selectReplyByBno(postId));
+    }
+
+
+
+
 }
 
