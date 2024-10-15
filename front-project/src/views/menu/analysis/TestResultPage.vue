@@ -368,7 +368,8 @@ export default {
             description:
               "안전한 국채를 통해 리스크 없이 수익을 올릴 수 있는 방법을 알아보세요.",
             icon: require("@/assets/img/analysis/6.png"),
-            link: "/bonds",
+            link: "/dictionary",
+            param : "국채", 
           },
         ];
       } else if (this.userType === "IPWL") {
@@ -551,7 +552,8 @@ export default {
     description: "옵션과 선물을 결합한 고도의 투자 전략으로 큰 수익을 추구합니다.",
 
             icon: require("@/assets/img/analysis/3.png"),
-            link: "/isa",
+            link: "/dictionary",
+            param : "옵션", 
           },
           {
             title: "펀드",
@@ -594,7 +596,9 @@ export default {
           title: "테마 ETF",
           description: "특정 산업이나 트렌드에 집중 투자하여 높은 수익을 추구합니다.",
             icon: require("@/assets/img/analysis/3.png"),
-            link: "/isa",
+            link: "/dictionary",
+            param : "테마", 
+            
           },
           // 대호님추가
           {
@@ -638,7 +642,7 @@ export default {
     description: "파생상품을 활용하여 만든 초고위험 ETF로, 극단적인 수익을 노릴 수 있습니다.",
 
             icon: require("@/assets/img/analysis/3.png"),
-            link: "/dictionary?search=합성 ETF",
+            link: "/dictionary",
             param : "합성 ETF",
             // 대호님추가 
           },
@@ -698,7 +702,8 @@ export default {
             title: "고수익 금융 상품",
             description: "금융 전문가를 위한 고수익 상품에 대해 알아보세요.",
             icon: require("@/assets/img/analysis/20.png"),
-            link: "/high-profit-finance",
+            link: "/dictionary",
+            param: "선물",
           },
         ];
       } else if (this.userType === "ABMC") {
