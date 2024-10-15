@@ -1,9 +1,10 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import {ref, onMounted, computed} from "vue";
 import axios from "axios";
 import {useAuthStore} from "@/stores/auth";
 import api from '@/api/boardApi';
 import {useRoute, useRouter} from "vue-router";
+
 const postType = ref(1); // 게시판 타입 (예: 1: 안정형)
 const posts = ref([]); // 게시글 목록
 const visibleCount = ref(5); // 보여질 게시글 수
@@ -76,10 +77,9 @@ const handleLike = async (index) => {
 };
 
 
-
-const handleDelete = async () => {
+const handleDelete = async (index) => {
   if (!confirm('삭제할까요?')) return;
-  await api.delete(postRefs.value);
+  await api.delete(getPostIdFromRef(index));
 };
 
 // 댓글 추가 처리 함수
@@ -168,7 +168,7 @@ onMounted(() => {
           </div>
           <input type="hidden" :value="post.postId" :ref="`${post.postId}`">
           <div class="d-flex align-items-center">
-            <a  class="btn btn-sm btn-color-muted btn-active-light-primary fw-bolder fs-6 py-1 px-2 me-4">
+            <a class="btn btn-sm btn-color-muted btn-active-light-primary fw-bolder fs-6 py-1 px-2 me-4">
               <i class="ai-message fs-2"></i>{{ post.commentCount }}
             </a>
             <a
