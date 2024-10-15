@@ -30,7 +30,7 @@ public class FundsController {
     }
 
     // 모든 펀드 조회 엔드포인트 (옵션)
-    @GetMapping("/all")
+    @GetMapping("")
     public ResponseEntity<List<FundsDTO>> findAllFunds(
             @RequestParam(required = false) String grade,
             @RequestParam(required = false) String category) {
