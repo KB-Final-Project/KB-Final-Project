@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -88,6 +86,11 @@ public class MemberController {
         return ResponseEntity.ok(service.join(member, avatar));
     }
 
+    @PostMapping("/{id}")
+    public ResponseEntity<Integer> checkPassword(@PathVariable String id, @RequestBody ChangePasswordDTO changePassword) {
+
+        return ResponseEntity.ok( service.checkPassword(id, changePassword));
+    }
 
     @PutMapping("/{id}/changepassword")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDTO changePassword) {
