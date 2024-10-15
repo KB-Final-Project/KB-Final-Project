@@ -187,33 +187,22 @@ public class BoardController {
 
     // 좋아요 버튼
     @PostMapping("/{postId}/like")
-    public ResponseEntity<BoardPost> likePost(@PathVariable long postId, @AuthenticationPrincipal Member principal) {
-        if (principal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    public ResponseEntity<BoardPost> likePost(@PathVariable int postId, @AuthenticationPrincipal Member principal) {
+
+        int mno = principal.getMno();
+        // 사용자가 이미 좋아요를 눌렀는지 확인
+        boolean alreadyLiked = boardService.checkLikeExists(postId, mno);
+
+        if (alreadyLiked) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         }
+        boardService.addLike(postId, mno);
 
-        try {
-            // 사용자가 이미 좋아요를 눌렀는지 확인
-            boolean alreadyLiked = boardService.checkLikeExists(postId, principal.getMno());
+        BoardPost updatedPost = boardService.getPostWithLikesCount(postId);
+        return ResponseEntity.ok(updatedPost);
 
-            if (alreadyLiked) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(null); // 이미 좋아요를 눌렀으면 409 Conflict 반환
-            }
-
-            // 좋아요 추가
-            boardService.addLike(postId, principal.getMno());
-
-            // 좋아요 수 업데이트 (여기서 게시물 정보를 다시 조회)
-            BoardPost updatedPost = boardService.getPostWithLikesCount(postId);
-
-            return ResponseEntity.ok(updatedPost);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        } catch (Exception e) {
-            log.error("Error liking post: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
     }
+
 
 //
 //    // 이미지 출력
@@ -230,9 +219,9 @@ public class BoardController {
 
     @PostMapping("/reply/{postId}")
     public ResponseEntity<BoardReply> createReply(
-                        @PathVariable long postId,
-                      @RequestBody BoardReplyDTO replyDTO,
-                      @AuthenticationPrincipal Member principal) throws Exception {
+        @PathVariable long postId,
+        @RequestBody BoardReplyDTO replyDTO,
+        @AuthenticationPrincipal Member principal) throws Exception {
         BoardReply reply = replyDTO.toReply();
         reply.setPostId(postId);
         reply.setMno(principal.getMno());
@@ -242,8 +231,8 @@ public class BoardController {
 
     @DeleteMapping("/reply/{rno}")
     public ResponseEntity<BoardReply> deleteReply(
-            @PathVariable int rno,
-            @AuthenticationPrincipal Member principal) throws Exception {
+        @PathVariable int rno,
+        @AuthenticationPrincipal Member principal) throws Exception {
 
         if (principal == null) {
             throw new IllegalAccessException("User is not authenticated");
@@ -263,7 +252,7 @@ public class BoardController {
             throw new Exception("DB error");
         }
 
-        return ResponseEntity.ok(reply);
+    return ResponseEntity.ok(reply);
     }
-
 }
+

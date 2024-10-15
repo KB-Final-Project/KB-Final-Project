@@ -364,6 +364,7 @@ onMounted(() => {
     </div>
   </div>
 </div>
+<span style="color:dimgray; font-size: 14px;"> * 등급은 6등급까지 존재하며 0등급에 가까울수록 고위험 상품입니다.</span>
 
         <!-- 로딩 메시지 -->
         <div v-if="isLoading" class="loading-box">

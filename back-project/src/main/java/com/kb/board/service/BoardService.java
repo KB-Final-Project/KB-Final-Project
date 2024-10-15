@@ -219,15 +219,16 @@ public class BoardService {
         return mapper.deleteReply(rno);
     }
 
-    public boolean checkLikeExists(long postId, long memberId) {
-        return mapper.checkLikeExists(postId, memberId);
+    public boolean checkLikeExists(int postId, int mno) {
+        return mapper.checkLikeExists(postId, mno);
     }
 
-    public void addLike(long postId, long memberId) {
+    @Transactional
+    public void addLike(int postId, int memberId) {
         mapper.insertLike(postId, memberId); // likes 테이블에 레코드 추가
     }
 
-    public BoardPost getPostWithLikesCount(long postId) {
+    public BoardPost getPostWithLikesCount(int postId) {
         BoardPost post = mapper.getBoardPost(postId);
         int likesCount = mapper.countLikes(postId); // likes 테이블에서 좋아요 수 계산
         post.setLikesCount(likesCount);

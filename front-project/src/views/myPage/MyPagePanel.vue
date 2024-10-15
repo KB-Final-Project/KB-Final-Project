@@ -15,13 +15,15 @@ import axios from "axios";
 const avatar = ref();
 const myPage = ref([]);
 const loading = ref(true);
+const token = JSON.parse(localStorage.getItem("auth")); // JSON 파싱
 
 const fetchMyPage = async () => {
   loading.value = true;
+  const id = token.id; //
   try {
-    const response = await axios.get('/api/member/{id}');
+    const response = await axios.get(`/api/member/${id}`);
     console.log(response);
-    myPage.value = response.data.member;
+    myPage.value = response.data;
   } catch (error) {
     console.error('마이페이지 오류:', error);
   } finally {
@@ -52,8 +54,8 @@ onMounted(() => {
   <div class="my-page-panel">
     <div class="nameBox">
       <img class="d-block profile" :src="avatar">
-      <p class="name">{{  myPage.name }}</p>
-      <p class="nim">님</p>
+      <h3 class="name">{{  myPage.name }}</h3>
+      <h3 class="nim">님</h3><br><br>
       <p class="email">{{ myPage.email }}</p>
     </div>
     <br><br>
@@ -103,13 +105,13 @@ onMounted(() => {
 }
 
 .name {
-  font-size: 20px;
+  font-size: 30px;
   display: inline-block;
 }
 
 .nim {
   color: #919090;
-  font-size: 20px;
+  font-size: 30px;
   display: inline-block;
 }
 
