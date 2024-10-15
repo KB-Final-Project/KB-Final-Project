@@ -163,7 +163,7 @@ const menuItems = ref([
         text: '펀드',
         href: '#',
         subItems: [
-          { text: '펀드 찾기', href: '/fund' },
+          { text: '펀드 찾기', href: '/funds' },
           { text: '테마별 펀드', href: '/fundTheme' },
         ],
       },

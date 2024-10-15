@@ -120,6 +120,11 @@ public class MemberService{
         return member;
     }
 
+    public Integer checkPassword(String id, ChangePasswordDTO changePassword){
+        changePassword.setNewPassword(passwordEncoder.encode(changePassword.getNewPassword()));
+        return mapper.checkPassword(id, changePassword);
+    }
+
     public void changePassword(ChangePasswordDTO changePassword) {
         Member member = mapper.selectById(changePassword.getId());
 //        System.out.println(changePassword);
