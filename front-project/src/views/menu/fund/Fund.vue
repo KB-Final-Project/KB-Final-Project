@@ -31,27 +31,40 @@ const formatDate = (dateString) => {
 };
 
 const filterFunds = () => {
-  if (!selectedCategory.value) {
-    return allFunds.value; // 카테고리가 선택되지 않았으면 전체 데이터 반환
-  }
+  const isReturnAvailable = (returnValue) => {
+    return returnValue !== null && returnValue !== undefined && returnValue !== '' && returnValue !== '없음';
+  };
 
-  return allFunds.value.filter(fund => {
+  const filteredFunds = allFunds.value.filter(fund => {
+    const hasReturns = 
+      isReturnAvailable(fund.suikRt1) ||
+      isReturnAvailable(fund.suikRt3) ||
+      isReturnAvailable(fund.suikRt6) ||
+      isReturnAvailable(fund.suikRt12);
+
+    if (!selectedCategory.value) {
+      return hasReturns; // 카테고리 선택 안 된 경우 수익률이 있는 펀드만 반환
+    }
+
     const fundName = fund.fundFnm.toLowerCase();
     const category = selectedCategory.value.toLowerCase();
 
-    switch (selectedCategory.value) {
+    switch (category) {
       case 'stock':
-        return fundName.includes('주식');
+        return fundName.includes('주식') && hasReturns;
       case 'bond':
-        return fundName.includes('채권');
+        return fundName.includes('채권') && hasReturns;
       case 'mixed':
-        return fundName.includes('혼합');
+        return fundName.includes('혼합') && hasReturns;
+      case 'etc':
+        return hasReturns; // 기타 카테고리도 수익률이 있어야 반환
       default:
-        return true; // 기타
+        return hasReturns; // 기타도 수익률이 존재해야 반환
     }
   });
-};
 
+  return filteredFunds;
+};
 
 
 
@@ -62,7 +75,7 @@ const updateCategoryFilter = (category) => {
   fetchAllFunds(); // 카테고리 업데이트 후 데이터 새로 불러오기
 };
 
-// fetchAllFunds 함수에서 호출될 때의 paginateFunds 수정
+// fetchAllFunds 함수에서 필터링된 데이터로 displayedFunds 업데이트
 const fetchAllFunds = async () => {
   isLoading.value = true;
   error.value = null;
@@ -70,19 +83,19 @@ const fetchAllFunds = async () => {
     const response = await axios.get('/api/funds/all', {
       params: {
         grade: selectedGrade.value,
-        category: selectedCategory.value, // 카테고리 추가
+        category: selectedCategory.value,
       },
     });
     allFunds.value = response.data;
 
-    // 데이터를 받은 후 초기 정렬 적용
-    sortFunds(sortKey.value, false);
-    
-    // 필터링된 데이터로 표시
-    displayedFunds.value = filterFunds(); 
+    console.log('Fetched Funds:', allFunds.value); // 여기 추가
 
-    totalPages.value = Math.ceil(displayedFunds.value.length / pageSize.value); // 페이지 수 계산
-    currentPage.value = 1; // 첫 페이지로 설정
+
+    // 필터링된 데이터로 displayedFunds 업데이트
+    displayedFunds.value = filterFunds();
+
+    totalPages.value = Math.ceil(displayedFunds.value.length / pageSize.value);
+    currentPage.value = 1;
     paginateFunds(); // 첫 페이지 데이터를 표시
   } catch (err) {
     error.value = '펀드 데이터를 불러오는 데 실패했습니다.';
@@ -91,7 +104,6 @@ const fetchAllFunds = async () => {
     isLoading.value = false;
   }
 };
-
 
 
 const searchFundsFunc = async () => {
