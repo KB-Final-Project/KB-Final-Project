@@ -10,6 +10,9 @@ const totalPages = ref(1);
 const pageSize = ref(20); // 페이지당 항목 수
 const selectedGrade = ref(null); // 선택된 등급
 const selectedCategory = ref(null); // 선택된 카테고리
+const selectedGradeButton = ref(null); // 선택된 등급 버튼 상태
+const selectedCategoryButton = ref(null); // 선택된 카테고리 버튼 상태
+
 
 const isLoading = ref(false);
 const error = ref(null);
@@ -49,8 +52,12 @@ const filterFunds = () => {
   });
 };
 
+
+
+
 // 카테고리 버튼 클릭 시 필터링과 페이지네이션 업데이트
 const updateCategoryFilter = (category) => {
+  selectedCategoryButton.value = category; // 선택된 카테고리 버튼 업데이트
   selectedCategory.value = category;
   fetchAllFunds(); // 카테고리 업데이트 후 데이터 새로 불러오기
 };
@@ -109,6 +116,21 @@ const searchFundsFunc = async () => {
   } finally {
     isLoading.value = false;
   }
+};
+
+// 전체보기 버튼 클릭 시 등급과 카테고리에 따른 데이터 가져오기
+const viewAll = () => {
+  selectedGradeButton.value = null; // 선택된 등급 초기화
+  selectedCategoryButton.value = null; // 선택된 카테고리 초기화
+  selectedGrade.value = null; // 선택된 등급 초기화
+  selectedCategory.value = null; // 선택된 카테고리 초기화
+  fetchAllFunds(); // 전체 데이터 가져오기
+};
+
+const updateGradeFilter = (grade) => {
+    selectedGradeButton.value = grade; // 선택된 등급 버튼 업데이트
+    selectedGrade.value = grade;
+    fetchAllFunds();
 };
 
 const goToFund  = (fundCd) => {
@@ -253,27 +275,69 @@ onMounted(() => {
             @keyup.enter="searchFundsFunc"
         />
         <button class="searchBtn" type="button" @click="searchFundsFunc">검색</button>
-        <button class="searchBtn" type="button" @click="fetchAllFunds">전체보기</button>
+        <button class="searchBtn" type="button" @click="viewAll">전체보기</button>
       </div>
 
-      <div class="d-flex justify-content-between align-items-center">
       <div>
-        <h2 class="d-inline search">등급 필터</h2>
-        <button class="filterBtn" @click="selectedGrade = '1-2'; fetchAllFunds()">고위험</button>
-        <button class="filterBtn" @click="selectedGrade = '3-4'; fetchAllFunds()">중위험</button>
-        <button class="filterBtn" @click="selectedGrade = '5-6'; fetchAllFunds()">저위험</button>
-        <button class="filterBtn" @click="selectedGrade = null; fetchAllFunds()">전체보기</button>
-      </div>
-      
-      <div class="text-right">
-        <h2 class="d-inline search">카테고리 필터</h2>
-        <button class="filterBtn" @click="updateCategoryFilter('stock')">주식</button>
-        <button class="filterBtn" @click="updateCategoryFilter('bond')">채권</button>
-        <button class="filterBtn" @click="updateCategoryFilter('mixed')">혼합</button>
-        <button class="filterBtn" @click="updateCategoryFilter('etc')">기타</button>
-        <button class="filterBtn" @click="updateCategoryFilter(null)">전체보기</button>
-      </div>
+  <div class="filter-container" style="display: flex; justify-content: space-between; align-items: center;">
+    <div style="display: flex; align-items: center;">
+      <h2 class="d-inline search">등급</h2>
+      <button 
+          class="filterBtn" 
+          :class="{ 'active': selectedGradeButton === '1-2' }" 
+          @click="updateGradeFilter('1-2')"
+      >
+          고위험
+      </button>
+      <button 
+          class="filterBtn" 
+          :class="{ 'active': selectedGradeButton === '3-4' }" 
+          @click="updateGradeFilter('3-4')"
+      >
+          중위험
+      </button>
+      <button 
+          class="filterBtn" 
+          :class="{ 'active': selectedGradeButton === '5-6' }" 
+          @click="updateGradeFilter('5-6')"
+      >
+          저위험
+      </button>
     </div>
+
+    <div style="display: flex; align-items: center; text-align: right;">
+      <h2 class="d-inline search">카테고리</h2>
+      <button 
+          class="filterBtn" 
+          :class="{ 'active': selectedCategoryButton === 'stock' }" 
+          @click="updateCategoryFilter('stock')"
+      >
+          주식
+      </button>
+      <button 
+          class="filterBtn" 
+          :class="{ 'active': selectedCategoryButton === 'bond' }" 
+          @click="updateCategoryFilter('bond')"
+      >
+          채권
+      </button>
+      <button 
+          class="filterBtn" 
+          :class="{ 'active': selectedCategoryButton === 'mixed' }" 
+          @click="updateCategoryFilter('mixed')"
+      >
+          혼합
+      </button>
+      <button 
+          class="filterBtn" 
+          :class="{ 'active': selectedCategoryButton === 'etc' }" 
+          @click="updateCategoryFilter('etc')"
+      >
+          기타
+      </button>
+    </div>
+  </div>
+</div>
 
         <!-- 로딩 메시지 -->
         <div v-if="isLoading" class="loading-box">
@@ -653,6 +717,18 @@ tbody td {
 .sort-button-inactive:hover {
   opacity: 0.8;
 }
+
+
+.filter-container {
+    display: flex;
+    align-items: center; /* 버튼 세로 정렬 */
+    margin-bottom: 10px; /* 아래쪽 여백 */
+}
+
+.filter-container h2 {
+    margin-right: 10px; /* 제목과 버튼 사이 여백 */
+}
+
 .filterBtn {
   font-size: 20px; /* 버튼 글꼴 크기 */
   height: 50px; /* 버튼 높이 */
@@ -665,10 +741,19 @@ tbody td {
   transition: background-color 0.3s;
 }
 
+.filterBtn:last-child {
+    margin-right: 0; /* 마지막 버튼 여백 제거 */
+}
+
 .filterBtn:active,
 .filterBtn:hover {
   background-color: #e5e4e4; /* 호버 색상 */
   color: black;
+}
+
+.filterBtn.active {
+  background-color: #e5e4e4; /* 선택된 버튼의 배경색 */
+  color: black; /* 선택된 버튼의 글자색 */
 }
 
 .text-right {
