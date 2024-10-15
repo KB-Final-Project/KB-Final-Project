@@ -196,8 +196,8 @@ const routes = [
     component: DepositDetail,
   },
   {
-    path: '/fund', // Fund 페이지 경로 추가
-    name: 'fund',
+    path: '/funds', // Fund 페이지 경로 추가
+    name: 'funds',
     component: Fund,
   },
   {
