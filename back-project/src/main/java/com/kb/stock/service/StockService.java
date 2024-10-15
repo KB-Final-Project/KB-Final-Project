@@ -109,8 +109,6 @@ public class StockService {
         logger.info("Finished updateAllStocks method at {}", now);
     }
 
-
-
     // 주식 배치 처리
     private void processStockBatch(List<String> stockCodes, int batchNumber) {
         long batchStartTime = System.currentTimeMillis(); // 배치 시작 시간
