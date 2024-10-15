@@ -109,7 +109,7 @@ public class FundsService {
         return fundsMapper.searchFunds(keyword);
     }
 
-    public List<FundsDTO> findAllFunds(String grade) {
+    public List<FundsDTO> findAllFunds(String grade, String category) {
         List<FundsDTO> funds = fundsMapper.findAllFunds();
 
         // 등급 필터링
@@ -122,6 +122,29 @@ public class FundsService {
                     .filter(fund -> fund.getInvestGrade() >= gradeStart && fund.getInvestGrade() <= gradeEnd)
                     .collect(Collectors.toList());
         }
+
+        // 카테고리 필터링
+        if (category != null && !category.isEmpty()) {
+            funds = funds.stream()
+                    .filter(fund -> {
+                        String fundName = fund.getFundFnm().toLowerCase();
+                        boolean isMixed = fundName.contains("혼합");
+
+                        // 카테고리에 따른 필터링 로직
+                        switch (category.toLowerCase()) {
+                            case "mixed":
+                                return isMixed; // 혼합 카테고리를 포함하는 경우
+                            case "stock":
+                                return fundName.contains("주식") && !isMixed; // 혼합 펀드 제외
+                            case "bond":
+                                return fundName.contains("채권") && !isMixed; // 혼합 펀드 제외
+                            default:
+                                return true; // 기타
+                        }
+                    })
+                    .collect(Collectors.toList());
+        }
+
 
         // 등급에 따른 정렬
         funds.sort((a, b) -> {
@@ -150,8 +173,6 @@ public class FundsService {
 
         return funds;
     }
-
-
 
 }
 
