@@ -76,9 +76,9 @@ const handleLike = async (index) => {
 };
 
 
-const handleDelete = async () => {
+const handleDelete = async (index) => {
   if (!confirm('삭제할까요?')) return;
-  await api.delete(postRefs.value);
+  await api.delete(getPostIdFromRef(index));
 };
 
 // 댓글 추가 처리 함수
