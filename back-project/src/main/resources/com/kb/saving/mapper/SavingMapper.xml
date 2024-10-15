@@ -190,7 +190,7 @@
                b.bank_logo_url,
                b.bank_url,
                MIN(sir.intr_rate2) AS intr_rate2,
-               b.bank_name,
+               b.bank_name  ,
                MIN(sir.intr_rate_type) AS intr_rate_type,
                MIN(sir.save_term) AS save_term
         FROM savings_products s
@@ -202,7 +202,67 @@
             LIMIT 3;
     </select>
 
-    <select id="getTopSavingsProductList" resultMap="DepositDetailResultMap" parameterType="int">
+    <select id="getTopProductListByViewCount" resultMap="DepositDetailResultMap" parameterType="int">
+            SELECT s.saving_id,
+                   s.bank_id,
+                   s.saving_name,
+                   s.dcls_strt_day,
+                   s.join_deny,
+                   s.join_member,
+                   s.fin_category_id,
+                   s.join_way,
+                   s.mtrt_int,
+                   s.etc_note,
+                   s.max_prime_rate,
+                   b.bank_id,
+                   b.bank_logo_url,
+                   b.bank_url,
+                   MIN(sir.intr_rate2) AS intr_rate2,
+                   b.bank_name  ,
+                   MIN(sir.intr_rate_type) AS intr_rate_type,
+                   MIN(sir.save_term) AS save_term,
+                   SUM(COALESCE(pwvc.view_count, 0)) AS total_view_count
+            FROM savings_products s
+                     JOIN saving_interest_rates sir ON s.saving_id = sir.saving_id
+                     JOIN banks b ON s.bank_id = b.bank_id
+                     LEFT JOIN product_wmti_view_counts pwvc ON s.saving_id = pwvc.saving_id
+            WHERE s.fin_category_id = #{finCategoryId}
+            GROUP BY s.saving_id
+            ORDER BY total_view_count DESC
+            LIMIT 3
+    </select>
+
+    <select id="getTopProductListByInvestType" resultMap="DepositDetailResultMap" parameterType="com.kb.saving.dto.SavingTopRequestDTO" >
+        SELECT s.saving_id,
+               s.bank_id,
+               s.saving_name,
+               s.dcls_strt_day,
+               s.join_deny,
+               s.join_member,
+               s.fin_category_id,
+               s.join_way,
+               s.mtrt_int,
+               s.etc_note,
+               s.max_prime_rate,
+               b.bank_id,
+               b.bank_logo_url,
+               b.bank_url,
+               MIN(sir.intr_rate2) AS intr_rate2,
+               b.bank_name  ,
+               MIN(sir.intr_rate_type) AS intr_rate_type,
+               MIN(sir.save_term) AS save_term
+        FROM savings_products s
+                 JOIN saving_interest_rates sir ON s.saving_id = sir.saving_id
+                 JOIN banks b ON s.bank_id = b.bank_id
+                 LEFT JOIN product_wmti_view_counts pwvc ON s.saving_id = pwvc.saving_id AND pwvc.invest_type = #{investType}
+        WHERE s.fin_category_id = #{finCategoryId}
+        GROUP BY s.saving_id
+        ORDER BY pwvc.view_count DESC
+        LIMIT 3
+    </select>
+
+
+    <select id="getTopSavingsProductList" resultMap="DepositDetailResultMap">
         SELECT s.saving_id,
                s.bank_id,
                s.saving_name,

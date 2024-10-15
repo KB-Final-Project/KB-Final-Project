@@ -4,7 +4,9 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { Swiper, SwiperSlide } from 'swiper/vue'; // Swiper와 SwiperSlide import
 import 'swiper/swiper-bundle.css';
+import { useAuthStore } from '@/stores/auth';
 
+const auth = useAuthStore();
 const savings = ref([]);
 const topSavings = ref([]);
 const loading = ref(true);
@@ -135,7 +137,11 @@ const resetInput = (event) => {
 const fetchTopSavings = async () => {
   loading.value = true;
   try {
-    const response = await axios.get('/api/saving/top');
+    const response = await axios.get('/api/saving/top', {
+      headers: {
+      Authorization: `Bearer ${auth.getToken()}` 
+      }
+    });
     if (response.data && response.data.length > 0) {
       topSavings.value = response.data;
       console.log(topSavings);
@@ -245,10 +251,15 @@ const truncateText = (text, maxLength) => {
     <p class="d-inline">꿈을 모아서</p>
     <br><br>
     <div class="savingBest">
-      <div class="text-start">
+      <div class="text-start"  v-if="!auth.investType || auth.investType === ''">
         <h2>고객님들이 선택한 BEST 인기상품</h2>
         <h4>가장 많이 사랑 받은 적금 상품</h4>
         <h5 style="color: rgba(68, 140, 116, 1);">가장 적은 개월 수에 많은 금리</h5><br><br>
+      </div>
+      <div class="text-start" v-else>
+        <h2>{{ auth.name }} 고객님을 위한 추천 상품</h2>
+        <h4>{{ auth.investType }}성향의 고객님들이 많이 조회한 적금 상품이에요.</h4>
+        <h5 style="color: rgba(68, 140, 116, 1);">다양한 상품을 찾아 보세요.</h5><br><br>
       </div>
       <!-- 로딩 메시지 -->
       <div v-if="loading" class="loading-box">
