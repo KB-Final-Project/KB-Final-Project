@@ -23,16 +23,17 @@
       <section class="stock-list">
         <p class="title">투자 성향별 추천 주식 목록</p>
         <div class="search-bar">
-          <input v-model="searchKeyword" placeholder="키워드를 입력해주세요" @keyup.enter="searchStocks" />
-          <button @click="fetchStocksByType('ALL')">전체</button>
-          <button @click="fetchStocksByType('IPWC')">IPWC</button>
-          <button @click="fetchStocksByType('IBMC')">IBMC</button>
-          <button @click="fetchStocksByType('IPMC')">IPMC</button>
-          <button @click="fetchStocksByType('IPML')">IPML</button>
-          <button @click="fetchStocksByType('IBWL')">IBWL</button>
-          <button @click="fetchStocksByType('APWL')">APWL</button>
-          <button @click="fetchStocksByType('ABWC')">ABWC</button>
+          <input v-model="searchKeyword" placeholder="키워드를 입력해주세요" @keyup.enter="searchStocks"/>
+          <button @click="fetchStocksByType('ALL')" :class="{'btn_type': true, 'active': selectedType === 'ALL'}">전체</button>
+          <button @click="fetchStocksByType('IPWC')" :class="{'btn_type': true, 'active': selectedType === 'IPWC'}">IPWC</button>
+          <button @click="fetchStocksByType('IBMC')" :class="{'btn_type': true, 'active': selectedType === 'IBMC'}">IBMC</button>
+          <button @click="fetchStocksByType('IPMC')" :class="{'btn_type': true, 'active': selectedType === 'IPMC'}">IPMC</button>
+          <button @click="fetchStocksByType('IBWL')" :class="{'btn_type': true, 'active': selectedType === 'IBWL'}">IBWL</button>
+          <button @click="fetchStocksByType('IPML')" :class="{'btn_type': true, 'active': selectedType === 'IPML'}">IPML</button>
+          <button @click="fetchStocksByType('APWL')" :class="{'btn_type': true, 'active': selectedType === 'APWL'}">APWL</button>
+          <button @click="fetchStocksByType('ABWC')" :class="{'btn_type': true, 'active': selectedType === 'ABWC'}">ABWC</button>
         </div>
+        
 
         <!-- 주식 목록 데이터 -->
         <table class="stock-table">
@@ -103,11 +104,13 @@ import axios from "axios";
 export default {
   data() {
     return {
+      selectedType: 'ALL', // 선택된 버튼의 상태
+      searchKeyword: '',
       stocks: [], // 전체 주식 목록
       currentStocks: [], // KOSPI, KOSDAQ, KOSPI200 데이터
       top3Stocks: [], // 등락률 상위 3개 주식
       error: null, // 에러 메시지
-      searchKeyword: "", // 검색 키워드
+
       currentPage: 1, // 현재 페이지
       totalPages: 1, // 전체 페이지 수
       itemsPerPage: 10, // 한 페이지에 표시할 항목 수
@@ -169,6 +172,7 @@ export default {
 
   methods: {
     async fetchStocksByType(type) {
+      this.selectedType = type;
       let apiUrl = "";
       switch (type) {
         case "IPWC":
@@ -530,14 +534,29 @@ a.more-link {
   width: 300px;
 }
 
-.stock-list .search-bar button {
-  margin-left: 10px;
-  padding: 10px 20px;
+.btn_type {
   background-color: #448c74;
   color: white;
+  margin-left: 10px;
+  padding: 10px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn_type:hover {
+  background-color: #90DAAA;
+}
+
+.btn_type:active {
+  background-color: #2a5b49;
+}
+
+/* 선택된 버튼에 적용될 active 클래스 */
+.btn_type.active {
+  background-color: #90DAAA;
+  color: white;
 }
 
 .stock-table th,
@@ -806,6 +825,7 @@ tbody tr:hover {
   font-size: 20px;
 }
 
+
 @media (max-width: 900px) {
   .main-news {
       flex-direction: column;
@@ -859,5 +879,6 @@ tbody tr:hover {
 .animate-on-load > *:nth-child(4) {
   animation-delay: 0.4s;
 }
+
 
 </style>
