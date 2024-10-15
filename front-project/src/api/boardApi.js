@@ -10,10 +10,19 @@ export default {
         console.log('BOARD GET LIST: ', data);
         return data;
     },
+    async createReply(postId, replyDTO) {
+        const { data } = await api.get(`/api/board/replyPlus/${postId}`, replyDTO);
+        return data;
+    },
 
     async likePost(postId) {
         const { data } = await api.post(`${BASE_URL}/${postId}/like`);
         return data; // 성공 시 응답 데이터 반환
+    },
+
+    async getReplies(postId) {
+        const { data } = await api.get(`${BASE_URL}/reply/${postId}`); // 댓글 API 엔드포인트
+        return data;
     },
 
 
@@ -34,11 +43,11 @@ export default {
         console.log('BOARD POST: ', data);
         return data;
     },
-    async get(no) {
-        const { data } = await api.get(`${BASE_URL}/${no}`);
-        console.log('BOARD GET', data);
-        return data;
-    },
+    // async get(no) {
+    //     const { data } = await api.get(`${BASE_URL}/${no}`);
+    //     console.log('BOARD GET', data);
+    //     return data;
+    // },
     async delete(postId) {
         const { data } = await api.delete(`${BASE_URL}/${postId}`);
         console.log('BOARD DELETE: ', data);

@@ -21,7 +21,6 @@ public class BoardParam {
 	private String searchValue;
 	private int amount;
 	private List<String> types;
-
 	// 페이징 인자, 요청 할 값
 	private int page = 1;
 

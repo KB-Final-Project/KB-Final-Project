@@ -79,6 +79,11 @@ const handleLike = async (index) => {
 const handleDelete = async (index) => {
   if (!confirm('삭제할까요?')) return;
   await api.delete(getPostIdFromRef(index));
+  reloadPosts();  // 페이지 새로 고침 추가
+};
+
+const reloadPosts = async () => {
+  await fetchBoardPosts(); // 게시글을 다시 불러오는 함수 호출
 };
 
 // 댓글 추가 처리 함수

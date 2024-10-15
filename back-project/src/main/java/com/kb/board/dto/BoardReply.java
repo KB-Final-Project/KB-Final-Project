@@ -17,7 +17,7 @@ public class BoardReply {
 	private Integer mno;
 	private String memberId;
 	private String memberName;
-	private String content;	
+	private String content;
 	private String status;
 	private Date createDate;
 	private Date modifyDate;
