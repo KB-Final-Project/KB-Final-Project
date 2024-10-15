@@ -11,6 +11,12 @@ export default {
         return data;
     },
 
+    async likePost(postId) {
+        const { data } = await api.post(`${BASE_URL}/${postId}/like`);
+        return data; // 성공 시 응답 데이터 반환
+    },
+
+
     async create(article) {
         const formData = new FormData();
         formData.append('title', article.title);
@@ -33,8 +39,8 @@ export default {
         console.log('BOARD GET', data);
         return data;
     },
-    async delete(no) {
-        const { data } = await api.delete(`${BASE_URL}/${no}`);
+    async delete(postId) {
+        const { data } = await api.delete(`${BASE_URL}/${postId}`);
         console.log('BOARD DELETE: ', data);
         return data;
     },
