@@ -65,37 +65,38 @@ onMounted(() => {
 
 <template>
   <div class="gold">
-    <div class="container text-center">
-      <h1>금</h1>
-      <br>
-      <div class="goldQuote">
-        <p class="fs-2 text-start">순금 시세</p>
-        <p class="text-end">현재 날짜</p>
-        <br>
-        <div class="goldQuoteText">
-          <br><br>
-          <table class="quoteTable">
-            <thead>
-              <tr>
-                <td><h3>내가 살 때(VAT포함)</h3></td>
-                <td><h3>내가 팔 때(VAT포함)</h3></td>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><h3>40000</h3></td>
-                <td><h3>40000</h3></td>
-              </tr>
-              <tr>
-                <td><h3>40</h3></td>
-                <td><h3>40</h3></td>
-              </tr>
-            </tbody>
-          </table>
-          <br><br>
-        </div>
-      </div>
-    </div><br><br>
+    <br><br>
+      <h1 class="text-center">금</h1>
+<!--    <div class="container text-center">-->
+<!--      <br>-->
+<!--      <div class="goldQuote">-->
+<!--        <p class="fs-2 text-start">순금 시세</p>-->
+<!--        <p class="text-end">현재 날짜</p>-->
+<!--        <br>-->
+<!--        <div class="goldQuoteText">-->
+<!--          <br><br>-->
+<!--          <table class="quoteTable">-->
+<!--            <thead>-->
+<!--              <tr>-->
+<!--                <td><h3>내가 살 때(VAT포함)</h3></td>-->
+<!--                <td><h3>내가 팔 때(VAT포함)</h3></td>-->
+<!--              </tr>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--              <tr>-->
+<!--                <td><h3>40000</h3></td>-->
+<!--                <td><h3>40000</h3></td>-->
+<!--              </tr>-->
+<!--              <tr>-->
+<!--                <td><h3>40</h3></td>-->
+<!--                <td><h3>40</h3></td>-->
+<!--              </tr>-->
+<!--            </tbody>-->
+<!--          </table>-->
+<!--          <br><br>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div><br><br>-->
     
     <!-- 금 시세 테이블 -->
     <div class="text-center container">
@@ -119,17 +120,17 @@ onMounted(() => {
             </tr>
           </tbody>
         </table>
-        <button @click="loadMore" class="btn btn-primary mt-4" :disabled="loading">
+        <button @click="loadMore" class="btn mt-4" :disabled="loading">
           {{ loading ? '로딩 중...' : '더보기' }}
         </button>
       </div>
       <br><br>
       
       <!-- 금 시세 그래프 -->
-      <div class="goldQuoteGraph">
-        <h2 class="d-inline">금 시세</h2><p class="d-inline" style="font-size: 27px; font-weight: 700;">그래프</p>
-        <div>그래프</div>
-      </div>
+<!--      <div class="goldQuoteGraph">-->
+<!--        <h2 class="d-inline">금 시세</h2><p class="d-inline" style="font-size: 27px; font-weight: 700;">그래프</p>-->
+<!--        <div>그래프</div>-->
+<!--      </div>-->
       <br><br>
       <div class="text-start">
         <h2 class="d-inline">일별 국제 금시세</h2><h5 class="d-inline">By TradingView</h5>
@@ -156,6 +157,9 @@ onMounted(() => {
 .goldQuoteText{
   border-radius: 30px;
   background-color: rgba(0, 0, 0, 0.65);
+}
+.btn{
+  background-color: rgb(255, 255, 255);
 }
 
 h3{

@@ -21,5 +21,5 @@ public interface MemberMapper {
     int checkDuplicateByKakaoId(String id);
     Integer getMemberAutoIncrement();
     int updateInvestType(Member member);
-
+    Integer checkPassword(String id, ChangePasswordDTO changePassword);
 }
