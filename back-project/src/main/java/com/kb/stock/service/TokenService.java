@@ -31,10 +31,11 @@ public class TokenService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    private String currentAccessToken;   // 캐시된 접근 토큰
-    private LocalDateTime tokenIssuedTime;  // 토큰 발급 시간
+    private String currentAccessToken;
+    private LocalDateTime tokenIssuedTime;
     private long tokenExpiryDuration = 24 * 60 * 60; // 24시간 (초)
 
+    // 토큰 발급 API 호출 메서드
     public String requestNewToken() {
         logger.info("새로운 Access Token 요청 중...");
 
@@ -49,7 +50,12 @@ public class TokenService {
 
         HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
         try {
-            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, request, Map.class);
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    request,
+                    Map.class
+            );
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 currentAccessToken = (String) response.getBody().get("access_token");
@@ -68,6 +74,7 @@ public class TokenService {
         }
     }
 
+    // 토큰 유효성 확인 메서드
     public boolean isTokenValid() {
         if (currentAccessToken == null || tokenIssuedTime == null) {
             return false; // 토큰이 없으면 유효하지 않음
@@ -77,6 +84,7 @@ public class TokenService {
         return secondsElapsed < tokenExpiryDuration; // 24시간 내에 유효한지 확인
     }
 
+    // 유효한 토큰을 가져오는 메서드 (없으면 새로 발급)
     public String getAccessToken() {
         if (isTokenValid()) {
             logger.info("기존 유효한 토큰 반환");
@@ -85,4 +93,6 @@ public class TokenService {
             return requestNewToken(); // 토큰이 없거나 만료되었으면 새로 발급
         }
     }
+
+
 }
