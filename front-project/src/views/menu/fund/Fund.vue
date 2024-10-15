@@ -9,6 +9,7 @@ const currentPage = ref(1);
 const totalPages = ref(1);
 const pageSize = ref(20); // 페이지당 항목 수
 const selectedGrade = ref(null); // 선택된 등급
+const selectedCategory = ref(null); // 선택된 카테고리
 
 const isLoading = ref(false);
 const error = ref(null);
@@ -26,21 +27,54 @@ const formatDate = (dateString) => {
   return `${year}.${month}.${day}`;
 };
 
+const filterFunds = () => {
+  if (!selectedCategory.value) {
+    return allFunds.value; // 카테고리가 선택되지 않았으면 전체 데이터 반환
+  }
+
+  return allFunds.value.filter(fund => {
+    const fundName = fund.fundFnm.toLowerCase();
+    const category = selectedCategory.value.toLowerCase();
+
+    switch (selectedCategory.value) {
+      case 'stock':
+        return fundName.includes('주식');
+      case 'bond':
+        return fundName.includes('채권');
+      case 'mixed':
+        return fundName.includes('혼합');
+      default:
+        return true; // 기타
+    }
+  });
+};
+
+// 카테고리 버튼 클릭 시 필터링과 페이지네이션 업데이트
+const updateCategoryFilter = (category) => {
+  selectedCategory.value = category;
+  fetchAllFunds(); // 카테고리 업데이트 후 데이터 새로 불러오기
+};
+
+// fetchAllFunds 함수에서 호출될 때의 paginateFunds 수정
 const fetchAllFunds = async () => {
   isLoading.value = true;
   error.value = null;
   try {
     const response = await axios.get('/api/funds/all', {
       params: {
-        grade: selectedGrade.value, // 선택된 등급을 쿼리 파라미터로 전달
+        grade: selectedGrade.value,
+        category: selectedCategory.value, // 카테고리 추가
       },
     });
-    allFunds.value = response.data; // 전체 데이터 저장
+    allFunds.value = response.data;
 
     // 데이터를 받은 후 초기 정렬 적용
     sortFunds(sortKey.value, false);
+    
+    // 필터링된 데이터로 표시
+    displayedFunds.value = filterFunds(); 
 
-    totalPages.value = Math.ceil(allFunds.value.length / pageSize.value); // 페이지 수 계산
+    totalPages.value = Math.ceil(displayedFunds.value.length / pageSize.value); // 페이지 수 계산
     currentPage.value = 1; // 첫 페이지로 설정
     paginateFunds(); // 첫 페이지 데이터를 표시
   } catch (err) {
@@ -50,6 +84,7 @@ const fetchAllFunds = async () => {
     isLoading.value = false;
   }
 };
+
 
 
 const searchFundsFunc = async () => {
@@ -81,10 +116,11 @@ const goToFund  = (fundCd) => {
 };
 
 
-const paginateFunds = () => {
+// paginateFunds 함수를 수정하여 인자를 받을 수 있도록
+const paginateFunds = (funds = allFunds.value) => {
   const start = (currentPage.value - 1) * pageSize.value;
   const end = start + pageSize.value;
-  displayedFunds.value = allFunds.value.slice(start, end);
+  displayedFunds.value = funds.slice(start, end); // 인자로 받은 데이터로 표시
 };
 
 const goToPage = (page) => {
@@ -220,21 +256,31 @@ onMounted(() => {
         <button class="searchBtn" type="button" @click="fetchAllFunds">전체보기</button>
       </div>
 
-      <div class="text-right">
-      <h2 class="d-inline search">등급 필터</h2>
+      <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h2 class="d-inline search">등급 필터</h2>
         <button class="filterBtn" @click="selectedGrade = '1-2'; fetchAllFunds()">고위험</button>
         <button class="filterBtn" @click="selectedGrade = '3-4'; fetchAllFunds()">중위험</button>
         <button class="filterBtn" @click="selectedGrade = '5-6'; fetchAllFunds()">저위험</button>
         <button class="filterBtn" @click="selectedGrade = null; fetchAllFunds()">전체보기</button>
       </div>
-
-
-      <!-- 로딩 메시지 -->
-      <div v-if="isLoading" class="loading-box">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">데이터를 불러오는 중...</span>
-        </div>
+      
+      <div class="text-right">
+        <h2 class="d-inline search">카테고리 필터</h2>
+        <button class="filterBtn" @click="updateCategoryFilter('stock')">주식</button>
+        <button class="filterBtn" @click="updateCategoryFilter('bond')">채권</button>
+        <button class="filterBtn" @click="updateCategoryFilter('mixed')">혼합</button>
+        <button class="filterBtn" @click="updateCategoryFilter(null)">전체보기</button>
       </div>
+    </div>
+
+        <!-- 로딩 메시지 -->
+        <div v-if="isLoading" class="loading-box">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">데이터를 불러오는 중...</span>
+            </div>
+        </div>
+
 
       <!-- 에러 메시지 -->
       <div v-if="error" class="text-center text-danger mt-4">
