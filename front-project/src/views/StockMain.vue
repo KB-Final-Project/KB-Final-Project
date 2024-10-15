@@ -351,7 +351,7 @@ export default {
     },
     async fetchAllStocksData() {
       try {
-        const response = await axios.get('http://localhost:8080/api/stocks/all');
+        const response = await axios.get("http://localhost:8080/api/websocket/prices");
         this.stocks = Object.values(response.data);
         this.updateTop3Stocks();
         // 카테고리가 null이 아닌 항목들만 필터링
