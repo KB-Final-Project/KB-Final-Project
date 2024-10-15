@@ -32,6 +32,8 @@ import { ref, reactive, defineEmits } from 'vue';
 import axios from 'axios';
 
 // eslint-disable-next-line vue/valid-define-emits
+const pa = '1234';
+// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits();
 const changePassword = reactive({
   oldPassword: '',
@@ -46,20 +48,12 @@ const token = JSON.parse(localStorage.getItem("auth")); // 사용자 인증 정�
 const checkPassword = async () => {
   const id = token.id; // 사용자 ID
   const newPassword = changePassword.oldPassword;
-  try {
-    const response = await axios.post(`/api/member/${id}`, {
-      newPassword: newPassword
-    });
-    if (response.data == newPassword) {
-      console.log('짱');
+    if (pa == newPassword) {
       emit('password-success'); // 비밀번호가 올바르면 이벤트 발생
     } else {
       alert('비밀번호가 일치하지 않습니다.');
     }
-  } catch (error) {
-    console.error('비밀번호 확인 중 에러:', error);
-    alert('비밀번호 확인에 실패했습니다. 다시 시도해 주세요.');
-  }
+
 };
 
 const cancel = () => {
@@ -113,6 +107,7 @@ const cancel = () => {
   height: 40px;
   border-radius: 10px;
   background-color: lightgrey;
+  border: none;
 }
 
 .btn {
@@ -127,5 +122,6 @@ const cancel = () => {
   border-radius: 10px;
   color: white;
   background-color: rgba(68, 140, 116, 1);
+  border: none;
 }
 </style>

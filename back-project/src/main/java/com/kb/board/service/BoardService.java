@@ -234,4 +234,14 @@ public class BoardService {
         post.setLikesCount(likesCount);
         return post;
     }
+
+    public List<BoardPost> mySelectPostList(String memberId) {
+        List<BoardPost> boardList = mapper.mySelectPostList(memberId);
+        return boardList;
+    }
+
+    public List<BoardReply> selectReplyByBno(long postId) {
+        List<BoardReply> replyList = mapper.selectReplyByBno(postId);
+        return replyList;
+    }
 }

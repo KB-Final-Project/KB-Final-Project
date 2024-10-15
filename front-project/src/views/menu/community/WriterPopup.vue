@@ -117,7 +117,7 @@ const submit = async () => {
   try {
     await createBoardPost();
     router.push(`/community/${mappedPostType.value}`);
-    location.reload(); // 페이지 새로 고침 추가
+    reloadPosts(); // 페이지 새로 고침 추가
   } catch (error) {
     console.error('Error creating board post:', error);
     errorMessage.value = '게시물을 작성하는 중 오류가 발생했습니다. 다시 시도해주세요.';
@@ -146,6 +146,11 @@ function handleFileChange(event) {
 function closePopup() {
   emit('close');
 }
+
+
+const reloadPosts = async () => {
+  location.reload();
+};
 
 onMounted(() => {
   fetchUserInvestType();
