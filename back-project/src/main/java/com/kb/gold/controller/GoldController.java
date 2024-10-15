@@ -26,7 +26,7 @@ public class GoldController {
     private final GoldService goldService;
 
     @GetMapping("/fetchGoldData")
-    public ResponseEntity<String> fetchGoldData(@RequestParam String day) {
+    public ResponseEntity<String> fetchGoldData() {
         try {
             goldService.fetchAndSaveGoldDataFromSpecificDate();
             return ResponseEntity.ok("금 데이터가 성공적으로 가져와지고 저장되었습니다.");
