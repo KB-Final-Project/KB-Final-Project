@@ -14,24 +14,24 @@
       <!-- trendGraph -->
       <div class="trendGraph">
         <div class="btn1 ">
-          <img src="/img/samsung.png">
+          <img src="/img/samsung.png" class="logo">
           <span>삼성전자</span>
-          <img src="/img/graph.png">
+          <img src="/img/mi1.png" class="graph">
         </div>
         <div class="btn2 ">
-          <img src="/img/hanhwa.png">
+          <img src="/img/hanhwa.png" class="logo">
           <span>한화에어로스페이스</span>
-          <img src="/img/graph.png">
+          <img src="/img/pl1.png" class="graph">
         </div>
         <div class="btn1 ">
-          <img src="/img/hana.png">
+          <img src="/img/hana.png" class="logo">
           <span>하나금융지주</span>
-          <img src="/img/graph.png">
+          <img src="/img/mi2.png" class="graph">
         </div>
         <div class="btn2 ">
-          <img src="/img/LGE.png">
+          <img src="/img/LGE.png" class="logo">
           <span>LG에너지솔루션</span>
-          <img src="/img/graph.png">
+          <img src="/img/pl2.png" class="graph">
         </div>
       </div>
     </div>
@@ -103,6 +103,7 @@ const goToStock = () => {
 
 .trendGraph span {
   font-size: 20px;
+  width: 300px;
   font-weight: 700;
 }
 
@@ -117,13 +118,11 @@ const goToStock = () => {
   padding: 0 20px;
 }
 
-.trendGraph div img {
+.logo{
   width: 50px;
   height: 50px;
   margin: 0 27px;
   border-radius: 50%;
-
-
 }
 
 .trendGraph div:nth-child(odd) {
@@ -148,6 +147,11 @@ const goToStock = () => {
 
 .trendMenu {
   font-family: J5;
+}
+
+.graph {
+  height: 50px;
+  margin: 0 27px;
 }
 </style>
 

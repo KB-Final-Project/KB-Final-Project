@@ -3,37 +3,37 @@
     <div class="container">
       <router-link to="/" class="navbar-brand pe-sm-3">
         <span class="text-primary flex-shrink-0 me-2">
-           </span><img class="invetiLogo" src="/img/inveti.png">
+        </span><img class="invetiLogo" src="/img/inveti.png">
       </router-link>
       <button class="navbar-toggler ms-sm-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <nav class="collapse navbar-collapse" id="navbarNav">
-        <ul  class="navbar-nav navbar-nav-scroll me-auto" style="--ar-scroll-height: 520px;">
+        <ul class="navbar-nav navbar-nav-scroll me-auto" style="--ar-scroll-height: 520px;">
           <li v-for="(item, index) in menuItems" :key="index" class="nav-item" :class="{ dropdown: item.subItems }"
-              @mouseenter="hoverDropdown(index, true)"
-              @mouseleave="hoverDropdown(index, false)">
-            <a style="font-size:18px;" v-if="!item.subItems" class="nav-link" :class="{ active: item.active }" :href="item.href">{{ item.text
+            @mouseenter="hoverDropdown(index, true)" @mouseleave="hoverDropdown(index, false)">
+            <a style="font-size:18px;" v-if="!item.subItems" class="nav-link" :class="{ active: item.active }"
+              :href="item.href">{{ item.text
               }}</a>
             <template v-else>
-              <a style="font-size:18px;" class="nav-link dropdown-toggle" :class="{ active: item.active }" href="#" data-bs-toggle="dropdown"
-                 :data-bs-auto-close="item.autoClose" aria-expanded="false">
+              <a style="font-size:18px;" class="nav-link dropdown-toggle" :class="{ active: item.active }" href="#"
+                data-bs-toggle="dropdown" :data-bs-auto-close="item.autoClose" aria-expanded="false">
                 {{ item.text }}
                 <i :class="dropdownStates[index] ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
               </a>
               <ul class="dropdown-menu" :class="{ 'overflow-hidden p-0': item.megaMenu }">
-                <template  v-if="item.megaMenu">
+                <template v-if="item.megaMenu">
                   <div class="d-lg-flex">
                     <div v-for="(column, colIndex) in item.subItems" :key="colIndex"
-                         class="mega-dropdown-column pt-1 pt-lg-3 pb-lg-4">
+                      class="mega-dropdown-column pt-1 pt-lg-3 pb-lg-4">
                       <ul class="list-unstyled mb-0">
                         <li v-for="(subItem, subIndex) in column" :key="subIndex">
                           <a style="font-size:17px;" class="dropdown-item" :href="subItem.href">{{
-                              subItem.text
-                            }}</a>
+                            subItem.text
+                          }}</a>
                           <span v-if="subItem.bgImage"
-                                class="mega-dropdown-column position-absolute top-0 end-0 h-100 bg-size-cover bg-repeat-0 rounded-3 rounded-start-0"
-                                :style="{
+                            class="mega-dropdown-column position-absolute top-0 end-0 h-100 bg-size-cover bg-repeat-0 rounded-3 rounded-start-0"
+                            :style="{
                               backgroundImage: `url(${subItem.bgImage})`,
                             }"></span>
                         </li>
@@ -44,20 +44,20 @@
                 </template>
                 <template v-else>
                   <li v-for="(subItem, subIndex) in item.subItems" :key="subIndex"
-                      :class="{ dropdown: subItem.subItems }">
+                    :class="{ dropdown: subItem.subItems }">
                     <template v-if="!subItem.subItems">
                       <a style="font-size:17px;" class="dropdown-item" :href="subItem.href">{{
-                          subItem.text
-                        }}</a>
+                        subItem.text
+                      }}</a>
                     </template>
                     <template v-else>
-                      <a style="font-size:17px;" class="dropdown-item dropdown-toggle" href="#" data-bs-toggle="dropdown"
-                         aria-expanded="false">{{ subItem.text }}</a>
+                      <a style="font-size:17px;" class="dropdown-item dropdown-toggle" href="#"
+                        data-bs-toggle="dropdown" aria-expanded="false">{{ subItem.text }}</a>
                       <ul class="dropdown-menu" style=";">
                         <li v-for="(grandChild, grandIndex) in subItem.subItems" :key="grandIndex">
                           <a style="font-size:17px;" class="dropdown-item" :href="grandChild.href">{{
-                              grandChild.text
-                            }}</a>
+                            grandChild.text
+                          }}</a>
                         </li>
                       </ul>
                     </template>
@@ -71,9 +71,10 @@
         <!-- 로그인 버튼을 투자성향과 동일하게 변경 -->
         <ul class="navbar-nav">
           <template v-if="islogin">
-            <li id="headerLoginBtn" class="nav-item dropdown" @mouseenter="hoverLoginDropdown(true)" @mouseleave="hoverLoginDropdown(false)">
+            <li id="headerLoginBtn" class="nav-item dropdown" @mouseenter="hoverLoginDropdown(true)"
+              @mouseleave="hoverLoginDropdown(false)">
               <router-link style="font-size:17px;" class="dropdown-item" to="/myPage">
-                {{name}} <i :class="loginDropdownState ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
+                {{ name }} <i :class="loginDropdownState ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
               </router-link>
               <ul class="dropdown-menu" v-show="loginDropdownState">
                 <li>
@@ -86,7 +87,8 @@
             </li>
           </template>
           <template v-else>
-            <li id="headerLoginBtn" class="nav-item dropdown" @mouseenter="hoverLoginDropdown(true)" @mouseleave="hoverLoginDropdown(false)">
+            <li id="headerLoginBtn" class="nav-item dropdown" @mouseenter="hoverLoginDropdown(true)"
+              @mouseleave="hoverLoginDropdown(false)">
               <router-link style="font-size:17px;" class="dropdown-item" to="/auth/login">
                 로그인 <i :class="loginDropdownState ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
               </router-link>
@@ -104,8 +106,8 @@
 
         <div class="d-sm-none p-3 mt-n3">
           <a class="btn btn-primary w-100 mb-1"
-             href="https://themes.getbootstrap.com/product/around-multipurpose-template-ui-kit/" target="_blank"
-             rel="noopener">
+            href="https://themes.getbootstrap.com/product/around-multipurpose-template-ui-kit/" target="_blank"
+            rel="noopener">
             <i class="ai-cart fs-xl me-2 ms-n1"></i>Buy now
           </a>
         </div>
@@ -137,43 +139,25 @@ const menuItems = ref([
   {
     text: '투자성향',
     href: '#',
-    active: true,
-    megaMenu: true,
     subItems: [
-      [
-        { text: '테스트하기', href: '/test-start' },
-        {
-          text: '투자성향 보기',
-          href: '/index.html'
-        },
-      ],
+      { text: '테스트하기', href: '/test-start' },
+      {
+        text: '투자성향 보기',
+        href: '/index.html'
+      },
     ],
   },
   {
-    text: '금융상품',
+    text: '투자상품',
     href: '#',
     subItems: [
-      {
-        text: '예금',
-        href: '/deposit',
-        subItems: [
-          { text: '예금 찾기', href: '/deposit' },
-        ],
-      },
-      {
-        text: '적금',
-        href: 'savings',
-        subItems: [
-          { text: '적금 찾기', href: '/savings' },
-        ],
-      },
       {
         text: '주식',
         href: '#',
         subItems: [
-          { text: '주식메인', href: '/StockMain' },
-          { text: '주식상세페이지', href: '/StockDetail' },
-      ],
+          { text: '전체 주식', href: '/StockMain' },
+          { text: '투자 성향별 주식', href: '/StockDetail' },
+        ],
       },
       {
         text: '펀드',
@@ -184,11 +168,16 @@ const menuItems = ref([
         ],
       },
       {
+        text: '예금',
+        href: '/deposit',
+      },
+      {
+        text: '적금',
+        href: '/savings',
+      },
+      {
         text: 'ISA',
-        href: '#',
-        subItems: [
-          { text: 'ISA', href: '/isa' },
-        ],
+        href: '/isa',
       },
     ],
   },
@@ -208,7 +197,7 @@ const menuItems = ref([
       },
       { text: '환전', href: '/currencyExchange' },
       { text: '뉴스', href: '/news' },
-      { text: '마이페이지(임시)', href: '/myPage' },
+      { text: '마이페이지', href: '/myPage' },
     ],
   },
 ]);
@@ -234,6 +223,7 @@ const hoverLoginDropdown = (state) => {
 .row.justify-content-center.text-center.pt-md-2.pt-xl-2.pb-5.mb-md-2 {
   height: 600px;
 }
+
 // 부트스트랩 색상
 .bg-primary.position-absolute.top-0.start-0.w-100.h-100 {
   background-color: #448c74 !important;
@@ -250,7 +240,7 @@ const hoverLoginDropdown = (state) => {
 </style>
 
 <style scoped>
-.navbar-expand-lg .dropdown:hover > .dropdown-menu{
+.navbar-expand-lg .dropdown:hover>.dropdown-menu {
   border-radius: 15px;
 }
 
@@ -263,7 +253,7 @@ a.nav-link {
   color: black;
 }
 
-.appHeader{
+.appHeader {
   height: 80px;
 }
 
@@ -288,30 +278,32 @@ a.nav-link {
   --ar-navbar-toggler-padding-y: 0.625rem;
 }
 
-#headerLoginBtn{
+#headerLoginBtn {
   width: 100px;
   height: 40px;
   border-radius: 10px;
   border: 1px solid lightgrey;
   background-color: rgba(67, 140, 116, 1);
   text-align: center;
-  color:white;
+  color: white;
   padding: 5px;
 }
 
-#headerLoginBtn:hover{
+#headerLoginBtn:hover {
   color: black;
   background-color: lightgrey;
 }
-.invetiLogo{
+
+.invetiLogo {
   width: 100px;
 }
 
-.dropdown-menu{
-  --bs-dropdown-link-active-bg: rgb(61, 141, 115);
+.dropdown-menu {
+  --bs-dropdown-link-active-bg: none;
 }
-.dropdown-item .dropdown-toggle{
-  color:white;
+
+.dropdown-item .dropdown-toggle {
+  color: white;
 }
 
 .nav-item {

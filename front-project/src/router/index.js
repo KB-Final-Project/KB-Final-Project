@@ -133,6 +133,7 @@ const routes = [
     path: '/dictionary',
     name: 'dictionary',
     component: Dictionary,
+    props: route => ({ searchQuery: route.query.search || '' })
   },
   {
     path: '/savings',

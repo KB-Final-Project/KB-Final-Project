@@ -31,7 +31,9 @@ public class FundsController {
 
     // 모든 펀드 조회 엔드포인트 (옵션)
     @GetMapping("/all")
-    public ResponseEntity<List<FundsDTO>> findAllFunds(@RequestParam(required = false) String grade) {
-        return ResponseEntity.ok(fundsService.findAllFunds(grade));
+    public ResponseEntity<List<FundsDTO>> findAllFunds(
+            @RequestParam(required = false) String grade,
+            @RequestParam(required = false) String category) {
+        return ResponseEntity.ok(fundsService.findAllFunds(grade, category));
     }
 }

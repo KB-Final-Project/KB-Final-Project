@@ -253,6 +253,14 @@ export default {
     if (content.title.includes('주식') || content.link === '/StockDetail') {
       return { path: '/StockDetail', query: { userType: this.userType } };
     }
+    // `dictionary` 링크일 경우에만 `param` 추가
+    if (content.link === '/dictionary') {
+      const query = { userType: this.userType };
+      if (content.param) {
+        query.search = content.param;  // `param`이 있는 경우에만 `search` 파라미터 추가
+      }
+      return { path: content.link, query };
+    }
     // 주식이 아닌 경우 원래의 링크로 이동
     return { path: content.link, query: { userType: this.userType } };
   },
@@ -375,7 +383,8 @@ export default {
             title: "외화예금 상품 ",
             description: "환율 변동을 활용한 수익과 함께 안정적인 이자 수익을 얻을 수 있습니다.",
             icon: require("@/assets/img/analysis/15.png"),
-            link: "/dictionary", 
+            link: "/dictionary",
+            param : "외화예금", 
             // 대호님추가 해당 상품에 맞는 id값 넘겨주면 될듯요?
           },
           
@@ -389,6 +398,7 @@ export default {
             description: "환율 변동을 활용한 수익과 함께 안정적인 이자 수익을 얻을 수 있습니다.",
             icon: require("@/assets/img/analysis/12.png"),
             link: "/dictionary", 
+            param : "외화예금",
             // 대호님추가
           },
           {
@@ -550,6 +560,7 @@ export default {
           description: "부동산 시장에 간접 투자하여 안정적인 배당 수익을 노려보세요.",
             icon: require("@/assets/img/analysis/3.png"),
             link: "/dictionary",
+            param : "REIT 투자",
             // 대호님추가
           },
           {
@@ -599,6 +610,7 @@ export default {
     description: "비상장 기업에 투자하여 IPO 전 높은 수익을 기대할 수 있습니다.",
             icon: require("@/assets/img/analysis/3.png"),
             link: "/dictionary",
+            param : "장외 주식 투자",
             // 대호님추가 
           },
           {
@@ -617,7 +629,8 @@ export default {
     description: "파생상품을 활용하여 만든 초고위험 ETF로, 극단적인 수익을 노릴 수 있습니다.",
 
             icon: require("@/assets/img/analysis/3.png"),
-            link: "/dictionary",
+            link: "/dictionary?search=합성 ETF",
+            param : "합성 ETF",
             // 대호님추가 
           },
           {
@@ -636,6 +649,7 @@ export default {
     description: "높은 수익을 노릴 수 있는 복잡한 구조의 ELS 상품에 투자해보세요.",
             icon: require("@/assets/img/analysis/3.png"),
             link: "/dictionary",
+            param : "ELS",
             // 대호님추가 
           },
           {
@@ -661,6 +675,7 @@ export default {
 
             icon: require("@/assets/img/analysis/3.png"),
             link: "/dictionary",
+            param : "암호화폐 펀드",
             // 대호님추가 
           },
           {
@@ -686,6 +701,7 @@ export default {
 
             icon: require("@/assets/img/analysis/3.png"),
             link: "/dictionary",
+            param : "메자닌 투자",
             // 대호님추가 
           },
           {
