@@ -1,27 +1,41 @@
 <template>
   <div class="stock-dashboard">
     <h1><b>국내주식</b></h1>
-    <div class="container animate-on-load">
+    <div class="container">
+      <div v-if="error" class="error-message">{{ error }}</div>
+
       <!-- 이 시각 증시 (KOSPI, KOSDAQ, KOSPI200) -->
       <section class="current-stocks">
         <div class="section-header">
-          <p class="title">이 시각 주가지수</p>
+          <p class="title">이 시각 증시</p>
         </div>
         <div class="stock-cards">
-          <div v-for="(stock, index) in currentStocks" :key="index"
-            :class="{ 'positive-card': stock.change && stock.change.includes('+'), 'negative-card': stock.change && stock.change.includes('-') }"
-            class="stock-card">
+          <div
+            v-for="(stock, index) in currentStocks"
+            :key="index"
+            :class="{
+              'positive-card': stock.change && stock.change.includes('+'),
+              'negative-card': stock.change && stock.change.includes('-'),
+            }"
+            class="stock-card"
+          >
             <p class="stock-title">{{ stock.name }}</p>
             <p class="amount-txt">{{ stock.amount }}</p>
             <p>
-              <span v-if="stock.change && stock.change.includes('+')" class="positive">
+              <span
+                v-if="stock.change && stock.change.includes('+')"
+                class="positive"
+              >
                 {{ stock.change }}
               </span>
-              <span v-else-if="stock.change && stock.change.includes('-')" class="negative">
+              <span
+                v-else-if="stock.change && stock.change.includes('-')"
+                class="negative"
+              >
                 {{ stock.change }}
               </span>
               <span v-else>
-                {{ stock.change ? stock.change : 'N/A' }}
+                {{ stock.change ? stock.change : "N/A" }}
               </span>
             </p>
             <div class="line-c">
@@ -30,18 +44,24 @@
           </div>
         </div>
       </section>
-
       <p class="middle-title">현재 상위권 TOP3 🏆</p>
       <section class="top3-stocks">
         <div class="top3-cards">
-          <div v-for="(stock, index) in top3Stocks" :key="index" class="top3-card" @click="goToStockChart(stock)">
+          <div
+            v-for="(stock, index) in top3Stocks"
+            :key="index"
+            class="top3-card"
+            @click="goToStockChart(stock)"
+          >
             <h3>{{ stock.stockName }}</h3>
             <p>{{ stock.currentPrice }}</p>
             <!-- 상승/하락에 따른 아이콘 표시 -->
-            <p :class="{
-              positive: stock.priceChangePct > 0,
-              negative: stock.priceChangePct < 0,
-            }">
+            <p
+              :class="{
+                positive: stock.priceChangePct > 0,
+                negative: stock.priceChangePct < 0,
+              }"
+            >
               {{ stock.priceChange }} ({{ stock.priceChangePct }}%)
             </p>
           </div>
@@ -58,53 +78,80 @@
         <table class="stock-table">
           <thead>
             <tr>
-              <th @click="sortBy('stockName')" :class="{ active: sortKey === 'stockName' }">
+              <th
+                @click="sortBy('stockName')"
+                :class="{ active: sortKey === 'stockName' }"
+              >
                 종목명
-                <span v-if="sortKey === 'stockName'" :class="{
-                  'sort-arrow': true,
-                  'sort-reverse': sortOrder === -1,
-                }"></span>
+                <span
+                  v-if="sortKey === 'stockName'"
+                  :class="{
+                    'sort-arrow': true,
+                    'sort-reverse': sortOrder === -1,
+                  }"
+                ></span>
               </th>
-              <th @click="sortBy('currentPrice')" :class="{ active: sortKey === 'currentPrice' }">
+              <th
+                @click="sortBy('currentPrice')"
+                :class="{ active: sortKey === 'currentPrice' }"
+              >
                 현재가
-                <span v-if="sortKey === 'currentPrice'" :class="{
-                  'sort-arrow': true,
-                  'sort-reverse': sortOrder === -1,
-                }"></span>
+                <span
+                  v-if="sortKey === 'currentPrice'"
+                  :class="{
+                    'sort-arrow': true,
+                    'sort-reverse': sortOrder === -1,
+                  }"
+                ></span>
               </th>
-              <th @click="sortBy('priceChange')" :class="{ active: sortKey === 'priceChange' }">
+              <th
+                @click="sortBy('priceChange')"
+                :class="{ active: sortKey === 'priceChange' }"
+              >
                 등락률
-                <span v-if="sortKey === 'priceChange'" :class="{
-                  'sort-arrow': true,
-                  'sort-reverse': sortOrder === -1,
-                }"></span>
+                <span
+                  v-if="sortKey === 'priceChange'"
+                  :class="{
+                    'sort-arrow': true,
+                    'sort-reverse': sortOrder === -1,
+                  }"
+                ></span>
               </th>
-              <th @click="sortBy('volume')" :class="{ active: sortKey === 'volume' }">
+              <th
+                @click="sortBy('volume')"
+                :class="{ active: sortKey === 'volume' }"
+              >
                 누적 거래량(주)
-                <span v-if="sortKey === 'volume'" :class="{
-                  'sort-arrow': true,
-                  'sort-reverse': sortOrder === -1,
-                }"></span>
+                <span
+                  v-if="sortKey === 'volume'"
+                  :class="{
+                    'sort-arrow': true,
+                    'sort-reverse': sortOrder === -1,
+                  }"
+                ></span>
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(stock, index) in limitedStocks" :key="index" @click="goToStockChart(stock)">
+            <tr
+              v-for="(stock, index) in sortedStocks"
+              :key="index"
+              @click="goToStockChart(stock)"
+            >
               <td>{{ stock.stockName }}</td>
               <td>{{ stock.currentPrice.toLocaleString() }}원</td>
-              <td :class="{
-                positive: stock.priceChange > 0,
-                negative: stock.priceChange < 0,
-              }">
+              <td
+                :class="{
+                  positive: stock.priceChange > 0,
+                  negative: stock.priceChange < 0,
+                }"
+              >
                 {{ stock.priceChange }}
                 ({{ stock.priceChangePct }})%
               </td>
-              <td>
-                {{ stock.volume.toLocaleString() }}주
-              </td>
+              <td>{{ stock.volume.toLocaleString() }}주</td>
             </tr>
           </tbody>
-
         </table>
       </section>
 
@@ -116,14 +163,20 @@
           </button>
         </div>
         <div class="category-cards">
-          <div v-for="(category, index) in categories.slice(0, 6)" :key="index" class="category-card"
-            @click="showCategoryStocks(category)">
-            <img :src="getCategoryIcon(category.name)" :alt="category.name">
+          <div
+            v-for="(category, index) in categories.slice(0, 6)"
+            :key="index"
+            class="category-card"
+            @click="showCategoryStocks(category)"
+          >
+            <img :src="getCategoryIcon(category.name)" :alt="category.name" />
             <h3>{{ category.name }}</h3>
-            <p :class="{
-              positive: category.avgChange >= 0,
-              negative: category.avgChange < 0,
-            }">
+            <p
+              :class="{
+                positive: category.avgChange >= 0,
+                negative: category.avgChange < 0,
+              }"
+            >
               {{ category.avgChange.toFixed(2) }}%
             </p>
           </div>
@@ -131,41 +184,67 @@
       </section>
 
       <!-- 카테고리 모달 -->
-      <div v-if="showCategoryModal" class="modal-overlay" @click="showCategoryModal = false">
+      <div
+        v-if="showCategoryModal"
+        class="modal-overlay"
+        @click="showCategoryModal = false"
+      >
         <div class="modal-content" @click.stop>
           <div class="modal-header">
             <h2>지금 뜨는 카테고리</h2>
             <button @click="showCategoryModal = false" class="close-button">
+              ×
             </button>
           </div>
           <div class="modal-body">
             <div class="category-list">
-              <div v-for="(category, index) in categories" :key="index" class="category-item"
-                @click="showCategoryStocks(category)">
+              <div
+                v-for="(category, index) in categories"
+                :key="index"
+                class="category-item"
+                @click="showCategoryStocks(category)"
+              >
                 <div class="category-rank">{{ index + 1 }}</div>
                 <div class="category-icon">
-                  <img :src="getCategoryIcon(category.name)" :alt="category.name" />
+                  <img
+                    :src="getCategoryIcon(category.name)"
+                    :alt="category.name"
+                  />
                 </div>
                 <div class="category-name">{{ category.name }}</div>
                 <div
-                  :class="['category-change', { 'positive': category.avgChange >= 0, 'negative': category.avgChange < 0 }]">
-                  {{ category.avgChange >= 0 ? '+' : '' }}{{ category.avgChange.toFixed(2) }}%
+                  :class="[
+                    'category-change',
+                    {
+                      positive: category.avgChange >= 0,
+                      negative: category.avgChange < 0,
+                    },
+                  ]"
+                >
+                  {{ category.avgChange >= 0 ? "+" : ""
+                  }}{{ category.avgChange.toFixed(2) }}%
                 </div>
-                <div class="category-detail">{{ category.totalStocksCount }}개 중 {{ category.risingStocksCount }}개 종목 상승
+                <div class="category-detail">
+                  {{ category.totalStocksCount }}개 중
+                  {{ category.risingStocksCount }}개 종목 상승
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
       <!-- 카테고리별 주식 목록 모달 -->
-      <!-- 카테고리별 주식 목록 모달 -->
-      <div v-if="showStockListModal" class="modal-overlay" @click="showStockListModal = false">
+      <div
+        v-if="showStockListModal"
+        class="modal-overlay"
+        @click="showStockListModal = false"
+      >
         <div class="modal-content" @click.stop>
           <div class="modal-header">
             <h2>{{ selectedCategory.name }} 주식 목록</h2>
-            <button @click="showStockListModal = false" class="close-button"></button>
+            <button @click="showStockListModal = false" class="close-button">
+              ×
+            </button>
           </div>
           <div class="modal-body">
             <table class="stock-table">
@@ -173,28 +252,30 @@
                 <tr>
                   <th>종목명</th>
                   <th>현재가</th>
-                  <th>대비</th>
                   <th>등락률</th>
                   <th>누적 거래량(주)</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="stock in categoryStocks" :key="stock.stockCode" @click="goToStockChart(stock)">
+                <tr
+                  v-for="stock in categoryStocks"
+                  :key="stock.stockCode"
+                  @click="goToStockChart(stock)"
+                >
                   <td>{{ stock.stockName }}</td>
                   <td>{{ stock.currentPrice.toLocaleString() }}원</td>
-                  <td :class="{
-                    positive: stock.priceChange > 0,
-                    negative: stock.priceChange < 0,
-                  }">
+                  <td
+                    :class="{
+                      positive: stock.priceChange > 0,
+                      negative: stock.priceChange < 0,
+                    }"
+                  >
                     {{ stock.priceChange }}
                     ({{ stock.priceChangePct }})%
                   </td>
-                  <td>
-                    {{ stock.volume.toLocaleString() }}주
-                  </td>
+                  <td>{{ stock.volume.toLocaleString() }}주</td>
                 </tr>
               </tbody>
-
             </table>
           </div>
         </div>
@@ -232,8 +313,9 @@ export default {
   },
   data() {
     return {
-      currentSort: 'currentPrice',  // 기본 정렬 필드
-      currentSortDir: 'desc',  // 기본 정렬 방향 (내림차순)
+      stockData: [], // 주식 데이터를 저장할 배열
+      currentSort: "currentPrice", // 기본 정렬 필드
+      currentSortDir: "desc", // 기본 정렬 방향 (내림차순)
       categoryIcons: {},
       currentStocks: [], // KOSPI, KOSDAQ, KOSPI200 데이터
       stocks: [], // 웹소켓에서 받아온 10개 주식 데이터
@@ -296,10 +378,6 @@ export default {
         return 0;
       });
     },
-    // 정렬된 주식 목록에서 10개만 반환
-    limitedStocks() {
-      return this.sortedStocks.slice(0, 10);
-    }
   },
   created() {
     this.loadCategoryIcons();
@@ -319,24 +397,23 @@ export default {
 
   methods: {
     startWebSocket() {
-      const ws = new WebSocket("ws://localhost:8080/websocket/stocks"); // WebSocket 서버 주소로 변경 필요
+      const ws = new WebSocket("ws://localhost:8080/api/websocket/stocks");
 
-      ws.onopen = () => {
+      ws.onopen = function () {
         console.log("WebSocket 연결 성공");
       };
 
       ws.onmessage = (event) => {
         const stockData = JSON.parse(event.data);
-        this.updateStockData(stockData);
+        this.updateStockData(stockData); // 실시간 데이터 업데이트
       };
 
-      ws.onerror = (error) => {
-        console.error("WebSocket 오류:", error);
-        this.error = "WebSocket 연결 중 오류가 발생했습니다.";
+      ws.onerror = function (error) {
+        console.log("WebSocket 오류:", error);
       };
 
-      ws.onclose = () => {
-        console.log("WebSocket 연결이 닫혔습니다.");
+      ws.onclose = function () {
+        console.log("WebSocket 연결 종료");
       };
     },
     createGradient(ctx, chartArea) {
@@ -351,25 +428,43 @@ export default {
     },
     async fetchAllStocksData() {
       try {
-        const response = await axios.get("http://localhost:8080/api/websocket/prices");
-        this.stocks = Object.values(response.data);
-        this.updateTop3Stocks();
-        // 카테고리가 null이 아닌 항목들만 필터링
-        this.allStocks = response.data.filter(stock => stock.industry !== null);
+        const response = await axios.get(
+          "http://localhost:8080/api/stocks/all"
+        );
 
-        console.log('전체 주식 데이터 (카테고리가 null이 아닌 항목만):', this.allStocks);
+        // 카테고리가 null이 아닌 항목들만 필터링
+        const filteredStocks = Array.from(response.data).filter(
+          (stock) => stock.industry !== null
+        );
+        this.allStocks = filteredStocks;
+
+        console.log(
+          "전체 주식 데이터 (카테고리가 null이 아닌 항목만):",
+          this.allStocks
+        );
       } catch (error) {
-        console.error('전체 주식 데이터를 가져오는 중 오류 발생:', error);
-        this.error = '전체 주식 데이터를 가져오는 중 오류가 발생했습니다.';
+        console.error("전체 주식 데이터를 가져오는 중 오류 발생:", error);
+        this.error = "전체 주식 데이터를 가져오는 중 오류가 발생했습니다.";
       }
     },
     // 초기 주식 데이터를 가져오는 메서드
     async fetchStockData() {
       try {
-        const kospiResponse = await axios.get("http://localhost:8080/api/index/kospi");
-        const kosdaqResponse = await axios.get("http://localhost:8080/api/index/kosdaq");
-        const kospi200Response = await axios.get("http://localhost:8080/api/index/kospi200");
+        const response = await axios.get(
+          "http://localhost:8080/api/websocket/prices"
+        );
+        this.stocks = Object.values(response.data);
+        this.updateTop3Stocks();
 
+        const kospiResponse = await axios.get(
+"http://localhost:8080/api/index/kospi"
+        );
+        const kosdaqResponse = await axios.get(
+          "http://localhost:8080/api/index/kosdaq"
+        );
+        const kospi200Response = await axios.get(
+          "http://localhost:8080/api/index/kospi200"
+        );
         // 더미 데이터 생성 함수
         const generateStockData = (startValue, numPoints, volatility) => {
           let labels = [];
@@ -509,22 +604,22 @@ export default {
     // 카테고리 데이터를 가져오는 메서드
     async fetchCategoryData() {
       try {
-        const response = await axios.get('http://localhost:8080/api/stocks/categories');
+        const response = await axios.get(
+          "http://localhost:8080/api/stocks/categories"
+        );
         this.categories = response.data
-          .filter(category => category.name && category.name.trim())  // name이 공백, null, undefined가 아닌 항목만 필터링
-          .map(category => ({
+          .filter((category) => category.name && category.name.trim()) // name이 공백, null, undefined가 아닌 항목만 필터링
+          .map((category) => ({
             name: category.name,
             avgChange: category.avgChange,
             risingStocksCount: category.risingStocksCount,
             totalStocksCount: category.totalStocksCount,
           }));
       } catch (error) {
-        console.error('카테고리 데이터를 가져오는 중 오류 발생:', error);
-        this.error = '카테고리 데이터를 가져오는 중 오류가 발생했습니다.';
+        console.error("카테고리 데이터를 가져오는 중 오류 발생:", error);
+        this.error = "카테고리 데이터를 가져오는 중 오류가 발생했습니다.";
       }
-    }
-    ,
-
+    },
     loadCategoryIcons() {
       const context = require.context("@/assets/img/stock", false, /\.png$/);
       context.keys().forEach((key) => {
@@ -549,27 +644,32 @@ export default {
       this.showStockListModal = true;
       try {
         if (!category || !category.name) {
-          throw new Error('선택된 카테고리 정보가 올바르지 않습니다.');
+          throw new Error("선택된 카테고리 정보가 올바르지 않습니다.");
         }
 
-        console.log('선택된 카테고리:', category);
-        console.log('전체 주식 데이터:', this.allStocks);
+        console.log("선택된 카테고리:", category);
+        console.log("전체 주식 데이터:", this.allStocks);
 
         // 카테고리가 null이 아닌 항목 중 선택된 카테고리와 일치하는 주식만 필터링
-        this.categoryStocks = this.allStocks.filter(stock => {
-          return stock.industry &&
-            stock.industry.toString().trim().toLowerCase() === category.name.toString().trim().toLowerCase();
+        this.categoryStocks = this.allStocks.filter((stock) => {
+          return (
+            stock.industry &&
+            stock.industry.toString().trim().toLowerCase() ===
+              category.name.toString().trim().toLowerCase()
+          );
         });
 
-        console.log('필터링된 주식 데이터:', this.categoryStocks);
+        console.log("필터링된 주식 데이터:", this.categoryStocks);
         this.categoryStocks.sort((a, b) => b.priceChangePct - a.priceChangePct);
       } catch (error) {
-        console.error(`${category.name} 카테고리의 주식 데이터를 처리하는 중 오류 발생:`, error);
-        this.error = '주식 데이터를 처리하는 중 오류가 발생했습니다.';
+        console.error(
+          `${category.name} 카테고리의 주식 데이터를 처리하는 중 오류 발생:`,
+          error
+        );
+        this.error = "주식 데이터를 처리하는 중 오류가 발생했습니다.";
       }
-    }
-
-  }
+    },
+  },
 };
 </script>
 
@@ -611,8 +711,9 @@ a.more-link {
   color: #448c74;
   text-decoration: none;
   font-weight: bold;
-  background: none;
-  border: none;
+
+  background: none; /* 배경 제거 */
+  border: none; /* 테두리 제거 */
 }
 
 .current-stocks,
@@ -888,15 +989,11 @@ h1 {
   align-items: center;
   padding: 10px 0;
   border-bottom: 1px solid #eee;
-  cursor: pointer;
-  /* 클릭 가능함을 나타내는 커서 추가 */
-  transition: background-color 0.3s ease;
-  /* 부드러운 전환 효과 추가 */
+  cursor: pointer; /* 클릭 가능함을 나타내는 커서 추가 */
+  transition: background-color 0.3s ease; /* 부드러운 전환 효과 추가 */
 }
-
 .category-item:hover {
-  background-color: #f0f8ff;
-  /* 마우스를 올리면 배경색 변경 */
+  background-color: #f0f8ff; /* 마우스를 올리면 배경색 변경 */
 }
 
 .category-rank {
@@ -941,7 +1038,7 @@ h1 {
 }
 
 .stock-row:hover {
-  background-color: #F1FAF7;
+  background-color: #f0f8ff;
   /* 배경색을 변경하여 hover 느낌을 줌 */
 }
 
@@ -959,7 +1056,7 @@ h1 {
   /* 마우스를 올리면 약간 위로 올라가는 효과 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   /* 그림자 효과 */
-  background-color: #F1FAF7;
+  background-color: #f0f8ff;
   /* 배경색 변경 */
 }
 
@@ -974,7 +1071,7 @@ tbody tr {
 }
 
 tbody tr:hover {
-  background-color: #F1FAF7;
+  background-color: #f0f8ff;
   /* 마우스를 올리면 배경색 변경 */
 }
 
@@ -986,7 +1083,7 @@ tbody tr:hover {
 }
 
 .top3-card:hover {
-  background-color: #F1FAF7;
+  background-color: #f0f8ff;
   /* 배경색 변경 */
   transform: translateY(-5px);
   /* 마우스를 올리면 살짝 올라가는 효과 */
@@ -999,7 +1096,7 @@ tbody tr:hover {
 }
 
 .category-card:hover {
-  background-color: #F1FAF7;
+  background-color: #f0f8ff;
   transform: translateY(-5px);
 }
 
@@ -1012,59 +1109,4 @@ tbody tr:hover {
 .modal-body tbody tr:hover {
   background-color: #f0f8ff;
 }
-
-@media (max-width: 900px) {
-  .main-news {
-      flex-direction: column;
-  }
-
-  .main-news-image,
-  .main-news-content {
-      width: 100%;
-  }
-
-  .news-grid {
-      grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  .news-grid {
-      grid-template-columns: 1fr;
-  }
-}
-
-@keyframes riseUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-on-load > * {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: riseUp 1s ease-out forwards;
-}
-
-.animate-on-load > *:nth-child(1) {
-  animation-delay: 0.1s;
-}
-
-.animate-on-load > *:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.animate-on-load > *:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-.animate-on-load > *:nth-child(4) {
-  animation-delay: 0.4s;
-}
-
 </style>
