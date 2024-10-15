@@ -3,6 +3,7 @@ package com.kb.board.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.MediaType;
 
 import java.util.Date;
 
@@ -17,4 +18,6 @@ public class BoardReplyDTO {
 	public BoardReply toReply(){
 		return BoardReply.builder().postId(postId).memberId(writer).content(content).build();
 	}
+
+
 }

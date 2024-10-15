@@ -4,6 +4,7 @@ import com.kb.board.dto.*;
 import com.kb.board.mapper.BoardMapper;
 import com.kb.common.pagination.PageInfo;
 import com.kb.common.util.UploadFiles;
+import com.kb.member.dto.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -201,15 +202,14 @@ public class BoardService {
         return mapper.deleteAttachFile(fno) == 1;
     }
 
-    @Transactional
-    public BoardReply createReply(BoardReply reply) {
-        int result = mapper.insertReply(reply);
-        if (result != 1) {
-            throw new RuntimeException("Failed to insert reply");
-        }
-        reply = mapper.selectReplyByRno(reply.getRno());
-        return reply;
-    }
+//    public BoardReply createReply(long postId, BoardReply reply) {
+//        int result = mapper.insertReply(postId, reply);
+//        if (result != 1) {
+//            throw new RuntimeException("Failed to insert reply");
+//        }
+//        reply = mapper.selectReplyByRno(reply.getRno());
+//        return reply;
+//    }
 
     public BoardReply getReply(int rno) {
         return mapper.selectReplyByRno(rno);
@@ -243,5 +243,9 @@ public class BoardService {
     public List<BoardReply> selectReplyByBno(long postId) {
         List<BoardReply> replyList = mapper.selectReplyByBno(postId);
         return replyList;
+    }
+
+    public void createReply(long postId, BoardReply reply, Member member) {
+        mapper.insertReply(postId, reply);
     }
 }
