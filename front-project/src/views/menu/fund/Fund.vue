@@ -270,6 +270,7 @@ onMounted(() => {
         <button class="filterBtn" @click="updateCategoryFilter('stock')">주식</button>
         <button class="filterBtn" @click="updateCategoryFilter('bond')">채권</button>
         <button class="filterBtn" @click="updateCategoryFilter('mixed')">혼합</button>
+        <button class="filterBtn" @click="updateCategoryFilter('etc')">기타</button>
         <button class="filterBtn" @click="updateCategoryFilter(null)">전체보기</button>
       </div>
     </div>

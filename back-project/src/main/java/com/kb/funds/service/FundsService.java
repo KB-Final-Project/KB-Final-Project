@@ -138,13 +138,14 @@ public class FundsService {
                                 return fundName.contains("주식") && !isMixed; // 혼합 펀드 제외
                             case "bond":
                                 return fundName.contains("채권") && !isMixed; // 혼합 펀드 제외
+                            case "etc": // 기타 카테고리
+                                return !isMixed && !fundName.contains("주식") && !fundName.contains("채권");
                             default:
-                                return true; // 기타
+                                return true; // 기타 (예: 전체보기)
                         }
                     })
                     .collect(Collectors.toList());
         }
-
 
         // 등급에 따른 정렬
         funds.sort((a, b) -> {
