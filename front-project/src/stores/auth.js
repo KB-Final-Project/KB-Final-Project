@@ -1,4 +1,4 @@
-import { ref, computed, reactive } from 'vue';
+import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
@@ -93,6 +93,11 @@ const getToken = () => state.value.token;
     localStorage.setItem('auth', JSON.stringify(state.value));
   };
 
+  const changeInvestType = (investType) => {
+    state.value.investType = investType;
+    localStorage.setItem('auth', JSON.stringify(state.value));
+  };
+
   load();
 
 // 토큰을 가져오고, 사용자의 이메일을 업데이트하며, 초기 상태를 불러오는 기능을 수행
@@ -100,5 +105,5 @@ const getToken = () => state.value.token;
 // changeProfile(member): 사용자의 이메일을 주어진 member.email로 변경하고, 변경된 상태를 localStorage에 저장합니다.
 // load(): 페이지가 로드될 때 localStorage에서 저장된 인증 정보를 불러와 state에 설정
 
-  return { state, id, name, email, isLogin, investType, mno, changeProfile, login, logout, getToken };
+  return { state, id, name, email, isLogin, investType, mno, changeProfile, changeInvestType, login, logout, getToken };
 });
