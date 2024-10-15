@@ -5,51 +5,68 @@
     <div class="profileBox">
       <i class="d-inline ai-lock-open"></i>
       <h3 class="d-inline"> 마이페이지 설정을 하기 전에 비밀번호를 입력해주세요</h3>
-      <div class="formMyInfo d-flex flex-wrap justify-content-center">
-        <div class="mb-3">
-          <label class="form-label" for="pass-visibility1">현재 비밀번호</label>
-          <div class="password-toggle">
-            <input class="form-control" type="password" id="pass-visibility1" v-model="changePassword" />
-            <label class="password-toggle-btn" aria-label="Show/hide password">
-              <input class="password-toggle-check" type="checkbox" @click="togglePasswordVisibility" />
-              <span class="password-toggle-indicator"></span>
-            </label>
-          </div>
-          <div class="btn d-flex">
-            <button class="cancelBtn" type="button" @click="cancel">취소</button>
-            <button class="submitBtn" @click="checkPassword">확인</button>
+      <form @submit.prevent="checkPassword"> <!-- Form 태그 추가 -->
+        <div class="formMyInfo d-flex flex-wrap justify-content-center">
+          <div class="mb-3">
+            <label class="form-label" for="pass-visibility1">현재 비밀번호</label>
+            <div class="password-toggle">
+              <input class="form-control" type="password" id="pass-visibility1" v-model="changePassword.oldPassword" />
+              <label class="password-toggle-btn" aria-label="Show/hide password">
+                <input class="password-toggle-check" type="checkbox" @click="togglePasswordVisibility" />
+                <span class="password-toggle-indicator"></span>
+              </label>
+            </div>
+            <div class="btn d-flex">
+              <button class="cancelBtn" type="button" @click="cancel">취소</button>
+              <button class="submitBtn" type="submit">확인</button> <!-- Submit 버튼으로 변경 -->
+            </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, defineEmits, reactive } from 'vue';
+import { ref, reactive, defineEmits } from 'vue';
 import axios from 'axios';
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits();
-const changePassword = reactive({});
+const changePassword = reactive({
+  oldPassword: '',
+});
 
 const togglePasswordVisibility = () => {
   const passwordField = document.getElementById('pass-visibility1');
   passwordField.type = passwordField.type === 'password' ? 'text' : 'password';
 };
 
-const token = JSON.parse(localStorage.getItem("auth"));
-
-const checkPassword =() => {
-  const password = token.password;
-    if (password.eqauls(changePassword.oldPassword)) {
-      emit('password-success');
+const token = JSON.parse(localStorage.getItem("auth")); // 사용자 인증 정보
+const checkPassword = async () => {
+  const id = token.id; // 사용자 ID
+  const newPassword = changePassword.oldPassword;
+  try {
+    const response = await axios.post(`/api/member/${id}`, {
+      newPassword: newPassword
+    });
+    if (response.data == newPassword) {
+      console.log('짱');
+      emit('password-success'); // 비밀번호가 올바르면 이벤트 발생
     } else {
       alert('비밀번호가 일치하지 않습니다.');
     }
+  } catch (error) {
+    console.error('비밀번호 확인 중 에러:', error);
+    alert('비밀번호 확인에 실패했습니다. 다시 시도해 주세요.');
+  }
 };
 
+const cancel = () => {
+  // 취소 버튼 클릭 시 처리할 내용
+};
 </script>
+
 
 <style scoped>
 .formMyInfo {

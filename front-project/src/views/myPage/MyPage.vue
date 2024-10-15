@@ -7,36 +7,20 @@ import MyPagePosts from './MyPagePosts.vue';
 import MyPageWithdraw from './MyPageWithdraw.vue';
 import MyPageWarning from "@/views/myPage/MyPageWarning.vue";
 
-const selectedPage = ref('profile'); // 초기 페이지를 사용자 정보로 설정
-const showWarning = ref(false); // 경고창 표시 여부
-
-const handlePageUpdate = (page) => {
-  if (page === 'settings') {
-    showWarning.value = true; // 설정 페이지로 이동 시 경고창 표시
-  } else {
-    showWarning.value = false; // 다른 페이지로 이동 시 경고창 숨김
-    selectedPage.value = page; // 선택된 페이지 업데이트
-  }
-};
-
-const handlePasswordSuccess = () => {
-  // 비밀번호 확인 성공 시, 설정 페이지로 이동
-  selectedPage.value = 'settings';
-  showWarning.value = false; // 경고창 숨기기
-};
+const selectedPage = ref('profile');
 </script>
 
 <template>
   <div class="bc">
     <br><br>
     <div class="container">
-      <MyPagePanel @update-page="handlePageUpdate" />
+      <MyPagePanel @update-page="selectedPage = $event" />
       <div class="content">
-        <MyPageWarning v-if="showWarning" @password-success="handlePasswordSuccess" />
-        <MyPageSettings v-if="selectedPage === 'settings' && !showWarning" />
-        <MyPageContent v-if="selectedPage === 'profile' && !showWarning" />
-        <MyPagePosts v-if="selectedPage === 'posts' && !showWarning" />
-        <MyPageWithdraw v-if="selectedPage === 'withdraw' && !showWarning" />
+        <MyPageWarning v-if="selectedPage === 'warning'"/>
+        <MyPageContent v-if="selectedPage === 'profile'" />
+        <MyPageSettings v-if="selectedPage === 'settings'" />
+        <MyPagePosts v-if="selectedPage === 'posts'" />
+        <MyPageWithdraw v-if="selectedPage === 'withdraw'" />
       </div>
     </div>
   </div>
@@ -45,6 +29,7 @@ const handlePasswordSuccess = () => {
 <style scoped>
 .bc {
   background-color: rgba(247, 249, 252, 1);
+
 }
 
 .container {
