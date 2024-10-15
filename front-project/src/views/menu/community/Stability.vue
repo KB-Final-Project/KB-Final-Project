@@ -8,7 +8,7 @@ import {useRoute, useRouter} from "vue-router";
 const postType = ref(1); // 게시판 타입 (예: 1: 안정형)
 const posts = ref([]); // 게시글 목록
 const visibleCount = ref(5); // 보여질 게시글 수
-const newReply = ref(""); // 댓글 입력을 위한 ref
+const newReply = ref({}); // 댓글 입력을 위한 ref
 const postRefs = ref([]); // hidden input 참조 배열
 const replies = ref({}); // 각 게시글의 댓글을 저장할 객체
 const cr = useRoute();
@@ -92,15 +92,33 @@ const handleLike = async (index) => {
 };
 
 const handleReply = async (postId) => {
-  if (newReply.value.trim() === "") return; // 댓글 내용이 비어있으면 리턴
   try {
-    const response = await api.createReply(postId, { content: newReply.value }); // API 호출
-    replies.value[postId].push(response); // 새 댓글을 해당 게시글의 댓글 목록에 추가
-    newReply.value = ""; // 입력 필드 초기화
+    const requestBody = {
+      postId: postId,
+      writer: auth.userId,
+      content: newReply.value[postId],
+    };
+
+    // /api/board/replyPlus/{postId} 경로로 POST 요청을 보냄
+    const response = await axios.get(`/api/board/replyPlus/${postId}`, requestBody);
+    newReply.value[postId] = ""; // 댓글 입력 필드 초기화
   } catch (error) {
     console.error("Error adding reply:", error);
   }
 };
+
+
+// const handleReply = async (postId) => {
+//   if (!newReply.value[postId] || newReply.value[postId].trim() === "") return; // 댓글 내용이 비어있으면 리턴
+//   try {
+//     const response = await api.createReply(postId, { content: newReply.value[postId] }); // API 호출
+//     replies.value[postId].push(response); // 새 댓글을 해당 게시글의 댓글 목록에 추가
+//     newReply.value[postId] = ""; // 해당 게시글의 댓글 입력 필드 초기화
+//   } catch (error) {
+//     console.error("Error adding reply:", error);
+//   }
+// };
+
 
 const handleDelete = async (index) => {
   if (!confirm('삭제할까요?')) return;
@@ -194,13 +212,12 @@ onMounted(() => {
         </div>
         <!-- 댓글 입력란 -->
         <form class="reply position-relative pb-3" @submit.prevent="handleReply(post.postId)">
-          <textarea
-              v-model="newReply"
+          <input
+              v-model="newReply[post.postId]"
               data-kt-autosize="true"
               class="form-control border-0 p-0 pe-10 resize-none min-h-25px"
-              rows="1"
               placeholder="댓글"
-          ></textarea>
+          />
           <div class="position-absolute top-0 end-0 me-n5">
             <button class="btn btn-icon btn-sm btn-active-color-primary ps-0" type="submit">
               <i class="ai-edit-alt"></i>

@@ -10,10 +10,10 @@ export default {
         console.log('BOARD GET LIST: ', data);
         return data;
     },
-    async createReply(postId, replyDTO) {
-        const { data } = await api.get(`/api/board/replyPlus/${postId}`, replyDTO);
-        return data;
-    },
+    // async createReply(postId, replyDTO) {
+    //     const { data } = await api.get(`/api/board/replyPlus/${postId}`, replyDTO);
+    //     return data;
+    // },
 
     async likePost(postId) {
         const { data } = await api.post(`${BASE_URL}/${postId}/like`);
