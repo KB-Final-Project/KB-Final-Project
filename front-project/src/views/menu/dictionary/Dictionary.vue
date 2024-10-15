@@ -120,7 +120,7 @@ export default {
         this.filterTerms();       
       }
     });
-},
+  },
   methods: {
     async fetchTerms() {
       this.loading = true;
@@ -128,6 +128,10 @@ export default {
         const response = await axios.get('/api/terms');
         this.terms = response.data;
         this.filteredTerms = response.data;
+
+        // 중복 제거
+        this.filteredTerms = Array.from(new Set(this.filteredTerms.map(term => term.termName)))
+          .map(name => this.filteredTerms.find(term => term.termName === name));
 
         // 용어가 존재하면 첫 번째 용어를 기본 선택
         if (this.filteredTerms.length > 0) {
@@ -147,9 +151,15 @@ export default {
       this.selectedAlphabet = null;
 
       const search = this.searchTerm.toLowerCase();
+      
       this.filteredTerms = this.terms.filter(term =>
-          term.termName.toLowerCase().includes(search)
+        term.termName.toLowerCase().includes(search)
       );
+
+      // 중복 제거
+      this.filteredTerms = Array.from(new Set(this.filteredTerms.map(term => term.termName)))
+        .map(name => this.filteredTerms.find(term => term.termName === name));
+
       this.selectedTerm = this.filteredTerms.length > 0 ? this.filteredTerms[0] : null;
     },
     filterTermsByHangul(hangul) {
@@ -157,8 +167,13 @@ export default {
       this.selectedHangul = hangul;
       this.selectedAlphabet = null;
       this.filteredTerms = this.terms.filter(term =>
-          this.getInitialConsonant(term.termName[0]) === hangul
+        this.getInitialConsonant(term.termName[0]) === hangul
       );
+
+      // 중복 제거
+      this.filteredTerms = Array.from(new Set(this.filteredTerms.map(term => term.termName)))
+        .map(name => this.filteredTerms.find(term => term.termName === name));
+
       this.selectedTerm = this.filteredTerms.length > 0 ? this.filteredTerms[0] : null;
     },
     filterTermsByAlphabet(alphabet) {
@@ -166,13 +181,34 @@ export default {
       this.selectedAlphabet = alphabet;
       this.selectedHangul = null;
       this.filteredTerms = this.terms.filter(term =>
-          term.termName[0].toUpperCase() === alphabet
+        term.termName[0].toUpperCase() === alphabet
       );
+
+      // 중복 제거
+      this.filteredTerms = Array.from(new Set(this.filteredTerms.map(term => term.termName)))
+        .map(name => this.filteredTerms.find(term => term.termName === name));
+
       this.selectedTerm = this.filteredTerms.length > 0 ? this.filteredTerms[0] : null;
-    }
+    },
+    getInitialConsonant(char) {
+  // 한글 초성 리스트
+  const initialConsonants = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+
+  // 한글의 유니코드 범위: 0xAC00 ~ 0xD7A3
+  const unicode = char.charCodeAt(0);
+  if (unicode < 0xAC00 || unicode > 0xD7A3) {
+    return null; // 한글이 아닌 경우
+  }
+
+  // 초성의 인덱스 계산
+  const initialIndex = Math.floor((unicode - 0xAC00) / 588);
+  return initialConsonants[initialIndex];
+}
+
   }
 };
 </script>
+
 
 <style scoped>
 .active {
