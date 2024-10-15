@@ -39,7 +39,7 @@ public class DepositController {
 
     @GetMapping("/top")
     public ResponseEntity<List< SavingListDTO>> getTopDeposits(@AuthenticationPrincipal Member member){
-        if(member != null)
+        if(member != null && member.getInvestType() != null)
             return ResponseEntity.ok(service.getTopProductList(new SavingTopRequestDTO(member.getInvestType(), 1)));
         return ResponseEntity.ok(service.getTopSavingsProductList(1));
     }

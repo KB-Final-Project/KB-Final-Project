@@ -52,7 +52,7 @@ public class SavingController {
 
     @GetMapping("/top")
     public ResponseEntity<List< SavingListDTO>> getTopSavings(@AuthenticationPrincipal Member member){
-        if(member != null)
+        if(member != null && member.getInvestType() != null)
             return ResponseEntity.ok(service.getTopProductList(new SavingTopRequestDTO(member.getInvestType(), 2)));
         return ResponseEntity.ok(service.getTopSavingsProductList(2));
     }
