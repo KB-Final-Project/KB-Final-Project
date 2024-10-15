@@ -1073,17 +1073,26 @@ const fundDetails = fundStore.fundDetails;
       <div class="stack-s"></div>
 
       <div style="margin-top: 50px"></div>
-      <div class="container" style="margin-right: 400px; margin-left: -70px">
+      <div
+        class="container"
+        style="
+          display: flex;
+          justify-content: center;
+          width: 105%;
+          margin-left: -2.8rem;
+        "
+      >
         <div
           class="round-box"
           style="
             background-color: #ffffff;
-            width: 921.6px;
-            height: 1374.35px;
-            padding: 57.6046px 76.8061px 76.8061px; /* 상, 우, 하, 좌 */
+            width: 100%; /* 화면의 150%로 설정 */
+            max-width: 1600px; /* 최대 너비 설정 (필요시 조정 가능) */
+            height: auto; /* 내용에 맞춰 자동 조정 */
+            padding: 57.6046px 76.8061px; /* 상, 우, 하, 좌 (패딩 유지) */
             border-radius: 30px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin: 40px;
+            margin: 20px; /* 마진 유지 */
           "
         >
           <div class="round-box__numbering">
@@ -1120,7 +1129,6 @@ const fundDetails = fundStore.fundDetails;
             </div>
 
             <div style="margin-top: 20px"></div>
-            <!-- 위쪽 여백 20px -->
 
             <div class="round-box__info mb-48">
               <p
@@ -1135,7 +1143,6 @@ const fundDetails = fundStore.fundDetails;
             </div>
 
             <div style="margin-top: 50px"></div>
-            <!-- 위쪽 여백 50px -->
 
             <p
               class="round-box__desc-md body_18-14 mb-24"
@@ -1145,7 +1152,6 @@ const fundDetails = fundStore.fundDetails;
             </p>
 
             <div style="margin-bottom: 19.2015px"></div>
-            <!-- 아래 여백 19.2015px -->
 
             <div class="img-wrap mb-48">
               <img
@@ -1156,7 +1162,6 @@ const fundDetails = fundStore.fundDetails;
             </div>
 
             <div style="margin-bottom: 38.4031px"></div>
-            <!-- 아래 여백 38.4031px -->
 
             <p
               class="round-box__desc-md body_18-14"
@@ -1185,7 +1190,6 @@ const fundDetails = fundStore.fundDetails;
             </ul>
 
             <div style="margin-bottom: 6.40016px"></div>
-            <!-- 아래 여백 6.40016px -->
           </div>
         </div>
       </div>

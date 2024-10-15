@@ -369,7 +369,7 @@
               <div class="card-contents front">
                 <p
                   class="title_32-21_m title"
-                  style="color: white; font-family: J3"
+                  style="color: white; font-family: J3; font-size: 3rem"
                 >
                   유망산업펀드
                 </p>
@@ -435,7 +435,7 @@
               <div class="card-contents front">
                 <p
                   class="title_32-21_m title"
-                  style="color: white; font-family: J3"
+                  style="color: white; font-family: J3; font-size: 3rem"
                 >
                   한국형 TDF
                 </p>
@@ -495,7 +495,7 @@
               <div class="card-contents front">
                 <p
                   class="title_32-21_m title"
-                  style="color: white; font-family: J3"
+                  style="color: white; font-family: J3; font-size: 3rem"
                 >
                   자산배분펀드
                 </p>
@@ -555,7 +555,7 @@
               <div class="card-contents front">
                 <p
                   class="title_32-21_m title"
-                  style="color: white; font-family: J3"
+                  style="color: white; font-family: J3; font-size: 3rem"
                 >
                   평생소득 TIF
                 </p>
@@ -620,11 +620,13 @@
             >
               <div class="card-contents front">
                 <p
+                  data-v-1be2daa0=""
                   class="title_32-21_m title"
-                  style="color: white; font-family: J3"
+                  style="color: white; font-family: J3; font-size: 3rem"
                 >
                   개인연금펀드
                 </p>
+
                 <img
                   src="/img/emoji/fund1.PNG"
                   alt="개인연금펀드 이미지"
@@ -681,14 +683,20 @@
               <div class="card-contents front">
                 <p
                   class="title_32-21_m title"
-                  style="color: white; font-family: J3"
+                  style="color: white; font-family: J3; font-size: 3rem"
                 >
                   지수형 펀드
                 </p>
                 <img
                   src="/img/emoji/fund4.PNG"
                   alt="지수형 펀드 이미지"
-                  style="position: absolute; bottom: 10px; right: 10px"
+                  style="
+                    position: absolute;
+                    bottom: 10px;
+                    right: 10px;
+                    width: 12%;
+                    height: auto;
+                  "
                 />
               </div>
               <div class="card-contents back" style="opacity: 0">
@@ -742,7 +750,7 @@
               <div class="card-contents front">
                 <p
                   class="title_32-21_m title"
-                  style="color: white; font-family: J3"
+                  style="color: white; font-family: J3; font-size: 3rem"
                 >
                   글로벌 중소형주 펀드
                 </p>
@@ -803,7 +811,7 @@
               <div class="card-contents front">
                 <p
                   class="title_32-21_m title"
-                  style="color: white; font-family: J3"
+                  style="color: white; font-family: J3; font-size: 3rem"
                 >
                   퇴직연금펀드
                 </p>
@@ -865,7 +873,7 @@
               <div class="card-contents front">
                 <p
                   class="title_32-21_m title"
-                  style="color: white; font-family: J3"
+                  style="color: white; font-family: J3; font-size: 3rem"
                 >
                   EMP 펀드
                 </p>
