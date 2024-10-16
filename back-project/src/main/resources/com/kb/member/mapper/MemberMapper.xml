@@ -87,7 +87,7 @@
         WHERE mno = #{mno}
     </update>
 
-    <update id="updatePassword" parameterType="com.kb.member.dto.Member">
+    <update id="updatePassword">
         UPDATE member
         SET
             password = #{newPassword},
