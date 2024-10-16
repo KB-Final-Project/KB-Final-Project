@@ -143,6 +143,20 @@ export default {
           lottiePath: digitalInnovator,
         },
         {
+          type: 'IPML',
+          title: 'IPML',
+          description:
+            '투자 전략을 철저히 분석하며, 안정적이면서도 성장 가능성이 있는 상품에 투자합니다.',
+          lottiePath: strategicResearcher,
+        },
+        {
+          type: 'IPWL',
+          title: 'IPWL',
+          description:
+            '금융 지식이 풍부하며, 다각화된 자산에 신중하게 투자합니다.',
+          lottiePath: strategicResearcher,
+        },
+        {
           type: "IBWL",
           title: "IBWL",
           description:

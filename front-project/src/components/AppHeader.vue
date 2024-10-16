@@ -30,7 +30,7 @@
                         <li v-for="(subItem, subIndex) in column" :key="subIndex">
                           <a style="font-size:17px;" class="dropdown-item" :href="subItem.href">{{
                             subItem.text
-                          }}</a>
+                            }}</a>
                           <span v-if="subItem.bgImage"
                             class="mega-dropdown-column position-absolute top-0 end-0 h-100 bg-size-cover bg-repeat-0 rounded-3 rounded-start-0"
                             :style="{
@@ -48,7 +48,7 @@
                     <template v-if="!subItem.subItems">
                       <a style="font-size:17px;" class="dropdown-item" :href="subItem.href">{{
                         subItem.text
-                      }}</a>
+                        }}</a>
                     </template>
                     <template v-else>
                       <a style="font-size:17px;" class="dropdown-item dropdown-toggle" href="#"
@@ -57,7 +57,7 @@
                         <li v-for="(grandChild, grandIndex) in subItem.subItems" :key="grandIndex">
                           <a style="font-size:17px;" class="dropdown-item" :href="grandChild.href">{{
                             grandChild.text
-                          }}</a>
+                            }}</a>
                         </li>
                       </ul>
                     </template>
@@ -142,8 +142,7 @@ const menuItems = ref([
     subItems: [
       { text: '테스트하기', href: '/test-start' },
       {
-        text: '투자성향 보기',
-        href: '/index.html'
+        text: '투자성향 보기', href: '/show-type'
       },
     ],
   },
