@@ -64,6 +64,7 @@ onMounted(() => {
 
 
 <template>
+  <div class="bc">
   <div class="gold">
     <br><br>
       <h1 class="text-center">금</h1>
@@ -105,24 +106,27 @@ onMounted(() => {
         <table>
           <thead class="fiveThQuoteThead">
             <tr>
-              <th>고시날짜</th>
-              <th>시가 (3.75kg)</th>
-              <th>변동률</th>
-              <th>한돈(3.75g) 가격</th>
+              <th><h2>고시날짜</h2></th>
+              <th><h2>시가 (3.75kg)</h2></th>
+              <th><h2>변동률</h2></th>
+              <th><h2>한돈(3.75g) 가격</h2></th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(gold, index) in goldData" :key="index">
-              <td>{{ gold.basDd }}</td>
-              <td>{{ gold.tddOpnPrc.toLocaleString() }} 원</td>
-              <td>{{ gold.flucRt }} %</td>
-              <td>{{ gold.price.toLocaleString() }} 원</td>
-            </tr>
+          <tr v-for="(gold, index) in goldData" :key="index">
+            <td>{{ gold.basDd }}</td>
+            <td>{{ gold.tddOpnPrc.toLocaleString() }} 원</td>
+            <td :style="{ color: gold.flucRt < 0 ? 'blue' : 'red' }">
+              {{ gold.flucRt }} %
+            </td>
+            <td>{{ Math.floor(gold.price).toLocaleString() }} 원</td> <!-- 소숫점 제거 -->
+          </tr>
           </tbody>
         </table>
         <button @click="loadMore" class="btn mt-4" :disabled="loading">
           {{ loading ? '로딩 중...' : '더보기' }}
         </button>
+        <br><br>
       </div>
       <br><br>
       
@@ -145,10 +149,24 @@ onMounted(() => {
       </div>
     </div>
   </div>
+    <br><br>
+  </div>
   </template>
   
 
 <style scoped>
+.fiveThQuote tbody tr td{
+  padding: 15px;
+}
+.gold{
+  font-family: J3;
+  margin: 0 auto;
+  width: 80%;
+}
+.bc{
+  background-color: rgba(129, 140, 67, 0.06);
+}
+
 .goldQuote{
   border-radius: 30px;
   background-color: rgba(129, 140, 67, 0.06);
@@ -159,7 +177,9 @@ onMounted(() => {
   background-color: rgba(0, 0, 0, 0.65);
 }
 .btn{
-  background-color: rgb(255, 255, 255);
+  width: 100px;
+  background-color: rgba(68, 140, 116, 1);
+  color: white;
 }
 
 h3{
@@ -178,7 +198,7 @@ div h2{
   text-align: center;
   border-radius: 30px;
   border: 1px solid rgba(153, 153, 153, 1);
-  background-color: rgba(240, 238, 238, 0.6);
+  background-color: rgba(255, 255, 255, 0.6);
   width: 90%;
   margin: 40px;
 }

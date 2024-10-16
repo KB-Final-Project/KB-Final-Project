@@ -73,8 +73,9 @@
           <template v-if="islogin">
             <li id="headerLoginBtn" class="nav-item dropdown" @mouseenter="hoverLoginDropdown(true)"
               @mouseleave="hoverLoginDropdown(false)">
+
               <router-link style="font-size:17px;" class="dropdown-item" to="/myPage">
-                {{ name }} <i :class="loginDropdownState ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
+                {{ props.username }} <i :class="loginDropdownState ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
               </router-link>
               <ul class="dropdown-menu" v-show="loginDropdownState">
                 <li>
@@ -124,7 +125,9 @@ import { useRouter } from 'vue-router';
 const auth = useAuthStore();
 const islogin = computed(() => auth.isLogin);
 const id = computed(() => auth.id);
+const props = defineProps({ username: String });
 
+const avatar = `/api/member/${props.username}/avatar`;
 
 const store = useAuthStore();
 const router = useRouter();
@@ -307,6 +310,14 @@ a.nav-link {
 
 .nav-item {
   font-family: J3;
+}
+.avatar {
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: inline-block;
+  cursor: pointer;
+  text-align: center;
 }
 </style>
 
