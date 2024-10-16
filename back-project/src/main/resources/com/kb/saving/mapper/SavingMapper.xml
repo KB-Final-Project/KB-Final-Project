@@ -88,13 +88,21 @@
         ir.intr_rate2
         FROM savings_products AS s
         INNER JOIN banks AS b ON s.bank_id = b.bank_id
-        LEFT JOIN saving_interest_rates AS ir ON s.saving_id = ir.saving_id
+        LEFT JOIN (
+        SELECT ir1.*
+        FROM saving_interest_rates ir1
+        INNER JOIN (
+        SELECT saving_id, MAX(intr_rate2) AS max_intr_rate2
+        FROM saving_interest_rates
+        GROUP BY saving_id
+        ) ir2 ON ir1.saving_id = ir2.saving_id AND ir1.intr_rate2 = ir2.max_intr_rate2
+        ) AS ir ON s.saving_id = ir.saving_id
         WHERE s.fin_category_id = #{finCategoryId}
 
         <if test="searchValue != null">
             AND s.saving_name LIKE CONCAT('%', #{searchValue}, '%')
         </if>
-        <if test="bankNameList != null and !bankNameList.isEmpty() > 0">
+        <if test="bankNameList != null and !bankNameList.isEmpty()">
             AND b.bank_name IN
             <foreach item="name" collection="bankNameList" open="(" separator="," close=")">
                 #{name}
