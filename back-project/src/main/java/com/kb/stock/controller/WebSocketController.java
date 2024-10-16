@@ -33,7 +33,7 @@ public class WebSocketController {
 
     private final List<String> STOCK_CODES = Arrays.asList("035720", "068270", "035420", "000660", "373220", "005380", "005930", "055550", "000270", "105560");
 
-    @ApiOperation(value = "WebSocket 연결을 시작합니다.", notes = "실시간 주식 데이터 수신을 위한 WebSocket 연결을 시작합니다.")
+    @ApiOperation(value = "WebSocket 연결을 시작합니다.", notes = "실시간 주식 데이터 수신을 위한 WebSocket 연결을 시작합니다." , produces = "application/json; charset=UTF-8")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "WebSocket 연결 성공"),
             @ApiResponse(code = 500, message = "서버 오류")
@@ -49,7 +49,7 @@ public class WebSocketController {
             return ResponseEntity.status(500).body("WebSocket 연결 중 오류가 발생했습니다.");
         }
     }
-    @ApiOperation(value = "현재 주식 가격을 조회합니다.", notes = "WebSocket을 통해 수신된 10개 종목의 최신 주식 가격 정보를 반환합니다.")
+    @ApiOperation(value = "현재 주식 가격을 조회합니다.", notes = "WebSocket을 통해 수신된 10개 종목의 최신 주식 가격 정보를 반환합니다." , produces = "application/json; charset=UTF-8")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "조회 성공"),
             @ApiResponse(code = 204, message = "데이터 없음")
@@ -69,7 +69,7 @@ public class WebSocketController {
         return ResponseEntity.ok(filteredStockData);
     }
 
-    @ApiOperation(value = "WebSocket 승인 키를 가져옵니다.", notes = "Access Token을 이용하여 WebSocket 승인 키를 발급받는 메서드입니다.")
+    @ApiOperation(value = "WebSocket 승인 키를 가져옵니다.", notes = "Access Token을 이용하여 WebSocket 승인 키를 발급받는 메서드입니다.", produces = "application/json; charset=UTF-8")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "승인 키 발급 성공"),
             @ApiResponse(code = 500, message = "서버 오류")
@@ -92,7 +92,7 @@ public class WebSocketController {
         }
     }
 
-    @ApiOperation(value = "구독 중인 주식 코드 목록을 조회합니다.", notes = "현재 실시간 데이터를 수신 중인 10개 주식 코드 목록을 반환합니다.")
+    @ApiOperation(value = "구독 중인 주식 코드 목록을 조회합니다.", notes = "현재 실시간 데이터를 수신 중인 10개 주식 코드 목록을 반환합니다." , produces = "application/json; charset=UTF-8")
     @PostMapping("/subscribe")
     public ResponseEntity<String> subscribeStocks(@RequestBody List<String> stockCodes) {
         for (String stockCode : stockCodes) {
