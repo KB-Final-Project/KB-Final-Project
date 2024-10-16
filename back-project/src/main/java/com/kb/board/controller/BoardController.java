@@ -12,11 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -222,21 +219,25 @@ public class BoardController {
     public ResponseEntity<Boolean> deleteAttachment(@PathVariable long fno) throws Exception {
         return ResponseEntity.ok(service.deleteAttachment(fno));
     }
+
+
     @GetMapping("/replyPlus/{postId}")
-    public ResponseEntity<BoardReply> createReply(
-        @PathVariable long postId,
-             @RequestBody BoardReplyDTO replyDTO,
-        @AuthenticationPrincipal Member principal) throws Exception {
-        BoardReply reply = replyDTO.toReply();
-        reply.setPostId(postId);
-        reply.setMno(principal.getMno());
-        BoardReply result = service.createReply(reply);
-        return ResponseEntity.ok(result);
+    public void ceateReply(
+            @PathVariable long postId,
+            @RequestBody BoardReply reply,
+            @AuthenticationPrincipal Member member) throws Exception {
+
+        // 댓글 생성 로직 처리
+        service.createReply(postId, reply, member);
     }
+
+
+
 
     @DeleteMapping("/reply/{rno}")
     public ResponseEntity<BoardReply> deleteReply(
         @PathVariable int rno,
+        @RequestBody BoardReplyDTO replyDTO,
         @AuthenticationPrincipal Member principal) throws Exception {
 
         if (principal == null) {

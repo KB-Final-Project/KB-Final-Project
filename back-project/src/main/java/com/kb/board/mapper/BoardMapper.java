@@ -20,7 +20,7 @@ public interface BoardMapper {
     List<BoardAttachFile> selectAttachFileByPostId(long postId);
     int insertAttachFile(BoardAttachFile attachFile);
     int deleteAttachFile(long fno);
-    int insertReply(BoardReply reply);
+    int insertReply(long postId,  BoardReply reply);
     BoardReply selectReplyByRno(long rno);
     List<BoardReply> selectReplyByBno(long postId);
     int deleteReply(int rno);

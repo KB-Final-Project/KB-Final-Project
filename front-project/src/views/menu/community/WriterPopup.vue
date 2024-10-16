@@ -222,6 +222,7 @@ onMounted(() => {
 }
 
 .writer {
+  font-family: J3;
   width: 500px;
   height: 250px;
   border: 1px solid lightgrey;

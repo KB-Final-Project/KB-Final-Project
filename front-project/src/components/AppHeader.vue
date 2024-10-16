@@ -30,7 +30,7 @@
                         <li v-for="(subItem, subIndex) in column" :key="subIndex">
                           <a style="font-size:17px;" class="dropdown-item" :href="subItem.href">{{
                             subItem.text
-                          }}</a>
+                            }}</a>
                           <span v-if="subItem.bgImage"
                             class="mega-dropdown-column position-absolute top-0 end-0 h-100 bg-size-cover bg-repeat-0 rounded-3 rounded-start-0"
                             :style="{
@@ -48,7 +48,7 @@
                     <template v-if="!subItem.subItems">
                       <a style="font-size:17px;" class="dropdown-item" :href="subItem.href">{{
                         subItem.text
-                      }}</a>
+                        }}</a>
                     </template>
                     <template v-else>
                       <a style="font-size:17px;" class="dropdown-item dropdown-toggle" href="#"
@@ -57,7 +57,7 @@
                         <li v-for="(grandChild, grandIndex) in subItem.subItems" :key="grandIndex">
                           <a style="font-size:17px;" class="dropdown-item" :href="grandChild.href">{{
                             grandChild.text
-                          }}</a>
+                            }}</a>
                         </li>
                       </ul>
                     </template>
@@ -73,8 +73,9 @@
           <template v-if="islogin">
             <li id="headerLoginBtn" class="nav-item dropdown" @mouseenter="hoverLoginDropdown(true)"
               @mouseleave="hoverLoginDropdown(false)">
+
               <router-link style="font-size:17px;" class="dropdown-item" to="/myPage">
-                {{ name }} <i :class="loginDropdownState ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
+                {{ props.username }} <i :class="loginDropdownState ? 'ai-chevron-up' : 'ai-chevron-down'"></i>
               </router-link>
               <ul class="dropdown-menu" v-show="loginDropdownState">
                 <li>
@@ -124,7 +125,9 @@ import { useRouter } from 'vue-router';
 const auth = useAuthStore();
 const islogin = computed(() => auth.isLogin);
 const id = computed(() => auth.id);
+const props = defineProps({ username: String });
 
+const avatar = `/api/member/${props.username}/avatar`;
 
 const store = useAuthStore();
 const router = useRouter();
@@ -142,8 +145,7 @@ const menuItems = ref([
     subItems: [
       { text: '테스트하기', href: '/test-start' },
       {
-        text: '투자성향 보기',
-        href: '/index.html'
+        text: '투자성향 보기', href: '/show-type'
       },
     ],
   },
@@ -308,6 +310,14 @@ a.nav-link {
 
 .nav-item {
   font-family: J3;
+}
+.avatar {
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: inline-block;
+  cursor: pointer;
+  text-align: center;
 }
 </style>
 
