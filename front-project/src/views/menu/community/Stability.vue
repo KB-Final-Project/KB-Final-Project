@@ -14,6 +14,9 @@ const replies = ref({}); // 각 게시글의 댓글을 저장할 객체
 const cr = useRoute();
 const router = useRouter();
 
+const props = defineProps({ username: String });
+
+const avatar = `/api/member/${props.username}/avatar`;
 const auth = useAuthStore();
 
 // 게시글 목록을 가져오는 함수
@@ -138,7 +141,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div class="bc">
     <div
         v-for="(post, index) in visiblePosts"
         :key="post.postId"
@@ -147,7 +150,7 @@ onMounted(() => {
       <div class="card-body pb-0">
         <div class="d-flex align-items-center">
           <div class="symbol symbol-45px me-5">
-            <img :src="require('@/assets/media/avatars/300-25.jpg')" alt=""/>
+            <img :src="avatar" class="avatar avatar-sm" /><br/>
           </div>
           <div class="d-flex flex-column">
             <p class="name text-gray-800 mb-1 fw-bolder">{{ post.authorId }}</p>
@@ -237,6 +240,9 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.bc{
+  font-family: J3;
+}
 .reply {
   font-size: 20px;
 }

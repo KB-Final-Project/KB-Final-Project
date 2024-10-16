@@ -7,6 +7,7 @@ import NewsPage from '@/views/NewsPage.vue';
 import TestStartPage from '@/views/menu/analysis/TestStartPage.vue';
 import TestProcessPage from '@/views/menu/analysis/TestProcessPage.vue';
 import TestResultPage from '@/views/menu/analysis/TestResultPage.vue';
+import ShowType from '@/views/menu/analysis/ShowType.vue';
 import Dictionary from '@/views/menu/dictionary/Dictionary.vue';
 import Savings from '@/views/menu/savings/Savings.vue';
 import SavingsDetail from '@/views/menu/savings/SavingsDetail.vue';
@@ -118,6 +119,11 @@ const routes = [
     path: '/test-result',
     name: 'TestResultPage',
     component: TestResultPage,
+  },  
+  {
+    path: '/show-type',
+    name: 'ShowType',
+    component: ShowType,
   },
   {
     path: '/stockMain',
