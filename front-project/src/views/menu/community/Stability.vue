@@ -3,7 +3,6 @@ import {ref, onMounted, computed} from "vue";
 import axios from "axios";
 import {useAuthStore} from "@/stores/auth";
 import api from '@/api/boardApi';
-import {useRoute, useRouter} from "vue-router";
 
 const postType = ref(1); // 게시판 타입 (예: 1: 안정형)
 const posts = ref([]); // 게시글 목록
@@ -11,8 +10,7 @@ const visibleCount = ref(5); // 보여질 게시글 수
 const newReply = ref({}); // 댓글 입력을 위한 ref
 const postRefs = ref([]); // hidden input 참조 배열
 const replies = ref({}); // 각 게시글의 댓글을 저장할 객체
-const cr = useRoute();
-const router = useRouter();
+
 
 const props = defineProps({ username: String });
 
@@ -34,7 +32,6 @@ const fetchBoardPosts = async () => {
   try {
     const response = await axios.get(`/api/board/${postType.value}/posts`);
     posts.value = response.data.postList;
-    console.log("data--------------"+response.data);
     // 게시글 목록을 가져온 후 각 게시글의 postId에 대해 fetchReplies 호출
     for (const post of posts.value) {
       await fetchReplies(post.postId); // 각 ID에 대해 개별적으로 댓글 가져오기
@@ -45,7 +42,6 @@ const fetchBoardPosts = async () => {
     console.error("Error fetching posts:", error);
   }
 };
-
 
 const getPostIdFromRef = (index) => {
   if (index < 0 || index >= postRefs.value.length) {
@@ -97,14 +93,13 @@ const handleLike = async (index) => {
 const handleReply = async (postId) => {
   try {
     const requestBody = {
-      postId: postId,
+      postId,
       writer: auth.userId,
       content: newReply.value[postId],
     };
-
-    // /api/board/replyPlus/{postId} 경로로 POST 요청을 보냄
-    const response = await axios.get(`/api/board/replyPlus/${postId}`, requestBody);
-    newReply.value[postId] = ""; // 댓글 입력 필드 초기화
+    // Changed to POST for submitting replies
+    const response = await axios.post(`/api/board/replyPlus/${postId}`, requestBody);
+    newReply.value[postId] = ""; // Clear the reply input
   } catch (error) {
     console.error("Error adding reply:", error);
   }
@@ -122,10 +117,12 @@ const handleReply = async (postId) => {
 //   }
 // };
 
-
+console.log('제발' + postRefs.value);
 const handleDelete = async (index) => {
   if (!confirm('삭제할까요?')) return;
-  await api.delete(getPostIdFromRef(index));
+
+  await api.delete(posts.value[index].postId);
+
   reloadPosts();  // 페이지 새로 고침 추가
 };
 
@@ -192,7 +189,7 @@ onMounted(() => {
               />
             </div>
           </div>
-          <input type="hidden" :value="post.postId" :ref="`${post.postId}`">
+          <input type="hidden" :value="post.postId" :ref="postRefs">
           <div class="d-flex align-items-center">
             <a class="btn btn-sm btn-color-muted btn-active-light-primary fw-bolder fs-6 py-1 px-2 me-4">
               <i class="ai-message fs-2"></i>{{ post.commentCount }}

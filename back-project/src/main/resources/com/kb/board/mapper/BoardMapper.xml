@@ -265,18 +265,19 @@
     <select id="selectBoardPostList" parameterType="com.kb.board.dto.BoardParam" resultMap="boardPostResultMap">
         <![CDATA[
         SELECT
-            bp.post_id AS postId,
-            bp.bno AS bno,
-            bp.title AS title,
-            bp.content AS content,
-            bp.read_count AS readCount,
-            bp.created_date AS createdDate,
-            bp.modified_date AS modifiedDate,
-            bp.type AS type,
-            bp.status AS status,
-            bp.comment_count AS commentCount,
-            bp.likes_count AS likesCount,
-            bp.member_id AS memberId
+            bp.post_id,
+            bp.bno,
+            bp.title,
+            bp.content,
+            bp.read_count,
+            bp.created_date,
+            bp.modified_date,
+            bp.type,
+            bp.status,
+            bp.comment_count,
+            bp.likes_count,
+            bp.member_id
+
         FROM board_post bp
         ORDER BY bp.post_id DESC
             LIMIT #{limit} OFFSET #{offset}
