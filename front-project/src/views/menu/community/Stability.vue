@@ -90,20 +90,25 @@ const handleLike = async (index) => {
   }
 };
 
-const handleReply = async (postId) => {
-  try {
-    const requestBody = {
-      postId,
-      writer: auth.userId,
-      content: newReply.value[postId],
-    };
-    // Changed to POST for submitting replies
-    const response = await axios.post(`/api/board/replyPlus/${postId}`, requestBody);
-    newReply.value[postId] = ""; // Clear the reply input
-  } catch (error) {
-    console.error("Error adding reply:", error);
-  }
-};
+// const handleReply = async (index) => {
+//   const token = localStorage.getItem('token');
+//   try {
+//     const requestBody = {
+//       postId: posts.value[index].postId,
+//       writer: auth.userId,
+//       content: newReply.value[index],
+//     };
+//     // Changed to POST for submitting replies
+//     const response = await axios.post(`/api/board/replyPlus/${posts.value[index].postId}`, requestBody, {
+//       headers: {
+//         Authorization: `Bearer ${token}`, // Authorization 헤더에 JWT 토큰 추가
+//       },
+//     })
+//     newReply.value[posts.value[index].postId] = ""; // Clear the reply input
+//   } catch (error) {
+//     console.error("Error adding reply:", error);
+//   }
+// };
 
 
 // const handleReply = async (postId) => {
@@ -211,9 +216,9 @@ onMounted(() => {
           </div>
         </div>
         <!-- 댓글 입력란 -->
-        <form class="reply position-relative pb-3" @submit.prevent="handleReply(post.postId)">
+        <form class="reply position-relative pb-3" @submit.prevent="handleReply(index)">
           <input
-              v-model="newReply[post.postId]"
+              v-model="newReply[index]"
               data-kt-autosize="true"
               class="form-control border-0 p-0 pe-10 resize-none min-h-25px"
               placeholder="댓글"

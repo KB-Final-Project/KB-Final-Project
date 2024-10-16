@@ -194,7 +194,7 @@ const menuItems = ref([
         href: '/gold',
         subItems: [
           { text: '금 시세', href: '/gold' },
-          { text: '금투자', href: '/goldInvest' },
+          { text: '금투자', href: '/goldInvestmentPage' },
         ],
       },
       { text: '환전', href: '/currencyExchange' },
