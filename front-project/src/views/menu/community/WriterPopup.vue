@@ -19,12 +19,7 @@ const userInvestType = ref(); // Store user's invest type
 
 const route = useRoute();
 const router = useRouter();
-const investTypeMapping = {
-  1: 'stability',
-  2: 'neutral',
-  3: 'activeInvestment',
-  4: 'aggressiveInvestment',
-};
+
 
 
 async function fetchUserInvestType() {
@@ -54,9 +49,7 @@ async function fetchUserInvestType() {
 }
 
 // Computed property to ensure userInvestType is available before using investTypeMapping
-const mappedPostType = computed(() => {
-  return investTypeMapping[userInvestType.value] || null;
-});
+
 
 async function createBoardPost() {
   const formData = new FormData();
@@ -69,7 +62,7 @@ async function createBoardPost() {
   });
 
   let bno;
-  switch (mappedPostType.value) {
+  switch (userInvestType.value) {
     case 'stability':
       bno = 1;
       break;
@@ -95,7 +88,7 @@ async function createBoardPost() {
 
   // Axios POST request
   try {
-    const postResponse = await axios.post(`/api/board/${mappedPostType.value}`, formData, {
+    const postResponse = await axios.post(`/api/board/${userInvestType.value}`, formData, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'multipart/form-data',
@@ -116,7 +109,7 @@ const submit = async () => {
 
   try {
     await createBoardPost();
-    router.push(`/community/${mappedPostType.value}`);
+    router.push(`/community/${userInvestType.value}`);
     reloadPosts(); // 페이지 새로 고침 추가
   } catch (error) {
     console.error('Error creating board post:', error);

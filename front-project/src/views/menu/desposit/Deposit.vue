@@ -181,7 +181,7 @@ const fetchSavings = async () => {
     const filterRequest = {
       searchValue: searchTerm.value,
       bankNameList: selectedBanks.value,
-      saveTerm: selectedDuration.value || 36,
+      saveTerm: selectedDuration.value || 12,
       page: currentPage.value,
       interestRateType: selectedInterestType.value || "단리",
     };

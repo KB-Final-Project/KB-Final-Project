@@ -221,7 +221,7 @@ public class BoardController {
     }
 
 
-    @GetMapping("/replyPlus/{postId}")
+    @PostMapping("/replyPlus/{postId}")
     public void ceateReply(
             @PathVariable long postId,
             @RequestBody BoardReply reply,
