@@ -4,10 +4,10 @@
       <div v-if="loading">로딩중..</div>
       <div v-else class="savingDetailBox">
         <div class="text-start m-4 rank-section animated-item">
-          <img class="rankMedal" src="/img/emoji/goldmedal.png" alt="Gold Medal">
+          <!-- <img class="rankMedal" src="/img/emoji/goldmedal.png" alt="Gold Medal"> -->
           <div class="rank-content">
-            <h4 class="rank-title">적금 최고금리 순위</h4>
-            <h4 class="rank">{{ deposit.rank }}위</h4>
+            <!-- <h4 class="rank-title">적금 최고금리 순위</h4>
+            <h4 class="rank">{{ deposit.rank }}위</h4> -->
           </div>
         </div>
 
@@ -54,7 +54,7 @@
           <div class="basicRates text-start m-4">
             <div class="basicRateBoxes">
               <div
-                  v-for="rate in deposit.interestRateList"
+                  v-for="rate in filteredInterestRateList"
                   :key="rate.interestRateId"
                   :class="['calBox', { selected: rate.interestRateId === selectedBaseRate }]"
                   @click="selectBaseRate(rate.interestRateId)"
@@ -80,9 +80,9 @@
         <div class="calNumber flex-container" @click="toggleKeypad">
           <img src="/img/emoji/calculator.png" alt="Calculator" class="calculator-icon">
           <div class="interest-info">
-            <p style="font-size: 15px;">월 {{ formatCurrency(monthlyAmount) }} 예금하면</p>
+            <p style="font-size: 15px;">{{ formatCurrency(monthlyAmount) }}원 예금하면</p>
             <p style="font-size: 15px; font-weight: 600;">
-              총 세후 이자 {{ formatCurrency(calculatedInterest) }}원
+              1년 후에 이자 {{ formatCurrency(calculatedInterest) }}원
             </p>
             <p style="font-size: 15px; color: #777777;">우대금리가 존재하는 상품엔 우대금리가 반영됩니다</p>
           </div>
@@ -180,7 +180,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="rate in deposit.interestRateList" :key="rate.interestRateId">
+          <tr v-for="rate in filteredInterestRateList" :key="rate.interestRateId">
             <td><h3>{{ rate.savingTerm }}개월</h3></td>
             <td><h3>{{ formatRate(rate.interestMaxRate) }}%({{ formatRate(rate.interestRate) }}%)</h3></td>
             <td><br><br></td>
@@ -243,6 +243,14 @@ const selectedBaseRate = ref(null);
 const showKeypad = ref(false);
 const keypadInput = ref('');
 const auth = useAuthStore();
+const interestType = ref('단리');
+
+const filteredInterestRateList = computed(() => {
+  if (!deposit.value.interestRateList || deposit.value.interestRateList.length === 0) {
+    return [];
+  }
+  return deposit.value.interestRateList.filter(rate => rate.interestRateType === interestType.value);
+});
 
 const maxInterestMaxRate = computed(() => {
   if (!deposit.value.interestRateList || deposit.value.interestRateList.length === 0) return 0;
@@ -313,7 +321,7 @@ const calculateInterest = () => {
   const base = selectedBaseRateRate.value || 0;
   const special = parseFloat(specialRate.value) || 0;
   const total = base + special;
-  const savingTerm = 36;
+  const savingTerm = 1;
   calculatedInterest.value = Math.round(monthlyAmount.value * total * savingTerm / 100);
 };
 

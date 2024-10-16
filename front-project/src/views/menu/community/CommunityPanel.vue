@@ -5,19 +5,19 @@ import WriterPopup from './WriterPopup.vue';
 import axios from 'axios';
 
 const propensityTypes = {
-  '1': {
+  'stability': {
     label: '안정형',
     route: '/community/stability',
   },
-  '2': {
+  'neutral': {
     label: '중립형',
     route: '/community/neutral',
   },
-  '3': {
+  'activeInvestment': {
     label: '적극투자형',
     route: '/community/activeInvestment',
   },
-  '4': {
+  'aggressiveInvestment': {
     label: '공격투자형',
     route: '/community/aggressiveInvestment',
   },
@@ -54,11 +54,12 @@ async function getMyInfo() {
       if (authData.id) {
         myInfo.id = authData.id;
         myInfo.email = authData.email; // email 값 추출
-
+        console.log('myInfo.id' + myInfo.id);
         // 사용자 투자 유형 설정
         if (authData.investType) {
           myInfo.investType = authData.investType.toString();
           userPropensity.value = authData.investType.toString();
+
         } else {
           console.warn('investType이 auth 데이터에 없습니다.');
         }
@@ -67,6 +68,8 @@ async function getMyInfo() {
         loading.value = true;
         const response = await axios.get(`/api/member/${myInfo.id}`);
         const data = response.data;
+        myInfo.value = response.data;
+        console.log('111' + myInfo.investType);
 
         if (data) {
           myInfo.name = data.name;
