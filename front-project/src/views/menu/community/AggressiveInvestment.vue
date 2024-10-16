@@ -14,6 +14,9 @@ const replies = ref({}); // 각 게시글의 댓글을 저장할 객체
 const cr = useRoute();
 const router = useRouter();
 
+const props = defineProps({ username: String });
+
+const avatar = `/api/member/${props.username}/avatar`;
 const auth = useAuthStore();
 
 // 게시글 목록을 가져오는 함수
@@ -31,7 +34,7 @@ const fetchBoardPosts = async () => {
   try {
     const response = await axios.get(`/api/board/${postType.value}/posts`);
     posts.value = response.data.postList;
-
+    console.log("data--------------"+response.data);
     // 게시글 목록을 가져온 후 각 게시글의 postId에 대해 fetchReplies 호출
     for (const post of posts.value) {
       await fetchReplies(post.postId); // 각 ID에 대해 개별적으로 댓글 가져오기
@@ -138,7 +141,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div class="bc">
     <div
         v-for="(post, index) in visiblePosts"
         :key="post.postId"
@@ -147,7 +150,7 @@ onMounted(() => {
       <div class="card-body pb-0">
         <div class="d-flex align-items-center">
           <div class="symbol symbol-45px me-5">
-            <img :src="require('@/assets/media/avatars/300-25.jpg')" alt=""/>
+            <img :src="avatar" class="avatar avatar-sm" /><br/>
           </div>
           <div class="d-flex flex-column">
             <p class="name text-gray-800 mb-1 fw-bolder">{{ post.authorId }}</p>
@@ -237,6 +240,9 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.bc{
+  font-family: J3;
+}
 .reply {
   font-size: 20px;
 }
@@ -302,7 +308,7 @@ onMounted(() => {
 }
 
 .reply {
-  display: flex;
+  display:flex;
   justify-content: space-between;
   padding: 10px; /* 댓글 여백 추가 */
   border-bottom: 1px solid lightgrey;

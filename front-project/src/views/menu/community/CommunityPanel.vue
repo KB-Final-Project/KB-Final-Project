@@ -22,6 +22,9 @@ const propensityTypes = {
     route: '/community/aggressiveInvestment',
   },
 };
+const props = defineProps({ username: String });
+
+const avatar = `/api/member/${props.username}/avatar`;
 
 // 상태 관리
 const activePropensity = ref('');
@@ -130,7 +133,7 @@ onMounted(async () => {
     <!-- 로딩이 완료되고 에러가 없을 때 콘텐츠 표시 -->
     <div v-else>
       <div class="profile">
-        <img src="/img/imsi.png" alt="프로필 이미지"/><br/>
+        <img :src="avatar" class="avatar avatar-sm" /><br/>
         <h2 class="d-inline">{{ myInfo.id }}</h2>
         <h2 style="font-weight: 100;" class="d-inline">님</h2>
         <h4 style="font-weight: lighter;">{{ myInfo.email }}</h4>
@@ -264,7 +267,9 @@ a{
   margin: 10px;
 }
 
+
 .communityPanel {
+  font-family: J3;
   width: 250px;
   height: 630px;
   border-radius: 30px;

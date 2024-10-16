@@ -83,7 +83,7 @@ export default {
 
   async changePassword(formData) {
     console.log('formData : ', formData);
-    const { data } = await api.put(`${BASE_URL}/${formData.id}/changepassword`, formData);
+    const { data } = await api.put(`${BASE_URL}/${formData}/changepassword`, formData);
     console.log('AUTH PUT: ', data);
     return data;
   },
