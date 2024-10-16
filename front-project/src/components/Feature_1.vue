@@ -88,7 +88,7 @@
                       <h3>Dreams Come True</h3>
                     </span><br>꿈을 향한 투자</h1>
                   <div class="logoYong">
-                    <img src="/img/logoYong.png" alt="Logo">
+                    <img src="/img/logoDaram.svg" alt="Logo">
                   </div>
                 </div>
                 <h3 class="pb-3 font-c">내 성향에 따른 방법대로<br> 꿈을 이루는 포트폴리오</h3>
