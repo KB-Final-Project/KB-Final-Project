@@ -161,8 +161,8 @@ public class WebSocketService extends TextWebSocketHandler {
 
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("Content-Type", "application/json; charset=utf-8");
-                headers.set("authorization", "Bearer " + approvalKey);  // WebSocket 승인 키
-                headers.set("tr_id", "FHKST01010100");  // 주식 요청을 위한 tr_id
+                headers.set("Authorization", "Bearer " + approvalKey);  // 발급받은 WebSocket Approval Key
+                headers.set("tr_id", "FHKST01010100");  // 주식 시세 요청을 위한 트랜잭션 ID
 
                 // WebSocket 메시지 생성
                 String message = String.format("{\"header\":{\"approval_key\":\"%s\",\"tr_type\":\"1\",\"content-type\":\"utf-8\"},"
