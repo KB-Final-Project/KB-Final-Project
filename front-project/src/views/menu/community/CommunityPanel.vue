@@ -5,29 +5,35 @@ import WriterPopup from './WriterPopup.vue';
 import axios from 'axios';
 
 const propensityTypes = {
-  'stability': {
+  stability: {
     label: '안정형',
     route: '/community/stability',
+    types: ['IPWC', 'IPMC', 'IBWC', 'IBMC']
   },
-  'neutral': {
+  neutral: {
     label: '중립형',
     route: '/community/neutral',
+    types: ['IPML', 'IPWL', 'IBML', 'IBWL']
   },
-  'activeInvestment': {
+  activeInvestment: {
     label: '적극투자형',
     route: '/community/activeInvestment',
+    types: ['APWL', 'APML', 'ABWC', 'APMC']
   },
-  'aggressiveInvestment': {
+  aggressiveInvestment: {
     label: '공격투자형',
     route: '/community/aggressiveInvestment',
-  },
+    types: ['ABWL', 'APWC', 'ABMC', 'ABML']
+  }
 };
+
 const props = defineProps({ username: String });
 
 const avatar = `/api/member/${props.username}/avatar`;
 
 // 상태 관리
 const activePropensity = ref('');
+const activeGroup = ref(null); // 현재 활성화된 그룹
 const showModal = ref(false);
 const userPropensity = ref('');
 const loading = ref(false);
@@ -46,65 +52,63 @@ const myInfo = reactive({
 // 사용자 정보 가져오기 (API 호출)
 async function getMyInfo() {
   const authValue = localStorage.getItem('auth');
-  console.log(authValue);
-
+  
   if (authValue) {
     try {
       const authData = JSON.parse(authValue);
       if (authData.id) {
         myInfo.id = authData.id;
-        myInfo.email = authData.email; // email 값 추출
-        console.log('myInfo.id' + myInfo.id);
-        // 사용자 투자 유형 설정
+        myInfo.email = authData.email;
+
         if (authData.investType) {
           myInfo.investType = authData.investType.toString();
           userPropensity.value = authData.investType.toString();
 
+          // 성향에 맞춰 활성화 설정
+          setActivePropensity(myInfo.investType);
         } else {
           console.warn('investType이 auth 데이터에 없습니다.');
         }
 
-        // 동적으로 API 엔드포인트 구성
         loading.value = true;
         const response = await axios.get(`/api/member/${myInfo.id}`);
         const data = response.data;
         myInfo.value = response.data;
-        console.log('111' + myInfo.investType);
 
         if (data) {
           myInfo.name = data.name;
-          // 추가적인 사용자 정보가 필요하면 여기에 설정
-          // 예: myInfo.someField = data.someField;
         } else {
           console.error('API 응답이 비어 있습니다.');
         }
-      } else {
-        console.log('Auth 데이터에 id가 없습니다.');
       }
     } catch (err) {
       error.value = '사용자 정보를 가져오는 중 오류가 발생했습니다.';
-      console.error('사용자 정보를 가져오는 중 오류 발생:', err);
     } finally {
       loading.value = false;
     }
   } else {
-    console.log('Auth 값이 로컬 스토리지에 없습니다.');
     error.value = '로그인이 필요합니다.';
   }
 }
 
 // Propensity 설정 및 라우팅
 function setActivePropensity(propensity) {
-  if (!propensityTypes[propensity]) {
+  const foundType = Object.keys(propensityTypes).find(group =>
+    propensityTypes[group].types.includes(propensity)
+  );
+
+  if (foundType) {
+    activePropensity.value = propensity;
+
+    const targetRoute = propensityTypes[foundType].route;
+    if (route.path !== targetRoute) {
+      router.push(targetRoute);
+    }
+    
+    // 그룹 활성화 상태 설정
+    activeGroup.value = foundType; // 수정된 부분
+  } else {
     console.error('유효하지 않은 유형:', propensity);
-    return;
-  }
-
-  activePropensity.value = propensity;
-
-  const targetRoute = propensityTypes[propensity].route;
-  if (route.path !== targetRoute) {
-    router.push(targetRoute);
   }
 }
 
@@ -120,6 +124,7 @@ function closePopup() {
 onMounted(async () => {
   await getMyInfo();
   if (myInfo.investType) {
+    console.log("Test" + myInfo.investType);
     setActivePropensity(myInfo.investType);
   }
 });
@@ -142,14 +147,15 @@ onMounted(async () => {
         <h4 style="font-weight: lighter;">{{ myInfo.email }}</h4>
       </div><br/>
 
-      <div
-          v-for="(type, key) in propensityTypes"
-          :key="key"
+      <!-- 성향 그룹 표시 -->
+      <div v-for="(group, key) in propensityTypes" :key="key">
+        <div
           class="propensity"
-          @click="setActivePropensity(key)"
-          :class="{ active: activePropensity === key }"
-      >
-        <h4>{{ type.label }}</h4>
+          @click="setActivePropensity(group.types[0])"
+          :class="{ active: activeGroup === key }"
+        >
+          <h4>{{ group.label }}</h4>
+        </div>
       </div>
 
       <div
@@ -188,6 +194,7 @@ onMounted(async () => {
   <!-- 흐림 배경 -->
   <div v-if="showModal" class="overlay" @click="closePopup"></div>
 </template>
+
 
 <style scoped>
 .bc {
