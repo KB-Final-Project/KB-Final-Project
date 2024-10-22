@@ -51,7 +51,7 @@ async function fetchUserInvestType() {
 // Computed property to ensure userInvestType is available before using investTypeMapping
 
 
-async function createBoardPost() {
+async function createBoardPost(token) {
   const formData = new FormData();
   formData.append('title', form.title);
   formData.append('content', form.content);
@@ -61,34 +61,12 @@ async function createBoardPost() {
     formData.append('files', file);
   });
 
-  let bno;
-  switch (userInvestType.value) {
-    case 'stability':
-      bno = 1;
-      break;
-    case 'neutral':
-      bno = 2;
-      break;
-    case 'activeInvestment':
-      bno = 3;
-      break;
-    case 'aggressiveInvestment':
-      bno = 4;
-      break;
-    default:
-      console.error('Invalid postType');
-  }
-
-  // Append bno and type to formData
-  formData.append('bno', bno);
-  formData.append('type', route.params.postType);
-
-  // Get auth token
-  const token = authStore.getToken();
+  // API 요청에서 userInvestType을 type으로 사용
+  const type = userInvestType.value; // 사용자의 investType을 type으로 사용
 
   // Axios POST request
   try {
-    const postResponse = await axios.post(`/api/board/${userInvestType.value}`, formData, {
+    const postResponse = await axios.post(`/api/board/${type}`, formData, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'multipart/form-data',
@@ -102,13 +80,21 @@ async function createBoardPost() {
   }
 }
 
+
 // Form submission function
 const submit = async () => {
   if (!confirm('등록할까요?')) return;
   isError.value = false;
 
+  const authValue = localStorage.getItem('auth'); // auth 데이터 가져오기
+  let token = null; // token 변수 초기화
+  if (authValue) {
+    const authData = JSON.parse(authValue);
+    token = authData.token; // token 설정
+  }
+
   try {
-    await createBoardPost();
+    await createBoardPost(token);
     router.push(`/community/${userInvestType.value}`);
     reloadPosts(); // 페이지 새로 고침 추가
   } catch (error) {
