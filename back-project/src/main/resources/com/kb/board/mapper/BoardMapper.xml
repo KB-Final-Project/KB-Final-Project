@@ -239,15 +239,14 @@
 
     <!-- 댓글 등록 -->
     <insert id="insertReply" parameterType="com.kb.board.dto.BoardReply">
+        <!-- 삽입 후 자동 생성된 rno 값을 가져오기 위해 selectKey 사용 -->
         <selectKey keyProperty="rno" resultType="int" order="AFTER">
-            SELECT @@identity as rno
+            SELECT LAST_INSERT_ID() as rno
         </selectKey>
-        insert into board_reply(
-        rno, post_id, mno, content, status,
-        create_date, modify_date)
-        VALUES(
-        default, #{postId}, #{mno}, #{content},
-        default, default, default
+        insert into board_reply (
+        post_id, mno, member_id, content, status, create_date, modify_date
+        ) VALUES (
+        #{postId}, #{mno}, #{memberId}, #{content}, default, default, default
         )
     </insert>
 
