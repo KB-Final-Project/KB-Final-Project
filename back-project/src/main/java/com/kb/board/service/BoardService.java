@@ -7,6 +7,7 @@ import com.kb.common.util.UploadFiles;
 import com.kb.member.dto.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -246,6 +247,10 @@ public class BoardService {
     }
 
     public void createReply(long postId, BoardReply reply, Member member) {
-        mapper.insertReply(postId, reply);
+        // reply 객체에 postId를 설정
+        reply.setPostId(postId); // reply에 postId를 설정
+        reply.setMemberId(member.getId()); // reply 객체에 memberId를 설정
+        reply.setMno(member.getMno()); // 만약 memberId와 mno가 다르다면, 각 필드에 맞게 설정해야 함
+        mapper.insertReply(reply); // reply 객체만 전달
     }
 }
