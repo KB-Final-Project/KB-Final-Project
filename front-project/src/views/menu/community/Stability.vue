@@ -338,14 +338,25 @@ onMounted(() => {
 }
 
 .modal-content {
-  background-color: #fff; /* 흰색 배경 */
+  background-color: rgba(67, 140, 116, 1); 
   padding: 20px;
   border-radius: 15px; /* 모서리 둥글게 */
   width: 450px; /* 폭 */
   max-width: 90%; /* 모바일 대응 */
   position: relative;
+  
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* 그림자 효과 */
   transition: transform 0.3s ease, opacity 0.3s ease; /* 부드러운 애니메이션 효과 */
+}
+
+
+.modal-content>h2 {
+  color : #fff;
+}
+
+.modal-content>button {
+  color: #fff;
+  background-color: darkgreen; /* 흐릿한 배경 */
 }
 
 .modal-header {
@@ -368,7 +379,7 @@ onMounted(() => {
 
 .modal-button {
   background-color: #438c74; /* 버튼 배경색 */
-  color: white; /* 버튼 글자색 */
+  color: #fff; /* 버튼 글자색 */
   border: none;
   border-radius: 5px; /* 모서리 둥글게 */
   padding: 10px 15px; /* 패딩 조정 */
