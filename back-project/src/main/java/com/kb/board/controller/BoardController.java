@@ -222,7 +222,7 @@ public class BoardController {
 
 
     @PostMapping("/replyPlus/{postId}")
-    public void ceateReply(
+    public void makeReply(
             @PathVariable long postId,
             @RequestBody BoardReply reply,
             @AuthenticationPrincipal Member member) throws Exception {
@@ -231,14 +231,11 @@ public class BoardController {
         service.createReply(postId, reply, member);
     }
 
-
-
-
     @DeleteMapping("/reply/{rno}")
     public ResponseEntity<BoardReply> deleteReply(
-        @PathVariable int rno,
-        @RequestBody BoardReplyDTO replyDTO,
-        @AuthenticationPrincipal Member principal) throws Exception {
+            @PathVariable int rno,
+            @RequestBody BoardReplyDTO replyDTO,
+            @AuthenticationPrincipal Member principal) throws Exception {
 
         if (principal == null) {
             throw new IllegalAccessException("User is not authenticated");
@@ -258,16 +255,12 @@ public class BoardController {
             throw new Exception("DB error");
         }
 
-    return ResponseEntity.ok(reply);
+        return ResponseEntity.ok(reply);
     }
 
     @GetMapping("/reply/{postId}")
     public ResponseEntity<List<BoardReply>> getReply(@PathVariable long postId) {
         return ResponseEntity.ok(service.selectReplyByBno(postId));
     }
-
-
-
-
 }
 
