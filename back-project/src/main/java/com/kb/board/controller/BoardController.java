@@ -153,7 +153,7 @@ public class BoardController {
 
     @PutMapping("/{postId}")
     public ResponseEntity<BoardPost> update(@PathVariable int postId,
-                                            BoardDTO boardDTO,
+                                            @RequestBody BoardDTO boardDTO,
                                             @RequestParam(name = "files", required = false) List<MultipartFile> files) {
         try {
             BoardPost boardPost = boardDTO.toBoardPost();
