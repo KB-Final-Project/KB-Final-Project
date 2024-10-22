@@ -1221,7 +1221,6 @@ CREATE TABLE MEMBER (
                         invest_type VARCHAR(50) DEFAULT NULL,
                         PRIMARY KEY (mno),
                         UNIQUE KEY id (id),
-                        FOREIGN KEY (invest_type) REFERENCES board_category(type)  -- 외래 키 설정
 );
 
 INSERT INTO `MEMBER` VALUES (4,'test','$2a$10$5dEnNeA5mppboERWOWnku.c2a5PXpQB7DvT8JVZWrL6jlczaXLWjS','홍길동',NULL,'2024-10-06 13:20:51','2024-10-06 13:20:51','hong@gmail.com','y',NULL),(6,'test12','$2a$10$fknq5hxQMVEMKcykCekJ7ufxpqJ45udSJqJ73Gu0XWmECePpuEms.','고대',NULL,'2024-10-06 13:45:37','2024-10-06 13:45:37','sup@naver.com','y',NULL),(7,'test1','$2a$10$sv0I/fFCzdXZ.5OiheV50.qYLHVeQsjBDW5hligxpKS6xgHksALdq','소소',NULL,'2024-10-06 13:58:54','2024-10-06 13:58:54','s@n.com','y',NULL),(13,'supergd01','$2a$10$SzTauxOiR6rIm8rnN.2uoOoVdahdpvCHPnpwq1Fvj89ERA8daNMp2','고대호','3735687457','2024-10-06 20:25:57','2024-10-06 20:25:57','supergd01@naver.com','y',NULL),(14,'root','$2a$10$Ch5QS36Od9lRUVJLCFxQueyIsoswi15lP/DrZIVpxhMNyAU1PT1la','고대',NULL,'2024-10-06 20:29:36','2024-10-06 20:29:36','s@naver.com','y',NULL),(16,'root1234','$2a$10$kftX3Y4D7CztH/QK9rJAg.PDoqI65DbiP0zsubC02D9R8e82tAshy','aslkdj',NULL,'2024-10-06 20:33:47','2024-10-06 20:33:47','123@na.com','y',NULL),(18,'supergd4263','$2a$10$2H4TxqK0kocYjfwPr9gytuOjA91HV04p32YpPuzq/EpCphuebJMqO','고대호',NULL,'2024-10-06 20:37:58','2024-10-06 20:37:58','supe0@naver.com','y',NULL),(19,'test1234','$2a$10$nK8UdL9NoyaZTjXxhxo8P.9Jm2/VWe0n3YZ5ve0FkD9aoJieKChO.','고대호',NULL,'2024-10-06 20:47:15','2024-10-06 20:47:15','super@naver.com','y',NULL),(20,'test123451','$2a$10$wjjfzcTeDAKI6fYjmmQZzedhzW7V6cyaRzHe6uVVhzB0AtwzXJBBC','고대',NULL,'2024-10-06 21:31:41','2024-10-06 21:31:41','wl@na.com','y',NULL);
@@ -1234,7 +1233,7 @@ CREATE TABLE `member_auth` (
                                CONSTRAINT `fk_authorities_users` FOREIGN KEY (`id`) REFERENCES `member` (`id`)
 )
 
-INSERT INTO `member_auth` VALUES ('root','ROLE_MEMBER'),('root1234','ROLE_MEMBER'),('supergd01','ROLE_MEMBER'),('supergd4263','ROLE_MEMBER'),('test','ROLE_MEMBER'),('test1','ROLE_MEMBER'),('test12','ROLE_MEMBER'),('test1234','ROLE_MEMBER'),('test123451','ROLE_MEMBER');
+    INSERT INTO `member_auth` VALUES ('root','ROLE_MEMBER'),('root1234','ROLE_MEMBER'),('supergd01','ROLE_MEMBER'),('supergd4263','ROLE_MEMBER'),('test','ROLE_MEMBER'),('test1','ROLE_MEMBER'),('test12','ROLE_MEMBER'),('test1234','ROLE_MEMBER'),('test123451','ROLE_MEMBER');
 
 
 CREATE TABLE board (
@@ -1278,14 +1277,16 @@ CREATE TABLE `board_reply` (
                                `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                `modify_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                                `status` varchar(1) DEFAULT 'y',
-                               `post_id` BIGINT NOT NULL,  -- 타입 변경
-                               `mno` int NOT NULL,
+                               `post_id` BIGINT NOT NULL,  -- 게시물 ID (외래 키)
+                               `mno` int NOT NULL,         -- 회원 번호 (외래 키)
+                               `member_id` varchar(255) NOT NULL,  -- 추가된 회원 아이디 필드
                                PRIMARY KEY (`rno`),
                                KEY `post_id` (`post_id`),
                                KEY `mno` (`mno`),
                                CONSTRAINT `board_reply_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `board_post` (`post_id`),
                                CONSTRAINT `board_reply_ibfk_2` FOREIGN KEY (`mno`) REFERENCES `member` (`mno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 CREATE TABLE `board_attach_file` (
                                      `fno` bigint NOT NULL AUTO_INCREMENT,

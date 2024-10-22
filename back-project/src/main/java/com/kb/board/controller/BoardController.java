@@ -104,17 +104,29 @@ public class BoardController {
         int bno;
         // type에 따라 bno 값 설정 (type이 문자열이므로 직접 매핑)
         switch (type) {
-            case "stability":
-                bno = 1;
+            case "IPWC":
+            case "IPMC":
+            case "IBWC":
+            case "IBMC":
+                bno = 1; // 안정형
                 break;
-            case "neutral":
-                bno = 2;
+            case "IPML":
+            case "IPWL":
+            case "IBML":
+            case "IBWL":
+                bno = 2; // 중립형
                 break;
-            case "activeInvestment":
-                bno = 3;
+            case "APWL":
+            case "APML":
+            case "ABWC":
+            case "APMC":
+                bno = 3; // 적극투자형
                 break;
-            case "aggressiveInvestment":
-                bno = 4;
+            case "ABWL":
+            case "APWC":
+            case "ABMC":
+            case "ABML":
+                bno = 4; // 공격투자형
                 break;
             default:
                 return ResponseEntity.badRequest().body(null); // 잘못된 type인 경우
@@ -130,10 +142,14 @@ public class BoardController {
 
         log.info("Creating boardPost with bno: " + boardPost.getPostId());
 
-        BoardPost createdPost = boardService.createBoardPost(boardPost, files);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
+        try {
+            BoardPost createdPost = boardService.createBoardPost(boardPost, files);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
+        } catch (Exception e) {
+            log.error("Error while creating board post", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
-
 
     @PutMapping("/{postId}")
     public ResponseEntity<BoardPost> update(@PathVariable int postId,
@@ -222,7 +238,7 @@ public class BoardController {
 
 
     @PostMapping("/replyPlus/{postId}")
-    public void ceateReply(
+    public void makeReply(
             @PathVariable long postId,
             @RequestBody BoardReply reply,
             @AuthenticationPrincipal Member member) throws Exception {
@@ -231,14 +247,11 @@ public class BoardController {
         service.createReply(postId, reply, member);
     }
 
-
-
-
     @DeleteMapping("/reply/{rno}")
     public ResponseEntity<BoardReply> deleteReply(
-        @PathVariable int rno,
-        @RequestBody BoardReplyDTO replyDTO,
-        @AuthenticationPrincipal Member principal) throws Exception {
+            @PathVariable int rno,
+            @RequestBody BoardReplyDTO replyDTO,
+            @AuthenticationPrincipal Member principal) throws Exception {
 
         if (principal == null) {
             throw new IllegalAccessException("User is not authenticated");
@@ -258,16 +271,12 @@ public class BoardController {
             throw new Exception("DB error");
         }
 
-    return ResponseEntity.ok(reply);
+        return ResponseEntity.ok(reply);
     }
 
     @GetMapping("/reply/{postId}")
     public ResponseEntity<List<BoardReply>> getReply(@PathVariable long postId) {
         return ResponseEntity.ok(service.selectReplyByBno(postId));
     }
-
-
-
-
 }
 
