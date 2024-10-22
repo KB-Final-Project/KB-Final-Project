@@ -122,7 +122,7 @@ const handleLike = async (index) => {
 //   }
 // };
 
-console.log('제발' + postRefs.value);
+// console.log('--' + postRefs.value);
 const handleDelete = async (index) => {
   if (!confirm('삭제할까요?')) return;
 
