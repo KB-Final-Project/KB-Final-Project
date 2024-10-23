@@ -1262,12 +1262,12 @@ CREATE TABLE `board_post` (
                               `modified_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                               `type` varchar(50) NOT NULL,
                               `comment_count` int DEFAULT '0',
-                              `member_id` int NOT NULL,
+                              `mno` int NOT NULL,
                               `author_id` varchar(50) DEFAULT NULL,
                               PRIMARY KEY (`post_id`),
                               KEY `member_id` (`member_id`),
                               KEY `board_post_ibfk_2` (`bno`),
-                              CONSTRAINT `board_post_ibfk_1` FOREIGN KEY (`member_id`) REFERENCES `member` (`mno`),
+                              CONSTRAINT `board_post_ibfk_1` FOREIGN KEY (`mno`) REFERENCES `member` (`mno`),
                               CONSTRAINT `board_post_ibfk_2` FOREIGN KEY (`bno`) REFERENCES `board` (`bno`)
 ) ENGINE=InnoDB AUTO_INCREMENT=132 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
