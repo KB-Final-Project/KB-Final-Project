@@ -238,14 +238,15 @@ public class BoardController {
 
 
     @PostMapping("/replyPlus/{postId}")
-    public void makeReply(
+    public ResponseEntity<BoardReply> makeReply(
             @PathVariable long postId,
             @RequestBody BoardReply reply,
             @AuthenticationPrincipal Member member) throws Exception {
 
-        // 댓글 생성 로직 처리
-        service.createReply(postId, reply, member);
+        BoardReply createdReply = service.createReply(postId, reply, member);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdReply);
     }
+
 
     @DeleteMapping("/reply/{rno}")
     public ResponseEntity<BoardReply> deleteReply(

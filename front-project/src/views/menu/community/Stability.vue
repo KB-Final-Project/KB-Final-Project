@@ -7,7 +7,7 @@ import api from '@/api/boardApi';
 const postType = ref(1); // 게시판 타입 (예: 1: 안정형)
 const posts = ref([]); // 게시글 목록
 const visibleCount = ref(5); // 보여질 게시글 수
-const newReply = ref({}); // 댓글 입력을 위한 ref
+const newReply = ref(Array(posts.value.length).fill('')); // 게시글 수에 따라 초기화
 const postRefs = ref([]); // hidden input 참조 배열
 const selectedFiles = ref([]); // 파일 선택을 위한 ref 추가
 const replies = ref({}); // 각 게시글의 댓글을 저장할 객체
@@ -65,6 +65,22 @@ const formatDate = (timestamp) => {
     hour12: true,
   });
 };
+
+const handleReply = async (index) => {
+  const postId = posts.value[index].postId;
+  const content = newReply.value[index];
+  if (!content) return;
+
+  try {
+    const response = await api.addReply(postId, { content });
+    replies.value[postId] = replies.value[postId] || [];
+    replies.value[postId].push(response.data);
+    newReply.value[index] = ''; // 입력란 초기화
+  } catch (error) {
+    console.error("Failed to add reply:", error);
+  }
+};
+
 
 // 더 많은 게시글 로드하는 함수
 const loadMore = () => {
