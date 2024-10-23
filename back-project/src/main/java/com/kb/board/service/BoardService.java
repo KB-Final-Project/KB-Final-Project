@@ -98,7 +98,7 @@ public class BoardService {
     @Transactional(rollbackFor = Exception.class)
     public BoardPost createBoardPost(BoardPost boardPost, List<MultipartFile> files) {
         // 먼저 authorId 가져오기
-        String authorId = mapper.getAuthorIdByMno(boardPost.getMemberId());
+        String authorId = mapper.getAuthorIdByMno(boardPost.getMno());
         boardPost.setAuthorId(authorId);
 
         // createdDate를 현재 시간으로 설정
