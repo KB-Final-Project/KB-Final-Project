@@ -378,4 +378,5 @@
         FROM likes
         WHERE post_id = #{postId}
     </select>
+
 </mapper>

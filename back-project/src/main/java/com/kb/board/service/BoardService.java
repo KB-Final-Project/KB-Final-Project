@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -246,11 +247,25 @@ public class BoardService {
         return replyList;
     }
 
-    public void createReply(long postId, BoardReply reply, Member member) {
-        // reply 객체에 postId를 설정
-        reply.setPostId(postId); // reply에 postId를 설정
-        reply.setMemberId(member.getId()); // reply 객체에 memberId를 설정
-        reply.setMno(member.getMno()); // 만약 memberId와 mno가 다르다면, 각 필드에 맞게 설정해야 함
-        mapper.insertReply(reply); // reply 객체만 전달
+    public BoardReply createReply(long postId, BoardReply reply, Member member) {
+        // reply 객체에 postId, memberId, mno, createDate, modifyDate를 설정
+        reply.setPostId(postId);
+        reply.setMemberId(member.getId());
+        reply.setMno(member.getMno());
+
+        // 현재 시간을 설정 (java.time.LocalDateTime 사용 예)
+        LocalDateTime now = LocalDateTime.now();
+        reply.setCreateDate(now);
+        reply.setModifyDate(now);
+
+        // 댓글을 데이터베이스에 삽입
+        mapper.insertReply(reply); // 이 시점에서 reply.rno가 자동으로 설정됨
+
+        return reply; // 생성된 댓글 객체 반환
     }
+
+
+
+
+
 }
