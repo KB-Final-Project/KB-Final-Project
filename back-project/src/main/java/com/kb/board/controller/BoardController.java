@@ -74,7 +74,7 @@ public class BoardController {
         // 각 게시글에 작성자 ID 추가
         List<BoardPost> postsWithAuthors = postResult.getPostList().stream()
                 .map(post -> {
-                    Member member = memberService.findByMno((int) post.getMemberId()); // memberId로 Member 조회
+                    Member member = memberService.findByMno((int) post.getMno()); // mno로 Member 조회
                     post.setAuthorId(member.getId()); // 작성자 ID 설정
                     return post; // 수정된 BoardPost 객체 반환
                 })
@@ -137,7 +137,7 @@ public class BoardController {
         boardDTO.setType(type);
 
         BoardPost boardPost = boardDTO.toBoardPost(); // DTO를 게시글 객체로 변환
-        boardPost.setMemberId(principal.getMno());
+        boardPost.setMno(principal.getMno());
         boardPost.setAuthorId(String.format("%d", principal.getMno()));
 
         log.info("Creating boardPost with bno: " + boardPost.getPostId());
