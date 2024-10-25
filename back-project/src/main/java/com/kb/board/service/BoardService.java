@@ -18,10 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Log4j
 @Service
@@ -221,16 +218,17 @@ public class BoardService {
         return mapper.deleteReply(rno);
     }
 
-    public boolean checkLikeExists(int postId, int mno) {
-        return mapper.checkLikeExists(postId, mno);
+    public boolean checkLikeExists(Long postId, int mno) {
+        int count = mapper.checkLikeExists(postId, mno);
+        return count > 0;
     }
 
     @Transactional
-    public void addLike(int postId, int memberId) {
+    public void addLike(Long postId, int memberId) {
         mapper.insertLike(postId, memberId); // likes 테이블에 레코드 추가
     }
 
-    public BoardPost getPostWithLikesCount(int postId) {
+    public BoardPost getPostWithLikesCount(Long postId) {
         BoardPost post = mapper.getBoardPost(postId);
         int likesCount = mapper.countLikes(postId); // likes 테이블에서 좋아요 수 계산
         post.setLikesCount(likesCount);

@@ -152,7 +152,7 @@ public class BoardController {
     }
 
     @PutMapping("/{postId}")
-    public ResponseEntity<BoardPost> update(@PathVariable int postId,
+    public ResponseEntity<BoardPost> update(@PathVariable Long postId,
                                             @RequestBody BoardDTO boardDTO,
                                             @RequestParam(name = "files", required = false) List<MultipartFile> files) {
         try {
@@ -206,7 +206,7 @@ public class BoardController {
 
     // 좋아요 버튼
     @PostMapping("/{postId}/like")
-    public ResponseEntity<BoardPost> likePost(@PathVariable int postId, @AuthenticationPrincipal Member principal) {
+    public ResponseEntity<BoardPost> likePost(@PathVariable Long postId, @AuthenticationPrincipal Member principal) {
 
         int mno = principal.getMno();
         // 사용자가 이미 좋아요를 눌렀는지 확인
