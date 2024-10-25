@@ -1304,14 +1304,14 @@ CREATE TABLE `board_attach_file` (
 CREATE TABLE `likes` (
                          `like_id` bigint NOT NULL AUTO_INCREMENT,
                          `post_id` bigint NOT NULL,
-                         `member_id` int NOT NULL,
+                         `mno` int NOT NULL,
                          `created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                          PRIMARY KEY (`like_id`),
-                         UNIQUE KEY `unique_like` (`post_id`, `member_id`), -- 같은 게시물에 같은 사용자가 중복 좋아요를 누를 수 없도록 설정
+                         UNIQUE KEY `unique_like` (`post_id`,`mno`),
+                         KEY `likes_ibfk_2` (`mno`),
                          CONSTRAINT `likes_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `board_post` (`post_id`),
-                         CONSTRAINT `likes_ibfk_2` FOREIGN KEY (`member_id`) REFERENCES `member` (`mno`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
+                         CONSTRAINT `likes_ibfk_2` FOREIGN KEY (`mno`) REFERENCES `member` (`mno`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `GOLD_INFO` (
                              `gno` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
