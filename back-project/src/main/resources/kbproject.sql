@@ -1261,6 +1261,7 @@ CREATE TABLE `board_post` (
                               `created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                               `modified_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                               `type` varchar(50) NOT NULL,
+                              `likes_count` INT DEFAULT 0,
                               `comment_count` int DEFAULT '0',
                               `mno` int NOT NULL,
                               `author_id` varchar(50) DEFAULT NULL,

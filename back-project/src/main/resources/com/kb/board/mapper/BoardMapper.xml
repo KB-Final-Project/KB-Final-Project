@@ -289,7 +289,8 @@
             bp.type AS type,
             bp.status AS status,
             bp.comment_count AS commentCount,
-            bp.member_id AS memberId
+            bp.member_id AS memberId,
+            bp.likes_count AS likesCount
         FROM board_post bp
         WHERE bp.post_id = #{postId}
         ]]>

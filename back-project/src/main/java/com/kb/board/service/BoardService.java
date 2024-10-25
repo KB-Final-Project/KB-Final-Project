@@ -201,15 +201,6 @@ public class BoardService {
         return mapper.deleteAttachFile(fno) == 1;
     }
 
-//    public BoardReply createReply(long postId, BoardReply reply) {
-//        int result = mapper.insertReply(postId, reply);
-//        if (result != 1) {
-//            throw new RuntimeException("Failed to insert reply");
-//        }
-//        reply = mapper.selectReplyByRno(reply.getRno());
-//        return reply;
-//    }
-
     public BoardReply getReply(int rno) {
         return mapper.selectReplyByRno(rno);
     }
@@ -226,6 +217,7 @@ public class BoardService {
     @Transactional
     public void addLike(Long postId, int memberId) {
         mapper.insertLike(postId, memberId); // likes 테이블에 레코드 추가
+        mapper.incrementLikesCount(postId);  // likes_count 증가
     }
 
     public BoardPost getPostWithLikesCount(Long postId) {
@@ -234,6 +226,13 @@ public class BoardService {
         post.setLikesCount(likesCount);
         return post;
     }
+
+
+
+//    @Transactional(readOnly = true)
+//    public int getLikesCount(Long postId) {
+//        return mapper.countLikes(postId); // likes 테이블에서 좋아요 수 계산
+//    }
 
     public List<BoardPost> mySelectPostList(String memberId) {
         List<BoardPost> boardList = mapper.mySelectPostList(memberId);
