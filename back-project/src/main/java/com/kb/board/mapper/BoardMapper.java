@@ -31,6 +31,7 @@ public interface BoardMapper {
     int checkLikeExists(@Param("postId") Long postId, @Param("mno") int mno);
     // 좋아요 추가
     void insertLike(@Param("postId") Long postId,@Param("mno") int mno);
+    void incrementLikesCount(@Param("postId") Long postId);
     // 특정 게시물의 좋아요 수 계산
     int countLikes(@Param("postId")Long postId);
     List<BoardPost> mySelectPostList(String memberId);
