@@ -17,10 +17,13 @@ export default {
     //     return data;
     // },
 
-    async likePost(postId) {
-        const { data } = await api.post(`${BASE_URL}/${postId}/like`);
-        return data; // 성공 시 응답 데이터 반환
-    },
+    likePost(postId) {
+        return api.post(`/api/board/${postId}/like`, {}, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`, // 적절한 토큰 설정
+          },
+        });
+      },
 
     async getReplies(postId) {
         const { data } = await api.get(`${BASE_URL}/reply/${postId}`);
