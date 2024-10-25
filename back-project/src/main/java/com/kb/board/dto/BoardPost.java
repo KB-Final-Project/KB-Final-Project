@@ -13,7 +13,7 @@ import java.util.Date;
 @Data
 @Builder
 public class BoardPost {
-    private long postId;
+    private Long postId;
     private int bno;
     @NotNull(message = "Title cannot be null")
     private String title;       // 제목
