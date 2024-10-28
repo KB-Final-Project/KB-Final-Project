@@ -22,16 +22,26 @@ const editPost = ref({});
 // 댓글 목록을 가져오는 함수
 const fetchReplies = async (postId) => {
   try {
-    const response = await api.getReplies(postId, { timeout: 5000 }); // 타임아웃을 5초로 설정
-    replies.value[postId] = response;
+    const response = await api.getReplies(postId, { timeout: 5000 });
+    
+    // Check if response is an array; if not, set to an empty array
+    replies.value[postId] = Array.isArray(response) ? response : [];
+    
+    if (!Array.isArray(response)) {
+      console.error(`Expected an array for post ${postId}, but got:`, response);
+    }
   } catch (error) {
     console.error("Error fetching replies:", error);
     if (error.response) {
       console.error("Response data:", error.response.data);
       console.error("Response status:", error.response.status);
     }
+    replies.value[postId] = []; // Initialize with an empty array on error
   }
 };
+
+
+
 
 const fetchBoardPosts = async () => {
   try {
@@ -180,6 +190,10 @@ onMounted(() => {
 
 <template>
   <div class="bc">
+   <!-- 게시글이 없을 때 메시지 표시 -->
+    <div v-if="posts.length === 0" class="no-posts">
+      게시물이 없습니다. 새 글을 작성해주세요.
+    </div>
     <div
         v-for="(post, index) in visiblePosts"
         :key="post.postId"
@@ -250,7 +264,7 @@ onMounted(() => {
         <div class="separator pt-5 mb-3"></div>
         <!-- 댓글 목록 표시 -->
         <div class="replies">
-          <div v-for="reply in replies[post.postId] || []" :key="reply.rno" class="reply">
+          <div v-for="reply in (replies[post.postId] || [])" :key="reply.rno" class="reply">
             <h5>{{ reply.content }}</h5>
             <h5>{{ formatDate(reply.createDate) }}</h5>
           </div>
@@ -452,5 +466,12 @@ onMounted(() => {
 
 .btn-active-light-danger:hover {
     color: darkred; /* 글자색 */
+}
+
+.no-posts {
+  text-align: center;
+  font-size: 20px;
+  color: gray;
+  margin: 20px 0;
 }
 </style>
