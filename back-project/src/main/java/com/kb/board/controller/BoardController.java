@@ -285,7 +285,7 @@ public class BoardController {
     }
 
     @GetMapping("/reply/{postId}")
-    public ResponseEntity<List<BoardReply>> getReply(@PathVariable long postId) {
+    public ResponseEntity<List<BoardReply>> getReply(@PathVariable Long postId) {
         return ResponseEntity.ok(service.selectReplyByBno(postId));
     }
 }

@@ -36,21 +36,7 @@ CREATE TABLE IF NOT EXISTS stock_codes (
     stock_name VARCHAR(100),
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );
-SELECT user, host FROM mysql.user WHERE user = 'root';
-SHOW GRANTS FOR 'root'@'localhost';
-show tables;
-use kbproject;
-select *from stock;
-select *from stock_history;
 
-select *from stock_codes;
-
-SELECT COUNT(*) FROM stock;
-SELECT COUNT(*) FROM stock_codes;
-
-TRUNCATE TABLE stock;
-
-drop tables stock;
 
 CREATE TABLE `funds` (
                          `id` bigint NOT NULL AUTO_INCREMENT,
@@ -1045,6 +1031,28 @@ INSERT INTO stock_codes (stock_code, stock_name) VALUES
                                                      ('000545', '흥국화재우'),
                                                      ('003280', '흥아해운');
 
+CREATE TABLE `FINANCIAL_PRODUCT_CATEGORY` (
+                                              `fin_category_id` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
+                                              `fin_category_name` varchar(50) NOT NULL COMMENT 'UNIQUE',
+                                              PRIMARY KEY (`fin_category_id`)
+)
+
+
+CREATE TABLE `STOCK_INFO` (
+                              `sno` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
+                              `code` varchar(20) NOT NULL COMMENT 'UNIQUE',
+                              `stock_name` varchar(50) NOT NULL COMMENT 'UNIQUE',
+                              `market_captial` int NOT NULL,
+                              `nominal_value` int NOT NULL,
+                              `oustanding_shares` int NOT NULL,
+                              `fin_category_id` int NOT NULL DEFAULT '4',
+                              PRIMARY KEY (`sno`),
+                              UNIQUE KEY `code` (`code`),
+                              UNIQUE KEY `stock_name` (`stock_name`),
+                              KEY `fin_category_id` (`fin_category_id`),
+                              CONSTRAINT `stock_info_ibfk_1` FOREIGN KEY (`fin_category_id`) REFERENCES `FINANCIAL_PRODUCT_CATEGORY` (`fin_category_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 
 CREATE TABLE `DAILY_STOCK_PRICE` (
@@ -1065,21 +1073,6 @@ CREATE TABLE `DAILY_STOCK_PRICE` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
-CREATE TABLE `STOCK_INFO` (
-                              `sno` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
-                              `code` varchar(20) NOT NULL COMMENT 'UNIQUE',
-                              `stock_name` varchar(50) NOT NULL COMMENT 'UNIQUE',
-                              `market_captial` int NOT NULL,
-                              `nominal_value` int NOT NULL,
-                              `oustanding_shares` int NOT NULL,
-                              `fin_category_id` int NOT NULL DEFAULT '4',
-                              PRIMARY KEY (`sno`),
-                              UNIQUE KEY `code` (`code`),
-                              UNIQUE KEY `stock_name` (`stock_name`),
-                              KEY `fin_category_id` (`fin_category_id`),
-                              CONSTRAINT `stock_info_ibfk_1` FOREIGN KEY (`fin_category_id`) REFERENCES `FINANCIAL_PRODUCT_CATEGORY` (`fin_category_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 CREATE TABLE `stocks_candle` (
                                  id INT AUTO_INCREMENT PRIMARY KEY,          -- 고유 ID, 자동 증가
@@ -1092,6 +1085,25 @@ CREATE TABLE `stocks_candle` (
                                  stock_candle_volume BIGINT,
                                  UNIQUE (stock_code, stock_candle_day)       -- 종목 코드와 날짜 중복 방지
 )
+
+
+
+CREATE TABLE `REAL_TIME_STOCK_PRICE` (
+                                         `rtno` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
+                                         `sno` int NOT NULL,
+                                         `current_price` int NOT NULL,
+                                         `open_price` int NOT NULL,
+                                         `low_price` int NOT NULL,
+                                         `high_price` int NOT NULL,
+                                         `price_change_rate` decimal(10,0) NOT NULL,
+                                         `volume` int NOT NULL,
+                                         `trade_value` int NOT NULL,
+                                         `trade_time` timestamp NOT NULL,
+                                         PRIMARY KEY (`rtno`),
+                                         KEY `sno` (`sno`),
+                                         CONSTRAINT `real_time_stock_price_ibfk_1` FOREIGN KEY (`sno`) REFERENCES `STOCK_INFO` (`sno`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 
 
@@ -1189,24 +1201,6 @@ insert into board_category(type, name, level, order_no) VALUES('aggressiveInvest
 
 
 
-CREATE TABLE `REAL_TIME_STOCK_PRICE` (
-                                         `rtno` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
-                                         `sno` int NOT NULL,
-                                         `current_price` int NOT NULL,
-                                         `open_price` int NOT NULL,
-                                         `low_price` int NOT NULL,
-                                         `high_price` int NOT NULL,
-                                         `price_change_rate` decimal(10,0) NOT NULL,
-                                         `volume` int NOT NULL,
-                                         `trade_value` int NOT NULL,
-                                         `trade_time` timestamp NOT NULL,
-                                         PRIMARY KEY (`rtno`),
-                                         KEY `sno` (`sno`),
-                                         CONSTRAINT `real_time_stock_price_ibfk_1` FOREIGN KEY (`sno`) REFERENCES `STOCK_INFO` (`sno`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-
 
 CREATE TABLE MEMBER (
                         mno INT NOT NULL AUTO_INCREMENT COMMENT '자동 증가',
@@ -1220,7 +1214,7 @@ CREATE TABLE MEMBER (
                         status VARCHAR(1) DEFAULT 'y',
                         invest_type VARCHAR(50) DEFAULT NULL,
                         PRIMARY KEY (mno),
-                        UNIQUE KEY id (id),
+                        UNIQUE KEY id (id)
 );
 
 INSERT INTO `MEMBER` VALUES (4,'test','$2a$10$5dEnNeA5mppboERWOWnku.c2a5PXpQB7DvT8JVZWrL6jlczaXLWjS','홍길동',NULL,'2024-10-06 13:20:51','2024-10-06 13:20:51','hong@gmail.com','y',NULL),(6,'test12','$2a$10$fknq5hxQMVEMKcykCekJ7ufxpqJ45udSJqJ73Gu0XWmECePpuEms.','고대',NULL,'2024-10-06 13:45:37','2024-10-06 13:45:37','sup@naver.com','y',NULL),(7,'test1','$2a$10$sv0I/fFCzdXZ.5OiheV50.qYLHVeQsjBDW5hligxpKS6xgHksALdq','소소',NULL,'2024-10-06 13:58:54','2024-10-06 13:58:54','s@n.com','y',NULL),(13,'supergd01','$2a$10$SzTauxOiR6rIm8rnN.2uoOoVdahdpvCHPnpwq1Fvj89ERA8daNMp2','고대호','3735687457','2024-10-06 20:25:57','2024-10-06 20:25:57','supergd01@naver.com','y',NULL),(14,'root','$2a$10$Ch5QS36Od9lRUVJLCFxQueyIsoswi15lP/DrZIVpxhMNyAU1PT1la','고대',NULL,'2024-10-06 20:29:36','2024-10-06 20:29:36','s@naver.com','y',NULL),(16,'root1234','$2a$10$kftX3Y4D7CztH/QK9rJAg.PDoqI65DbiP0zsubC02D9R8e82tAshy','aslkdj',NULL,'2024-10-06 20:33:47','2024-10-06 20:33:47','123@na.com','y',NULL),(18,'supergd4263','$2a$10$2H4TxqK0kocYjfwPr9gytuOjA91HV04p32YpPuzq/EpCphuebJMqO','고대호',NULL,'2024-10-06 20:37:58','2024-10-06 20:37:58','supe0@naver.com','y',NULL),(19,'test1234','$2a$10$nK8UdL9NoyaZTjXxhxo8P.9Jm2/VWe0n3YZ5ve0FkD9aoJieKChO.','고대호',NULL,'2024-10-06 20:47:15','2024-10-06 20:47:15','super@naver.com','y',NULL),(20,'test123451','$2a$10$wjjfzcTeDAKI6fYjmmQZzedhzW7V6cyaRzHe6uVVhzB0AtwzXJBBC','고대',NULL,'2024-10-06 21:31:41','2024-10-06 21:31:41','wl@na.com','y',NULL);
@@ -1266,7 +1260,7 @@ CREATE TABLE `board_post` (
                               `mno` int NOT NULL,
                               `author_id` varchar(50) DEFAULT NULL,
                               PRIMARY KEY (`post_id`),
-                              KEY `member_id` (`member_id`),
+                              KEY `mno` (`mno`),
                               KEY `board_post_ibfk_2` (`bno`),
                               CONSTRAINT `board_post_ibfk_1` FOREIGN KEY (`mno`) REFERENCES `member` (`mno`),
                               CONSTRAINT `board_post_ibfk_2` FOREIGN KEY (`bno`) REFERENCES `board` (`bno`)
@@ -1327,6 +1321,18 @@ CREATE TABLE `GOLD_INFO` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+CREATE TABLE `currency` (
+                            `currency_id` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
+                            `currency_code` varchar(10) NOT NULL,
+                            `currency_name` varchar(30) NOT NULL,
+                            `fin_category_id` int NOT NULL DEFAULT '7',
+                            PRIMARY KEY (`currency_id`),
+                            KEY `fin_category_id` (`fin_category_id`),
+                            CONSTRAINT `currency_ibfk_1` FOREIGN KEY (`fin_category_id`) REFERENCES `FINANCIAL_PRODUCT_CATEGORY` (`fin_category_id`)
+)
+
+
 CREATE TABLE gold_data (
                            bas_dd VARCHAR(8),
                            isu_cd VARCHAR(8),
@@ -1359,23 +1365,6 @@ CREATE TABLE `exchange_rates` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
-CREATE TABLE product_view_logs (
-                                   log_id INT AUTO_INCREMENT PRIMARY KEY,
-                                   saving_id INT,
-                                   mno INT,
-                                   invest_type VARCHAR(4),
-                                   viewed_at TIMESTAMP,
-                                   UNIQUE(saving_id, mno),
-                                   FOREIGN KEY (saving_id) REFERENCES savings_products(saving_id) ON DELETE CASCADE,
-                                   FOREIGN KEY (mno) REFERENCES member(mno) ON DELETE CASCADE
-);
-CREATE TABLE product_wmti_view_counts (
-                                          saving_id INT,
-                                          invest_type VARCHAR(4),
-                                          view_count INT DEFAULT 0,
-                                          PRIMARY KEY (saving_id, invest_type),
-                                          FOREIGN KEY (saving_id) REFERENCES savings_products(saving_id) ON DELETE CASCADE
-);
 CREATE TABLE term_dictionary (
                                  term_id INT AUTO_INCREMENT PRIMARY KEY,
                                  term_name VARCHAR(255) NOT NULL,
@@ -1420,48 +1409,6 @@ CREATE TABLE `BANKS` (
                          `bank_type` int DEFAULT NULL,
                          PRIMARY KEY (`bank_id`)
 )
-
-CREATE TABLE `currency` (
-                            `currency_id` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
-                            `currency_code` varchar(10) NOT NULL,
-                            `currency_name` varchar(30) NOT NULL,
-                            `fin_category_id` int NOT NULL DEFAULT '7',
-                            PRIMARY KEY (`currency_id`),
-                            KEY `fin_category_id` (`fin_category_id`),
-                            CONSTRAINT `currency_ibfk_1` FOREIGN KEY (`fin_category_id`) REFERENCES `FINANCIAL_PRODUCT_CATEGORY` (`fin_category_id`)
-)
-
-CREATE TABLE `FINANCIAL_PRODUCT_CATEGORY` (
-                                              `fin_category_id` int NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
-                                              `fin_category_name` varchar(50) NOT NULL COMMENT 'UNIQUE',
-                                              PRIMARY KEY (`fin_category_id`)
-)
-
-CREATE TABLE `SAVING_PRIME_RATES` (
-                                      `prime_rate_id` bigint NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
-                                      `prime_rate_percent` decimal(5,2) NOT NULL,
-                                      `prime_rate_detail` varchar(200) NOT NULL,
-                                      `saving_id` int NOT NULL,
-                                      PRIMARY KEY (`prime_rate_id`),
-                                      KEY `saving_id` (`saving_id`),
-                                      CONSTRAINT `saving_prime_rates_ibfk_1` FOREIGN KEY (`saving_id`) REFERENCES `SAVINGS_PRODUCTS` (`saving_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=318 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-CREATE TABLE `saving_interest_rates` (
-                                         `intr_rate_id` bigint NOT NULL AUTO_INCREMENT COMMENT 'AUTO_INCREMENT',
-                                         `saving_id` int DEFAULT NULL,
-                                         `intr_rate_type` varchar(10) NOT NULL,
-                                         `save_term` int NOT NULL,
-                                         `intr_rate` decimal(5,2) NOT NULL,
-                                         `intr_rate2` decimal(5,2) NOT NULL,
-                                         `bank_id` varchar(20) NOT NULL,
-                                         `fin_prdt_cd` varchar(50) NOT NULL,
-                                         PRIMARY KEY (`intr_rate_id`),
-                                         KEY `saving_interest_rates_ibfk_1` (`saving_id`),
-                                         CONSTRAINT `saving_interest_rates_ibfk_1` FOREIGN KEY (`saving_id`) REFERENCES `SAVINGS_PRODUCTS` (`saving_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 CREATE TABLE `INVEST_TYPE` (
                                `invest_type` varchar(50) NOT NULL COMMENT 'AUTO INCREMENT',
