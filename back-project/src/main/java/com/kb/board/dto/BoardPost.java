@@ -24,6 +24,7 @@ public class BoardPost {
     private String status;      // 상태 ('y' 또는 'n')
     private int commentCount;    // 댓글 수
     private int likesCount;     // 좋아요 수
+    private boolean isLiked;
     private Integer mno;      // member 테이블의 mno
     private String authorId;     // 작성자 ID (MEMBER 테이블의 id)
     private Date createdDate;   // 생성 날짜

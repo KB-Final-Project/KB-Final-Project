@@ -210,14 +210,19 @@ public class BoardService {
     }
 
     public boolean checkLikeExists(Long postId, int mno) {
-        int count = mapper.checkLikeExists(postId, mno);
-        return count > 0;
+        return mapper.checkLikeExists(postId, mno); // mapper에서 boolean 반환
     }
 
     @Transactional
     public void addLike(Long postId, int memberId) {
-        mapper.insertLike(postId, memberId); // likes 테이블에 레코드 추가
-        mapper.incrementLikesCount(postId);  // likes_count 증가
+        try {
+            mapper.insertLike(postId, memberId);
+            mapper.incrementLikesCount(postId);
+        } catch (Exception e) {
+            // 로그 기록
+            System.err.println("Error adding like: " + e.getMessage());
+            throw e; // 예외 재발생
+        }
     }
 
     public BoardPost getPostWithLikesCount(Long postId) {
@@ -226,8 +231,6 @@ public class BoardService {
         post.setLikesCount(likesCount);
         return post;
     }
-
-
 
 //    @Transactional(readOnly = true)
 //    public int getLikesCount(Long postId) {
@@ -250,8 +253,8 @@ public class BoardService {
         reply.setMemberId(member.getId());
         reply.setMno(member.getMno());
 
-        // 현재 시간을 설정 (java.time.LocalDateTime 사용 예)
-        LocalDateTime now = LocalDateTime.now();
+        // 현재 시간을 Timestamp로 설정
+        Timestamp now = new Timestamp(System.currentTimeMillis());
         reply.setCreateDate(now);
         reply.setModifyDate(now);
 
