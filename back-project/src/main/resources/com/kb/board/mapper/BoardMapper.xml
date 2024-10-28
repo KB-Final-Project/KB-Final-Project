@@ -268,7 +268,7 @@
             bp.status,
             bp.comment_count,
             bp.likes_count,
-            bp.member_id
+            bp.mno
 
         FROM board_post bp
         ORDER BY bp.post_id DESC
@@ -289,7 +289,7 @@
             bp.type AS type,
             bp.status AS status,
             bp.comment_count AS commentCount,
-            bp.member_id AS memberId,
+            bp.mno AS mno,
             bp.likes_count AS likesCount
         FROM board_post bp
         WHERE bp.post_id = #{postId}
@@ -345,7 +345,6 @@
         select id from member where mno = #{mno}
     </select>
 
-
     <!-- 게시글 조회 -->
     <select id="getBoardPost" parameterType="long" resultType="com.kb.board.dto.BoardPost">
         SELECT *
@@ -354,10 +353,12 @@
     </select>
 
     <!-- 특정 게시물에 대한 사용자의 좋아요 여부 확인 -->
-    <select id="checkLikeExists" parameterType="map" resultType="int">
-        SELECT COUNT(*)
-        FROM likes
-        WHERE post_id = #{postId} AND mno = #{mno}
+    <select id="checkLikeExists" parameterType="map" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM likes
+            WHERE post_id = #{postId} AND mno = #{mno}
+        )
     </select>
 
     <!-- 좋아요 추가 -->

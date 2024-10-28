@@ -19,29 +19,42 @@ const auth = useAuthStore();
 const isModalOpen = ref(false);
 const editPost = ref({});
 
-// 게시글 목록을 가져오는 함수
+// 댓글 목록을 가져오는 함수
 const fetchReplies = async (postId) => {
   try {
-    const response = await api.getReplies(postId);
+    const response = await api.getReplies(postId, { timeout: 5000 }); // 타임아웃을 5초로 설정
     replies.value[postId] = response;
   } catch (error) {
     console.error("Error fetching replies:", error);
+    if (error.response) {
+      console.error("Response data:", error.response.data);
+      console.error("Response status:", error.response.status);
+    }
   }
 };
 
-// 게시글 목록을 가져오는 함수 수정
 const fetchBoardPosts = async () => {
   try {
-    const response = await axios.get(`/api/board/${postType.value}/posts`);
-    posts.value = response.data.postList;
-    for (const post of posts.value) {
-      await fetchReplies(post.postId);
-    }
-    console.log("Fetched posts:", posts.value);
+    const response = await axios.get(`/api/board/${postType.value}/posts`, {
+      timeout: 5000,
+    });
+    console.log("API 응답:", response.data); // API 응답 로그 추가
+    posts.value = response.data.postList.map(post => ({
+      ...post,
+      isLiked: post.isLiked || false,
+      likesCount: post.likesCount || 0 // 좋아요 수 추가
+    }));
+
+    // 댓글을 가져오는 부분
+    await Promise.all(posts.value.map(post => fetchReplies(post.postId)));
+
   } catch (error) {
     console.error("Error fetching posts:", error);
   }
 };
+
+
+
 
 // 보여질 게시글 계산
 const visiblePosts = computed(() => {
@@ -91,12 +104,20 @@ const handleLike = async (index) => {
   const postId = posts.value[index].postId;
   if (postId) {
     try {
-      await api.likePost(postId);
+      const response = await api.likePost(postId);
+      posts.value[index] = response.data; // 서버에서 업데이트된 데이터를 받아옴
+      posts.value[index].isLiked = true; // 사용자 좋아요 상태 업데이트
     } catch (error) {
-      console.error("Failed to like the post:", error);
+      if (error.response && error.response.status === 409) {
+        alert("이미 좋아요를 눌렀습니다.");
+      } else {
+        console.error("Failed to like the post:", error.message);
+      }
     }
   }
 };
+
+
 
 const openEditModal = (index) => {
   editPost.value = { ...posts.value[index] }; // 선택된 게시물 데이터 복사
@@ -212,12 +233,16 @@ onMounted(() => {
           <input type="hidden" :value="post.postId" :ref="postRefs">
           <div class="d-flex align-items-center">
             <a class="btn btn-sm btn-color-muted btn-active-light-primary fw-bolder fs-6 py-1 px-2 me-4">
-              <i class="ai-message fs-2"></i>{{ post.commentCount }}
+              <i class="ai-message fs-2"></i>{{  (replies[post.postId] || []).length  }}
             </a>
             <a
-                class="btn btn-sm btn-color-muted btn-active-light-danger fw-bold fs-6 py-1 px-2"
-                @click="handleLike(index)"
-            >
+              class="btn btn-sm btn-color-muted fw-bold fs-6 py-1 px-2"
+              :class="{
+                  'btn-active-light-danger': post.isLiked,
+                  'btn-active': post.isLiked // 활성화된 상태 클래스
+              }"
+              @click="handleLike(index)"
+              >
               <i class="ai-heart fs-2"></i>{{ post.likesCount }}
             </a>
           </div>
@@ -421,5 +446,11 @@ onMounted(() => {
   color: #333; /* 마우스 오버 시 색상 변경 */
 }
 
+.btn-active-light-danger {
+    color: red; /* 글자색 */
+}
 
+.btn-active-light-danger:hover {
+    color: darkred; /* 글자색 */
+}
 </style>

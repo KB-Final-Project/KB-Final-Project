@@ -26,9 +26,9 @@ public interface BoardMapper {
     int deleteReply(int rno);
     String getAuthorIdByMno(Integer mno);
     // 게시글 조회
-    BoardPost getBoardPost(long postId);
+    BoardPost getBoardPost(Long postId);
     // 특정 게시물에 대한 사용자의 좋아요 여부 확인
-    int checkLikeExists(@Param("postId") Long postId, @Param("mno") int mno);
+    boolean checkLikeExists(@Param("postId") Long postId, @Param("mno") int mno);
     // 좋아요 추가
     void insertLike(@Param("postId") Long postId,@Param("mno") int mno);
     void incrementLikesCount(@Param("postId") Long postId);
