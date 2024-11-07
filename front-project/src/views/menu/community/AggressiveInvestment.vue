@@ -79,12 +79,30 @@ const loadMore = () => {
 };
 
 const handleLike = async (index) => {
-  const postId = getPostIdFromRef(index);
+  const postId = posts.value[index].postId;
+  const authData = JSON.parse(localStorage.getItem("auth"));
+  const token = authData?.token; // auth 객체에서 token 값 추출
+  if (token && token.split('.').length !== 3) {
+  console.error("Invalid JWT token format");
+  }
   if (postId) {
     try {
-      await api.likePost(postId); // API 호출
+      const response = await axios.post(`/api/board/${postId}/like`, null, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      posts.value[index] = {
+        ...posts.value[index],
+        isLiked: true,
+        likesCount: response.data.likesCount,
+      };
     } catch (error) {
-      console.error("Failed to like the post:", error);
+      if (error.response && error.response.status === 409) {
+        alert("이미 좋아요를 눌렀습니다.");
+      } else {
+        console.error("Failed to like the post:", error.message);
+      }
     }
   }
 };
@@ -187,10 +205,16 @@ onMounted(() => {
               <i class="ai-message fs-2"></i>{{ post.commentCount }}
             </a>
             <a
-              class="btn btn-sm btn-color-muted btn-active-light-danger fw-bold fs-6 py-1 px-2"
+              class="btn btn-sm btn-color-muted fw-bold fs-6 py-1 px-2"
+              :class="{
+                  'btn-active-light': post.isLiked,
+                  'btn-active': post.isLiked // 활성화된 상태 클래스
+              }"
               @click="handleLike(index)"
-            >
-              <i class="ai-heart fs-2"></i>{{ post.likesCount }}
+              >
+              <i :class="post.isLiked ? 'ai-heart-filled' : 'ai-heart'" 
+            :style="{ color: post.isLiked ? 'red' : 'inherit',  fontSize: '2em' }"></i>{{ post.likesCount }}
+
             </a>
           </div>
         </div>
