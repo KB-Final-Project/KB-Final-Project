@@ -25,13 +25,26 @@ export default {
         });
       },
 
-    async getReplies(postId) {
+      async checkLikeExists(postId, mno){
+        try {
+          const response = await api.get(`/api/board/${postId}/like/check`, {
+            params: { mno }
+          });
+          return response.data; // boolean 반환
+        } catch (error) {
+          console.error("Error checking like exists:", error);
+          return false; // 오류 발생 시 기본값
+        }
+      },
+      
+
+      async getReplies(postId) {
         const { data } = await api.get(`${BASE_URL}/reply/${postId}`);
         
-        // 날짜 배열을 Date 객체로 변환
+        // 날짜를 Date 객체로 변환
         data.forEach(reply => {
-            reply.createDate = new Date(...reply.createDate);
-            reply.modifyDate = new Date(...reply.modifyDate);
+            reply.createDate = new Date(reply.createDate);
+            reply.modifyDate = new Date(reply.modifyDate);
         });
     
         return data;
